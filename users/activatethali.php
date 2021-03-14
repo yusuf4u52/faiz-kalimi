@@ -26,7 +26,7 @@ mysqli_query($link,"update change_table set processed = 1 where userid = '" . $_
 
 
 $msgvar = "Salaam %name%,<br><br>Mubarak for starting your Faiz ul Mawaid il Burhaniyah Thaali -<br><br>Your Thali No. will be : <b>%thali%</b><br><br>
-1) If you need any help please email us on help@faizstudents.com or WhatsApp us on 9049378652, 9503054797.
+1) If you need any help please email us on kalimifaiz@gmail.com or WhatsApp us on 9049378652, 9503054797.
 <br>
 2) You can start / stop your thaali and update your details from the site - http://www.faizstudents.com/users/
 <br>
@@ -42,7 +42,7 @@ $msgvar = "Salaam %name%,<br><br>Mubarak for starting your Faiz ul Mawaid il Bur
 <br>
 7) Faiz time is between 9-11 AM Mon - Sat. Pickups and hub collection at Faiz will only happen in this time.
 <br>
-8) If you need any help please email us on help@faizstudents.com or WhatsApp us personally.
+8) If you need any help please email us on kalimifaiz@gmail.com or WhatsApp us personally.
 <br><br>
 Abeede Sayedna (TUS)<br>
 Faiz Khidmat Team<br>";
@@ -51,4 +51,3 @@ $msgvar = str_replace(array('%thali%','%name%','%email%'), array($_POST['thalino
 sendEmail($_POST['email'], 'Thali Activated', $msgvar, null);
 
 header("Location: pendingactions.php");
-?>

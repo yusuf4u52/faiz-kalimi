@@ -20,7 +20,7 @@ if (empty($values['Thali']) && empty($usr_values['id'])) {
   session_unset();
   session_destroy();
 
-  $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send and email to help@faizstudents.com";
+  $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send and email to kalimifaiz@gmail.com";
   header("Location: login.php?status=$status");
   exit;
 }
@@ -326,7 +326,7 @@ if (!empty($values['yearly_hub'])) {
   <?php include('_bottomJS.php'); ?>
 
   <div align="center">
-    <a href="mailto:help@faizstudents.com">help@faizstudents.com</a><br><br>
+    <a href="mailto:kalimifaiz@gmail.com">kalimifaiz@gmail.com</a><br><br>
   </div>
 </body>
 

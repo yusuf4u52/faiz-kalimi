@@ -64,7 +64,7 @@ if ($_POST) {
   mysqli_close($link);
   $msgvar = "Salaam " . $firstname . "bhai,<br><br>New Registration form for Faiz ul Mawaid il Burhaniyah thali has been successfully submitted.<br>
   <b>Please contact Saifuddinbhai on +919975305980 to activate your thali.</b><br><br>
-  For any concerns mail help@faizstudents.com";
+  For any concerns mail kalimifaiz@gmail.com";
   sendEmail($email, 'New Registration Successful, Visit Faiz to activate the thali', $msgvar, null);
   echo ("<SCRIPT LANGUAGE='JavaScript'>
     window.alert('Form has been successfully submitted.You need to visit faiz office with xerox of ITS card and 8000 Hub to get the thali started. Address: Shop Near Gold Gym,Lane adjacent to Satyanand Hospital, Office Time - 9 to 11 AM.')
