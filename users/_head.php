@@ -1,9 +1,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta charset="utf-8" />
-<title>Faiz ul Mawaid il Burhaniyah (Poona Students)</title>
+<title>Faizul Mawaidil Burhaniya (Kalimi Mohalla)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<link rel="stylesheet" href="/styles/css/bootstrap-theme-white-plum/bootstrap.min.css"/>
+<link rel="stylesheet" href="/styles/css/bootstrap-theme-white-plum/bootstrap.min.css" />
 <link rel="stylesheet" href="/users/src/custom.min.css" />
 <link rel="stylesheet" href="/users/src/jquery.dynatable.css" />
 <link rel="icon" href="/users/images/icon.png">

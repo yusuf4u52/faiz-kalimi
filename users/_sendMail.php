@@ -4,7 +4,7 @@ function sendEmail($to, $subject, $msg, $attachment,$attachmentObj = false, $add
 	require '../sms/_credentials.php';
 
 	$email = new \SendGrid\Mail\Mail(); 
-	$email->setFrom("no-reply@faizstudents.com", "FMB (Poona Students)");
+	$email->setFrom("no-reply@faizstudents.com", "Faizul Mawaidil Burhaniya (Kalimi Mohalla)");
 	$email->setSubject($subject);
 	$email->addTo($to);
 
@@ -45,5 +45,3 @@ function sendEmail($to, $subject, $msg, $attachment,$attachmentObj = false, $add
 	    echo 'Caught exception: '. $e->getMessage() ."\n";
 	}
 }
-
-?>

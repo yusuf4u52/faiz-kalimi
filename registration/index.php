@@ -132,7 +132,7 @@ if ($_POST) {
   <div class="container drop-shadow">
     <div class="header" style="text-align: center; vertical-align: middle; font-weight:20px">
       <h4 class="color-brown"><strong>Faiz ul Mawaid il Burhaniyah</strong></h4>
-      <h5 class="color-brown">(Poona Students)</h5>
+      <h5 class="color-brown">(Kalimi Mohalla)</h5>
       <h4 style="margin-top: 20px;"><strong>Thaali Registration</strong></h4>
     </div>
 
