@@ -28,7 +28,7 @@ mysqli_query($link,"update change_table set processed = 1 where userid = '" . $_
 $msgvar = "Salaam %name%,<br><br>Mubarak for starting your Faiz ul Mawaid il Burhaniyah Thaali -<br><br>Your Thali No. will be : <b>%thali%</b><br><br>
 1) If you need any help please email us on kalimifaiz@gmail.com or WhatsApp us on 9049378652, 9503054797.
 <br>
-2) You can start / stop your thaali and update your details from the site - http://www.faizstudents.com/users/
+2) You can start / stop your thaali and update your details from the site - http://kalimi.epizy.com/users/
 <br>
 2) Please ping +919503054797 to join the Faiz WhatsApp Group. All Faiz announcements are sent through it so please join it.
 <br>

@@ -30,7 +30,7 @@ class Examples extends CI_Controller {
 		{
 
 		}else
-		 header("Location: http://www.faizstudents.com/users/login.php");
+		 header("Location: http://kalimi.epizy.com/users/login.php");
 
     $crud = new grocery_CRUD();
     $crud->set_table('thalilist');
@@ -47,7 +47,7 @@ function notpickedup()
 		{
 
 		}else
-		 header("Location: http://www.faizstudents.com/users/login.php");
+		 header("Location: http://kalimi.epizy.com/users/login.php");
 
     $crud = new grocery_CRUD();
     $crud->set_table('not_picked_up');
@@ -64,7 +64,7 @@ function daily_hisab_items()
 		{
 
 		}else
-		 header("Location: http://www.faizstudents.com/users/login.php");
+		 header("Location: http://kalimi.epizy.com/users/login.php");
 
     $crud = new grocery_CRUD();
     $crud->set_table('daily_hisab_items');
@@ -81,7 +81,7 @@ function daily_menu_count()
 		{
 
 		}else
-		 header("Location: http://www.faizstudents.com/users/login.php");
+		 header("Location: http://kalimi.epizy.com/users/login.php");
 
     $crud = new grocery_CRUD();
     $crud->set_table('daily_hisab');
@@ -98,7 +98,7 @@ function sf_hisab()
 		{
 
 		}else
-		 header("Location: http://www.faizstudents.com/users/login.php");
+		 header("Location: http://kalimi.epizy.com/users/login.php");
 
     $crud = new grocery_CRUD();
     $crud->set_table('sf_hisab');
@@ -115,7 +115,7 @@ function receipts()
 		{
 
 		}else
-		 header("Location: http://www.faizstudents.com/users/login.php");
+		 header("Location: http://kalimi.epizy.com/users/login.php");
 
     $crud = new grocery_CRUD();
     $crud->set_table('receipts');
@@ -137,7 +137,7 @@ function change()
 	if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('nationalminerals52@gmail.com','mesaifee52@gmail.com','murtaza52@gmail.com','murtaza.sh@gmail.com','yusuf4u52@gmail.com','tzabuawala@gmail.com','mustafamnr@gmail.com')))
 	{}
 	else {
-	 header("Location: http://www.faizstudents.com/users/login.php");
+	 header("Location: http://kalimi.epizy.com/users/login.php");
 	}
 
     $crud = new grocery_CRUD();
@@ -157,7 +157,7 @@ function event_response()
 		{
 
 		}else
-		 header("Location: http://www.faizstudents.com/users/login.php");
+		 header("Location: http://kalimi.epizy.com/users/login.php");
 
     $crud = new grocery_CRUD();
     $crud->set_table('event_response');
