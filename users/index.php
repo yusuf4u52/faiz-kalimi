@@ -32,7 +32,7 @@ if (!empty($values['Thali']) && empty($values['yearly_hub'])) {
 }
 
 // Redirect users to update details page if any details are missing
-if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['fathersNo']) || empty($values['fathersITS']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['Full_Address']))) {
+if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['Full_Address']))) {
   header("Location: update_details.php?update_pending_info");
   exit;
 }
