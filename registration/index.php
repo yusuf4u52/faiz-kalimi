@@ -152,7 +152,7 @@ if ($_POST) {
           </div>
           <div class="form-group col-md-6">
             <label for="whatsapp">WhatsApp Number <a class="required">*</a></label>
-            <input type="number" class="form-control" id="whatsapp" name="whatsapp" pattern="0{2}[0-9]{8,20}" required placeholder="00[CountryCode][MobileNumber]">
+            <input type="number" class="form-control" id="whatsapp" name="whatsapp" pattern="[0-9]{10}" required>
           </div>
         </div>
 
