@@ -17,48 +17,22 @@ if ($_POST) {
   }
   $data = array_map("sanitize", $raw_data);
   extract($data);
-  $transport = ($transport == 'Yes') ? 'Transporter' : 'Pick Up';
-  $occupation = ($occupation == 'Student') ? 'Student' : 'Working';
-  // $datafromits = CallAPI($its,$header,$its_url);
-  // if (!empty($datafromits)) {
-  //   $datafromits_name = $datafromits['name'];
-  //   $datafromits_jamaat = $datafromits['jamaat'];
-  // } else {
-  $datafromits_name = $firstname . " " . $fathername . " " . $lastname;
-  $datafromits_jamaat = $watan;
-  // }
-
+  $combined_name = $firstname . " " . $fathername . " " . $lastname;
   $sql = "INSERT INTO thalilist (
                                         `NAME`,
                                         `CONTACT`,
                                         `ITS_No`,
                                         `Full_Address`,
                                         `Email_ID`,
-                                        `WATAN`,
-                                        `Transporter`,
-                                        `Occupation`
-                                       ,`Gender`
-                                       ,`Area`
-                                       ,`WhatsApp`
-                                       ,`College`
-                                       ,`Field`
-                                       ,`Permanent_Residence`
+                                        `WhatsApp`
                                         )
                             VALUES (
-                                    '$datafromits_name',
+                                    '$combined_name',
                                     '$mobile',
                                     '$its',
                                     '$address',
                                     '$email',
-                                    '$datafromits_jamaat',
-                                    '$transport',
-                                    '$occupation'
-                                    ,'$gender'
-                                    ,'$area'
-                                    ,'$whatsapp'
-                                    ,'$college'
-                                    ,'$field'
-                                    ,'$permanent_residence'
+                                    '$whatsapp'
                                     )";
   mysqli_query($link, $sql) or die(mysqli_error($link));
   mysqli_close($link);
@@ -162,18 +136,6 @@ if ($_POST) {
         </div>
 
         <div class="form-group">
-          <label>Gender <a class="required">*</a> : </label>
-          <label class="radio-inline">
-            <input type="radio" name="gender" value="Male" required />Male
-          </label>
-          <label class="radio-inline">
-            <input type="radio" name="gender" value="Female" required />Female
-          </label>
-        </div>
-
-        <hr />
-
-        <div class="form-group">
           <label for="address">Current Address <a class="required">*</a></label>
           <!-- <input type="text" class="form-control" id="address1" name="address1" required>
               <input type="text" class="form-control" id="address2" name="address2" required style="margin-top : 5px">
@@ -181,41 +143,6 @@ if ($_POST) {
 
           <textarea class="form-control" rows="3" id="address" name="address" required></textarea>
           <p class="help-block "><em>(Please enter in this order-FLAT No, Floor No, Bldg No, SOCIETY Name, ROAD, Nearest LANDMARK)</em></p>
-        </div>
-
-        <div class="form-group">
-          <label for="area">Area <a class="required">*</a></label>
-          <select class="form-control" id="area" name="area" required>
-            <option disabled selected value> -- select an option -- </option>
-            <option value="Bhagyoday Nagar">Bhagyoday Nagar</option>
-            <option value="Bhawani Peth">Bhawani Peth</option>
-            <option value="Camp">Camp</option>
-            <option value="City">City</option>
-            <option value="Fakhri Hills">Fakhri Hills</option>
-            <option value="Fatima Nagar">Fatima Nagar</option>
-            <option value="Ghorpadi">Ghorpadi</option>
-            <option value="Kondhwa">Kondhwa</option>
-            <option value="Kondhwa Budruk">Kondhwa Budruk</option>
-            <option value="Kothrud">Kothrud</option>
-            <option value="Market Yard">Market Yard</option>
-            <option value="Mitha Nagar">Mitha Nagar</option>
-            <option value="NIBM">NIBM</option>
-            <option value="Salunke Vihar">Salunke Vihar</option>
-            <option value="Tilak Nagar">Tilak Nagar</option>
-            <option value="Undri">Undri</option>
-            <option value="Wanawadi">Wanawadi</option>
-            <option value="(not present in the list)">(not present in the list)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Transport Required <a class="required">*</a> : </label>
-          <label class="radio-inline">
-            <input type="radio" name="transport" value="Yes" required>Yes
-          </label>
-          <label class="radio-inline">
-            <input type="radio" name="transport" value="No" required>No
-          </label>
         </div>
 
         <div class="row">
@@ -234,40 +161,6 @@ if ($_POST) {
           <input type="email" class="form-control" id="Email" name="email" pattern="^[_a-z0-9-]+(\.[_a-z0-9-]+)*@gmail.com$" required>
         </div>
 
-        <hr />
-
-        <div class="form-group">
-          <label for="watan">Watan <a class="required">*</a></label>
-          <input type="text" class="form-control" id="watan" name="watan" required>
-        </div>
-        <div class="form-group">
-          <label for="permanent_residence">Permanent Residence Address</label>
-          <input type="text" class="form-control" id="permanent_residence" name="permanent_residence">
-          <p class="help-block">If different from Watan e.g. Kuwait, Dubai, Mumbai, Surat etc</p>
-        </div>
-
-        <hr />
-
-        <div class="form-group font-size-13-px">
-          <label>Occupation <a class="required">*</a> : </label>
-          <label class="radio-inline">
-            <input type="radio" name="occupation" value="Student" required>Student
-          </label>
-          <label class="radio-inline">
-            <input type="radio" name="occupation" value="Working Professional" required>Working Professional
-          </label>
-        </div>
-
-        <div class="row">
-          <div class="form-group col-md-6">
-            <label for="college">Full College/Company Name <a class="required">*</a></label>
-            <input type="text" class="form-control" id="college" name="college" required>
-          </div>
-          <div class="form-group col-md-6">
-            <label for="field">Field/Stream of Study <a class="required">*</a></label>
-            <input type="text" class="form-control" id="field" name="field" required>
-          </div>
-        </div>
         <div class="form-group" style="text-align: center; vertical-align: middle; font-weight:20px;margin-top: 25px;">
           <button type="submit" class="btn btn-success">Next</button>
         </div>
