@@ -6,16 +6,13 @@ include('_common.php');
 $query = "SELECT * FROM thalilist LEFT JOIN transporters on thalilist.Transporter = transporters.Name where Email_id = '" . $_SESSION['email'] . "'";
 $values = mysqli_fetch_assoc(mysqli_query($link, $query));
 
-$query_user_table = "SELECT * FROM users where email = '" . $_SESSION['email'] . "'";
-$usr_values = mysqli_fetch_assoc(mysqli_query($link, $query_user_table));
-
 $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT FROM thalilist where Email_id = '" . $values['musaid'] . "'"));
 
 $_SESSION['thaliid'] = $values['id'];
 $_SESSION['thali'] = $values['Thali'];
 
 // Check if users gmail id is registered with us and has got a thali number against it 
-if (empty($values['Thali']) && empty($usr_values['id'])) {
+if (empty($values['Active'])) {
   $some_email = $_SESSION['email'];
   session_unset();
   session_destroy();
@@ -26,13 +23,13 @@ if (empty($values['Thali']) && empty($usr_values['id'])) {
 }
 
 // Check if takhmeen is done for the year
-if (!empty($values['Thali']) && empty($values['yearly_hub'])) {
-  // header("Location: selectyearlyhub.php");
-  $some_email = $_SESSION['email'];
-  $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send and email to kalimifaiz@gmail.com";
-  header("Location: login.php?status=$status");
-  exit;
-}
+// if (!empty($values['Thali']) && empty($values['yearly_hub'])) {
+//   // header("Location: selectyearlyhub.php");
+//   $some_email = $_SESSION['email'];
+//   $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send and email to kalimifaiz@gmail.com";
+//   header("Location: login.php?status=$status");
+//   exit;
+// }
 
 // Redirect users to update details page if any details are missing
 if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['Full_Address']))) {
