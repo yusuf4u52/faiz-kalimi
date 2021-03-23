@@ -27,7 +27,9 @@ if (empty($values['Thali']) && empty($usr_values['id'])) {
 
 // Check if takhmeen is done for the year
 if (!empty($values['Thali']) && empty($values['yearly_hub'])) {
-  header("Location: selectyearlyhub.php");
+  // header("Location: selectyearlyhub.php");
+  $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send and email to kalimifaiz@gmail.com";
+  header("Location: login.php?status=$status");
   exit;
 }
 
