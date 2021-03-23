@@ -85,7 +85,7 @@
 
         //Display user info or display login url as per the info we have.
         echo '<div style="margin:20px">';
-        if (isset($authUrl)) {
+        if (isset($authUrl) || isset($_GET['status'])) {
           //show login url
           echo '<div align="center">';
           echo '<h1>Login with Google</h1>';
@@ -122,11 +122,12 @@
   if (isset($_GET['status'])) {
   ?>
     <script type="text/javascript">
-      alert('<?php echo $_GET['status']; ?>');
+    alert('<?php echo $_GET['status']; ?>');
+    window.location.href='/index.html';
     </script>
 
   <?php } ?>
 
-</body>
+  </body>
 
 </html>
