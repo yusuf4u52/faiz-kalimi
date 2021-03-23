@@ -3,7 +3,7 @@ include('_authCheck.php');
 include('getHijriDate.php');
 
 $today = getTodayDateHijri();
-$sql = "select id, Total_Pending from thalilist WHERE Thali = '" . $_POST['Thaliid'] . "'";
+$sql = "select id, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending from thalilist WHERE Thali = '" . $_POST['Thaliid'] . "'";
 $result = mysqli_query($link, $sql) or die(mysqli_error($link));
 $name = mysqli_fetch_assoc($result);
 

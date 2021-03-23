@@ -20,7 +20,7 @@
   include('connection.php');
 
   // Form the SQL query that returns the top 10 most populous countries
-  $query = "SELECT Thali, Total_Pending FROM thalilist where Active='1' ORDER BY Total_Pending DESC LIMIT 10";
+  $query = "SELECT Thali, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist where Active='1' ORDER BY Total_Pending DESC LIMIT 10";
 
   // Execute the query, or else return the error message.
   $result = mysqli_query($link,$query);

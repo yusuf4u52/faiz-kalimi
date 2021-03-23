@@ -20,6 +20,8 @@ while($row = mysqli_fetch_assoc($result)){
       $_miqaats[$record['miqat_date']] = $record['miqat_description'];
     }
 
+  $row['Total_Pending'] = $row['Previous_Due'] + $row['yearly_hub'] + $row['Zabihat'] - $row['Paid'];
+
   $installment = (int)($row['Total_Pending'] + $row['Paid'])/count($_miqaats);;
   $todays_date = date("Y-m-d");
   $miqaat_gone = 0;

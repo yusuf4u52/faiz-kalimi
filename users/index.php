@@ -62,6 +62,8 @@ if (!empty($values['yearly_hub'])) {
     $_miqaats[$record['miqat_date']] = $record['miqat_description'];
   }
 
+  $values['Total_Pending'] = $values['Previous_Due'] + $values['yearly_hub'] + $values['Zabihat'] - $values['Paid'];
+
   $installment = (int)($values['Total_Pending'] + $values['Paid']) / count($_miqaats);
   $todays_date = date("Y-m-d");
   $miqaat_gone = 0;
