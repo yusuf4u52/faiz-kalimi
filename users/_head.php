@@ -4,9 +4,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <link rel="stylesheet" href="../styles/css/bootstrap-theme-white-plum/bootstrap.min.css" />
-<link rel="stylesheet" href="./src/custom.min.css" />
-<link rel="stylesheet" href="./src/jquery.dynatable.css" />
-<link rel="icon" href="./images/icon.png">
+<link rel="stylesheet" href="src/custom.min.css" />
+<link rel="stylesheet" href="src/jquery.dynatable.css" />
+<link rel="icon" href="images/icon.png">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <style type="text/css">
 	.well {

@@ -14,7 +14,7 @@
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand font-bold" href="/users/">Faizul Mawaidil Burhaniya (Kalimi Mohalla)</a>
+        <a class="navbar-brand font-bold" href="index.php">Faizul Mawaidil Burhaniya (Kalimi Mohalla)</a>
       </div>
     </div>
   </nav>
