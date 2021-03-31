@@ -11,27 +11,29 @@ if (!isset($_SESSION['fromLogin'])) {
 // check if user has right to access the page
 $rights = array(
 	"musaid" => array(
-		"/users/musaid.php",
-		"/users/_stop_thali_admin.php"
+		"musaid.php",
+		"_stop_thali_admin.php"
 	),
-	"admin" => array("/users/musaid.php",
-		"/users/admin_scripts.php",
-		"/users/stop_permanant.php",
-		"/users/thalisearch.php",
-		"/users/pendingactions.php",
-		"/users/_stop_thali_admin.php"
+	"admin" => array(
+		"musaid.php",
+		"admin_scripts.php",
+		"stop_permanant.php",
+		"thalisearch.php",
+		"pendingactions.php",
+		"_stop_thali_admin.php"
 	),
-	"all" => array("/users/index.php",
-		"/users/hoobHistory.php",
-		"/users/events.php",
-		"/users/update_details.php",
-		"/users/selectyearlyhub.php",
-		"/users/selectyearlyhub_action.php")
+	"all" => array(
+		"index.php",
+		"hoobHistory.php",
+		"events.php",
+		"update_details.php",
+		"selectyearlyhub.php",
+		"selectyearlyhub_action.php")
 );	
 // fetch user role
 $sql = mysqli_query($link,"SELECT role from users where email='".$_SESSION['email']."'");
 
-$requet_path = explode('?',$_SERVER['REQUEST_URI'])[0];
+$requet_path = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
 
 if ($row = mysqli_fetch_assoc($sql)) {
 	$_SESSION['role'] = $row['role'];
