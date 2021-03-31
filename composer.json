@@ -1,6 +1,5 @@
 {
-  "require": {
-  	"geniusts/hijri-dates": "^1.1",
-    "sendgrid/sendgrid": "~7"
-  }
+    "require": {
+        "cammac/carbony": "^1.2"
+    }
 }

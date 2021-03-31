@@ -1,12 +1,10 @@
 <?php
 include '../vendor/autoload.php';
-use GeniusTS\HijriDate\Date;
+use Cammac\Carbony\Carbony;
 
 function getTodayDateHijri()
 {	
-	$toStringFormat = 'Y-m-d';
-	Date::setToStringFormat($toStringFormat);
-	return Date::today();
+	return Carbony::now()->hijriFormat('Y-m-d');
 }
 
 ?>
