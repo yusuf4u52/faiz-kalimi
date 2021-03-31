@@ -2,25 +2,25 @@
 include('connection.php');
 include('_authCheck.php');
 
-if($_POST){
-  if($_POST['comment']){
+if ($_POST) {
+  if ($_POST['comment']) {
     $clean_comment = htmlentities(strip_tags($_POST['comment']), ENT_QUOTES, 'UTF-8');
-    $comment_insert_query = "INSERT INTO `comments`(`author_id`,`user_id`,`comment`) values('".$_SESSION['thaliid']."','".$_POST['user_id']."','$clean_comment')";
+    $comment_insert_query = "INSERT INTO `comments`(`author_id`,`user_id`,`comment`) values('" . $_SESSION['thaliid'] . "','" . $_POST['user_id'] . "','$clean_comment')";
 
-    mysqli_query($link,$comment_insert_query);
+    mysqli_query($link, $comment_insert_query);
   }
 
-  if($_POST['musaid']){
+  if ($_POST['musaid']) {
     $clean_musaid = htmlentities(strip_tags($_POST['musaid']), ENT_QUOTES, 'UTF-8');
-    $change_musaid_query = "UPDATE `thalilist` SET `musaid` = '$clean_musaid' WHERE Thali = ".$_GET['thalino'];
+    $change_musaid_query = "UPDATE `thalilist` SET `musaid` = '$clean_musaid' WHERE Thali = " . $_GET['thalino'];
 
-    mysqli_query($link,$change_musaid_query);
+    mysqli_query($link, $change_musaid_query);
   }
-  header("Location: thalisearch.php?thalino=".$_GET['thalino']."&general=".$_GET['general']."&year=".$_GET['year']);
+  header("Location: thalisearch.php?thalino=" . $_GET['thalino'] . "&general=" . $_GET['general'] . "&year=" . $_GET['year']);
 }
 
-$current_year = mysqli_fetch_assoc(mysqli_query($link,"SELECT value FROM settings where `key`='current_year'"));
-$musaid_list = mysqli_fetch_all(mysqli_query($link,"SELECT username, email FROM users"), MYSQLI_ASSOC);
+$current_year = mysqli_fetch_assoc(mysqli_query($link, "SELECT value FROM settings where `key`='current_year'"));
+$musaid_list = mysqli_query($link, "SELECT username, email FROM users");
 
 
 if ($_GET) {
@@ -28,11 +28,11 @@ if ($_GET) {
     $thalilist_tablename = "thalilist";
     $receipts_tablename = "receipts";
   } else {
-    $thalilist_tablename = "thalilist_".$_GET['year'];
-    $receipts_tablename = "receipts_".$_GET['year'];
+    $thalilist_tablename = "thalilist_" . $_GET['year'];
+    $receipts_tablename = "receipts_" . $_GET['year'];
   }
 
-  $query="SELECT id, Thali, NAME, CONTACT, Active, Transporter, thalicount, Full_Address, Thali_start_date, Thali_stop_date, Paid, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist";
+  $query = "SELECT id, Thali, NAME, CONTACT, Active, Transporter, thalicount, Full_Address, Thali_start_date, Thali_stop_date, Paid, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist";
   if (!empty($_GET['thalino'])) {
     $query .= " WHERE Thali = '" . addslashes($_GET['thalino']) . "'";
   } else if (!empty($_GET['general'])) {
@@ -50,7 +50,9 @@ if ($_GET) {
 <!DOCTYPE html>
 <!-- saved from url=(0029)http://bootswatch.com/flatly/ -->
 <html lang="en">
+
 <head><?php include('_head.php'); ?></head>
+
 <body>
   <?php include('_nav.php'); ?>
   <div class="container">
@@ -83,8 +85,8 @@ if ($_GET) {
                   <label for="year" class="col-lg-2 control-label">Year</label>
                   <div class="col-lg-10">
                     <select class="form-control" id="year" name="year">
-                      <?php for ($i=1438;$i<=1450;$i++) { ?>
-                        <option value="<?php echo $i; ?>" <?php if($current_year['value'] == $i) echo "selected";?>><?php echo $i; ?></option>
+                      <?php for ($i = 1438; $i <= 1450; $i++) { ?>
+                        <option value="<?php echo $i; ?>" <?php if ($current_year['value'] == $i) echo "selected"; ?>><?php echo $i; ?></option>
                       <?php } ?>
                     </select>
                   </div>
@@ -130,33 +132,33 @@ if ($_GET) {
   </div>
 
   <div class="modal" id="changeMusaid">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <form method="POST">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title">Change Musaid</h4>
-            </div>
-            <div class="modal-body">
-              <select name="musaid" required='required' class="form-control">
-                <option value=''>Select</option>
-                <?php
-                  foreach($musaid_list as $musaid) {
-                ?>
-                    <option value='<?php echo $musaid['email']; ?>'><?php echo $musaid['username']; ?></option>
-                <?php
-                  }
-                ?>
-              </select>
-            </div>
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">Submit</button>
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-          </form>
-        </div>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Change Musaid</h4>
+          </div>
+          <div class="modal-body">
+            <select name="musaid" required='required' class="form-control">
+              <option value=''>Select</option>
+              <?php
+              while ($musaid = mysqli_fetch_assoc($musaid_list)) {
+              ?>
+                <option value='<?php echo $musaid['email']; ?>'><?php echo $musaid['username']; ?></option>
+              <?php
+              }
+              ?>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
 
   <?php include('_bottomJS.php'); ?>
   <script>
@@ -230,4 +232,5 @@ if ($_GET) {
     });
   </script>
 </body>
+
 </html>
