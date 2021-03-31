@@ -1,5 +1,5 @@
 {
     "require": {
-        "cammac/carbony": "^1.2"
+        "cammac/carbony": "1.0"
     }
 }
