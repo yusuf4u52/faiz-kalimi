@@ -1,5 +1,6 @@
 <?php
 include('connection.php');
+include('getHijriDate.php');
 
 date_default_timezone_set('Asia/Kolkata');
 $counter = 1;
@@ -25,8 +26,7 @@ while (($column = fgetcsv($file)) !== FALSE) {
         $date = "";
         if (isset($column[3])) {
             $datefromcsv = mysqli_real_escape_string($link, $column[3]);
-            $dateObject = date_create($datefromcsv);
-            $datestring = date_format($dateObject, "Y-m-d");
+            $datestring = getHijriDate($datefromcsv);
         }
         $receivedby = "";
         if (isset($column[10])) {

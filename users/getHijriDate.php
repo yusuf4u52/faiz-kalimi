@@ -1,6 +1,7 @@
 <?php
 include '../vendor/autoload.php';
 use GeniusTS\HijriDate\Date;
+use GeniusTS\HijriDate\Hijri;
 
 function getTodayDateHijri()
 {	
@@ -9,4 +10,10 @@ function getTodayDateHijri()
 	return Date::today();
 }
 
+function getHijriDate($date)
+{	
+	$toStringFormat = 'Y-m-d';
+	Date::setToStringFormat($toStringFormat);
+	return Hijri::convertToHijri($date);
+}
 ?>
