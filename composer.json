@@ -1,4 +1,9 @@
 {
+    "config": {
+        "platform": {
+            "php": "5.4.16"
+        }
+    },
     "require": {
         "cammac/carbony": "1.0"
     }
