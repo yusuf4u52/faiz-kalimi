@@ -15,8 +15,8 @@ if (isset($_GET['update'])) {
 </head>
 <body>
 	<?php include('_nav.php'); ?>
-	<a href="/users/integrity_check.php" class="btn btn-info" role="button">Receipts Integrity</a>
-	<a href="/monthchange/month_change.php" class="btn btn-info" role="button">Year Change</a>
+	<a href="integrity_check.php" class="btn btn-info" role="button">Receipts Integrity</a>
+	<a href="../monthchange/month_change.php" class="btn btn-info" role="button">Year Change</a>
 	<a href="admin_scripts.php?update=true" class="btn btn-info" role="button">Update From ITS</a>
 </body>
 </html>

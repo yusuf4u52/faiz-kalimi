@@ -34,7 +34,7 @@
               <li><a href="../admin/index.php/examples/daily_hisab_items">Daily Items</a></li>
               <li><a href="../admin/index.php/examples/daily_menu_count">Menu-Count</a>
               <li><a href="../admin/index.php/examples/sf_hisab">SF Purchases</a></li>
-              <li><a href="../admin_scripts.php">Scripts</a></li>
+              <li><a href="admin_scripts.php">Scripts</a></li>
             </ul>
           </li>
           <li><a href="notpickedup.php">NotPickedUp</a></li>
