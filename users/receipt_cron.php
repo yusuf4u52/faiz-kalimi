@@ -1,6 +1,7 @@
 <?php
-include("connection.php");
+include('connection.php');
 
+date_default_timezone_set('Asia/Kolkata');
 $counter = 1;
 $file = fopen("fmbreceipts.csv", "r");
 while (($column = fgetcsv($file)) !== FALSE) {
@@ -43,5 +44,5 @@ while (($column = fgetcsv($file)) !== FALSE) {
     }
     $counter++;
 }
-echo "Receipts Data Imported into the Database";
+echo "Success\n";
 ?>
