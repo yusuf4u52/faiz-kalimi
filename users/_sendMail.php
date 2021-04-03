@@ -5,7 +5,7 @@ function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false, $ad
 	require '../sms/_credentials.php';
 
 	$email = new \SendGrid\Mail\Mail();
-	$email->setFrom("kalimifaiz@gmail.com", "Faizul Mawaidil Burhaniya (Kalimi Mohalla)");
+	$email->setFrom("no-reply@kalimijamaatpoona.org", "Faizul Mawaidil Burhaniya (Kalimi Mohalla)");
 	$email->setSubject($subject);
 	$email->addTo($to);
 
@@ -16,6 +16,8 @@ function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false, $ad
 		$email->addTo("mustafamnr@gmail.com");
 		$email->addTo("tzabuawala@gmail.com");
 		$email->addTo("ahmedi.murtaza@gmail.com");
+		$email->addTo("hussain.engg@gmail.com");
+		$email->addTo("sofamaterial53@gmail.com");
 	}
 
 	$email->addContent(
