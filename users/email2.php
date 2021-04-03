@@ -9,6 +9,7 @@ require_once '_sendMail.php';
 error_reporting(0);
 $day = date("D");
 if ($day == 'Sat') {
+	echo "Skipping email on saturday.";
 	exit;
 }
 $sql = mysqli_query($link,"SELECT t.id, c.Thali, t.NAME, t.CONTACT, t.Transporter, t.Full_Address, c.Operation,c.id,t.markaz
@@ -77,4 +78,3 @@ fclose($myfile);
 mysqli_query($link,"UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
 $msgvar = str_replace("\n", "<br>", $msgvar);
 sendEmail('kalimifaiz@gmail.com', 'Start Stop update '.date('d/m/Y'), $msgvar, null);
-?>	
