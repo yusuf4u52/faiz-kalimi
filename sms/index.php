@@ -511,16 +511,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $field_transporter = "Transporter";
 
   $field_studentNo = "CONTACT";
-  $field_isIndian = "isIndian";
-
   $active_operator = $_REQUEST['active_operator'];
 
-  $regex_indian = "^\\\\+91 [1-9][0-9]{9}$";
-
-
-  $inner_query = "select $field_fatherNo from thalilist where $field_fatherNo REGEXP \"$regex_indian\"";
-  $field_indian = "IF($field_fatherNo in ($inner_query), \"1\", \"0\")";
-  $query = "SELECT Thali, NAME, $field_studentNo, $field_transporter, $field_amount as amount, $field_fatherNo, $field_indian as $field_isIndian from thalilist where CONTACT is not null and ";
+  $query = "SELECT Thali, NAME, $field_studentNo, $field_transporter, $field_amount as amount from thalilist where CONTACT is not null and ";
   $condition = "1=1";
 
   switch ($amount_operator) {
