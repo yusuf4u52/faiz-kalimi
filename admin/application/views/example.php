@@ -18,7 +18,7 @@ foreach($css_files as $file): ?>
     <?php foreach($js_files as $file): ?>
         <script src="<?php echo $file; ?>"></script>
 	<?php endforeach; ?>
-	<script src="/users/javascript/bootstrap-3.3.6.min.js"></script>
+	<script src="../users/javascript/bootstrap-3.3.6.min.js"></script>
 
 </body>
 </html>
