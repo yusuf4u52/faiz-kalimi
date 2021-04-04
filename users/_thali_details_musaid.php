@@ -25,10 +25,6 @@ $previous_values = mysqli_fetch_assoc(
                         <h6 class="list-group-item-head ing text-muted">Contact</h6>
                         <p class="list-group-item-text"><strong><?php echo $values['contact']; ?></strong></p>
                     </li>
-                    <li class="list-group-item">
-                        <h6 class="list-group-item-head ing text-muted">Father Contact</h6>
-                        <p class="list-group-item-text"><strong><?php echo $values['fathersNo']; ?></strong></p>
-                    </li>
                 </ul>
 
                 <h2>Year <?php echo $previous_year; ?></h2>

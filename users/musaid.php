@@ -56,7 +56,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'superadmin') {
 			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 				<?php
 				while ($musaid = mysqli_fetch_assoc($musaid_list)) {
-					$result = mysqli_query($link, "SELECT id, Thali, Active, Name, ITS_No, contact, fathersNo, yearly_hub, total_pending, Previous_Due, Paid, thalicount, WhatsApp FROM thalilist where Active in (0,1) AND musaid='" . $musaid['email'] . "'");
+					$result = mysqli_query($link, "SELECT id, Thali, Active, Name, ITS_No, contact, yearly_hub, total_pending, Previous_Due, Paid, thalicount, WhatsApp FROM thalilist where Active in (0,1) AND musaid='" . $musaid['email'] . "'");
 					$musaid_thali_count = mysqli_num_rows($result);
 					if ($musaid_thali_count > 0) {
 				?>
