@@ -107,9 +107,6 @@ while (($column = fgetcsv($file)) !== FALSE) {
             $sqlInsert = "replace into account (`id`,`Date`,`Type`, `Amount`, `Month`,`Remarks`)
                    values ('$voucherno', '$datestring', '$vendor', '$amount', '$datemonth', '$description')";
             mysqli_query($link, $sqlInsert) or die(mysqli_error($link));
-
-            $sql = "UPDATE thalilist set Paid = Paid + '$amount' WHERE thali = '$thalino'";
-            mysqli_query($link, $sql) or die(mysqli_error($link));
         }
         $counter++;
     }
