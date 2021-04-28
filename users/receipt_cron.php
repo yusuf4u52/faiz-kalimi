@@ -112,4 +112,27 @@ while (($column = fgetcsv($file)) !== FALSE) {
     }
 }
 
+//update takhmeen
+$counter = 1;
+$file = fopen("fmbdetails.csv", "r");
+while (($column = fgetcsv($file)) !== FALSE) {
+    if ($counter != 1) {
+        $thalino = "";
+        if (isset($column[0])) {
+            $thalino = mysqli_real_escape_string($link, $column[0]);
+        }
+        $amount = "";
+        if (isset($column[7])) {
+            $amount = mysqli_real_escape_string($link, $column[7]);
+            $amount = str_replace('₹', '', $amount);
+            $amount = str_replace(',', '', $amount);
+            $amount = intval($amount);
+        }
+
+        $sqlupdate = "update thalilist set yearly_hub = '$amount' WHERE thali = '$thalino'";
+        mysqli_query($link, $sqlupdate) or die(mysqli_error($link));
+    }
+    $counter++;
+}
+
 echo "Success\n";
