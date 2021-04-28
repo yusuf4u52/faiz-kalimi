@@ -33,7 +33,7 @@ class Examples extends CI_Controller
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('thalilist');
-		$crud->unset_columns(array('Total_Pending'));
+		// $crud->unset_columns(array('Total_Pending'));
 		$output = $crud->render();
 
 		$this->_example_output($output);
