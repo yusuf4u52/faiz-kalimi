@@ -263,7 +263,7 @@ if (!empty($values['yearly_hub'])) {
             </div>
             <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
               <div class="panel-body">
-                <h5 class="col-xs-12">The niyaaz amount will be payable throughout the year on the following 3 miqaats. If possible do contribute the whole amount in Lailat ul Qadr</h5>
+                <h5 class="col-xs-12">The niyaaz amount will be payable throughout the year on the following miqaats. If possible do contribute the whole amount in Lailat ul Qadr</h5>
                 <table class='table table-striped'>
                   <thead>
                     <tr>
