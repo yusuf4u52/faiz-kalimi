@@ -122,14 +122,21 @@ while (($column = fgetcsv($file)) !== FALSE) {
             $thalino = mysqli_real_escape_string($link, $column[0]);
         }
         $amount = "";
-        if (isset($column[7])) {
-            $amount = mysqli_real_escape_string($link, $column[7]);
+        if (isset($column[6])) {
+            $amount = mysqli_real_escape_string($link, $column[6]);
             $amount = str_replace('₹', '', $amount);
             $amount = str_replace(',', '', $amount);
             $amount = intval($amount);
         }
+        $pendingamount = "";
+        if (isset($column[7])) {
+            $pendingamount = mysqli_real_escape_string($link, $column[7]);
+            $pendingamount = str_replace('₹', '', $pendingamount);
+            $pendingamount = str_replace(',', '', $pendingamount);
+            $pendingamount = intval($pendingamount);
+        }
 
-        $sqlupdate = "update thalilist set yearly_hub = '$amount' WHERE thali = '$thalino'";
+        $sqlupdate = "update thalilist set yearly_hub = '$amount', Previous_Due = '$pendingamount' WHERE thali = '$thalino'";
         mysqli_query($link, $sqlupdate) or die(mysqli_error($link));
     }
     $counter++;
