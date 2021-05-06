@@ -2,13 +2,11 @@
 include('connection.php');
 include('_authCheck.php');
 
-
 $query = "SELECT * FROM thalilist";
 $query_new_transporter = $query . " WHERE Transporter = 'Transporter'  and active = 1 and Thali <> '' and Thali is not null";
 $result = mysqli_query($link, $query_new_transporter);
 $query_new_thali = $query . " WHERE Thali is null and Active is null";
 $result_new_thali = mysqli_query($link, $query_new_thali);
-
 $transporter_list = array();
 $query = "SELECT Name FROM transporters";
 $result1 = mysqli_query($link, $query);
@@ -16,13 +14,9 @@ while ($values1 = mysqli_fetch_assoc($result1)) {
   $transporter_list[] = $values1['Name'];
 }
 
-$musaid_list = mysqli_query($link, "SELECT username, email FROM users");
-
 ?>
 <!DOCTYPE html>
-
 <!-- saved from url=(0029)http://bootswatch.com/flatly/ -->
-
 <html lang="en">
 
 <head>
@@ -30,64 +24,41 @@ $musaid_list = mysqli_query($link, "SELECT username, email FROM users");
 </head>
 
 <body>
-
   <?php include('_nav.php'); ?>
 
-
-
   <div class="container">
-
     <!-- Forms
-
       ================================================== -->
-
     <div class="row">
-
       <div class="row">
-
         <div class="col-lg-12">
 
-
-
           <div class="col-lg-12">
-
             <div class="page-header">
-
               <h2 id="tables">Transporter request</h2>
-
             </div>
-
             <div class="bs-component">
-
               <table class="table table-striped table-hover ">
-
                 <thead>
-
                   <tr>
-
                     <th>Thali No</th>
                     <th>Transporter</th>
                     <th>Address</th>
                     <th>Name</th>
                     <th>Active</th>
-
                   </tr>
-
                 </thead>
-
                 <tbody>
                   <?php
                   while ($values = mysqli_fetch_assoc($result)) {
                   ?>
                     <tr>
 
-
                       <td><?php echo $values['Thali']; ?></td>
                       <td>
                         <select class='transporter'>
                           <option>Select</option>
                           <?php
-
                           foreach ($transporter_list as $tname) {
                           ?>
                             <option value='<?php echo $values['Thali']; ?>|<?php echo $tname; ?>'><?php echo $tname; ?></option>
@@ -100,35 +71,23 @@ $musaid_list = mysqli_query($link, "SELECT username, email FROM users");
                       <td><?php echo $values['NAME']; ?></td>
                       <td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
 
-
-
                     </tr>
                   <?php } ?>
-
                 </tbody>
-
               </table>
-
             </div><!-- /example -->
-
 
           </div>
 
-
           <div class="col-lg-12">
-
             <div class="page-header">
-
               <h2 id="tables">New Thali</h2>
-
             </div>
-
             <?php
             $sql = mysqli_query($link, "
             SELECT (
 t1.Thali +1
 ) AS gap_starts_at, (
-
 SELECT MIN( t3.Thali ) -1
 FROM thalilist t3
 WHERE t3.Thali > t1.Thali
@@ -136,7 +95,6 @@ WHERE t3.Thali > t1.Thali
 FROM thalilist t1
 WHERE NOT 
 EXISTS (
-
 SELECT t2.Thali
 FROM thalilist t2
 WHERE t2.Thali = t1.Thali +1
@@ -145,18 +103,12 @@ HAVING gap_ends_at IS NOT NULL
 LIMIT 0 , 30");
             $row = mysqli_fetch_row($sql);
             $plusone = $row[0];
-
             echo "Thali No. :: $plusone  can be given";
             ?>
-
             <div class="bs-component">
-
               <table class="table table-striped table-hover ">
-
                 <thead>
-
                   <tr>
-
                     <th>Thali No</th>
                     <th>Transporter</th>
                     <th>Musaid</th>
@@ -165,18 +117,14 @@ LIMIT 0 , 30");
                     <th>Name</th>
                     <th>Mobile</th>
                     <th></th>
-
                   </tr>
-
                 </thead>
-
                 <tbody>
                   <?php
                   while ($values = mysqli_fetch_assoc($result_new_thali)) {
                   ?>
                     <form action='activatethali.php' method='post'>
                       <tr>
-
 
                         <td>
                           <input type='hidden' value='<?php echo $values['Email_ID']; ?>' name='email'>
@@ -208,6 +156,7 @@ LIMIT 0 , 30");
                           <select name="musaid" required='required'>
                             <option value=''>Select</option>
                             <?php
+                            $musaid_list = mysqli_query($link, "SELECT username, email FROM users");
                             while ($musaid = mysqli_fetch_assoc($musaid_list)) {
                             ?>
                               <option value='<?php echo $musaid['email']; ?>'><?php echo $musaid['username']; ?></option>
@@ -226,35 +175,22 @@ LIMIT 0 , 30");
                       </tr>
                     </form>
                   <?php } ?>
-
                 </tbody>
-
               </table>
-
             </div><!-- /example -->
-
 
           </div>
 
 
-
-
-
         </div>
       </div>
-
     </div>
-
   </div>
-
   <?php include('_bottomJS.php'); ?>
-
   <script type="text/javascript">
     $(function() {
       // Handler for .ready() called.
-
       $(".transporter").change(function() {
-
         if (confirm('Are you sure?')) {
           $.ajax({
             type: "POST",
@@ -269,12 +205,9 @@ LIMIT 0 , 30");
         } else {
           return false;
         }
-
       });
     });
   </script>
-
-
 
 </body>
 
