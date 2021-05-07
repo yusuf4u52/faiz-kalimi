@@ -1,5 +1,4 @@
 <?php
-error_reporting(0);
 include('_authCheck.php');
 include('_common.php');
 
@@ -53,44 +52,49 @@ if (!empty($values['yearly_hub'])) {
   $thaliactivedate_query = mysqli_fetch_assoc(mysqli_query($link, "SELECT DATE(datetime) as datetime FROM `change_table` where userid = '" . $_SESSION['thaliid'] . "' AND operation = 'Start Thali' ORDER BY id limit 1"));
   $thaliactivedate = $thaliactivedate_query['datetime'];
 
+  // fetch miqaats from db
   $sql = mysqli_query($link, "select miqat_date,miqat_description from sms_date");
+  $miqaatslist = mysqli_fetch_all($sql);
 
-  while ($record = mysqli_fetch_assoc($sql)) {
-    $_miqaats[$record['miqat_date']] = $record['miqat_description'];
+  // calculate installment based on yearly hub and number of miqaats
+  $installment = (int)($values['yearly_hub']) / count($miqaatslist);
+
+  // add installment to the miqaat array by individually adding installment
+  // to each row and than pushing that row into new array.
+  $miqaatslistwithinstallement = array();
+  foreach ($miqaatslist as $miqaat) {
+    array_push($miqaat, $installment);
+    array_push($miqaatslistwithinstallement, $miqaat);
   }
 
-  $values['Total_Pending'] = $values['Previous_Due'] + $values['yearly_hub'] + $values['Zabihat'] - $values['Paid'];
+  // add any previous year pending to first installment
+  $miqaatslistwithinstallement[0][2] += $values['Previous_Due'];
 
-  $installment = (int)($values['Total_Pending'] + $values['Paid']) / count($_miqaats);
-  $todays_date = date("Y-m-d");
-  $miqaat_gone = 0;
-
-  $miqaats = array();
-  $miqaats_past = array();
-  foreach ($_miqaats as $mdate => $miqaat) {
-
-    if ($mdate < $todays_date) {
-      $miqaats_past[$mdate] = $miqaat;
-    } else {
-
-      $month_installment = $installment;
-      $miqaats[] = array(
-        $mdate, $miqaat, ceil($month_installment)
-      );
+  // adjust installments if hub is paid
+  if (!empty($values['Paid'])) {
+    $paid = $values['Paid'];
+    for ($i = 0; $i < sizeof($miqaatslistwithinstallement); $i++) {
+      if ($miqaatslistwithinstallement[$i][2] - $paid  == 0) {
+        $miqaatslistwithinstallement[$i][2] = 0;
+        break;
+      } else if ($miqaatslistwithinstallement[$i][2] - $paid > 0) {
+        $miqaatslistwithinstallement[$i][2] = $miqaatslistwithinstallement[$i][2] - $paid;
+        break;
+      } else if ($miqaatslistwithinstallement[$i][2] - $paid < 0) {
+        $paid = $paid - $miqaatslistwithinstallement[$i][2];
+        $miqaatslistwithinstallement[$i][2] = 0;
+      }
     }
   }
 
-
-  $hub_baki = ((count($miqaats_past) - $miqaat_gone) * $installment) - $total_amount_paid;
-
-  $miqaats[0][2] += $hub_baki;
-
-  if ($miqaats[0][2] > 0) {
-    $miqaats[0][2] = round($miqaats[0][2], -2);
+  // check if miqaat has passed, if so than move that passed miqaat amount to next
+  $todays_date = date("Y-m-d");
+  for ($i = 0; $i < sizeof($miqaatslistwithinstallement); $i++) {
+    if ($miqaatslistwithinstallement[$i][0] < $todays_date) {
+      $miqaatslistwithinstallement[$i + 1][2] += $miqaatslistwithinstallement[$i][2];
+      $miqaatslistwithinstallement[$i][2] = "--";
+    }
   }
-  $next_install = $miqaats[0][2];
-  mysqli_query($link, "UPDATE thalilist set next_install ='$next_install' WHERE Email_id = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
-  mysqli_query($link, "UPDATE thalilist set prev_install_pending ='$hub_baki' WHERE Email_id = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
 }
 ?>
 <!DOCTYPE html>
@@ -249,61 +253,42 @@ if (!empty($values['yearly_hub'])) {
         </div>
 
         <!-- Break down -->
-        <?php
-        if (isset($installment)) :
-        ?>
 
-          <div class="panel panel-default" style="margin-top: 20px;">
-            <div class="panel-heading" role="tab" id="headingTwo">
-              <h4 class="panel-title">
-                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                  Hoob Breakdown <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
-                </a>
-              </h4>
-            </div>
-            <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
-              <div class="panel-body">
-                <h5 class="col-xs-12">The niyaaz amount will be payable throughout the year on the following miqaats. If possible do contribute the whole amount in Lailat ul Qadr</h5>
-                <table class='table table-striped'>
-                  <thead>
+
+        <div class="panel panel-default" style="margin-top: 20px;">
+          <div class="panel-heading" role="tab" id="headingTwo">
+            <h4 class="panel-title">
+              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Hoob Breakdown <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
+              </a>
+            </h4>
+          </div>
+          <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
+            <div class="panel-body">
+              <h5 class="col-xs-12">The niyaaz amount will be payable throughout the year on the following miqaats. If possible do contribute the whole amount in Lailat ul Qadr</h5>
+              <table class='table table-striped'>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php foreach ($miqaatslistwithinstallement as $miqaat) {
+                  ?>
                     <tr>
-                      <th>Date</th>
-                      <th>Amount</th>
+                      <td><?php echo $miqaat['1']; ?></td>
+                      <td><?php echo $miqaat['2']; ?></td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    <?php foreach ($miqaats_past as $miqaat) {
-                    ?>
-                      <tr>
-                        <td><?php echo $miqaat; ?></td>
-                        <td>--</td>
-                      </tr>
-                    <?php } ?>
+                  <?php } ?>
 
-                    <?php
-                    $i = true;
-                    foreach ($miqaats as $miqaat) {
-                    ?>
-                      <tr>
-                        <td><?php echo $miqaat[1]; ?></td>
 
-                        <?php if ($miqaat[2] < 0) { ?>
-                          <td>0</td>
-                        <?php } else { ?>
-                          <td><?php echo $miqaat[2]; ?></td>
-                        <?php } ?>
-                      </tr>
-                    <?php
-                      $i = false;
-                    }
-                    ?>
-                  </tbody>
-                </table>
-              </div>
+                </tbody>
+              </table>
             </div>
           </div>
+        </div>
 
-        <?php endif; ?>
         <!-- Break down -->
       </div>
     </div>
