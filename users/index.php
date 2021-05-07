@@ -84,12 +84,20 @@ if (!empty($values['yearly_hub'])) {
 
   // check if miqaat has passed, if so than move that passed miqaat amount to next
   $todays_date = date("Y-m-d");
+  $previousInstall = 0;
   for ($i = 0; $i < sizeof($miqaatslistwithinstallement); $i++) {
     if ($miqaatslistwithinstallement[$i][0] < $todays_date) {
+      $previousInstall += $miqaatslistwithinstallement[$i][2];
       $miqaatslistwithinstallement[$i + 1][2] += $miqaatslistwithinstallement[$i][2];
       $miqaatslistwithinstallement[$i][2] = "Miqaat Done";
+    } else {
+      $next_install = $miqaatslistwithinstallement[$i][2];
+      mysqli_query($link, "UPDATE thalilist set next_install ='$next_install' WHERE Email_id = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+      break;
     }
   }
+  mysqli_query($link, "UPDATE thalilist set prev_install_pending ='$previousInstall' WHERE Email_id = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+
 }
 ?>
 <!DOCTYPE html>
