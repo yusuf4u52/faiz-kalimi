@@ -47,11 +47,6 @@ if (!empty($enabled_events_values) && !isResponseReceived($enabled_events_values
 
 // show the index page with hub miqaat breakdown
 if (!empty($values['yearly_hub'])) {
-  $reciepts_query_result_total = mysqli_fetch_assoc(mysqli_query($link, "SELECT sum(`Amount`) as total FROM `receipts` where Thali_No = '" . $_SESSION['thali'] . "'"));
-  $total_amount_paid = $reciepts_query_result_total['total'];
-  $thaliactivedate_query = mysqli_fetch_assoc(mysqli_query($link, "SELECT DATE(datetime) as datetime FROM `change_table` where userid = '" . $_SESSION['thaliid'] . "' AND operation = 'Start Thali' ORDER BY id limit 1"));
-  $thaliactivedate = $thaliactivedate_query['datetime'];
-
   // fetch miqaats from db
   $sql = mysqli_query($link, "select miqat_date,miqat_description from sms_date");
   $miqaatslist = mysqli_fetch_all($sql);
@@ -92,7 +87,7 @@ if (!empty($values['yearly_hub'])) {
   for ($i = 0; $i < sizeof($miqaatslistwithinstallement); $i++) {
     if ($miqaatslistwithinstallement[$i][0] < $todays_date) {
       $miqaatslistwithinstallement[$i + 1][2] += $miqaatslistwithinstallement[$i][2];
-      $miqaatslistwithinstallement[$i][2] = "--";
+      $miqaatslistwithinstallement[$i][2] = "Miqaat Done";
     }
   }
 }
