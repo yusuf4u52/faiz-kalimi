@@ -32,7 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message_formatted = str_replace(array("<THALI>", "<NAME>", "<AMOUNT>"), array($thali, $name, $amount), $message_raw);
         $message = urlencode($message_formatted);
 
-        $param = "authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$message&language=english&flash=0&numbers=$numbers";
+        $param["url"] = "authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$message&language=english&flash=0&numbers=$numbers";
+        $param["number"] = $numbers;
         array_push($params, $param);
     }
     $data = array('result' => "success", 'params' => $params);
