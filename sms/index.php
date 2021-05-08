@@ -1,7 +1,7 @@
 <?php
 require '_credentials.php';
 require '../users/update_next_install.php';
-header("Access-Control-Allow-Origin: sms1.almasaarr.com");
+header("Access-Control-Allow-Origin: www.fast2sms.com");
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   try {
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $multiselect_html = $multiselect_html . "\t<option>$val</option>\n";
   }
   $root_urls = array(
-    "real" => "http://sms1.almasaarr.com/sendhttp.php?",
+    "real" => "https://www.fast2sms.com/dev/bulkV2?",
     "telegram" => "http://murtazafaizstudent.pythonanywhere.com/sendhttp.php?",
     "email" => "http://murtazafaizstudent.pythonanywhere.com/sendsmtp?"
   );

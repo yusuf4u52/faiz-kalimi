@@ -16,28 +16,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //var_dump($records);
     // now begin by changing placeholders
     $params = array();
-    foreach($records as $record)
-    {
+    foreach ($records as $record) {
         //extract($record);
         $contact = $record['CONTACT']; // this is an array of numbers
         $numbers = getMobilesString($contact);
-        if(!$numbers)
-        {
+        if (!$numbers) {
             // skip sending SMS to a faulty number(s)
             continue;
         }
         $thali = $record['Thali'];
         $name = $record['NAME'];
         $names = explode(" ", $name, 3);
-        $name = $names[0]." ".$names[1];
+        $name = $names[0] . " " . $names[1];
         $amount = $record['amount'];
-        $message_formatted = str_replace(array("<THALI>","<NAME>","<AMOUNT>"),array($thali,$name,$amount),$message_raw);
+        $message_formatted = str_replace(array("<THALI>", "<NAME>", "<AMOUNT>"), array($thali, $name, $amount), $message_raw);
         $message = urlencode($message_formatted);
 
-        $param = "authkey=$smsauthkey&mobiles=$numbers&message=$message&sender=FAIZST&route=Template";
-        array_push($params,$param);
-        
-        
+        $param = "authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$message&language=english&flash=0&numbers=$numbers";
+        array_push($params, $param);
     }
     $data = array('result' => "success", 'params' => $params);
     echo json_encode($data);
@@ -58,30 +54,22 @@ function getMobilesString($numbers)
     $regex_international_phone_number = '/^\+(9[976]\d|8[987530]\d|6[987]\d|5[90]\d|42\d|3[875]\d|2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|4[987654310]|3[9643210]|2[70]|7|1) (\d{1,14})$/';
 
     $processedNumbers = array();
-    foreach($numbers as $num)
-    {
+    foreach ($numbers as $num) {
         $matches = array();
         preg_match($regex_international_phone_number, $num, $matches);
-        if(sizeof($matches) == 3)
-        {
+        if (sizeof($matches) == 3) {
             // international phone number
             $country_code = $matches[1];
             $national_number = $matches[2];
-            $formatted_number = $country_code.$national_number;
+            $formatted_number = $country_code . $national_number;
             array_push($processedNumbers, $formatted_number);
-        }
-
-        else if(preg_match('/^[1-9][0-9]{9}$/', $num))
-        {
+        } else if (preg_match('/^[1-9][0-9]{9}$/', $num)) {
             // indian national phone number
             array_push($processedNumbers, $num);
-        }
-        else
-        {
+        } else {
             // the number was in an unrecognized format
         }
     }
     $finalString = implode(",", $processedNumbers);
     return $finalString;
 }
-?>
