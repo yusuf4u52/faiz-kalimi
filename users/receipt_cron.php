@@ -135,8 +135,11 @@ while (($column = fgetcsv($file)) !== FALSE) {
             $pendingamount = str_replace(',', '', $pendingamount);
             $pendingamount = intval($pendingamount);
         }
-
-        $sqlupdate = "update thalilist set yearly_hub = '$amount', Previous_Due = '$pendingamount' WHERE thali = '$thalino'";
+        $size = "";
+        if (isset($column[9])) {
+            $size = mysqli_real_escape_string($link, $column[9]);
+        }
+        $sqlupdate = "update thalilist set yearly_hub = '$amount', Previous_Due = '$pendingamount', thalisize = '$size' WHERE thali = '$thalino'";
         mysqli_query($link, $sqlupdate) or die(mysqli_error($link));
     }
     $counter++;

@@ -206,6 +206,10 @@ if (!empty($values['yearly_hub'])) {
                   <h6 class="list-group-item-heading text-muted">Mobile Number</h6>
                   <p class="list-group-item-text"><strong><?php echo $values['CONTACT']; ?></strong></p>
                 </li>
+                <li class="list-group-item">
+                  <h6 class="list-group-item-heading text-muted">Thali Type</h6>
+                  <p class="list-group-item-text"><strong><?php echo $values['thalisize']; ?></strong></p>
+                </li>
                 <?php if ($musaid_details) { ?>
                   <li class="list-group-item">
                     <h6 class="list-group-item-heading text-muted">Musaid</h6>
