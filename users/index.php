@@ -277,7 +277,7 @@ if (!empty($values['yearly_hub'])) {
                 <thead>
                   <tr>
                     <th>Date</th>
-                    <th>Amount</th>
+                    <th>Pending Amount</th>
                   </tr>
                 </thead>
                 <tbody>
