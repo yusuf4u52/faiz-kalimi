@@ -85,11 +85,12 @@ $("#send_sure").on('click', function(){
 });
 
 var sendSms = function(gateway, extra){
-    url = gateway+params[index]+extra;
+    user_details = params[index]
+    url = gateway+user_details["url"]+extra;
     // console.log("url");
     //console.log(url);
     //console.log(extra);
-    number_field = params[index].match(/&mobiles=(.*?)&/)[1];
+    number_field = user_details["number"];
     updateStatus("("+(index+1)+") sending message to "+number_field, index);
     $.ajax({
         url: url,
