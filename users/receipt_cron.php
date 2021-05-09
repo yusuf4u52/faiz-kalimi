@@ -20,6 +20,7 @@ $months = array(
 // reset paid to 0 before updating receipts
 $sql = "UPDATE thalilist set Paid = 0";
 mysqli_query($link, $sql) or die(mysqli_error($link));
+mysqli_query($link, "truncate receipts") or die(mysqli_error($link));
 
 date_default_timezone_set('Asia/Kolkata');
 $counter = 1;
@@ -56,7 +57,7 @@ while (($column = fgetcsv($file)) !== FALSE) {
             $result = mysqli_query($link, $sql) or die(mysqli_error($link));
             $name = mysqli_fetch_assoc($result);
 
-            $sqlInsert = "replace into receipts (`Receipt_No`,`Thali_No`,`userid`, `name`, `Date`,`Amount`,`received_by`)
+            $sqlInsert = "insert into receipts (`Receipt_No`,`Thali_No`,`userid`, `name`, `Date`,`Amount`,`received_by`)
                    values ('$receiptno', '$thalino', '" . $name['id'] . "', '" . $name['NAME'] . "', '$datestring', '$amount', '$receivedby')";
             mysqli_query($link, $sqlInsert) or die(mysqli_error($link));
 
@@ -145,11 +146,11 @@ while (($column = fgetcsv($file)) !== FALSE) {
             $size = mysqli_real_escape_string($link, $column[9]);
         }
 
-        $count = mysqli_num_rows(mysqli_query($link, "select count(*) from thalilist WHERE thali = '$thalino'"));
+        $count = mysqli_num_rows(mysqli_query($link, "select * from thalilist WHERE thali = '$thalino'"));
         if ($count == 1) {
             $sqlupdate = "update thalilist set NAME = '$name', yearly_hub = '$amount', Previous_Due = '$pendingamount', thalisize = '$size' WHERE thali = '$thalino'";
             mysqli_query($link, $sqlupdate) or die(mysqli_error($link));
-        } else if ($count == 0) {
+        } else {
             $sqlinsert = "insert into thalilist (`Thali`, `NAME`, `CONTACT`, `yearly_hub`, `Previous_Due`, `thalisize`)
                 values ('$thalino', '$name', '$mobile', '$amount', '$pendingamount', '$size')";
             mysqli_query($link, $sqlinsert) or die(mysqli_error($link));
