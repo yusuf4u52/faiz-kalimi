@@ -121,6 +121,11 @@ while (($column = fgetcsv($file)) !== FALSE) {
         if (isset($column[0])) {
             $thalino = mysqli_real_escape_string($link, $column[0]);
         }
+        $name = mysqli_real_escape_string($link, $column[1] . " " . $column[2] . " " . $column[3]);
+        $mobile = "";
+        if (isset($column[4])) {
+            $mobile = mysqli_real_escape_string($link, $column[4]);
+        }
         $amount = "";
         if (isset($column[6])) {
             $amount = mysqli_real_escape_string($link, $column[6]);
@@ -139,8 +144,16 @@ while (($column = fgetcsv($file)) !== FALSE) {
         if (isset($column[9])) {
             $size = mysqli_real_escape_string($link, $column[9]);
         }
-        $sqlupdate = "update thalilist set yearly_hub = '$amount', Previous_Due = '$pendingamount', thalisize = '$size' WHERE thali = '$thalino'";
-        mysqli_query($link, $sqlupdate) or die(mysqli_error($link));
+
+        $count = mysqli_num_rows(mysqli_query($link, "select count(*) from thalilist WHERE thali = '$thalino'"));
+        if ($count == 1) {
+            $sqlupdate = "update thalilist set NAME = '$name', yearly_hub = '$amount', Previous_Due = '$pendingamount', thalisize = '$size' WHERE thali = '$thalino'";
+            mysqli_query($link, $sqlupdate) or die(mysqli_error($link));
+        } else if ($count == 0) {
+            $sqlinsert = "insert into thalilist (`Thali`, `NAME`, `CONTACT`, `yearly_hub`, `Previous_Due`, `thalisize`)
+                values ('$thalino', '$name', '$mobile', '$amount', '$pendingamount', '$size')";
+            mysqli_query($link, $sqlinsert) or die(mysqli_error($link));
+        }
     }
     $counter++;
 }
