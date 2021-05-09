@@ -35,7 +35,7 @@
 	// fetch user role
 	$sql = mysqli_query($link, "SELECT role from users where email='" . $_SESSION['email'] . "'");
 
-	$requet_path = $_SERVER['REQUEST_URI'];
+	$requet_path = strtok($_SERVER["REQUEST_URI"], '?');
 	if ($row = mysqli_fetch_assoc($sql)) {
 		$_SESSION['role'] = $row['role'];
 		if ($row['role'] !== 'superadmin') {
