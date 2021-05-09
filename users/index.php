@@ -97,7 +97,6 @@ if (!empty($values['yearly_hub'])) {
     }
   }
   mysqli_query($link, "UPDATE thalilist set prev_install_pending ='$previousInstall' WHERE Email_id = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
-
 }
 ?>
 <!DOCTYPE html>
@@ -218,7 +217,24 @@ if (!empty($values['yearly_hub'])) {
                 <?php } ?>
                 <li class="list-group-item">
                   <h5 class="list-group-item-heading text-muted">Pending Hoob</h5>
-                  <p class="list-group-item-text"><?php echo $values['Total_Pending'] + $values['Paid']; ?> - <a href="hoobHistory.php"><strong><?php echo $values['Paid']; ?></strong></a> = <?php echo $values['Total_Pending']; ?></p>
+                  <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Previous Year Pending
+                      <span class="badge bg-primary rounded-pill"><?php echo $values['Previous_Due']; ?></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Current Year Takhmeen
+                      <span class="badge bg-primary rounded-pill">+ <?php echo $values['yearly_hub']; ?></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Paid
+                      <span class="badge bg-primary rounded-pill"><a href="hoobHistory.php">- <?php echo $values['Paid']; ?></a></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Total Pending
+                      <span class="badge bg-primary rounded-pill"><?php echo $values['Total_Pending']; ?></span>
+                    </li>
+                  </ul>
                 </li>
                 <li class="list-group-item">
                   <h6 class="list-group-item-heading text-muted">Is Active?</h6>
