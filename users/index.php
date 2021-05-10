@@ -149,27 +149,9 @@ if (!empty($values['yearly_hub'])) {
       </div>
 
       <div class="col-xs-6 col-sm-3 col-md-2">
-
-        <?php
-          if ($values['Transporter'] == 'Pick Up' && $values['Active'] == 1) {
-        ?>
-
-          <form method="POST" action="start_transport.php" onsubmit='return confirm("Are you sure?");' data-key="LazyLoad" class="hidden">
-            <input type="submit" name="start_transport" value="Request Transport" class="btn btn-success" />
-          </form>
-
-        <?php
-          } else if ($values['Active'] == 1) {
-        ?>
-
-          <form method="POST" action="stop_transport.php" onsubmit='return confirm("Are you sure?");' data-key="LazyLoad" class="hidden">
-            <input type="submit" name="stop_transport" value="Request Pickup" class="btn btn-danger" />
-          </form>
-
-        <?php
-          }
+      <?php
         } else {
-        ?>
+      ?>
         <form>
           <h5>You have not done hub takhmeen and so will not see START THALI button</h5>
         </form>
