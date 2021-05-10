@@ -191,6 +191,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 <label class="radio-inline">
                   <input type="radio" name="amount_type" value="Total_Pending">Total Amount
                 </label>
+                <label class="radio-inline">
+                  <input type="radio" name="amount_type" value="yearly_hub">Current Takhmeen
+                </label>
               </form>
               <div class="btn-group btn-group-justified" role="group" aria-label="...">
                 <div class="btn-group hidden" role="group">
