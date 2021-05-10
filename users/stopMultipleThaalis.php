@@ -104,7 +104,7 @@ if (isset($_GET['stopallthalis'])) {
   <script>
     $(function() {
       $('#stopThaliButton').click(function() {
-        var regext = /^[0-9,]+$/;
+        var regext = /^[0-9,KL-]+$/;
         if (!regext.test($('#thaliNumbers').val().replace(/(^,)|(,$)/g, ""))) {
           alert('Please enter only numbers and comma.');
           return false;
