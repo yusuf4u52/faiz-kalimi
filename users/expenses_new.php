@@ -18,6 +18,8 @@ $months = array(
   '08' => 'Shaban'
 );
 
+$fmt = numfmt_create('en_IN', NumberFormatter::CURRENCY);
+$fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
 
 ?>
 
@@ -33,7 +35,7 @@ $months = array(
     <select name="year">
       <?php
       for ($i = 1438; $i <= 1450; $i++) { ?>
-        <option value="<?php echo $i; ?>" <?php if ($_POST['year'] == $i) echo "selected"; ?>><?php echo $i; ?></option>
+        <option value="<?php echo $i; ?>" <?php if ($_POST['year'] == $i) echo "selected"; ?>><?php echo $i - 1 . ' - ' . $i; ?></option>
       <?php } ?>
     </select>
     <input type="submit" value="Submit">
@@ -162,7 +164,7 @@ $months = array(
           <tr>
             <td colspan='3'></td>
             <td><strong>Previous Year Cash</strong></td>
-            <td class='success'><strong><?php echo $previous_balance['value']; ?></strong></td>
+            <td><strong><?php echo numfmt_format_currency($fmt, $previous_balance['value'], "INR"); ?></strong></td>
             <td colspan='1'></td>
           </tr>
           <tr>
@@ -206,10 +208,10 @@ $months = array(
 
             <tr>
               <td><?php echo $value; ?></td>
-              <td><?php echo $hub_received['Amount']; ?></td>
-              <td><?php echo $cash_paid['Amount']; ?></td>
-              <td><?php echo $fixed_cost['Amount']; ?></td>
-              <td class="success"><?php echo $hub_received['Amount'] - $cash_paid['Amount'] - $fixed_cost['Amount']; ?></td>
+              <td><?php echo numfmt_format_currency($fmt, $hub_received['Amount'], "INR"); ?></td>
+              <td><?php echo numfmt_format_currency($fmt, $cash_paid['Amount'], "INR"); ?></td>
+              <td><?php echo numfmt_format_currency($fmt, $fixed_cost['Amount'], "INR"); ?></td>
+              <td><?php echo numfmt_format_currency($fmt, $hub_received['Amount'] - $cash_paid['Amount'] - $fixed_cost['Amount'], "INR"); ?></td>
               <td><a href="#" data-key="payhisab" data-month="<?php echo $value; ?>"><img src="images/add.png" style="width:20px;height:20px;"></a>&nbsp;
                 <a data-key="Monthview" data-month="<?php echo $value; ?>" data-toggle="modal" href="#sfbreakup-<?php echo $value; ?>"><img src="images/view.png" style="width:20px;height:20px;"></a>
               </td>
@@ -220,7 +222,7 @@ $months = array(
           <tr>
             <td colspan='3'></td>
             <td><strong>Cash In Hand</strong></td>
-            <td class='warning'><strong><?php echo $yearly_total_savings; ?></strong></td>
+            <td><strong><?php echo numfmt_format_currency($fmt, $yearly_total_savings, "INR"); ?></strong></td>
             <td colspan='1'></td>
           </tr>
         </tbody>
