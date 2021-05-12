@@ -17,18 +17,21 @@ to get transport stop date $date->modify('+1 day'); //does not work as of now
 */
 
 
-function get_next_day($date) {
+function get_next_day($date)
+{
     //$date = "04-15-2013";
     $date = str_replace('-', '/', $date);
-    $tomorrow = date('d/m',strtotime($date . "+1 days"));
+    $tomorrow = date('d/m', strtotime($date . "+1 days"));
     return $tomorrow;
 }
 
-function get_todays_date() {
+function get_todays_date()
+{
     return date('Y-m-d');
 }
 
-function get_day_diff($miqat_date) {
+function get_day_diff($miqat_date)
+{
     $now = time();
     $miqat = strtotime($miqat_date);
     $time_diff = $miqat - $now;
@@ -57,22 +60,21 @@ try {
 
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $todays_date = get_todays_date();
-    $stmt = $conn->prepare("SELECT * FROM `sms_date` WHERE miqat_date >= '$todays_date' order by miqat_id limit 1"); 
+    $stmt = $conn->prepare("SELECT * FROM `sms_date` WHERE miqat_date >= '$todays_date' order by miqat_id limit 1");
     $stmt->execute();
     $stmt = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    echo var_dump($stmt);
     $next_miqat = NULL;
-    if(sizeof($stmt) == 0) {
+    if (sizeof($stmt) == 0) {
         echo "no such miqat exists";
     } else {
         $next_miqat = $stmt[0];
-        echo "next miqat is ".$next_miqat['miqat_description'];
+        echo "next miqat is " . $next_miqat['miqat_description'];
     }
-    
+
     // now get the day difference
     $day_diff = get_day_diff($next_miqat['miqat_date']);
     //$day_diff = 7; // for debugging.
-    echo "day diff is ".$day_diff;
+    echo "day diff is " . $day_diff;
     /*
     so the day when i coded this was 7th June. 
     Lailatul Qadr is on 16th June. 
@@ -80,26 +82,24 @@ try {
     */
 
     // now check if any message template exists for this day_diff in the database
-    $stmt = $conn->prepare("SELECT * FROM `sms_template` WHERE fired_before_days=$day_diff"); 
+    $stmt = $conn->prepare("SELECT * FROM `sms_template` WHERE fired_before_days=$day_diff");
     $stmt->execute();
     $stmt = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $sms_template = NULL;
-    
-    if(sizeof($stmt) == 0) {
+
+    if (sizeof($stmt) == 0) {
         echo "No SMS to send before $day_diff days";
     } else {
         $sms_template = $stmt[0];
         $stop_date = get_next_day($next_miqat['miqat_date']);
         echo $stop_date;
-        $template_formatted = str_replace(array("<DAY>", "<DATE>"),array($day_diff, $stop_date),$sms_template['template']);
-        echo "<br>formatted template:<br>".$template_formatted;
-        
+        $template_formatted = str_replace(array("<DAY>", "<DATE>"), array($day_diff, $stop_date), $sms_template['template']);
+        echo "<br>formatted template:<br>" . $template_formatted;
+
         $result = send_sms_to_records($conn, $template_formatted);
         echo "send sms returned ";
         print_r($result);
     }
-}
-catch(PDOException $e) {
+} catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
 }
-?>
