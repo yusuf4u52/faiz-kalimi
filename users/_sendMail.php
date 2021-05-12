@@ -11,13 +11,6 @@ function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false, $ad
 
 	if ($addAllRecipents) {
 		$email->addTo("kalimifaiz@gmail.com");
-		$email->addTo("mesaifee52@gmail.com");
-		$email->addTo("yusuf4u52@gmail.com");
-		$email->addTo("mustafamnr@gmail.com");
-		$email->addTo("tzabuawala@gmail.com");
-		$email->addTo("ahmedi.murtaza@gmail.com");
-		$email->addTo("hussain.engg@gmail.com");
-		$email->addTo("sofamaterial53@gmail.com");
 	}
 
 	$email->addContent(

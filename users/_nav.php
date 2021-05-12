@@ -15,7 +15,7 @@
           <li><a href="/fmb/users/musaid.php">Musaid</a></li>
         <?php } ?>
         <?php
-        if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com','nationalminerals52@gmail.com', 'mesaifee52@gmail.com', 'murtaza52@gmail.com', 'murtaza.sh@gmail.com', 'yusuf4u52@gmail.com', 'tzabuawala@gmail.com', 'mustafamnr@gmail.com', 'ismailsidhpuri@gmail.com'))) {
+        if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
         ?>
           <li><a href="/fmb/users/pendingactions.php">Pending Actions</a></li>
           <li><a href="/fmb/users/_daily_hisab_entry.php">Daily Hisab</a></li>
@@ -42,7 +42,7 @@
         }
         ?>
         <?php
-        if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com','yusuf4u52@gmail.com'))) {
+        if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
         ?>
           <li><a href="/fmb/users/amount_received_by.php">Received</a></li>
         <?php

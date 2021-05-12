@@ -27,9 +27,9 @@ class Examples extends CI_Controller
 	function faiz()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com','nationalminerals52@gmail.com', 'mesaifee52@gmail.com', 'murtaza52@gmail.com', 'murtaza.sh@gmail.com', 'yusuf4u52@gmail.com', 'tzabuawala@gmail.com', 'mustafamnr@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
-			header("Location: http://kalimi.epizy.com/users/login.php");
+			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('thalilist');
@@ -42,9 +42,9 @@ class Examples extends CI_Controller
 	function notpickedup()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com','mesaifee52@gmail.com', 'murtaza52@gmail.com', 'murtaza.sh@gmail.com', 'yusuf4u52@gmail.com', 'tzabuawala@gmail.com', 'mustafamnr@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
-			header("Location: http://kalimi.epizy.com/users/login.php");
+			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('not_picked_up');
@@ -57,9 +57,9 @@ class Examples extends CI_Controller
 	function daily_hisab_items()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com','bscalcuttawala@gmail.com', 'mesaifee52@gmail.com', 'murtaza52@gmail.com', 'murtaza.sh@gmail.com', 'yusuf4u52@gmail.com', 'tzabuawala@gmail.com', 'mustafamnr@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
-			header("Location: http://kalimi.epizy.com/users/login.php");
+			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('daily_hisab_items');
@@ -72,9 +72,9 @@ class Examples extends CI_Controller
 	function daily_menu_count()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com','bscalcuttawala@gmail.com', 'mesaifee52@gmail.com', 'murtaza52@gmail.com', 'murtaza.sh@gmail.com', 'yusuf4u52@gmail.com', 'tzabuawala@gmail.com', 'mustafamnr@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
-			header("Location: http://kalimi.epizy.com/users/login.php");
+			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('daily_hisab');
@@ -87,9 +87,9 @@ class Examples extends CI_Controller
 	function sf_hisab()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com','bscalcuttawala@gmail.com', 'mesaifee52@gmail.com', 'murtaza52@gmail.com', 'murtaza.sh@gmail.com', 'yusuf4u52@gmail.com', 'tzabuawala@gmail.com', 'mustafamnr@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
-			header("Location: http://kalimi.epizy.com/users/login.php");
+			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('sf_hisab');
@@ -102,16 +102,15 @@ class Examples extends CI_Controller
 	function receipts()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com','nationalminerals52@gmail.com', 'mesaifee52@gmail.com', 'bscalcuttawala@gmail.com', 'murtaza52@gmail.com', 'murtaza.sh@gmail.com', 'yusuf4u52@gmail.com', 'tzabuawala@gmail.com', 'mustafamnr@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
-			header("Location: http://kalimi.epizy.com/users/login.php");
+			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('receipts');
 		$crud->unset_edit();
-		if ($_SESSION['email'] == 'bscalcuttawala@gmail.com') {
-			$crud->unset_delete();
-		}
+		$crud->unset_delete();
+
 		$crud->columns('Receipt_No', 'Thali_No', 'name', 'Amount', 'Date', 'received_by');
 
 		$output = $crud->render();
@@ -122,9 +121,9 @@ class Examples extends CI_Controller
 	function change()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com','nationalminerals52@gmail.com', 'mesaifee52@gmail.com', 'murtaza52@gmail.com', 'murtaza.sh@gmail.com', 'yusuf4u52@gmail.com', 'tzabuawala@gmail.com', 'mustafamnr@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else {
-			header("Location: http://kalimi.epizy.com/users/login.php");
+			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 		}
 
 		$crud = new grocery_CRUD();
@@ -140,9 +139,9 @@ class Examples extends CI_Controller
 	function event_response()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com','nationalminerals52@gmail.com', 'mesaifee52@gmail.com', 'murtaza52@gmail.com', 'murtaza.sh@gmail.com', 'yusuf4u52@gmail.com', 'tzabuawala@gmail.com', 'mustafamnr@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
-			header("Location: http://kalimi.epizy.com/users/login.php");
+			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('event_response');

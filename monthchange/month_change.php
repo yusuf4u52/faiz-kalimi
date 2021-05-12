@@ -1,6 +1,6 @@
 <?php
 include('../users/connection.php');
-include('../users/adminsession.php');
+include('../users/_authCheck.php');
 if ($_POST) {
 	$query = file_get_contents("month_change.sql");
 	$query = str_replace('%month%', $_POST['year'], $query);
