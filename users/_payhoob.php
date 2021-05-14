@@ -1,6 +1,6 @@
 <?php
 include('connection.php');
-include('adminsession.php');
+include('_authCheck.php.php');
 include('../sms/_credentials.php');
 include('../sms/_helper.php');
 include('getHijriDate.php');
