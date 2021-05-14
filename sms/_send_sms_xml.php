@@ -30,12 +30,11 @@ function send_sms_to_records($conn, $message)
 		$names = explode(" ", $name, 3);
 		$name = $names[0] . $names[1];
 		$amount = $record[$qAmount];
-		$message_formatted = str_replace(array("<TN>", "<NAME>", "<AMO>", "<SUF>"), array($thali, $name, $amount), $message_raw);
+		$message_formatted = str_replace(array("<TN>", "<NAME>", "<AMO>"), array($thali, $name, $amount), $message_raw);
 		// echo $message_formatted;
-
+		$sms_body_encoded = urlencode($message_formatted);
 		// send sms
-		$sendurl = "https://www.fast2sms.com/dev/bulkV2?authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$message_formatted&language=english&flash=0&numbers=$number";
-
+		$sendurl = "https://www.fast2sms.com/dev/bulkV2?authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$sms_body_encoded&language=english&flash=0&numbers=$number";
 		file_get_contents($sendurl);
 	}
 	return "success";
