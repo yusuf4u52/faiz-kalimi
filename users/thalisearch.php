@@ -34,7 +34,7 @@ if ($_GET) {
 
   $query = "SELECT id, Thali, NAME, CONTACT,musaid, thalisize, Active, Transporter, thalicount, Full_Address, Thali_start_date, Thali_stop_date, Paid, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist";
   if (!empty($_GET['thalino'])) {
-    $query .= " WHERE Thali = '" . addslashes($_GET['thalino']) . "'";
+    $query .= " WHERE Thali LIKE '%" . addslashes($_GET['thalino']) . "%'";
   } else if (!empty($_GET['general'])) {
     $query .= " WHERE 
                 Email_ID LIKE '%" . addslashes($_GET['general']) . "%'
