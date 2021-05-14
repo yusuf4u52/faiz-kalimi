@@ -34,7 +34,17 @@ if ($_POST) {
                                     '$email',
                                     '$whatsapp'
                                     )";
-  mysqli_query($link, $sql) or die(mysqli_error($link));
+  if (!mysqli_query($link, $sql)) {
+    if (substr_count(mysqli_error($link), "Duplicate") > 0) {
+      echo ("<SCRIPT LANGUAGE='JavaScript'>
+    window.alert('Your data already exist in the system and so you can login directly. You will now be redirected to the login page.')
+    window.location.href='../users/login.php';
+    </SCRIPT>");
+    } else {
+      echo mysqli_error($link);
+    }
+    exit;
+  }
   mysqli_close($link);
   $msgvar = "Salaam " . $firstname . "bhai,<br><br>New Registration form for Faiz ul Mawaid il Burhaniyah thali has been successfully submitted.<br>
   <b>Please contact Kalimi Mohalla Jamaat Office to start your thali.</b><br><br>
