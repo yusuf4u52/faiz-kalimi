@@ -122,12 +122,12 @@
   if (isset($_GET['status'])) {
   ?>
     <script type="text/javascript">
-    alert('<?php echo $_GET['status']; ?>');
-    window.location.href='/index.html';
+      alert('<?php echo $_GET['status']; ?>');
+      window.location.href = '/fmb/index.html';
     </script>
 
   <?php } ?>
 
-  </body>
+</body>
 
 </html>
