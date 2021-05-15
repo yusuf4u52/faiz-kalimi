@@ -43,6 +43,7 @@ while ($values1 = mysqli_fetch_assoc($result1)) {
                   <tr>
                     <th>Thali No</th>
                     <th>Transporter</th>
+                    <th>Sector</th>
                     <th>Address</th>
                     <th>Name</th>
                     <th>Active</th>
@@ -67,6 +68,7 @@ while ($values1 = mysqli_fetch_assoc($result1)) {
                           ?>
                         </select>
                       </td>
+                      <td><?php echo $values['sector']; ?></td>
                       <td><?php echo $values['Full_Address']; ?></td>
                       <td><?php echo $values['NAME']; ?></td>
                       <td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
