@@ -113,7 +113,7 @@ while (($column = fgetcsv($file)) !== FALSE) {
     }
 }
 
-//update takhmeen
+//update new sabil
 $counter = 1;
 $file = fopen("fmbdetails.csv", "r");
 while (($column = fgetcsv($file)) !== FALSE) {
@@ -152,7 +152,7 @@ while (($column = fgetcsv($file)) !== FALSE) {
             mysqli_query($link, $sqlupdate) or die(mysqli_error($link));
         } else {
             $sqlinsert = "insert into thalilist (`Thali`, `NAME`, `CONTACT`, `yearly_hub`, `Previous_Due`, `thalisize`)
-                values ('$thalino', '$name', '$mobile', '$amount', '$pendingamount', '$size')";
+                values ('$thalino', '$name', NULLIF('$mobile', ''), '$amount', '$pendingamount', '$size')";
             mysqli_query($link, $sqlinsert) or die(mysqli_error($link));
         }
     }
