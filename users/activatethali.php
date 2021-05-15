@@ -30,20 +30,11 @@ $msgvar = "Salaam %name%,<br><br>Mubarak for starting your Faiz ul Mawaid il Bur
 <br>
 2) You can start / stop your thaali and update your details from the site - http://kalimijamaatpoona.org/fmb/users/index.php
 <br>
-2) Please ping +919503054797 to join the Faiz WhatsApp Group. All Faiz announcements are sent through it so please join it.
+3) Please ensure your hub is paid on each Miqaat listed on the site. If you have any problems in paying the hub please contact us in advance.
 <br>
-3) Subscribe to the Google mailing list - https://groups.google.com/forum/#!forum/faizstudents/join - This group can be used to send enquiries regarding vancancies, looking for roomates etc.
+4) Please ensure you return a washed tiffin everyday. If your tiffin is unwashed / partially washed or not returned, your thaali will not be delivered the next day. In this case you will have to pick it up from Faiz, your thaali will not be delivered that day. However the bhai doing delivery will come to take the empty tiffin, so that your thaali can be delivered the next day. He will only take one empty tiffin.
 <br>
-4) Please ensure your hub is paid on each Miqaat listed on the site. If you have any problems in paying the hub please contact us in advance.
 <br>
-5) Please ensure you return a washed tiffin everyday. If your tiffin is unwashed / partially washed or not returned, your thaali will not be delivered the next day. In this case you will have to pick it up from Faiz, your thaali will not be delivered that day. However the bhai doing delivery will come to take the empty tiffin, so that your thaali can be delivered the next day. He will only take one empty tiffin.
-<br>
-6) If your thaali is in pickup for - unpaid hub, unreturned tiffin - and you fail to pick it up, then you will be charged Rs 200 fine for wastage of Muala's jaman.
-<br>
-7) Faiz time is between 9-11 AM Mon - Sat. Pickups and hub collection at Faiz will only happen in this time.
-<br>
-8) If you need any help please email us on kalimifaiz@gmail.com or WhatsApp us personally.
-<br><br>
 Abeede Sayedna (TUS)<br>
 Faiz Khidmat Team<br>";
 
