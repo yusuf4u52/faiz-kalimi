@@ -67,9 +67,8 @@ $totalcountonsize = mysqli_query($link, "SELECT
 					FROM `thalilist` WHERE Active = 1");
 $result = mysqli_fetch_row($totalcountonsize);
 $msgvar .= 	sprintf("%s\n",  'Grand Total: ' . ' Small: ' . $result[1] . ' Medium: ' . $result[2] . ' Large: ' . $result[3] . ' Total: ' . $result[0]);
-$hijridate = getTodayDateHijri();
-$gregoraindate = date("Y-m-d");
-mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `small`,`medium`,`large`, `Count`) VALUES ('" . $gregoraindate . "','" . $hijridate . "','" . $result[1] . "','" . $result[2] . "','" . $$result[3] . "'," . $result[0] . ")") or die(mysqli_error($link));
+$hijridate = getHijriDate($tomorrow_date);
+mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `small`,`medium`,`large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[1] . "','" . $result[2] . "','" . $$result[3] . "'," . $result[0] . ")") or die(mysqli_error($link));
 
 mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
 $msgvar = str_replace("\n", "<br>", $msgvar);
