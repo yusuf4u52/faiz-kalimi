@@ -26,7 +26,7 @@ mysqli_query($link,"update change_table set processed = 1 where userid = '" . $_
 
 
 $msgvar = "Salaam %name%,<br><br>Mubarak for starting your Faiz ul Mawaid il Burhaniyah Thaali -<br><br>Your Thali No. will be : <b>%thali%</b><br><br>
-1) If you need any help please email us on kalimifaiz@gmail.com or WhatsApp us on 9049378652, 9503054797.
+1) If you need any help please email us on kalimifaiz@gmail.com or WhatsApp us on 9096778753, 9503054797.
 <br>
 2) You can start / stop your thaali and update your details from the site - http://kalimijamaatpoona.org/fmb/users/index.php
 <br>

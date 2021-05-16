@@ -11,7 +11,7 @@ if ($day == 'Sat') {
 	echo "Skipping email on saturday.";
 	exit;
 }
-$sql = mysqli_query($link, "SELECT t.id, c.Thali, t.thalisize, t.NAME, t.CONTACT, t.Transporter, t.Full_Address, c.Operation,c.id,t.markaz
+$sql = mysqli_query($link, "SELECT t.id, c.Thali, t.thalisize, t.NAME, t.CONTACT, t.Transporter, t.Full_Address, c.Operation,c.id
 						from change_table as c
 						inner join thalilist as t on (c.userid = t.id)
 						WHERE c.processed = 0");
@@ -20,9 +20,6 @@ $processed_ids = array();
 echo "<pre>";
 while ($row = mysqli_fetch_assoc($sql)) {
 	$request[$row['Transporter']][$row['Operation']][] = $row;
-	// To add Markaz
-	// $request[$row['markaz']][$row['Operation']][] = $row;
-
 	$processed[] = $row['id'];
 }
 foreach ($request as $transporter_name => $thalis) {
