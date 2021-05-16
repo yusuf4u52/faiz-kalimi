@@ -11,7 +11,7 @@ if ($day == 'Sat') {
 	echo "Skipping email on saturday.";
 	exit;
 }
-$sql = mysqli_query($link, "SELECT t.id, c.Thali, t.NAME, t.CONTACT, t.Transporter, t.Full_Address, c.Operation,c.id,t.markaz
+$sql = mysqli_query($link, "SELECT t.id, c.Thali, t.thalisize, t.NAME, t.CONTACT, t.Transporter, t.Full_Address, c.Operation,c.id,t.markaz
 						from change_table as c
 						inner join thalilist as t on (c.userid = t.id)
 						WHERE c.processed = 0");
@@ -31,7 +31,7 @@ foreach ($request as $transporter_name => $thalis) {
 		$msgvar .= $operation_type . "\n";
 		if (in_array($operation_type, array('Start Thali', 'Start Transport', 'Update Address', 'New Thali'))) {
 			foreach ($thali_details as $thaliuser) {
-				$msgvar .= 	sprintf("%s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['Transporter'], $thaliuser['Full_Address']);
+				$msgvar .= 	sprintf("%s - %s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['Transporter'], $thaliuser['Full_Address']);
 			}
 		} else if (in_array($operation_type, array('Stop Thali', 'Stop Transport'))) {
 			foreach ($thali_details as $thaliuser) {
@@ -48,21 +48,32 @@ foreach ($request as $transporter_name => $thalis) {
 mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
 //----------------- Transporter wise count daily----------------------
 $msgvar .= "\n<b>Transporter Count</b>\n";
-$sql = mysqli_query($link, "SELECT Transporter,count(*) as tcount FROM `thalilist` WHERE Active = 1 and Transporter != 'Transporter' group by Transporter");
+$sql = mysqli_query($link, "SELECT Transporter,
+					count(*) as tcount,
+    				sum(case when thalisize = 'Small' then 1 else 0 end) AS smallcount,
+    				sum(case when thalisize = 'Medium' then 1 else 0 end) AS mediumcount,
+					sum(case when thalisize = 'Large' then 1 else 0 end) AS largecount
+					FROM `thalilist` WHERE Active = 1 group by Transporter");
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 while ($row = mysqli_fetch_assoc($sql)) {
-	$msgvar .= 	sprintf("%s\n", $row['Transporter'] . ' ' . $row['tcount']);
-	$insert_sql = "INSERT INTO transporter_daily_count (`date`, `name`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "','" . $row['tcount'] . "')";
+	$msgvar .= 	sprintf("%s\n", $row['Transporter'] . ' Small: ' . $row['smallcount'] . ' Medium: ' . $row['mediumcount'] . ' Large: ' . $row['largecount'] . ' Total: ' . $row['tcount']);
+	$insert_sql = "INSERT INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "', '" . $row['tcount'] . "')";
 	mysqli_query($link, $insert_sql) or die(mysqli_error($link));
 }
+
 //-------------------------------------------------------------------
-$result = mysqli_query($link, "SELECT * FROM thalilist WHERE Active='1' ");
-$count = mysqli_num_rows($result);
+$totalcountonsize = mysqli_query($link, "SELECT
+					count(*) as tcount,
+    				sum(case when thalisize = 'Small' then 1 else 0 end) AS smallcount,
+    				sum(case when thalisize = 'Medium' then 1 else 0 end) AS mediumcount,
+					sum(case when thalisize = 'Large' then 1 else 0 end) AS largecount
+					FROM `thalilist` WHERE Active = 1");
+$result = mysqli_fetch_row($totalcountonsize);
+$msgvar .= 	sprintf("%s\n",  'Grand Total: ' . ' Small: ' . $result[1] . ' Medium: ' . $result[2] . ' Large: ' . $result[3] . ' Total: ' . $result[0]);
 $hijridate = getTodayDateHijri();
 $gregoraindate = date("Y-m-d");
-mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `Count`) VALUES ('" . $gregoraindate . "','" . $hijridate . "'," . $count . ")") or die(mysqli_error($link));
+// mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `small`,`medium`,`large`, `Count`) VALUES ('" . $gregoraindate . "','" . $hijridate . "','" . $result[1] . "','" . $result[2] . "','" . $$result[3] . "'," . $result[0] . ")") or die(mysqli_error($link));
 
-$msgvar .= "\n Count \n $count ";
 $myfile = fopen("requestarchive.txt", "a") or die("Unable to open file!");
 $txt = date('d/m/Y') . "\n" . $msgvar . "\n";
 fwrite($myfile, $txt);
