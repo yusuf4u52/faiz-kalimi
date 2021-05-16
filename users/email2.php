@@ -72,12 +72,8 @@ $result = mysqli_fetch_row($totalcountonsize);
 $msgvar .= 	sprintf("%s\n",  'Grand Total: ' . ' Small: ' . $result[1] . ' Medium: ' . $result[2] . ' Large: ' . $result[3] . ' Total: ' . $result[0]);
 $hijridate = getTodayDateHijri();
 $gregoraindate = date("Y-m-d");
-// mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `small`,`medium`,`large`, `Count`) VALUES ('" . $gregoraindate . "','" . $hijridate . "','" . $result[1] . "','" . $result[2] . "','" . $$result[3] . "'," . $result[0] . ")") or die(mysqli_error($link));
+mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `small`,`medium`,`large`, `Count`) VALUES ('" . $gregoraindate . "','" . $hijridate . "','" . $result[1] . "','" . $result[2] . "','" . $$result[3] . "'," . $result[0] . ")") or die(mysqli_error($link));
 
-$myfile = fopen("requestarchive.txt", "a") or die("Unable to open file!");
-$txt = date('d/m/Y') . "\n" . $msgvar . "\n";
-fwrite($myfile, $txt);
-fclose($myfile);
 mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
 $msgvar = str_replace("\n", "<br>", $msgvar);
 sendEmail('kalimifaiz@gmail.com', 'Start Stop update ' . date('d/m/Y'), $msgvar, null);
