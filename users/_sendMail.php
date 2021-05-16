@@ -1,5 +1,5 @@
 <?php
-function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false, $addAllRecipents = true)
+function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false)
 {
 	require '../vendor/autoload.php';
 	require '../sms/_credentials.php';
@@ -8,11 +8,6 @@ function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false, $ad
 	$email->setFrom("no-reply@kalimijamaatpoona.org", "Faizul Mawaidil Burhaniya (Kalimi Mohalla)");
 	$email->setSubject($subject);
 	$email->addTo($to);
-
-	if ($addAllRecipents) {
-		$email->addTo("kalimifaiz@gmail.com");
-	}
-
 	$email->addContent(
 		"text/html",
 		$msg
