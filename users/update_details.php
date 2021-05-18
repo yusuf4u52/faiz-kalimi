@@ -4,31 +4,33 @@ include 'getHijriDate.php';
 
 $today = getTodayDateHijri();
 if ($_POST) {
-    $_POST['address'] = str_replace("'", "", $_POST['address']);
-    mysqli_query($link, "UPDATE thalilist set
+  $_POST['address'] = str_replace("'", "", $_POST['address']);
+  mysqli_query($link, "UPDATE thalilist set
                                       CONTACT='" . $_POST["contact"] . "',
                                       Full_Address='" . $_POST["address"] . "',
                                       ITS_No='" . $_POST["its"] . "',
+                                      wingflat='" . $_POST["wingflat"] . "',
+                                      society='" . $_POST["society"] . "',
                                       WhatsApp='" . $_POST["whatsapp"] . "'
                                       WHERE Email_id = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
 
-    if ($_POST['address'] != $_SESSION['old_address']) {
-        mysqli_query($link, "UPDATE thalilist set Transporter='Transporter' where id ='" . $_SESSION['thaliid'] . "'");
-        mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_SESSION['thaliid'] . "' and `Operation` in ('Update Address') and processed = 0") or die(mysqli_error($link));
-        mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`) VALUES ('" . $_SESSION['thali'] . "','" . $_SESSION['thaliid'] . "', 'Update Address','" . $today . "')") or die(mysqli_error($link));
-    }
+  if ($_POST['address'] != $_SESSION['old_address']) {
+    mysqli_query($link, "UPDATE thalilist set Transporter='Transporter' where id ='" . $_SESSION['thaliid'] . "'");
+    mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_SESSION['thaliid'] . "' and `Operation` in ('Update Address') and processed = 0") or die(mysqli_error($link));
+    mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`) VALUES ('" . $_SESSION['thali'] . "','" . $_SESSION['thaliid'] . "', 'Update Address','" . $today . "')") or die(mysqli_error($link));
+  }
 
-    unset($_SESSION['old_address']);
-    header('Location: index.php');
+  unset($_SESSION['old_address']);
+  header('Location: index.php');
 } else {
-    $query = "SELECT * FROM thalilist where Email_id = '" . $_SESSION['email'] . "'";
+  $query = "SELECT * FROM thalilist where Email_id = '" . $_SESSION['email'] . "'";
 
-    $data = mysqli_fetch_assoc(mysqli_query($link, $query));
+  $data = mysqli_fetch_assoc(mysqli_query($link, $query));
 
-    // print_r($data); exit;
+  // print_r($data); exit;
 
-    extract($data);
-    $_SESSION['old_address'] = $Full_Address;
+  extract($data);
+  $_SESSION['old_address'] = $Full_Address;
 }
 
 ?>
@@ -39,13 +41,13 @@ if ($_POST) {
 <html lang="en">
 
 <head>
-  <?php include '_head.php';?>
-  <?php include '_bottomJS.php';?>
+  <?php include '_head.php'; ?>
+  <?php include '_bottomJS.php'; ?>
 </head>
 
 <body>
 
-  <?php include '_nav.php';?>
+  <?php include '_nav.php'; ?>
   <div class="container">
 
     <!-- Forms
@@ -122,6 +124,30 @@ if ($_POST) {
                 </div>
 
                 <div class="form-group">
+                  <label class="col-lg-2 control-label">Wing-Flat</label>
+                  <div class="col-lg-10">
+                    <input type="text" class="form-control" placeholder="B1-1002" required='required' name="wingflat" value='<?php echo $wingflat; ?>'>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="inputContact" class="col-lg-2 control-label">Society</label>
+                  <div class="col-lg-10">
+                    <select class="form-control" name="society" required='required'>
+                      <option value=''>Select</option>
+                      <?php
+                      $society_list = mysqli_query($link, "SELECT distinct(society) FROM thalilist where Active=1");
+                      while ($society = mysqli_fetch_assoc($society_list)) {
+                      ?>
+                        <option value='<?php echo $society['society']; ?>'><?php echo $society['society']; ?></option>
+                      <?php
+                      }
+                      ?>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
 
                   <label for="inputAddress" class="col-lg-2 control-label">Address</label>
 
@@ -178,11 +204,11 @@ if ($_POST) {
     </div>
   </div>
   <!-- Message model ends-->
-  <?php if (isset($_GET['update_pending_info'])) {?>
+  <?php if (isset($_GET['update_pending_info'])) { ?>
     <script type="text/javascript">
       $('#myModal').modal('show');
     </script>
-  <?php }?>
+  <?php } ?>
 </body>
 
 </html>
