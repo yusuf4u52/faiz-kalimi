@@ -137,9 +137,9 @@ if ($_POST) {
                       <option value=''>Select</option>
                       <?php
                       $society_list = mysqli_query($link, "SELECT distinct(society) FROM thalilist where Active=1");
-                      while ($society = mysqli_fetch_assoc($society_list)) {
+                      while ($society_option = mysqli_fetch_assoc($society_list)) {
                       ?>
-                        <option value='<?php echo $society['society']; ?>'><?php echo $society['society']; ?></option>
+                        <option value='<?php echo $society_option['society']; ?>' <?php echo ($society_option['society'] == $society) ? "selected" : ""; ?>><?php echo $society_option['society']; ?></option>
                       <?php
                       }
                       ?>
