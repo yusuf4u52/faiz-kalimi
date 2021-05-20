@@ -11,7 +11,7 @@ if ($day == 'Sat') {
 	echo "Skipping email on saturday.";
 	exit;
 }
-$sql = mysqli_query($link, "SELECT t.id, c.Thali, t.thalisize, t.NAME, t.CONTACT, t.Transporter, t.Full_Address, c.Operation,c.id
+$sql = mysqli_query($link, "SELECT t.id, c.Thali, t.thalisize, t.NAME, t.CONTACT, t.Transporter,t.wingflat, t.society, t.Full_Address, c.Operation,c.id
 						from change_table as c
 						inner join thalilist as t on (c.userid = t.id)
 						WHERE c.processed = 0");
@@ -28,15 +28,15 @@ foreach ($request as $transporter_name => $thalis) {
 		$msgvar .= $operation_type . "\n";
 		if (in_array($operation_type, array('Start Thali', 'Start Transport', 'Update Address', 'New Thali'))) {
 			foreach ($thali_details as $thaliuser) {
-				$msgvar .= 	sprintf("%s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['Full_Address']);
+				$msgvar .= 	sprintf("%s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
 			}
 		} else if (in_array($operation_type, array('Stop Thali', 'Stop Transport'))) {
 			foreach ($thali_details as $thaliuser) {
-				$msgvar .= 	sprintf("%s\n", $thaliuser['Thali']);
+				$msgvar .= 	sprintf("%s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
 			}
 		} else if (in_array($operation_type, array('Stop Permanent'))) {
 			foreach ($thali_details as $thaliuser) {
-				$msgvar .= 	sprintf("%s - %s\n", $thaliuser['Thali'], $thaliuser['NAME']);
+				$msgvar .= 	sprintf("%s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
 			}
 		}
 		$msgvar .= 	"\n";
