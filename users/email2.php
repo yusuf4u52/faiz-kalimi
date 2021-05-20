@@ -26,22 +26,13 @@ foreach ($request as $transporter_name => $thalis) {
 	$msgvar .= "<b>" . $transporter_name . "</b>\n";
 	foreach ($thalis as $operation_type => $thali_details) {
 		$msgvar .= $operation_type . "\n";
-		if (in_array($operation_type, array('Start Thali', 'Start Transport', 'Update Address', 'New Thali'))) {
-			foreach ($thali_details as $thaliuser) {
-				$msgvar .= 	sprintf("%s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
-			}
-		} else if (in_array($operation_type, array('Stop Thali', 'Stop Transport'))) {
-			foreach ($thali_details as $thaliuser) {
-				$msgvar .= 	sprintf("%s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
-			}
-		} else if (in_array($operation_type, array('Stop Permanent'))) {
-			foreach ($thali_details as $thaliuser) {
-				$msgvar .= 	sprintf("%s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
-			}
+		foreach ($thali_details as $thaliuser) {
+			$msgvar .= 	sprintf("%s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
 		}
-		$msgvar .= 	"\n";
 	}
+	$msgvar .= 	"\n";
 }
+
 mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
 //----------------- Transporter wise count daily----------------------
 $msgvar .= "\n<b>Transporter Count</b>\n";

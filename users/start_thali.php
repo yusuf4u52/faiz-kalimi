@@ -35,7 +35,7 @@ mysqli_query($link, "UPDATE thalilist set Active='1' WHERE id = '" . $_SESSION['
 mysqli_query($link, "UPDATE thalilist set Thali_start_date='" . $today . "' WHERE id = '" . $values['id'] . "'") or die(mysqli_error($link));
 
 
-mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_SESSION['thaliid'] . "' and `Operation` in ('Start Thali','Stop Thali','Update Address') and processed = 0") or die(mysqli_error($link));
+mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_SESSION['thaliid'] . "' and `Operation` in ('Start Thali','Stop Thali','Update Address', 'Change Size') and processed = 0") or die(mysqli_error($link));
 mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('" . $values['Thali'] . "','" . $_SESSION['thaliid'] . "', 'Start Thali','" . $today . "')") or die(mysqli_error($link));
 
 $status = 'Start Thali Successful';

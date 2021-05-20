@@ -17,6 +17,8 @@ $months = array(
     '08' => 'Shaban'
 );
 
+$today = getTodayDateHijri();
+
 // reset paid to 0 before updating receipts
 $sql = "UPDATE thalilist set Paid = 0";
 mysqli_query($link, $sql) or die(mysqli_error($link));
@@ -146,8 +148,12 @@ while (($column = fgetcsv($file)) !== FALSE) {
             $size = mysqli_real_escape_string($link, $column[9]);
         }
 
-        $count = mysqli_num_rows(mysqli_query($link, "select * from thalilist WHERE thali = '$thalino'"));
-        if ($count == 1) {
+        $row = mysqli_fetch_row(mysqli_query($link, "select * from thalilist WHERE thali = '$thalino'"));
+        if ($row != null) {
+            // if there is change in size update the change table so that email can have it
+            if ($row[15] != $size) {
+                mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('$thalino','$row[0]', 'Change Size','" . $today . "')") or die(mysqli_error($link));
+            }
             $sqlupdate = "update thalilist set NAME = '$name', yearly_hub = '$amount', Previous_Due = '$pendingamount', thalisize = '$size' WHERE thali = '$thalino'";
             mysqli_query($link, $sqlupdate) or die(mysqli_error($link));
         } else {
