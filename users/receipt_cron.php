@@ -151,8 +151,8 @@ while (($column = fgetcsv($file)) !== FALSE) {
             $sqlupdate = "update thalilist set NAME = '$name', yearly_hub = '$amount', Previous_Due = '$pendingamount', thalisize = '$size' WHERE thali = '$thalino'";
             mysqli_query($link, $sqlupdate) or die(mysqli_error($link));
         } else {
-            $sqlinsert = "insert into thalilist (`Thali`, `NAME`, `CONTACT`, `yearly_hub`, `Previous_Due`, `thalisize`)
-                values ('$thalino', '$name', NULLIF('$mobile', ''), '$amount', '$pendingamount', '$size')";
+            $sqlinsert = "insert into thalilist (`Thali`, `NAME`, `CONTACT`,`Active`, `yearly_hub`, `Previous_Due`, `thalisize`)
+                values ('$thalino', '$name', NULLIF('$mobile', ''), 0, '$amount', '$pendingamount', '$size')";
             mysqli_query($link, $sqlinsert) or die(mysqli_error($link));
         }
     }
