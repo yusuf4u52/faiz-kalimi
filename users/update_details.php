@@ -7,6 +7,7 @@ if ($_POST) {
   $_POST['address'] = str_replace("'", "", $_POST['address']);
   mysqli_query($link, "UPDATE thalilist set
                                       CONTACT='" . $_POST["contact"] . "',
+                                      niyazdate='" . $_POST["niyazdate"] . "',
                                       Full_Address='" . $_POST["address"] . "',
                                       ITS_No='" . $_POST["its"] . "',
                                       wingflat='" . $_POST["wingflat"] . "',
@@ -43,6 +44,8 @@ if ($_POST) {
 <head>
   <?php include '_head.php'; ?>
   <?php include '_bottomJS.php'; ?>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 </head>
 
 <body>
@@ -121,6 +124,13 @@ if ($_POST) {
 
                   </div>
 
+                </div>
+
+                <div class="form-group">
+                  <label for="niyazdate" class="col-lg-2 control-label">Niyaz Date</label>
+                  <div class="col-lg-10">
+                    <input type="text" class="form-control" id="niyazdate" required='required' name="niyazdate" value='<?php echo $niyazdate; ?>'>
+                  </div>
                 </div>
 
                 <div class="form-group">
@@ -209,6 +219,18 @@ if ($_POST) {
       $('#myModal').modal('show');
     </script>
   <?php } ?>
+
+  <script>
+    $(function() {
+      $('#niyazdate').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        autoApply: true,
+        minDate: moment(),
+        maxDate: "04/1/2022"
+      });
+    });
+  </script>
 </body>
 
 </html>
