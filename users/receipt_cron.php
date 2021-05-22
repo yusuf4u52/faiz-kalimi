@@ -149,10 +149,10 @@ while (($column = fgetcsv($file)) !== FALSE) {
         }
 
         $row = mysqli_fetch_row(mysqli_query($link, "select * from thalilist WHERE thali = '$thalino'"));
-        if ($row != null) {
+        if (!empty($row)) {
             // if there is change in size update the change table so that email can have it
             if ($row[15] != $size) {
-                mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('$thalino','$row[0]', 'Change Size','" . $today . "')") or die(mysqli_error($link));
+                mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('$thalino','$row[0]', 'Change Size','$today')") or die(mysqli_error($link));
             }
             $sqlupdate = "update thalilist set NAME = '$name', yearly_hub = '$amount', Previous_Due = '$pendingamount', thalisize = '$size' WHERE thali = '$thalino'";
             mysqli_query($link, $sqlupdate) or die(mysqli_error($link));
