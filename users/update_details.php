@@ -227,7 +227,15 @@ if ($_POST) {
         showDropdowns: true,
         autoApply: true,
         minDate: moment(),
-        maxDate: "04/1/2022"
+        maxDate: "04/1/2022",
+        isInvalidDate: function(date) {
+          var suppliedDate = new Date(date);
+          var dayOfWeek = suppliedDate.getDay();
+          var isWeekend = (dayOfWeek === 6) || (dayOfWeek === 0); // 6 = Saturday, 0 = Sunday
+          if (isWeekend) {
+            return true;
+          }
+        }
       });
     });
   </script>
