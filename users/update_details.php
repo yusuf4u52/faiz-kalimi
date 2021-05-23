@@ -7,7 +7,7 @@ if ($_POST) {
   $_POST['address'] = str_replace("'", "", $_POST['address']);
   mysqli_query($link, "UPDATE thalilist set
                                       CONTACT='" . $_POST["contact"] . "',
-                                      niyazdate='" . $_POST["niyazdate"] . "',
+                                      niyazdate=NULLIF('" . $_POST["niyazdate"] . "', ''),
                                       Full_Address='" . $_POST["address"] . "',
                                       ITS_No='" . $_POST["its"] . "',
                                       wingflat='" . $_POST["wingflat"] . "',
@@ -129,12 +129,14 @@ if ($_POST) {
 
                 </div>
 
-                <div class="form-group">
-                  <label for="niyazdate" class="col-lg-2 control-label">Niyaz Date</label>
-                  <div class="col-lg-10">
-                    <input type="text" class="form-control" id="niyazdate" required='required' name="niyazdate" value='<?php echo $niyazdate; ?>' <?php echo !empty($niyazdate) ? "disabled" : ""; ?>>
+                <?php if (!empty($yearly_hub)) { ?>
+                  <div class="form-group">
+                    <label for="niyazdate" class="col-lg-2 control-label">Niyaz Date</label>
+                    <div class="col-lg-10">
+                      <input type="text" class="form-control" id="niyazdate" required='required' name="niyazdate" value='<?php echo $niyazdate; ?>' <?php echo !empty($niyazdate) ? "disabled" : ""; ?>>
+                    </div>
                   </div>
-                </div>
+                <?php } ?>
 
                 <div class="form-group">
                   <label class="col-lg-2 control-label">Wing-Flat</label>
