@@ -245,6 +245,7 @@ if ($_POST) {
         locale: {
           format: 'YYYY-MM-DD'
         },
+        autoUpdateInput: false,
         minDate: moment(),
         maxDate: "2022-04-01",
         isInvalidDate: function(date) {
@@ -258,6 +259,15 @@ if ($_POST) {
           }
         }
       });
+
+      $('#niyazdate').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY-MM-DD'));
+      });
+
+      $('#niyazdate').on('hideCalendar.daterangepicker', function(ev, picker) {
+        $(this).val('');
+      });
+
     });
   </script>
 </body>
