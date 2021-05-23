@@ -76,8 +76,6 @@ if ($_POST) {
 
       </div>
 
-
-
       <div class="row">
 
         <div class="col-lg-6">
@@ -87,7 +85,6 @@ if ($_POST) {
             <form class="form-horizontal" method="post">
 
               <fieldset>
-
 
                 <div class="form-group">
 
@@ -173,7 +170,6 @@ if ($_POST) {
                   </div>
 
                 </div>
-
 
                 <div class="form-group">
 
