@@ -46,6 +46,12 @@ if ($_POST) {
   <?php include '_bottomJS.php'; ?>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+  <style>
+    .selected {
+      background-color: red !important;
+      color: white !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -129,7 +135,7 @@ if ($_POST) {
                 <div class="form-group">
                   <label for="niyazdate" class="col-lg-2 control-label">Niyaz Date</label>
                   <div class="col-lg-10">
-                    <input type="text" class="form-control" id="niyazdate" required='required' name="niyazdate" value='<?php echo $niyazdate; ?>'>
+                    <input type="text" class="form-control" id="niyazdate" required='required' name="niyazdate" value='<?php echo $niyazdate; ?>' <?php echo !empty($niyazdate) ? "disabled" : ""; ?>>
                   </div>
                 </div>
 
@@ -222,18 +228,33 @@ if ($_POST) {
 
   <script>
     $(function() {
+      var dates = "";
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          dates = JSON.parse(this.responseText);
+        }
+      };
+      xhttp.open("GET", "_fetch_niyaz_dates.php", true);
+      xhttp.send();
+
       $('#niyazdate').daterangepicker({
         singleDatePicker: true,
         showDropdowns: true,
         autoApply: true,
+        locale: {
+          format: 'YYYY-MM-DD'
+        },
         minDate: moment(),
-        maxDate: "04/1/2022",
+        maxDate: "2022-04-01",
         isInvalidDate: function(date) {
-          var suppliedDate = new Date(date);
-          var dayOfWeek = suppliedDate.getDay();
-          var isWeekend = (dayOfWeek === 6) || (dayOfWeek === 0); // 6 = Saturday, 0 = Sunday
-          if (isWeekend) {
+          if (date.day() === 0 || dates.reserved.includes(date.format("YYYY-MM-DD")) || dates.nonthali.includes(date.format("YYYY-MM-DD"))) {
             return true;
+          }
+        },
+        isCustomDate: function(date) {
+          if (dates.reserved.includes(date.format("YYYY-MM-DD"))) {
+            return "selected";
           }
         }
       });
