@@ -180,6 +180,10 @@ if (!empty($values['yearly_hub'])) {
                   <p class="list-group-item-text"><strong><?php echo $values['Thali']; ?></strong></p>
                 </li>
                 <li class="list-group-item">
+                  <h6 class="list-group-item-head ing text-muted">Tiffin Number</h6>
+                  <p class="list-group-item-text"><strong><?php echo $values['tiffinno']; ?></strong></p>
+                </li>
+                <li class="list-group-item">
                   <h6 class="list-group-item-heading text-muted">Name</h6>
                   <p class="list-group-item-text"><strong><?php echo $values['NAME']; ?></strong></p>
                 </li>
