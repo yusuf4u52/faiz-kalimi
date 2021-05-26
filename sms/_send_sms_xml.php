@@ -35,7 +35,12 @@ function send_sms_to_records($conn, $message)
 		$sms_body_encoded = urlencode($message_formatted);
 		// send sms
 		$sendurl = "https://www.fast2sms.com/dev/bulkV2?authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$sms_body_encoded&language=english&flash=0&numbers=$number";
-		file_get_contents($sendurl);
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $sendurl);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$data = curl_exec($ch);
+		curl_close($ch);
 	}
 	return "success";
 }
