@@ -6,7 +6,6 @@
     },
     "require": {
         "geniusts/hijri-dates": "^1.1",
-        "sendgrid/sendgrid": "^7.9",
-        "guzzlehttp/guzzle": "^7.3"
+        "sendgrid/sendgrid": "^7.9"
     }
 }

@@ -1,6 +1,4 @@
 <?php
-include '../vendor/autoload.php';
-
 //assuming _credentials.php is already included by the file which is including this file
 // this function sends the SMS, everything is hardcoded, the return value is the value returned
 // from the XML api call
@@ -34,12 +32,10 @@ function send_sms_to_records($conn, $message)
 		$amount = $record[$qAmount];
 		$message_formatted = str_replace(array("<TN>", "<NAME>", "<AMO>"), array($thali, $name, $amount), $message_raw);
 		// echo $message_formatted;
-		$sms_body_encoded = urlencode($message_formatted);
+		$sms_body_encoded = rawurlencode($message_formatted);
 		// send sms
 		$sendurl = "https://www.fast2sms.com/dev/bulkV2?authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$sms_body_encoded&language=english&flash=0&numbers=$number";
-		$client = new GuzzleHttp\Client();
-		$client->get($sendurl, ['verify' => false]);
-		
+		file_get_contents($sendurl);
 	}
 	return "success";
 }
