@@ -18,14 +18,14 @@ while ($values1 = mysqli_fetch_assoc($result1)) {
 $sector_list = array();
 $sector_query = "SELECT DISTINCT(sector) FROM `thalilist` WHERE sector IS NOT NULL";
 $sector_result = mysqli_query($link, $sector_query);
-while($sector_value = mysqli_fetch_assoc($sector_result)) {
+while ($sector_value = mysqli_fetch_assoc($sector_result)) {
   $sector_list[] = $sector_value['sector'];
 }
 
 $subsector_list = array();
 $subsector_query = "SELECT DISTINCT(subsector) FROM `thalilist` WHERE subsector IS NOT NULL";
 $subsector_result = mysqli_query($link, $subsector_query);
-while($subsector_value = mysqli_fetch_assoc($subsector_result)) {
+while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
   $subsector_list[] = $subsector_value['subsector'];
 }
 ?>
@@ -69,54 +69,54 @@ while($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                   <?php
                   while ($values = mysqli_fetch_assoc($result)) {
                   ?>
-                  <form action='savetransporter.php' method='post'>
-                    <tr>
+                    <form action='savetransporter.php' method='post'>
+                      <tr>
 
-                      <td>
-                        <?php echo $values['Thali']; ?>
-                        <input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
-                      </td>
-                      <td>
-                        <select class='transporter' name='transporter' required>
-                          <option value=''>Select</option>
-                          <?php
-                          foreach ($transporter_list as $tname) {
-                          ?>
-                            <option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>><?php echo $tname; ?></option>
-                          <?php
-                          }
-                          ?>
-                        </select>
-                      </td>
-                      <td>
-                      <select class='sector' name='sector' required>
-                      <option value=''>Select</option>
-                          <?php
-                          foreach ($sector_list as $sector_name) {
-                          ?>
-                            <option value='<?php echo $sector_name; ?>' <?php echo ($sector_name == $values['sector']) ? 'selected' : ''; ?>><?php echo $sector_name; ?></option>
-                          <?php
-                          }
-                          ?>
-                        </select>
-                      </td>
-                      <td>
-                      <select class='subsector' name='subsector' required>
-                      <option value=''>Select</option>
-                          <?php
-                          foreach ($subsector_list as $subsector_name) {
-                          ?>
-                            <option value='<?php echo $subsector_name; ?>' <?php echo ($subsector_name == $values['subsector']) ? 'selected' : ''; ?>><?php echo $subsector_name; ?></option>
-                          <?php
-                          }
-                          ?>
-                        </select>
-                      </td>
-                      <td><?php echo $values['Full_Address']; ?></td>
-                      <td><?php echo $values['NAME']; ?></td>
-                      <td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
-                      <td><input type='submit' value='Submit'></td>
-                    </tr>
+                        <td>
+                          <?php echo $values['Thali']; ?>
+                          <input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
+                        </td>
+                        <td>
+                          <select class='transporter' name='transporter' required>
+                            <option value=''>Select</option>
+                            <?php
+                            foreach ($transporter_list as $tname) {
+                            ?>
+                              <option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>><?php echo $tname; ?></option>
+                            <?php
+                            }
+                            ?>
+                          </select>
+                        </td>
+                        <td>
+                          <select class='sector' name='sector' required>
+                            <option value=''>Select</option>
+                            <?php
+                            foreach ($sector_list as $sector_name) {
+                            ?>
+                              <option value='<?php echo $sector_name; ?>' <?php echo ($sector_name == $values['sector']) ? 'selected' : ''; ?>><?php echo $sector_name; ?></option>
+                            <?php
+                            }
+                            ?>
+                          </select>
+                        </td>
+                        <td>
+                          <select class='subsector' name='subsector' required>
+                            <option value=''>Select</option>
+                            <?php
+                            foreach ($subsector_list as $subsector_name) {
+                            ?>
+                              <option value='<?php echo $subsector_name; ?>' <?php echo ($subsector_name == $values['subsector']) ? 'selected' : ''; ?>><?php echo $subsector_name; ?></option>
+                            <?php
+                            }
+                            ?>
+                          </select>
+                        </td>
+                        <td><?php echo $values['Full_Address']; ?></td>
+                        <td><?php echo $values['NAME']; ?></td>
+                        <td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
+                        <td><input type='submit' value='Submit'></td>
+                      </tr>
                     </form>
                   <?php } ?>
                 </tbody>
