@@ -3,7 +3,7 @@ include('connection.php');
 include('_authCheck.php');
 
 $query = "SELECT * FROM thalilist";
-$query_new_transporter = $query . " WHERE (Transporter = 'Transporter' OR sector IS NULL or subsector IS NULL) and active = 1 and Thali <> '' and Thali is not null";
+$query_new_transporter = $query . " WHERE (Transporter = 'Transporter' OR sector IS NULL OR subsector IS NULL) and Thali <> '' and Thali is not null";
 $result = mysqli_query($link, $query_new_transporter);
 $query_new_thali = $query . " WHERE Thali is null and Active is null";
 $result_new_thali = mysqli_query($link, $query_new_thali);
@@ -77,6 +77,9 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                           <input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
                         </td>
                         <td>
+                        <?php
+                        if ($values['yearly_hub'] != "0") {
+                        ?>
                           <select class='transporter' name='transporter' required>
                             <option value=''>Select</option>
                             <?php
@@ -87,6 +90,7 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                             }
                             ?>
                           </select>
+                          <?php } ?>
                         </td>
                         <td>
                           <select class='sector' name='sector' required>
