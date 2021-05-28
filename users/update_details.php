@@ -151,7 +151,7 @@ if ($_POST) {
                     <select class="form-control" name="society" required='required'>
                       <option value=''>Select</option>
                       <?php
-                      $society_list = mysqli_query($link, "SELECT distinct(society) FROM thalilist where Active=1 and society is not null order by society");
+                      $society_list = mysqli_query($link, "SELECT distinct(society) FROM thalilist where society is not null order by society");
                       while ($society_option = mysqli_fetch_assoc($society_list)) {
                       ?>
                         <option value='<?php echo $society_option['society']; ?>' <?php echo ($society_option['society'] == $society) ? "selected" : ""; ?>><?php echo $society_option['society']; ?></option>
