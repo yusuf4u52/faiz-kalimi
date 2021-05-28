@@ -31,6 +31,9 @@ function send_sms_to_records($conn, $message)
 		$name = $names[0] . $names[1];
 		$amount = $record[$qAmount];
 		$message_formatted = str_replace(array("<TN>", "<NAME>", "<AMO>"), array($thali, $name, $amount), $message_raw);
+		// message charge will double beyond 142 chars for fast2sms
+		$message_formatted = (strlen($message_formatted) > 142) ? substr($message_formatted, 0, 142) : $message_formatted;
+
 		// echo $message_formatted;
 		$sms_body_encoded = rawurlencode($message_formatted);
 		// send sms
