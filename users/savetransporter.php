@@ -1,8 +1,15 @@
 <?php
 include('connection.php');
 include('_authCheck.php');
-$data = explode('|',$_POST['data']);
+extract($_POST);
 
-$result = mysqli_query($link,"UPDATE thalilist SET Transporter = '".$data[1]."' WHERE Thali = '".$data[0]."'") or die(mysqli_error($link));
-echo 'Done';
+$update_query = "UPDATE thalilist SET
+sector = '". mysqli_real_escape_string($link,$sector)."',
+subsector = '".mysqli_real_escape_string($link,$subsector)."',
+Transporter = '".mysqli_real_escape_string($link, $transporter)."'
+WHERE Thali = '".mysqli_real_escape_string($link, $Thali)."'";
+
+$result = mysqli_query($link,$update_query) or die(mysqli_error($link));
+
+header("Location: pendingactions.php");
 ?>
