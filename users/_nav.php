@@ -7,11 +7,11 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand font-bold" href="/fmb/users/index.php">Faizul Mawaidil Burhaniya (Kalimi Mohalla)</a>
+      <a class="navbar-brand font-bold" href="/">Faizul Mawaidil Burhaniya (Kalimi Mohalla)</a>
     </div>
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/">Home</a></li>
+        <li><a href="/fmb/users/index.php">Home</a></li>
         <?php if ($_SESSION['role']) { ?>
           <li><a href="/fmb/users/musaid.php">Musaid</a></li>
         <?php } ?>
