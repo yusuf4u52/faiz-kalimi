@@ -27,7 +27,7 @@ foreach ($request as $transporter_name => $thalis) {
 	foreach ($thalis as $operation_type => $thali_details) {
 		$msgvar .= $operation_type . "\n";
 		foreach ($thali_details as $thaliuser) {
-			$msgvar .= 	sprintf("%s - %s - %s - %s - %s - %s\n", $thaliuser['Thali'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
+			$msgvar .= 	sprintf("%s - %s - %s - %s - %s - %s\n", $thaliuser['tiffinno'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
 		}
 	}
 	$msgvar .= 	"\n";
