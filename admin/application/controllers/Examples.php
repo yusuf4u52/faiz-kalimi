@@ -144,7 +144,7 @@ class Examples extends CI_Controller
 			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 
 		$crud = new grocery_CRUD();
-		$crud->set_model('event_join');
+		$crud->set_model('Event_join');
 		$crud->set_table('event_response');
 		$crud->columns('thalino', 'eventid', 'response', 'name', 'thalisize', 'wingflat', 'society', 'sector', 'subsector');
 		$crud->unset_edit();

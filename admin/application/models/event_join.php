@@ -1,5 +1,5 @@
 <?php
-class event_join extends grocery_CRUD_Model
+class Event_join extends grocery_CRUD_Model
 {
 	function get_list()
 	{
