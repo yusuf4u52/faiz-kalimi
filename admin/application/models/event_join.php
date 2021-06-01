@@ -9,7 +9,7 @@ class Event_join extends grocery_CRUD_Model
 		$select = "{$this->table_name}.*";
 
 		// ADD YOUR SELECT FROM JOIN HERE <------------------------------------------------------
-		$select .= ", thalilist.wingflat, thalilist.society";
+		$select .= ", thalilist.*";
 
 		if (!empty($this->relation))
 			foreach ($this->relation as $relation) {
