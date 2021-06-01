@@ -58,7 +58,8 @@ include('_common.php')
 				<tr>
 					<th scope="col">Event Name</th>
 					<th scope="col">Date/Venue/Time</th>
-					<th scope="col">Comments</th>
+					<!-- <th scope="col">Comments</th> -->
+					<th scope="col">Thali Size</th>
 					<th scope="col">Confirmation</th>
 					<!-- <th scope="col">Actions</th> -->
 					<?php if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
@@ -71,19 +72,42 @@ include('_common.php')
 				<?php
 				$result = mysqli_query($link, "SELECT * FROM events where enabled='1' order by id");
 				while ($values = mysqli_fetch_assoc($result)) {
+					$response = getResponse($values['id']);
 				?>
 					<tr>
 						<th scope="row"><?php echo $values['name']; ?></th>
 						<td><?php echo $values['venue']; ?></td>
-						<td>
+						<!-- <td>
 							<textarea class="form-control" id="comments" rows="3"></textarea>
+						</td> -->
+						<td>
+							<fieldset class="form-group">
+								<div class="form-check">
+									<label class="form-check-label">
+										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="small" <?php echo ($response['thalisize'] == "small") ? "checked" : ""; ?>>
+										Small
+									</label>
+								</div>
+								<div class="form-check">
+									<label class="form-check-label">
+										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="medium" <?php echo ($response['thalisize'] == "medium") ? "checked" : ""; ?>>
+										Medium
+									</label>
+								</div>
+								<div class="form-check">
+									<label class="form-check-label">
+										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="large" <?php echo ($response['thalisize'] == "large") ? "checked" : ""; ?>>
+										Large
+									</label>
+								</div>
+							</fieldset>
 						</td>
 						<td>
 							<button type="button" data-eventid="<?php echo $values['id']; ?>" data-thaliid="<?php echo $_SESSION['thaliid']; ?>" data-response="yes" class="btn btn-primary btn-sm btn-response action-<?php echo $values['id']; ?>">Yes</button>
 							<button type="button" data-eventid="<?php echo $values['id']; ?>" data-thaliid="<?php echo $_SESSION['thaliid']; ?>" data-response="no" class="btn btn-primary btn-sm btn-response action-<?php echo $values['id']; ?>">No</button>
-							<p <?php echo isResponseReceived($values['id']) ? '' : 'hidden'; ?> class="text-muted"><small>
+							<p <?php echo isResponseReceived($values['id']) ? '' : 'hidden'; ?>><small>
 									<?php
-									$response = getResponse($values['id']);
+
 									echo "You said [" . $response['response'] . "] on " . $response['date'];
 									?>
 								</small></p>
@@ -127,7 +151,8 @@ include('_common.php')
 					Response: $(this).data("response"),
 					Thaliid: $(this).data("thaliid"),
 					Eventid: $(this).data("eventid"),
-					Comments: $('textarea#comments').val()
+					Comments: $('textarea#comments').val(),
+					Thalisize: $('input[name=optionsRadios]:checked').val()
 				},
 				function(data, status) {
 					alert("Response Submitted Successfully");
