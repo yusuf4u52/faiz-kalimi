@@ -108,7 +108,7 @@ include('_common.php')
 							<p <?php echo isResponseReceived($values['id']) ? '' : 'hidden'; ?>><small>
 									<?php
 
-									echo "You said [" . $response['response'] . "] on " . $response['date'];
+									echo "You said [" . $response['response'] . "] for [" . $response['thalisize'] . "] thali";
 									?>
 								</small></p>
 						</td>
