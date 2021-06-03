@@ -59,7 +59,7 @@ include('_common.php')
 					<th scope="col">Event Name</th>
 					<th scope="col">Date/Venue/Time</th>
 					<!-- <th scope="col">Comments</th> -->
-					<th scope="col">Thali Size</th>
+					<!-- <th scope="col">Thali Size</th> -->
 					<th scope="col">Confirmation</th>
 					<!-- <th scope="col">Actions</th> -->
 					<?php if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
@@ -80,7 +80,7 @@ include('_common.php')
 						<!-- <td>
 							<textarea class="form-control" id="comments" rows="3"></textarea>
 						</td> -->
-						<td>
+						<!-- <td>
 							<fieldset class="form-group">
 								<div class="form-check">
 									<label class="form-check-label">
@@ -101,14 +101,14 @@ include('_common.php')
 									</label>
 								</div>
 							</fieldset>
-						</td>
+						</td> -->
 						<td>
 							<button type="button" data-eventid="<?php echo $values['id']; ?>" data-thaliid="<?php echo $_SESSION['thaliid']; ?>" data-response="yes" class="btn btn-primary btn-sm btn-response action-<?php echo $values['id']; ?>">Yes</button>
 							<button type="button" data-eventid="<?php echo $values['id']; ?>" data-thaliid="<?php echo $_SESSION['thaliid']; ?>" data-response="no" class="btn btn-primary btn-sm btn-response action-<?php echo $values['id']; ?>">No</button>
 							<p <?php echo isResponseReceived($values['id']) ? '' : 'hidden'; ?>><small>
 									<?php
 
-									echo "You said [" . $response['response'] . "] for [" . $response['thalisize'] . "] thali";
+									echo "You said [" . $response['response'] . "].";
 									?>
 								</small></p>
 						</td>
