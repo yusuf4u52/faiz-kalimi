@@ -85,19 +85,19 @@ include('_common.php')
 								<div class="form-check">
 									<label class="form-check-label">
 										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="small" <?php echo ($response['thalisize'] == "small") ? "checked" : ""; ?>>
-										Small
+										Small (2 person)
 									</label>
 								</div>
 								<div class="form-check">
 									<label class="form-check-label">
 										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="medium" <?php echo ($response['thalisize'] == "medium") ? "checked" : ""; ?>>
-										Medium
+										Medium (4 person)
 									</label>
 								</div>
 								<div class="form-check">
 									<label class="form-check-label">
 										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="large" <?php echo ($response['thalisize'] == "large") ? "checked" : ""; ?>>
-										Large
+										Large (6 person)
 									</label>
 								</div>
 							</fieldset>
