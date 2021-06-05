@@ -16,14 +16,14 @@ while ($values1 = mysqli_fetch_assoc($result1)) {
 }
 
 $sector_list = array();
-$sector_query = "SELECT DISTINCT(sector) FROM `thalilist` WHERE sector IS NOT NULL";
+$sector_query = "SELECT DISTINCT(sector) FROM `thalilist` WHERE sector IS NOT NULL order by sector";
 $sector_result = mysqli_query($link, $sector_query);
 while ($sector_value = mysqli_fetch_assoc($sector_result)) {
   $sector_list[] = $sector_value['sector'];
 }
 
 $subsector_list = array();
-$subsector_query = "SELECT DISTINCT(subsector) FROM `thalilist` WHERE subsector IS NOT NULL";
+$subsector_query = "SELECT DISTINCT(subsector) FROM `thalilist` WHERE subsector IS NOT NULL order by subsector";
 $subsector_result = mysqli_query($link, $subsector_query);
 while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
   $subsector_list[] = $subsector_value['subsector'];
