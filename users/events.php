@@ -103,7 +103,8 @@ include('_common.php')
 							</fieldset>
 						</td> -->
 						<td>
-							<button type="button" data-eventid="<?php echo $values['id']; ?>" data-thaliid="<?php echo $_SESSION['thaliid']; ?>" data-response="yes" class="btn btn-primary btn-sm btn-response action-<?php echo $values['id']; ?>">Yes</button>&nbsp;
+							<button type="button" data-eventid="<?php echo $values['id']; ?>" data-thaliid="<?php echo $_SESSION['thaliid']; ?>" data-response="yes" class="btn btn-primary btn-sm btn-response action-<?php echo $values['id']; ?>">Yes</button>
+							<p></p>
 							<button type="button" data-eventid="<?php echo $values['id']; ?>" data-thaliid="<?php echo $_SESSION['thaliid']; ?>" data-response="no" class="btn btn-primary btn-sm btn-response action-<?php echo $values['id']; ?>">No</button>
 							<p <?php echo isResponseReceived($values['id']) ? '' : 'hidden'; ?>><small>
 									<?php
