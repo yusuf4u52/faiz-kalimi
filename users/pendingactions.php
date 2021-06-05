@@ -186,7 +186,6 @@ LIMIT 0 , 30");
                           <input type='text' size=8 name='thalino' class='' required='required'>
                         </td>
                         <td>
-                          <?php if ($values['Transporter'] == 'Transporter') { ?>
                             <select name="transporter" required='required'>
                               <option value=''>Select</option>
                               <?php
@@ -197,10 +196,6 @@ LIMIT 0 , 30");
                               }
                               ?>
                             </select>
-                          <?php } else {
-                            echo "Pick up";
-                          }
-                          ?>
                         </td>
                         <td>
                           <select name="musaid" required='required'>
