@@ -29,6 +29,7 @@
             <ul class="dropdown-menu" role="menu">
               <li><a href="/fmb/admin/index.php/examples/faiz">Admin</a></li>
               <li><a href="/fmb/admin/index.php/examples/receipts">Receipts</a></li>
+              <li><a href="/fmb/admin/index.php/examples/payments">Payments</a></li>
               <li><a href="/fmb/admin/index.php/examples/change">CR NR</a></li>
               <li><a href="/fmb/admin/index.php/examples/event_response">Event Response</a></li>
               <li><a href="/fmb/admin/index.php/examples/daily_hisab_items">Daily Items</a></li>

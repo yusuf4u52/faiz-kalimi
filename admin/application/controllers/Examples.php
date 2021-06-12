@@ -84,6 +84,21 @@ class Examples extends CI_Controller
 		$this->_example_output($output);
 	}
 
+	function payments()
+	{
+		session_start();
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		} else
+			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
+
+		$crud = new grocery_CRUD();
+		$crud->set_table('account');
+
+		$output = $crud->render();
+
+		$this->_example_output($output);
+	}
+
 	function sf_hisab()
 	{
 		session_start();
