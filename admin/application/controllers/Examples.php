@@ -165,6 +165,7 @@ class Examples extends CI_Controller
 		$crud->where('eventid in (select id from events WHERE enabled =1)');
 		$crud->unset_edit();
 		$crud->unset_delete();
+		$crud->unset_view();
 		$output = $crud->render();
 		$this->_example_output($output);
 	}
