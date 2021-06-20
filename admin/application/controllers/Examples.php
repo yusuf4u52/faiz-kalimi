@@ -162,7 +162,7 @@ class Examples extends CI_Controller
 		$crud->set_model('Event_join');
 		$crud->set_table('event_response');
 		$crud->columns('thalino', 'eventid', 'response', 'name', 'CONTACT', 'wingflat', 'society','Full_Address', 'sector', 'subsector');
-		$crud->where('eventid in (select id from events WHERE enabled =1)');
+		$crud->where('eventid in (select id from events where showInAdmin=1)');
 		$crud->unset_read();
 		$crud->unset_edit();
 		$crud->unset_delete();
