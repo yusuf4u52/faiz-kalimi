@@ -7,7 +7,7 @@ if ($_POST) {
   $_POST['address'] = str_replace("'", "", $_POST['address']);
   mysqli_query($link, "UPDATE thalilist set
                                       CONTACT='" . $_POST["contact"] . "',
-                                      aata='" . $_POST["aata"] . "',
+                                      aata=NULLIF('" . $_POST["aata"] . "', ''),
                                       niyazdate=NULLIF('" . $_POST["niyazdate"] . "', ''),
                                       Full_Address='" . $_POST["address"] . "',
                                       ITS_No='" . $_POST["its"] . "',
