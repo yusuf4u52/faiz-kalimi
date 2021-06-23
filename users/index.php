@@ -260,7 +260,6 @@ if (!empty($values['yearly_hub'])) {
                     <h6 class="list-group-item-heading text-muted">Stop Date</h6>
                     <p class="list-group-item-text hijridate"><?php echo $values['Thali_Stop_Date']; ?></p>
                   </li>
-
                 <?php } ?>
               </ul>
             </div>
@@ -268,8 +267,6 @@ if (!empty($values['yearly_hub'])) {
         </div>
 
         <!-- Break down -->
-
-
         <div class="panel panel-default" style="margin-top: 20px;">
           <div class="panel-heading" role="tab" id="headingTwo">
             <h4 class="panel-title">
@@ -296,44 +293,6 @@ if (!empty($values['yearly_hub'])) {
                       <td><?php echo $miqaat['2']; ?></td>
                     </tr>
                   <?php } ?>
-
-
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- Break down -->
-
-        <div class="panel panel-default" style="margin-top: 20px;">
-          <div class="panel-heading" role="tab" id="headingTwo">
-            <h4 class="panel-title">
-              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                Pay Now <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
-              </a>
-            </h4>
-          </div>
-          <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
-            <div class="panel-body">
-              <h5 class="col-xs-12">The niyaaz amount will be payable throughout the year on the following miqaats. If possible do contribute the whole amount in Lailat ul Qadr</h5>
-              <table class='table table-striped'>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Pending Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php foreach ($miqaatslistwithinstallement as $miqaat) {
-                  ?>
-                    <tr>
-                      <td><?php echo $miqaat['1']; ?></td>
-                      <td><?php echo $miqaat['2']; ?></td>
-                    </tr>
-                  <?php } ?>
-
-
                 </tbody>
               </table>
             </div>
