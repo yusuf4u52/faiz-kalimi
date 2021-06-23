@@ -15,13 +15,14 @@ if ($_POST) {
                                       WhatsApp='" . $_POST["whatsapp"] . "'
                                       WHERE Email_id = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
 
-  if ($_POST['address'] != $_SESSION['old_address']) {
+  if ($_POST['address'] != $_SESSION['old_address'] && $_SESSION['active'] == 1) {
     mysqli_query($link, "UPDATE thalilist set Transporter=NULL, sector = NULL, subsector = NULL where id ='" . $_SESSION['thaliid'] . "'");
     mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_SESSION['thaliid'] . "' and `Operation` in ('Update Address') and processed = 0") or die(mysqli_error($link));
     mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`) VALUES ('" . $_SESSION['thali'] . "','" . $_SESSION['thaliid'] . "', 'Update Address','" . $today . "')") or die(mysqli_error($link));
   }
 
   unset($_SESSION['old_address']);
+  unset($_SESSION['active']);
   header('Location: index.php');
 } else {
   $query = "SELECT * FROM thalilist where Email_id = '" . $_SESSION['email'] . "'";
@@ -32,6 +33,7 @@ if ($_POST) {
 
   extract($data);
   $_SESSION['old_address'] = $Full_Address;
+  $_SESSION['active'] = $Active;
 }
 
 ?>
