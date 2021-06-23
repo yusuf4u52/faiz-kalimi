@@ -7,6 +7,7 @@ if ($_POST) {
   $_POST['address'] = str_replace("'", "", $_POST['address']);
   mysqli_query($link, "UPDATE thalilist set
                                       CONTACT='" . $_POST["contact"] . "',
+                                      aata='" . $_POST["aata"] . "',
                                       niyazdate=NULLIF('" . $_POST["niyazdate"] . "', ''),
                                       Full_Address='" . $_POST["address"] . "',
                                       ITS_No='" . $_POST["its"] . "',
@@ -132,6 +133,23 @@ if ($_POST) {
                 </div>
 
                 <?php if (!empty($yearly_hub)) { ?>
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">Aata Required</label>
+                    <div class="col-lg-10">
+                      <select class="form-control" name="aata" required='required'>
+                        <option value='' <?php echo (is_null($aata)) ? "selected" : ""; ?>></option>
+                        <option value='0' <?php echo ($aata == '0') ? "selected" : ""; ?>>0 kg</option>
+                        <option value='5' <?php echo ($aata == '5') ? "selected" : ""; ?>>5 kg</option>
+                        <?php if ($thalisize == 'Medium' || $thalisize == 'Large') { ?>
+                          <option value='10' <?php echo ($aata == '10') ? "selected" : ""; ?>>10 kg</option>
+                        <?php }
+                        if ($thalisize == 'Large') { ?>
+                          <option value='15' <?php echo ($aata == '15') ? "selected" : ""; ?>>15 kg</option>
+                        <?php } ?>
+                      </select>
+                    </div>
+                  </div>
+
                   <div class="form-group">
                     <label for="niyazdate" class="col-lg-2 control-label">Niyaz Date</label>
                     <div class="col-lg-10">
