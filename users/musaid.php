@@ -25,15 +25,9 @@ $max_days = mysqli_fetch_row(mysqli_query($link, "SELECT MAX(thalicount) as max 
 $max_days_previous = mysqli_fetch_row(mysqli_query($link, "SELECT MAX(thalicount) as max FROM `$previous_thalilist`"));
 
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'superadmin') {
-	$musaid_list = mysqli_query($link, "SELECT `id`,`email`,`username` FROM `users` WHERE `role` in ('musaid','admin','superadmin')");
+	$musaid_list = mysqli_query($link, "SELECT `id`,`email`,`username` FROM `users`");
 } else {
-	$musaid_list = array(
-		array(
-			'id' => 0,
-			'username' => $_SESSION['email'],
-			'email' => $_SESSION['email']
-		)
-	);
+	$musaid_list = 	$musaid_list = mysqli_query($link, "SELECT `id`,`email`,`username` FROM `users` WHERE `email` = '" . $_SESSION['email'] . "'");
 }
 ?>
 <!DOCTYPE html>
