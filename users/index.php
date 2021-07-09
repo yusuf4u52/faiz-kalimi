@@ -283,6 +283,7 @@ if (!empty($values['yearly_hub'])) {
                   <tr>
                     <th>Date</th>
                     <th>Pending Amount</th>
+                    <th>Payment Link</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -291,6 +292,11 @@ if (!empty($values['yearly_hub'])) {
                     <tr>
                       <td><?php echo $miqaat['1']; ?></td>
                       <td><?php echo $miqaat['2']; ?></td>
+                      <?php if ($miqaat['2'] != 0 || $miqaat['2'] != "Miqaat Done") { ?>
+                        <td><a href="upi://pay?pa=201003297750@INDB0000173.ifsc.npci&pn=DAWOODI BOHRA JAMAT TRUST-KALIMI MOHALLA POONA-FMB&cu=INR&am=<?php echo $miqaat['2']; ?>">Pay</a></td>
+                      <?php } else { ?>
+                        <td></td>
+                      <?php } ?>
                     </tr>
                   <?php } ?>
                 </tbody>
