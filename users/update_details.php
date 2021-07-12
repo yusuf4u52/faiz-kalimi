@@ -9,7 +9,7 @@ if ($_POST) {
                                       CONTACT='" . $_POST["contact"] . "',
                                       aata=NULLIF('" . $_POST["aata"] . "', ''),
                                       niyazdate=NULLIF('" . $_POST["niyazdate"] . "', ''),
-                                      Full_Address='" . $_POST["address"] . "',
+                                      Full_Address='" . mysqli_real_escape_string($link, $_POST["address"]) . "',
                                       ITS_No='" . $_POST["its"] . "',
                                       wingflat='" . $_POST["wingflat"] . "',
                                       society='" . $_POST["society"] . "',
