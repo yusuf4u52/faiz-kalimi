@@ -6,8 +6,8 @@ include '../sms/_sms_automation.php';
 require_once '_sendMail.php';
 
 error_reporting(0);
-$day = date("D");
-if ($day == 'Sat') {
+$day = date("l");
+if ($day == 'Saturday') {
 	echo "Skipping email on saturday.";
 	exit;
 }
@@ -34,8 +34,9 @@ foreach ($request as $transporter_name => $thalis) {
 
 mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
 //----------------- Transporter wise count daily----------------------
+$tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $hijridate = getHijriDate($tomorrow_date);
-$msgvar .= "\n<b>Transporter Count $hijridate </b>\n";
+$msgvar .= "\n<b>Transporter Count $hijridate $day</b>\n";
 $sql = mysqli_query($link, "SELECT
 					(case when Transporter IS NULL then 'No Transport' else Transporter end) AS Transporter,
 					count(*) as tcount,
@@ -44,7 +45,6 @@ $sql = mysqli_query($link, "SELECT
 					sum(case when thalisize = 'Large' then 1 else 0 end) AS largecount,
 					sum(case when thalisize IS NULL then 1 else 0 end) AS nullcount
 					FROM `thalilist` WHERE Active = 1 group by Transporter");
-$tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $pivot = array();
 $transporters = array();
 while ($row = mysqli_fetch_assoc($sql)) {
