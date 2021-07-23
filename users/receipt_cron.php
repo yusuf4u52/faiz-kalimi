@@ -71,6 +71,7 @@ while (($column = fgetcsv($file)) !== FALSE) {
 }
 
 //update expenses
+mysqli_query($link, "truncate account") or die(mysqli_error($link));
 $counter = 1;
 $file = fopen("fmbpayments.csv", "r");
 while (($column = fgetcsv($file)) !== FALSE) {
@@ -95,8 +96,8 @@ while (($column = fgetcsv($file)) !== FALSE) {
             if (isset($column[3])) {
                 $datefromcsv = mysqli_real_escape_string($link, $column[3]);
                 $datestring = date_format(date_create($datefromcsv), "Y-m-d");
-                $datemonth = getHijriMonth($datefromcsv);
-                $datemonth = $months["$datemonth"];
+                $datemonth = date("m", strtotime(getHijriDate($datefromcsv)));
+                $datemonth = $months[$datemonth];
             }
             $description = "";
             if (isset($column[11])) {
@@ -107,7 +108,7 @@ while (($column = fgetcsv($file)) !== FALSE) {
             $result = mysqli_query($link, $sql) or die(mysqli_error($link));
             $name = mysqli_fetch_assoc($result);
 
-            $sqlInsert = "replace into account (`id`,`Date`,`Type`, `Amount`, `Month`,`Remarks`)
+            $sqlInsert = "insert into account (`id`,`Date`,`Type`, `Amount`, `Month`,`Remarks`)
                    values ('$voucherno', '$datestring', '$vendor', '$amount', '$datemonth', '$description')";
             mysqli_query($link, $sqlInsert) or die(mysqli_error($link));
         }
@@ -151,7 +152,7 @@ while (($column = fgetcsv($file)) !== FALSE) {
         $row = mysqli_fetch_assoc(mysqli_query($link, "select * from thalilist WHERE thali = '$thalino'"));
         if (!empty($row)) {
             // if there is change in size update the change table so that email can have it
-            if ($row['thalisize'] != $size) {
+            if ($row['thalisize'] != $size && $row['Active'] == 1) {
                 $changeinsert = "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('$thalino','$row[id]', 'Change Size','$today')";
                 mysqli_query($link, $changeinsert) or die(mysqli_error($link));
             }
