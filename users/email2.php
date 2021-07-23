@@ -24,9 +24,10 @@ while ($row = mysqli_fetch_assoc($sql)) {
 foreach ($request as $transporter_name => $thalis) {
 	$msgvar .= "<b>" . $transporter_name . "</b>\n";
 	foreach ($thalis as $operation_type => $thali_details) {
-		$msgvar .= $operation_type . "\n";
+		$msgvar .= "<b>" . $operation_type . "</b>\n";
 		foreach ($thali_details as $thaliuser) {
 			$msgvar .= 	sprintf("%s - %s - %s - %s - %s - %s\n", $thaliuser['tiffinno'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
+			$msgvar .= "\n";
 		}
 	}
 	$msgvar .= 	"\n";
