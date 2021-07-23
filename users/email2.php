@@ -6,9 +6,9 @@ include '../sms/_sms_automation.php';
 require_once '_sendMail.php';
 
 error_reporting(0);
-$day = date("l");
-if ($day == 'Saturday') {
-	echo "Skipping email on saturday.";
+$day = date("l", strtotime("tomorrow"));
+if ($day == 'Sunday') {
+	echo "Skipping email as no thali on Sunday.";
 	exit;
 }
 $sql = mysqli_query($link, "SELECT t.id, c.Thali, t.tiffinno, t.thalisize, t.NAME, t.CONTACT, t.Transporter,t.wingflat, t.society, t.Full_Address, c.Operation,c.id
