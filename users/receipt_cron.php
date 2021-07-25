@@ -119,11 +119,13 @@ while (($column = fgetcsv($file)) !== FALSE) {
 //update new sabil
 $counter = 1;
 $file = fopen("fmbdetails.csv", "r");
+$allThaliNos = array();
 while (($column = fgetcsv($file)) !== FALSE) {
     if ($counter != 1) {
         $thalino = "";
         if (isset($column[0])) {
             $thalino = mysqli_real_escape_string($link, $column[0]);
+            array_push($allThaliNos, $thalino);
         }
         $name = mysqli_real_escape_string($link, $column[1] . " " . $column[2] . " " . $column[3]);
         $mobile = "";
@@ -166,5 +168,7 @@ while (($column = fgetcsv($file)) !== FALSE) {
     }
     $counter++;
 }
-
+$allthalistring = "'" . implode("','", $allThaliNos) . "'";
+$deactivate = "update thalilist set Active=2 where Thali not in ($allthalistring)";
+mysqli_query($link, $deactivate) or die(mysqli_error($link));
 echo "Success\n";
