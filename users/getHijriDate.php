@@ -17,10 +17,3 @@ function getHijriDate($date)
 	Date::setToStringFormat($toStringFormat);
 	return Hijri::convertToHijri($date);
 }
-
-function getHijriMonth($date)
-{
-	$toStringFormat = 'm';
-	Date::setToStringFormat($toStringFormat);
-	return Hijri::convertToHijri($date);
-}

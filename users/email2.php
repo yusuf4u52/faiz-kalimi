@@ -33,7 +33,6 @@ foreach ($request as $transporter_name => $thalis) {
 	$msgvar .= 	"\n";
 }
 
-mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
 //----------------- Transporter wise count daily----------------------
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $hijridate = getHijriDate($tomorrow_date);
@@ -83,13 +82,13 @@ $msgvar = str_replace("\n", "<br>", $msgvar);
 
 $pivotTable = "<table border='1' ><tr><td></td>";
 foreach ($transporters as $tname => $value) {
-	$pivotTable .= "<td style='padding: 2px 10px 2px 10px;'>" . $tname . "</td>"; 
+	$pivotTable .= "<td style='padding: 2px 10px 2px 10px;'>" . $tname . "</td>";
 }
 $pivotTable .= "</tr>";
 
 foreach ($pivot as $size => $tcountArr) {
 	$pivotTable .= "<tr><td style='padding: 2px 10px 2px 10px;'>" . $size . "</td>";
-	foreach($transporters as $tname => $value) {
+	foreach ($transporters as $tname => $value) {
 		$pivotTable .= "<td style='padding: 2px 10px 2px 10px;'>" . $tcountArr[$tname] . "</td>";
 	}
 	$pivotTable .= "</tr>";
@@ -99,3 +98,5 @@ $pivotTable .= "</table>";
 $msgvar .= $pivotTable;
 
 sendEmail('kalimifaiz@gmail.com', 'Start Stop update ' . date('d/m/Y'), $msgvar, null);
+
+mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
