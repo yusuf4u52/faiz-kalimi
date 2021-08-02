@@ -1,4 +1,8 @@
+<!-- <!DOCTYPE html> -->
 <?php
+include('_bottomJS.php');
+include('_head.php');
+include('connection.php');
 // check if user didn't hit this page directly and is coming from login page
 session_start();
 if (!isset($_SESSION['fromLogin'])) {
@@ -6,7 +10,7 @@ if (!isset($_SESSION['fromLogin'])) {
     exit;
 }
 
-if (!in_array($_SESSION['email'], array('coolakw@gmail.com'))) {
+if (!in_array($_SESSION['email'], array('coolakw@gmail.com', 'yusuf4u52@gmail.com'))) {
     echo '<script language="javascript">';
     echo 'alert("You are unauthorized to view this link.")';
     echo '</script>';
@@ -19,7 +23,10 @@ if (!in_array($_SESSION['email'], array('coolakw@gmail.com'))) {
 </head>
 
 <body>
-    <iframe src="https://player.castr.com/live_1a39e900f37811ebb5c39b0ff1cc970f" width="100%" height="100%" frameborder="0" scrolling="no" allow="autoplay" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+    <?php include('_nav.php'); ?>
+    <p align="center">
+        <iframe src=<?php echo $live_uri; ?> width="80%" height="80%" frameborder="0" scrolling="no" allow="autoplay" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+    </p>
 </body>
 
 </html>
