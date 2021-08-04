@@ -57,10 +57,10 @@ include('_common.php')
 			<thead>
 				<tr>
 					<th scope="col">Event Name</th>
-					<th scope="col">Date/Venue/Time</th>
+					<th scope="col">Date / Venue / Time</th>
 					<!-- <th scope="col">Comments</th> -->
-					<th scope="col">Thali Size</th>
-					<th scope="col">Confirmation</th>
+					<th scope="col">No-of-Person</th>
+					<th scope="col">Action</th>
 					<!-- <th scope="col">Actions</th> -->
 					<?php if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 					?>
