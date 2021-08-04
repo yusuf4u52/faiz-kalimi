@@ -59,7 +59,7 @@ include('_common.php')
 					<th scope="col">Event Name</th>
 					<th scope="col">Date/Venue/Time</th>
 					<!-- <th scope="col">Comments</th> -->
-					<!-- <th scope="col">Thali Size</th> -->
+					<th scope="col">Thali Size</th>
 					<th scope="col">Confirmation</th>
 					<!-- <th scope="col">Actions</th> -->
 					<?php if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
@@ -80,28 +80,28 @@ include('_common.php')
 						<!-- <td>
 							<textarea class="form-control" id="comments" rows="3"></textarea>
 						</td> -->
-						<!-- <td>
+						<td>
 							<fieldset class="form-group">
 								<div class="form-check">
 									<label class="form-check-label">
 										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="small" <?php echo ($response['thalisize'] == "small") ? "checked" : ""; ?>>
-										Small (2 person)
+										1 - 3 person
 									</label>
 								</div>
 								<div class="form-check">
 									<label class="form-check-label">
 										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="medium" <?php echo ($response['thalisize'] == "medium") ? "checked" : ""; ?>>
-										Medium (4 person)
+										4 - 6 person
 									</label>
 								</div>
 								<div class="form-check">
 									<label class="form-check-label">
 										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="large" <?php echo ($response['thalisize'] == "large") ? "checked" : ""; ?>>
-										Large (6 person)
+										More than 6 person
 									</label>
 								</div>
 							</fieldset>
-						</td> -->
+						</td>
 						<td>
 							<button type="button" data-eventid="<?php echo $values['id']; ?>" data-thaliid="<?php echo $_SESSION['thaliid']; ?>" data-response="yes" class="btn btn-primary btn-sm btn-response action-<?php echo $values['id']; ?>">Yes</button>
 							<p></p>
@@ -142,6 +142,10 @@ include('_common.php')
 			// 	alert('Please provide comments');
 			// 	exit;
 			// }
+			if ($(this).data("response") == 'yes' && !$('input[name=optionsRadios]:checked').val()) {
+				alert('Please select number of persons.');
+				exit;
+			}
 			$(".action-" + $(this).data("eventid")).attr("disabled", true);
 			$.ajaxSetup({
 				beforeSend: function(xhr) {
