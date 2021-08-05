@@ -84,19 +84,19 @@ include('_common.php')
 							<fieldset class="form-group">
 								<div class="form-check">
 									<label class="form-check-label">
-										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="small" <?php echo ($response['thalisize'] == "small") ? "checked" : ""; ?>>
+										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="small" <?php echo ($response['thali_size'] == "small") ? "checked" : ""; ?>>
 										1 - 3 person
 									</label>
 								</div>
 								<div class="form-check">
 									<label class="form-check-label">
-										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="medium" <?php echo ($response['thalisize'] == "medium") ? "checked" : ""; ?>>
+										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="medium" <?php echo ($response['thali_size'] == "medium") ? "checked" : ""; ?>>
 										4 - 6 person
 									</label>
 								</div>
 								<div class="form-check">
 									<label class="form-check-label">
-										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="large" <?php echo ($response['thalisize'] == "large") ? "checked" : ""; ?>>
+										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="large" <?php echo ($response['thali_size'] == "large") ? "checked" : ""; ?>>
 										More than 6 person
 									</label>
 								</div>
