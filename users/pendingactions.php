@@ -3,7 +3,7 @@ include('connection.php');
 include('_authCheck.php');
 
 $query = "SELECT * FROM thalilist";
-$query_new_transporter = $query . " WHERE (Transporter = 'Transporter' OR sector IS NULL OR subsector IS NULL) and Thali <> '' and Thali is not null";
+$query_new_transporter = $query . " WHERE (Transporter = 'Transporter' OR sector IS NULL OR subsector IS NULL) and Thali <> '' and Thali is not null and Active in (0,1)";
 $result = mysqli_query($link, $query_new_transporter);
 $query_new_thali = $query . " WHERE Thali is null and Active is null";
 $result_new_thali = mysqli_query($link, $query_new_thali);
@@ -77,19 +77,19 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                           <input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
                         </td>
                         <td>
-                        <?php
-                        if ($values['yearly_hub'] != "0") {
-                        ?>
-                          <select class='transporter' name='transporter' required>
-                            <option value=''>Select</option>
-                            <?php
-                            foreach ($transporter_list as $tname) {
-                            ?>
-                              <option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>><?php echo $tname; ?></option>
-                            <?php
-                            }
-                            ?>
-                          </select>
+                          <?php
+                          if ($values['yearly_hub'] != "0") {
+                          ?>
+                            <select class='transporter' name='transporter' required>
+                              <option value=''>Select</option>
+                              <?php
+                              foreach ($transporter_list as $tname) {
+                              ?>
+                                <option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>><?php echo $tname; ?></option>
+                              <?php
+                              }
+                              ?>
+                            </select>
                           <?php } ?>
                         </td>
                         <td>
@@ -186,16 +186,16 @@ LIMIT 0 , 30");
                           <input type='text' size=8 name='thalino' class='' required='required'>
                         </td>
                         <td>
-                            <select name="transporter" required='required'>
-                              <option value=''>Select</option>
-                              <?php
-                              foreach ($transporter_list as $tname) {
-                              ?>
-                                <option value='<?php echo $tname; ?>'><?php echo $tname; ?></option>
-                              <?php
-                              }
-                              ?>
-                            </select>
+                          <select name="transporter" required='required'>
+                            <option value=''>Select</option>
+                            <?php
+                            foreach ($transporter_list as $tname) {
+                            ?>
+                              <option value='<?php echo $tname; ?>'><?php echo $tname; ?></option>
+                            <?php
+                            }
+                            ?>
+                          </select>
                         </td>
                         <td>
                           <select name="musaid" required='required'>
