@@ -46,7 +46,8 @@ if (!empty($values['yearly_hub']) && is_null($values['aata'])) {
 $enabled_events_query = mysqli_query($link, "SELECT * FROM events where enabled='1' order by id limit 1");
 $enabled_events_values = mysqli_fetch_assoc($enabled_events_query);
 
-if (!empty($enabled_events_values) && !isResponseReceived($enabled_events_values['id'])) {
+// if (!empty($enabled_events_values) && !isResponseReceived($enabled_events_values['id'])) {
+if (!empty($enabled_events_values)) {
   header("Location: events.php");
   exit;
 }
