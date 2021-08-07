@@ -84,19 +84,19 @@ include('_common.php')
 							<fieldset class="form-group">
 								<div class="form-check">
 									<label class="form-check-label">
-										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="small" <?php echo ($response['thali_size'] == "small") ? "checked" : ""; ?>>
+										<input type="radio" class="form-check-input" name="<?php echo $values['id']; ?>optionsRadios" id="optionsRadios1" value="small" <?php echo ($response['thali_size'] == "small") ? "checked" : ""; ?>>
 										1 - 3 person
 									</label>
 								</div>
 								<div class="form-check">
 									<label class="form-check-label">
-										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="medium" <?php echo ($response['thali_size'] == "medium") ? "checked" : ""; ?>>
+										<input type="radio" class="form-check-input" name="<?php echo $values['id']; ?>optionsRadios" id="optionsRadios2" value="medium" <?php echo ($response['thali_size'] == "medium") ? "checked" : ""; ?>>
 										4 - 6 person
 									</label>
 								</div>
 								<div class="form-check">
 									<label class="form-check-label">
-										<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="large" <?php echo ($response['thali_size'] == "large") ? "checked" : ""; ?>>
+										<input type="radio" class="form-check-input" name="<?php echo $values['id']; ?>optionsRadios" id="optionsRadios3" value="large" <?php echo ($response['thali_size'] == "large") ? "checked" : ""; ?>>
 										More than 6 person
 									</label>
 								</div>
@@ -142,7 +142,7 @@ include('_common.php')
 			// 	alert('Please provide comments');
 			// 	exit;
 			// }
-			if ($(this).data("response") == 'yes' && !$('input[name=optionsRadios]:checked').val()) {
+			if ($(this).data("response") == 'yes' && !$('input[name=' + $(this).data("eventid") + 'optionsRadios]:checked').val()) {
 				alert('Please select number of persons.');
 				exit;
 			}
@@ -157,7 +157,7 @@ include('_common.php')
 					Thaliid: $(this).data("thaliid"),
 					Eventid: $(this).data("eventid"),
 					Comments: $('textarea#comments').val(),
-					Thalisize: $('input[name=optionsRadios]:checked').val()
+					Thalisize: $('input[name=' + $(this).data("eventid") + 'optionsRadios]:checked').val()
 				},
 				function(data, status) {
 					alert("Response Submitted Successfully");
