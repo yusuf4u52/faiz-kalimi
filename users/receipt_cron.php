@@ -170,5 +170,5 @@ while (($column = fgetcsv($file)) !== FALSE) {
 }
 $allthalistring = "'" . implode("','", $allThali) . "'";
 // deactivate sabil
-// mysqli_query($link, "update thalilist set Active=2 where Thali not in ($allthalistring)") or die(mysqli_error($link));
+mysqli_query($link, "update thalilist set Active=2 where Thali not in ($allthalistring)") or die(mysqli_error($link));
 echo "Success\n";
