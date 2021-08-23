@@ -11,7 +11,7 @@ $_SESSION['thaliid'] = $values['id'];
 $_SESSION['thali'] = $values['Thali'];
 
 // Check if users gmail id is registered with us and has got a thali number against it 
-if (is_null($values['Active'])) {
+if (is_null($values['Active']) || $values['Active'] = 2) {
   $some_email = $_SESSION['email'];
   session_unset();
   session_destroy();
