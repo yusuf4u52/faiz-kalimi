@@ -4,6 +4,10 @@ include('getHijriDate.php');
 
 $today = getTodayDateHijri();
 session_start();
+if ($_POST) {
+  $_SESSION['fromLogin'] = $_POST['fromLogin'];
+  $_SESSION['thaliid'] = $_POST['thaliid'];
+}
 if (is_null($_SESSION['fromLogin'])) {
   //send them back\
   header("Location: login.php");

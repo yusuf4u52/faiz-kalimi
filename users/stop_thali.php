@@ -4,6 +4,11 @@ include('getHijriDate.php');
 
 $today = getTodayDateHijri();
 session_start();
+if ($_POST) {
+  $_SESSION['fromLogin'] = $_POST['fromLogin'];
+  $_SESSION['thaliid'] = $_POST['thaliid'];
+  $_SESSION['thali'] = $_POST['thali'];
+}
 
 if (is_null($_SESSION['fromLogin'])) {
 
