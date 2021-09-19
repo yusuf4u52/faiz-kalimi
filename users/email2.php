@@ -120,6 +120,12 @@ $pivotTable .= "</table>";
 
 $msgvar .= $pivotTable;
 
+// add total registered count
+$registered_but_not_active = mysqli_query($link, "SELECT * FROM thalilist WHERE Active='0' and (Transporter <> '' or Transporter is not null)");
+$total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered_but_not_active);
+$msgvar .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
+
+// send email
 sendEmail('kalimifaiz@gmail.com', 'Start Stop update ' . date('d/m/Y'), $msgvar, null);
 
 mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
