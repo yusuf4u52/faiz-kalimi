@@ -1,5 +1,5 @@
 <?php
-function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false)
+function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false, $addTransporter = false)
 {
 	require '../vendor/autoload.php';
 	require '../sms/_credentials.php';
@@ -8,6 +8,13 @@ function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false)
 	$email->setFrom("no-reply@kalimijamaatpoona.org", "Faizul Mawaidil Burhaniya (Kalimi Mohalla)");
 	$email->setSubject($subject);
 	$email->addTo($to);
+
+	if ($addTransporter) {
+		$email->addTo("Taumiz2285@gmail.com");
+		$email->addTo("Moula.juned@gmail.com");
+		$email->addTo("khanbilalkbr@gmail.com");
+	}
+
 	$email->addContent(
 		"text/html",
 		$msg
