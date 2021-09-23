@@ -70,9 +70,16 @@ include('_common.php')
 			</thead>
 			<tbody>
 				<?php
+				$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_id = '" . $_SESSION['email'] . "'";
+				$takesFmb = mysqli_num_rows(mysqli_query($link, $query));
 				$result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
 				while ($values = mysqli_fetch_assoc($result)) {
 					$response = getResponse($values['id']);
+					$showToNonFmbOnly = $values['showtononfmb'];
+					// skip events for fmb holder if the database flag is set to do so
+					if ($showToNonFmbOnly == 1 && $takesFmb == 1) {
+						exit;
+					}
 				?>
 					<tr>
 						<th scope="row"><?php echo $values['name']; ?></th>
