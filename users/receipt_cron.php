@@ -49,7 +49,10 @@ while (($column = fgetcsv($file)) !== FALSE) {
             if (isset($column[3])) {
                 $datefromcsv = mysqli_real_escape_string($link, $column[3]);
                 $datestring = getHijriDate($datefromcsv);
+            } else {
+                echo "Date cannot be empty for " . $receiptno;
             }
+
             $receivedby = "";
             if (isset($column[10])) {
                 $receivedby = mysqli_real_escape_string($link, $column[10]);
@@ -96,7 +99,10 @@ while (($column = fgetcsv($file)) !== FALSE) {
             if (isset($column[3])) {
                 $datefromcsv = mysqli_real_escape_string($link, $column[3]);
                 $datestring = getHijriDate($datefromcsv);
+            } else {
+                echo "Date cannot be empty for " . $receiptno;
             }
+
             $receivedby = "";
             if (isset($column[10])) {
                 $receivedby = mysqli_real_escape_string($link, $column[10]);
@@ -140,7 +146,10 @@ while (($column = fgetcsv($file)) !== FALSE) {
             if (isset($column[3])) {
                 $datefromcsv = mysqli_real_escape_string($link, $column[3]);
                 $datestring = getHijriDate($datefromcsv);
+            } else {
+                echo "Date cannot be empty for " . $receiptno;
             }
+            
             $receivedby = "";
             if (isset($column[10])) {
                 $receivedby = mysqli_real_escape_string($link, $column[10]);
@@ -184,7 +193,10 @@ while (($column = fgetcsv($file)) !== FALSE) {
             if (isset($column[3])) {
                 $datefromcsv = mysqli_real_escape_string($link, $column[3]);
                 $datestring = getHijriDate($datefromcsv);
+            } else {
+                echo "Date cannot be empty for " . $receiptno;
             }
+
             $receivedby = "";
             if (isset($column[10])) {
                 $receivedby = mysqli_real_escape_string($link, $column[10]);
@@ -230,7 +242,10 @@ while (($column = fgetcsv($file)) !== FALSE) {
                 $datestring = date_format(date_create($datefromcsv), "Y-m-d");
                 $datemonth = date("m", strtotime(getHijriDate($datefromcsv)));
                 $datemonth = $months[$datemonth];
+            } else {
+                echo "Date cannot be empty for " . $voucherno;
             }
+
             $description = "";
             if (isset($column[11])) {
                 $description = mysqli_real_escape_string($link, $column[11]);
