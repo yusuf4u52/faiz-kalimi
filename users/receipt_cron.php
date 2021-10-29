@@ -125,7 +125,7 @@ mysqli_query($link, "truncate sherullah") or die(mysqli_error($link));
 $counter = 1;
 $file = fopen("fmbsherullah.csv", "r");
 while (($column = fgetcsv($file)) !== FALSE) {
-    if ($column[13] != "Cancelled") {
+    if ($column[13] != "Cancelled" && $column[5] != "Cash") {
         if ($counter != 1) {
             $receiptno = "";
             if (isset($column[0])) {
