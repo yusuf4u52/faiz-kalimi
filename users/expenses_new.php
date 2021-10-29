@@ -56,6 +56,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
       $niyaz_tablename = "niyaz";
       $zabihat_tablename = "zabihat";
       $ashara_tablename = "ashara";
+      $sherullah_tablename = "sherullah";
     } else {
       $thalilist_tablename = "thalilist_" . $_POST['year'];
       $account_tablename = "account_" . $_POST['year'];
@@ -63,6 +64,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
       $niyaz_tablename = "niyaz_" . $_POST['year'];
       $zabihat_tablename = "zabihat_" . $_POST['year'];
       $ashara_tablename = "ashara_" . $_POST['year'];
+      $sherullah_tablename = "sherullah_" . $_POST['year'];
     }
 
     foreach ($months as $key => $month) {
@@ -179,6 +181,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
             <th>Niyaz</th>
             <th>Zabihat</th>
             <th>Ashara</th>
+            <th>Sherullah</th>
             <th>Total Income</th>
             <th>Total Expense</th>
             <th>Total Savings</th>
@@ -215,10 +218,13 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
             $result8 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $ashara_tablename where Date like '%-$key-%'");
             $ashara_received = mysqli_fetch_assoc($result8);
 
+            $result9 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date like '%-$key-%'");
+            $sherullah_received = mysqli_fetch_assoc($result9);
+
             $result1 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Month = '" . $value . "'");
             $cash_paid = mysqli_fetch_assoc($result1);
 
-            $yearly_total_savings += $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] - $cash_paid['Amount'] - $fixed_cost['Amount'];
+            $yearly_total_savings += $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'] - $cash_paid['Amount'] - $fixed_cost['Amount'];
 
           ?>
 
@@ -228,9 +234,10 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
               <td><?php echo numfmt_format_currency($fmt, $niyaz_received['Amount'], "INR"); ?></td>
               <td><?php echo numfmt_format_currency($fmt, $zabihat_received['Amount'], "INR"); ?></td>
               <td><?php echo numfmt_format_currency($fmt, $ashara_received['Amount'], "INR"); ?></td>
-              <td><?php echo numfmt_format_currency($fmt, $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'], "INR"); ?></td>
+              <td><?php echo numfmt_format_currency($fmt, $sherullah_received['Amount'], "INR"); ?></td>
+              <td><?php echo numfmt_format_currency($fmt, $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'], "INR"); ?></td>
               <td><?php echo numfmt_format_currency($fmt, $cash_paid['Amount'], "INR"); ?></td>
-              <td><?php echo numfmt_format_currency($fmt, $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] - $cash_paid['Amount'], "INR"); ?></td>
+              <td><?php echo numfmt_format_currency($fmt, $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'] - $cash_paid['Amount'], "INR"); ?></td>
               <td><a href="#" data-key="payhisab" data-month="<?php echo $value; ?>"><img src="images/add.png" style="width:20px;height:20px;"></a>&nbsp;
                 <a data-key="Monthview" data-month="<?php echo $value; ?>" data-toggle="modal" href="#sfbreakup-<?php echo $value; ?>"><img src="images/view.png" style="width:20px;height:20px;"></a>
               </td>
