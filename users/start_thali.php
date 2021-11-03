@@ -25,7 +25,7 @@ $time2 = date_format($time, 'H:i');
 
 $current = date("H:i");
 if ($current > $time1 && $current < $time2) {
-  $cutoffmessage =  'Start thali not allowed post 8 PM. Please message 9503054797';
+  $cutoffmessage =  'Start thali not allowed post 8 PM.';
   header("Location: index.php?status=$cutoffmessage");
   exit;
 }
