@@ -170,7 +170,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
       <table class="table table-striped table-hover table-responsive table-bordered">
         <thead>
           <tr>
-            <td colspan='6'></td>
+            <td colspan='7'></td>
             <td><strong>Previous Year Cash</strong></td>
             <td><strong><?php echo numfmt_format_currency($fmt, $previous_balance['value'], "INR"); ?></strong></td>
             <td colspan='1'></td>
@@ -246,7 +246,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
           mysqli_query($link, "UPDATE settings set value ='" . $yearly_total_savings . "' where `key`= 'cash_in_hand_" . $_POST['year'] . "'") or die(mysqli_error($link));
           ?>
           <tr>
-            <td colspan='6'></td>
+            <td colspan='7'></td>
             <td><strong>Cash In Hand</strong></td>
             <td><strong><?php echo numfmt_format_currency($fmt, $yearly_total_savings, "INR"); ?></strong></td>
             <td colspan='1'></td>
