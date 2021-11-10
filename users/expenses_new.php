@@ -67,11 +67,11 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
       $sherullah_tablename = "sherullah_" . $_POST['year'];
     }
 
-    $hub_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $receipts_tablename where Date <= '29-09-1442'"));
-    $niyaz_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $niyaz_tablename where Date <= '29-09-1442'"));
-    $zabihat_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $zabihat_tablename where Date <= '29-09-1442'"));
-    $ashara_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $ashara_tablename where Date <= '29-09-1442'"));
-    $sherullah_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date <= '29-09-1442'"));
+    $hub_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $receipts_tablename where Date <= '1442-09-29'"));
+    $niyaz_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $niyaz_tablename where Date <= '1442-09-29'"));
+    $zabihat_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $zabihat_tablename where Date <= '1442-09-29'"));
+    $ashara_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $ashara_tablename where Date <= '1442-09-29'"));
+    $sherullah_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date <= '1442-09-29'"));
     $cash_paid_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Date <= '2021-04-11'"));
     $previous_balance['value'] += $hub_received_prev['Amount'] + $niyaz_received_prev['Amount'] + $zabihat_received_prev['Amount'] + $ashara_received_prev['Amount'] + $sherullah_received_prev['Amount'] - $cash_paid_prev['Amount'];
 
@@ -214,19 +214,19 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
 
           foreach ($months as $key => $value) {
             $key == $key + 1;
-            $result = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $receipts_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
+            $result = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $receipts_tablename where Date like '%-$key-%' and Date > '1442-09-29'");
             $hub_received = mysqli_fetch_assoc($result);
 
-            $result6 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $niyaz_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
+            $result6 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $niyaz_tablename where Date like '%-$key-%' and Date > '1442-09-29'");
             $niyaz_received = mysqli_fetch_assoc($result6);
 
-            $result7 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $zabihat_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
+            $result7 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $zabihat_tablename where Date like '%-$key-%' and Date > '1442-09-29'");
             $zabihat_received = mysqli_fetch_assoc($result7);
 
-            $result8 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $ashara_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
+            $result8 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $ashara_tablename where Date like '%-$key-%' and Date > '1442-09-29'");
             $ashara_received = mysqli_fetch_assoc($result8);
 
-            $result9 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
+            $result9 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date like '%-$key-%' and Date > '1442-09-29'");
             $sherullah_received = mysqli_fetch_assoc($result9);
 
             $result1 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Month = '" . $value . "' and Date > '2021-04-11'");
