@@ -72,7 +72,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
     $zabihat_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $zabihat_tablename where Date <= '29-09-1442'"));
     $ashara_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $ashara_tablename where Date <= '29-09-1442'"));
     $sherullah_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date <= '29-09-1442'"));
-    $cash_paid_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Date <= '11-04-2021'"));
+    $cash_paid_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Date <= '2021-04-11'"));
     $previous_balance['value'] += $hub_received_prev['Amount'] + $niyaz_received_prev['Amount'] + $zabihat_received_prev['Amount'] + $ashara_received_prev['Amount'] + $sherullah_received_prev['Amount'] - $cash_paid_prev['Amount'];
 
     foreach ($months as $key => $month) {
@@ -229,7 +229,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
             $result9 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
             $sherullah_received = mysqli_fetch_assoc($result9);
 
-            $result1 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Month = '" . $value . "' and Date > '11-04-2021'");
+            $result1 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Month = '" . $value . "' and Date > '2021-04-11'");
             $cash_paid = mysqli_fetch_assoc($result1);
 
             $yearly_total_savings += $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'] - $cash_paid['Amount'];
