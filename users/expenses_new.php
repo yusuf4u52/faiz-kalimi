@@ -67,6 +67,14 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
       $sherullah_tablename = "sherullah_" . $_POST['year'];
     }
 
+    $hub_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $receipts_tablename where Date <= '29-09-1442'"));
+    $niyaz_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $niyaz_tablename where Date <= '29-09-1442'"));
+    $zabihat_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $zabihat_tablename where Date <= '29-09-1442'"));
+    $ashara_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $ashara_tablename where Date <= '29-09-1442'"));
+    $sherullah_received_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date <= '29-09-1442'"));
+    $cash_paid_prev = mysqli_fetch_assoc(mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Date <= '11-04-2021'"));
+    $previous_balance['value'] += $hub_received_prev['Amount'] + $niyaz_received_prev['Amount'] + $zabihat_received_prev['Amount'] + $ashara_received_prev['Amount'] + $sherullah_received_prev['Amount'] - $cash_paid_prev['Amount'];
+
     foreach ($months as $key => $month) {
       $sf_breakup = mysqli_query($link, "SELECT * FROM $account_tablename where Month = '" . $month . "'") or die(mysqli_error($link));
   ?>
@@ -206,25 +214,25 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
 
           foreach ($months as $key => $value) {
             $key == $key + 1;
-            $result = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $receipts_tablename where Date like '%-$key-%'");
+            $result = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $receipts_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
             $hub_received = mysqli_fetch_assoc($result);
 
-            $result6 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $niyaz_tablename where Date like '%-$key-%'");
+            $result6 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $niyaz_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
             $niyaz_received = mysqli_fetch_assoc($result6);
 
-            $result7 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $zabihat_tablename where Date like '%-$key-%'");
+            $result7 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $zabihat_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
             $zabihat_received = mysqli_fetch_assoc($result7);
 
-            $result8 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $ashara_tablename where Date like '%-$key-%'");
+            $result8 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $ashara_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
             $ashara_received = mysqli_fetch_assoc($result8);
 
-            $result9 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date like '%-$key-%'");
+            $result9 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date like '%-$key-%' and Date > '29-09-1442'");
             $sherullah_received = mysqli_fetch_assoc($result9);
 
-            $result1 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Month = '" . $value . "'");
+            $result1 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Month = '" . $value . "' and Date > '11-04-2021'");
             $cash_paid = mysqli_fetch_assoc($result1);
 
-            $yearly_total_savings += $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'] - $cash_paid['Amount'] - $fixed_cost['Amount'];
+            $yearly_total_savings += $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'] - $cash_paid['Amount'];
 
           ?>
 
