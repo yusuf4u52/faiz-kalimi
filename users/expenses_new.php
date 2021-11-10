@@ -237,7 +237,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
               <td><?php echo numfmt_format_currency($fmt, $sherullah_received['Amount'], "INR"); ?></td>
               <td><?php echo numfmt_format_currency($fmt, $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'], "INR"); ?></td>
               <td><?php echo numfmt_format_currency($fmt, $cash_paid['Amount'], "INR"); ?></td>
-              <td><?php echo numfmt_format_currency($fmt, $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'] - $cash_paid['Amount'], "INR"); ?></td>
+              <td><?php echo numfmt_format_currency($fmt, $yearly_total_savings, "INR"); ?></td>
               <td><a href="#" data-key="payhisab" data-month="<?php echo $value; ?>"><img src="images/add.png" style="width:20px;height:20px;"></a>&nbsp;
                 <a data-key="Monthview" data-month="<?php echo $value; ?>" data-toggle="modal" href="#sfbreakup-<?php echo $value; ?>"><img src="images/view.png" style="width:20px;height:20px;"></a>
               </td>
