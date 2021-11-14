@@ -6,4 +6,14 @@
     $client_id = ''; 
     $client_secret = '';
     $redirect_uri = 'https://faizstudents.com/users/login.php';
+
+    class CashfreeConfig {
+        public static $appId = "";
+        public static $secret = "";
+        public static $apiVersion = "2021-05-21";
+    
+        public static $baseUrl = "";
+        public static $returnHost = "";
+    
+    }
 ?>

@@ -9,6 +9,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
 
 $_SESSION['thaliid'] = $values['id'];
 $_SESSION['thali'] = $values['Thali'];
+$_SESSION['mobile'] = $values['CONTACT'];
 
 // Check if users gmail id is registered with us and has got a thali number against it 
 if (is_null($values['Active']) || $values['Active'] == 2) {
@@ -153,6 +154,9 @@ if (!empty($values['yearly_hub'])) {
 
           <?php } ?>
 
+      </div>
+      <div class="col-xs-6 col-sm-3 col-md-2">
+        <a href="payment.php" class="btn btn-info">Pay Hoob</a>
       </div>
 
       <div class="col-xs-6 col-sm-3 col-md-2">

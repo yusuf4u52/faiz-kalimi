@@ -29,7 +29,10 @@
 			"/fmb/users/events.php",
 			"/fmb/users/update_details.php",
 			"/fmb/users/selectyearlyhub.php",
-			"/fmb/users/selectyearlyhub_action.php"
+			"/fmb/users/selectyearlyhub_action.php",
+			"/fmb/users/checkout.php",
+			"/fmb/users/payment.php",
+			"/fmb/users/return.php"
 		)
 	);
 	// fetch user role
