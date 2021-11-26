@@ -58,8 +58,9 @@ if (!empty($values['yearly_hub'])) {
   $sql = mysqli_query($link, "select miqat_date,miqat_description from sms_date");
   $miqaatslist = mysqli_fetch_all($sql);
 
+  $miqaat_count = sizeof($miqaatslist);
   // calculate installment based on yearly hub and number of miqaats
-  $installment = (int)($values['yearly_hub']) / count($miqaatslist);
+  $installment = (int)($values['yearly_hub']) / $miqaat_count;
 
   // add installment to the miqaat array by individually adding installment
   // to each row and than pushing that row into new array.
@@ -72,7 +73,6 @@ if (!empty($values['yearly_hub'])) {
   // add any previous year pending to first installment
   $miqaatslistwithinstallement[0][2] += $values['Previous_Due'];
 
-  $miqaat_count = sizeof($miqaatslistwithinstallement);
   // adjust installments if hub is paid
   if (!empty($values['Paid'])) {
     $paid = $values['Paid'];
