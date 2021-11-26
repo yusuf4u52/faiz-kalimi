@@ -13,26 +13,26 @@ if ($day == 'Sunday') {
 }
 
 // start sanchawala thali only on friday
-if ($day == 'Friday') {
-	$url = 'http://' . $_SERVER['HTTP_HOST'] . '/fmb/users/start_thali.php';
-	$myvars = 'fromLogin=true&thaliid=94';
-	$ch = curl_init($url);
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $myvars);
-	$response = curl_exec($ch);
-	curl_close($ch);
-	echo $response;
-}
-if ($day == 'Tuesday') {
-	$url = 'http://' . $_SERVER['HTTP_HOST'] . '/fmb/users/stop_thali.php';
-	$myvars = 'fromLogin=true&thaliid=94&&thali=KL-095';
-	$ch = curl_init($url);
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $myvars);
-	$response = curl_exec($ch);
-	curl_close($ch);
-	echo $response;
-}
+// if ($day == 'Friday') {
+// 	$url = 'http://' . $_SERVER['HTTP_HOST'] . '/fmb/users/start_thali.php';
+// 	$myvars = 'fromLogin=true&thaliid=94';
+// 	$ch = curl_init($url);
+// 	curl_setopt($ch, CURLOPT_POST, 1);
+// 	curl_setopt($ch, CURLOPT_POSTFIELDS, $myvars);
+// 	$response = curl_exec($ch);
+// 	curl_close($ch);
+// 	echo $response;
+// }
+// if ($day == 'Saturday') {
+// 	$url = 'http://' . $_SERVER['HTTP_HOST'] . '/fmb/users/stop_thali.php';
+// 	$myvars = 'fromLogin=true&thaliid=94&&thali=KL-095';
+// 	$ch = curl_init($url);
+// 	curl_setopt($ch, CURLOPT_POST, 1);
+// 	curl_setopt($ch, CURLOPT_POSTFIELDS, $myvars);
+// 	$response = curl_exec($ch);
+// 	curl_close($ch);
+// 	echo $response;
+// }
 
 $sql = mysqli_query($link, "SELECT t.id, c.Thali, t.tiffinno, t.thalisize, t.NAME, t.CONTACT, t.Transporter,t.wingflat, t.society, t.Full_Address, c.Operation,c.id
 						from change_table as c
