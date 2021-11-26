@@ -72,10 +72,11 @@ if (!empty($values['yearly_hub'])) {
   // add any previous year pending to first installment
   $miqaatslistwithinstallement[0][2] += $values['Previous_Due'];
 
+  $miqaat_count = sizeof($miqaatslistwithinstallement);
   // adjust installments if hub is paid
   if (!empty($values['Paid'])) {
     $paid = $values['Paid'];
-    for ($i = 0; $i < sizeof($miqaatslistwithinstallement); $i++) {
+    for ($i = 0; $i < $miqaat_count; $i++) {
       if ($miqaatslistwithinstallement[$i][2] - $paid  == 0) {
         $miqaatslistwithinstallement[$i][2] = 0;
         break;
@@ -92,7 +93,7 @@ if (!empty($values['yearly_hub'])) {
   // check if miqaat has passed, if so than move that passed miqaat amount to next
   $todays_date = date("Y-m-d");
   $previousInstall = 0;
-  for ($i = 0; $i < sizeof($miqaatslistwithinstallement); $i++) {
+  for ($i = 0; $i < $miqaat_count; $i++) {
     if ($miqaatslistwithinstallement[$i][0] < $todays_date) {
       $previousInstall += $miqaatslistwithinstallement[$i][2];
       $miqaatslistwithinstallement[$i + 1][2] += $miqaatslistwithinstallement[$i][2];
