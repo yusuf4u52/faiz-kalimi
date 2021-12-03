@@ -11,8 +11,9 @@ while ($row = mysqli_fetch_assoc($result)) {
     $sql = mysqli_query($link, "select miqat_date,miqat_description from sms_date");
     $miqaatslist = mysqli_fetch_all($sql);
 
+    $miqaat_count = sizeof($miqaatslist);
     // calculate installment based on yearly hub and number of miqaats
-    $installment = (int)($row['yearly_hub']) / count($miqaatslist);
+    $installment = (int)($row['yearly_hub']) / $miqaat_count;
 
     // add installment to the miqaat array by individually adding installment
     // to each row and than pushing that row into new array.
@@ -28,7 +29,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     // adjust installments if hub is paid
     if (!empty($row['Paid'])) {
       $paid = $row['Paid'];
-      for ($i = 0; $i < sizeof($miqaatslistwithinstallement); $i++) {
+      for ($i = 0; $i < $miqaat_count; $i++) {
         if ($miqaatslistwithinstallement[$i][2] - $paid  == 0) {
           $miqaatslistwithinstallement[$i][2] = 0;
           break;
@@ -45,7 +46,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     // check if miqaat has passed, if so than move that passed miqaat amount to next
     $todays_date = date("Y-m-d");
     $previousInstall = 0;
-    for ($i = 0; $i < sizeof($miqaatslistwithinstallement); $i++) {
+    for ($i = 0; $i < $miqaat_count; $i++) {
       if ($miqaatslistwithinstallement[$i][0] < $todays_date) {
         $previousInstall += $miqaatslistwithinstallement[$i][2];
         $miqaatslistwithinstallement[$i + 1][2] += $miqaatslistwithinstallement[$i][2];
