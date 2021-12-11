@@ -61,6 +61,7 @@ if (!empty($values['yearly_hub'])) {
   $miqaat_count = sizeof($miqaatslist);
   // calculate installment based on yearly hub and number of miqaats
   $installment = (int)($values['yearly_hub']) / $miqaat_count;
+  $installment = floor($installment);
 
   // add installment to the miqaat array by individually adding installment
   // to each row and than pushing that row into new array.
