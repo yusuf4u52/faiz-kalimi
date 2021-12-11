@@ -6,3 +6,4 @@ sms/_credentials.php
 .htaccess
 vendor
 composer.lock
+*.json

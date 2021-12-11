@@ -27,5 +27,6 @@ print_r($order);
 $response_body = $order["data"];
 
 if ($response_body["order_status"] == "PAID") {
+    echo "Payment Successful";
     // create_receipt_in_sheet($response_body["customer_details"]["customer_id"], $response_body["order_amount"] );
 }
