@@ -1,5 +1,5 @@
 	<?php
-	include('connection.php');
+	require_once('connection.php');
 
 	// check if user didn't hit this page directly and is coming from login page
 	session_start();
