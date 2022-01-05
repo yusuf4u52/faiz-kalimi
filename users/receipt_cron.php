@@ -253,6 +253,49 @@ while (($column = fgetcsv($file)) !== FALSE) {
     }
 }
 
+// update voluntary contribution
+mysqli_query($link, "truncate voluntary") or die(mysqli_error($link));
+$file = fopen("fmbvoluntary.csv", "r");
+while (($column = fgetcsv($file)) !== FALSE) {
+    if ($column[13] != "Cancelled" && $column[17] == "Faizul Mawaidil Burhaniyah") {
+        $receiptno = "";
+        if (isset($column[0])) {
+            $receiptno = mysqli_real_escape_string($link, $column[0]);
+        }
+        $thalino = "";
+        if (isset($column[1])) {
+            $thalino = mysqli_real_escape_string($link, $column[1]);
+        }
+        $amount = "";
+        if (isset($column[4])) {
+            $amount = mysqli_real_escape_string($link, $column[4]);
+            $amount = str_replace('₹', '', $amount);
+            $amount = str_replace(',', '', $amount);
+            $amount = intval($amount);
+        }
+        $date = "";
+        if (isset($column[3])) {
+            $datefromcsv = mysqli_real_escape_string($link, $column[3]);
+            $datestring = getHijriDate($datefromcsv);
+        } else {
+            echo "Date cannot be empty for " . $receiptno;
+        }
+
+        $receivedby = "";
+        if (isset($column[10])) {
+            $receivedby = mysqli_real_escape_string($link, $column[10]);
+        }
+
+        $sql = "select NAME,id from thalilist WHERE thali = '$thalino'";
+        $result = mysqli_query($link, $sql) or die(mysqli_error($link));
+        $name = mysqli_fetch_assoc($result);
+
+        $sqlInsert = "insert into voluntary (`Receipt_No`,`Thali_No`,`userid`, `name`, `Date`,`Amount`,`received_by`)
+                   values ('$receiptno', '$thalino', '" . $name['id'] . "', '" . $name['NAME'] . "', '$datestring', '$amount', '$receivedby')";
+        mysqli_query($link, $sqlInsert) or die(mysqli_error($link));
+    }
+}
+
 //update expenses
 mysqli_query($link, "truncate account") or die(mysqli_error($link));
 $counter = 1;

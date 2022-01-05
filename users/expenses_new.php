@@ -57,6 +57,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
       $zabihat_tablename = "zabihat";
       $ashara_tablename = "ashara";
       $sherullah_tablename = "sherullah";
+      $voluntary_tablename = "voluntary";
     } else {
       $thalilist_tablename = "thalilist_" . $_POST['year'];
       $account_tablename = "account_" . $_POST['year'];
@@ -65,6 +66,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
       $zabihat_tablename = "zabihat_" . $_POST['year'];
       $ashara_tablename = "ashara_" . $_POST['year'];
       $sherullah_tablename = "sherullah_" . $_POST['year'];
+      $voluntary_tablename = "voluntary_" . $_POST['year'];
     }
 
     foreach ($months as $key => $month) {
@@ -170,7 +172,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
       <table class="table table-striped table-hover table-responsive table-bordered">
         <thead>
           <tr>
-            <td colspan='7'></td>
+            <td colspan='8'></td>
             <td><strong>Previous Year Cash</strong></td>
             <td><strong><?php echo numfmt_format_currency($fmt, $previous_balance['value'], "INR"); ?></strong></td>
             <td colspan='1'></td>
@@ -182,6 +184,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
             <th>Zabihat</th>
             <th>Ashara</th>
             <th>Sherullah</th>
+            <th>Voluntary</th>
             <th>Total Income</th>
             <th>Total Expense</th>
             <th>Total Savings</th>
@@ -221,10 +224,13 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
             $result9 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $sherullah_tablename where Date like '%-$key-%' and Date > '1442-08-29'");
             $sherullah_received = mysqli_fetch_assoc($result9);
 
+            $result10 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $voluntary_tablename where Date like '%-$key-%' and Date > '1442-08-29'");
+            $voluntary_received = mysqli_fetch_assoc($result10);
+
             $result1 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Month = '" . $value . "' and Date > '2021-04-11'");
             $cash_paid = mysqli_fetch_assoc($result1);
 
-            $yearly_total_savings += $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'] - $cash_paid['Amount'];
+            $yearly_total_savings += $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'] + $voluntary_received['Amount'] - $cash_paid['Amount'];
 
           ?>
 
@@ -235,7 +241,8 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
               <td><?php echo numfmt_format_currency($fmt, $zabihat_received['Amount'], "INR"); ?></td>
               <td><?php echo numfmt_format_currency($fmt, $ashara_received['Amount'], "INR"); ?></td>
               <td><?php echo numfmt_format_currency($fmt, $sherullah_received['Amount'], "INR"); ?></td>
-              <td><?php echo numfmt_format_currency($fmt, $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'], "INR"); ?></td>
+              <td><?php echo numfmt_format_currency($fmt, $voluntary_received['Amount'], "INR"); ?></td>
+              <td><?php echo numfmt_format_currency($fmt, $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'] + $voluntary_received['Amount'], "INR"); ?></td>
               <td><?php echo numfmt_format_currency($fmt, $cash_paid['Amount'], "INR"); ?></td>
               <td><?php echo numfmt_format_currency($fmt, $yearly_total_savings, "INR"); ?></td>
               <td><a href="#" data-key="payhisab" data-month="<?php echo $value; ?>"><img src="images/add.png" style="width:20px;height:20px;"></a>&nbsp;
@@ -246,7 +253,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
           mysqli_query($link, "UPDATE settings set value ='" . $yearly_total_savings . "' where `key`= 'cash_in_hand_" . $_POST['year'] . "'") or die(mysqli_error($link));
           ?>
           <tr>
-            <td colspan='7'></td>
+            <td colspan='8'></td>
             <td><strong>Cash In Hand</strong></td>
             <td><strong><?php echo numfmt_format_currency($fmt, $yearly_total_savings, "INR"); ?></strong></td>
             <td colspan='1'></td>
