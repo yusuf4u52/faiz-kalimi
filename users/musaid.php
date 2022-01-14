@@ -112,9 +112,9 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'superadmin') {
 															<?php } ?> -->
 														</td>
 														<td><?php echo $values['Active'] ? '<span class="label label-success">Active</span>' : '<span class="label label-danger">Inactive</span>'; ?></td>
-														<td><?php echo $values['Name']; ?></td>
+														<td><?php echo $values['NAME']; ?></td>
 														<td><?php echo $values['yearly_hub']; ?></td>
-														<td><?php echo $values['total_pending']; ?></td>
+														<td><?php echo $values['Total_Pending']; ?></td>
 														<td><?php echo "<pre>" . implode(",\n", $all_dates) . "</pre>"; ?><input type="text" name="date" class="datepicker" autocomplete="off"><input type="number" name="rs"></td>
 														<td>
 															<?php

@@ -2,7 +2,7 @@
 $previous_values = mysqli_fetch_assoc(
     mysqli_query(
         $link,
-        "SELECT id, Thali, Name, contact, yearly_hub, total_pending, Previous_Due, Paid, thalicount, WhatsApp FROM $previous_thalilist where Thali='" . $values['Thali'] . "'"
+        "SELECT id, Thali, NAME, CONTACT, yearly_hub, Total_Pending, Previous_Due, Paid, thalicount, WhatsApp FROM $previous_thalilist where Thali='" . $values['Thali'] . "'"
     )
 );
 ?>
@@ -12,7 +12,7 @@ $previous_values = mysqli_fetch_assoc(
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Details - Thali# <?php echo $values['Thali']; ?> <?php echo $values['Name']; ?></h4>
+                <h4 class="modal-title">Details - Thali# <?php echo $values['Thali']; ?> <?php echo $values['NAME']; ?></h4>
             </div>
             <div class="modal-body">
                 <h2>Thali Details</h2>
@@ -23,7 +23,7 @@ $previous_values = mysqli_fetch_assoc(
                     </li>
                     <li class="list-group-item">
                         <h6 class="list-group-item-head ing text-muted">Contact</h6>
-                        <p class="list-group-item-text"><strong><?php echo $values['contact']; ?></strong></p>
+                        <p class="list-group-item-text"><strong><?php echo $values['CONTACT']; ?></strong></p>
                     </li>
                 </ul>
 
@@ -31,7 +31,7 @@ $previous_values = mysqli_fetch_assoc(
                 <ul class="list-group col">
                     <li class="list-group-item">
                         <h6 class="list-group-item-head ing text-muted">Hub Pending <strong>(Yearly Takhmeen + Previous Due - Paid = Total Pending)</strong></h6>
-                        <p class="list-group-item-text"><strong><?php echo $previous_values['yearly_hub']; ?> + <?php echo $previous_values['Previous_Due']; ?> - <?php echo $previous_values['Paid']; ?> = <?php echo $previous_values['total_pending']; ?></strong></p>
+                        <p class="list-group-item-text"><strong><?php echo $previous_values['yearly_hub']; ?> + <?php echo $previous_values['Previous_Due']; ?> - <?php echo $previous_values['Paid']; ?> = <?php echo $previous_values['Total_Pending']; ?></strong></p>
                     </li>
                     <li class="list-group-item">
                         <h6 class="list-group-item-head ing text-muted">Thali Delivered</h6>
@@ -66,7 +66,7 @@ $previous_values = mysqli_fetch_assoc(
                 <ul class="list-group col">
                     <li class="list-group-item">
                         <h6 class="list-group-item-head ing text-muted">Hub Pending <strong>(Yearly Takhmeen + Previous Due - Paid = Total Pending)</strong></h6>
-                        <p class="list-group-item-text"><strong><?php echo $values['yearly_hub']; ?> + <?php echo $values['Previous_Due']; ?> - <?php echo $values['Paid']; ?> = <?php echo $values['total_pending']; ?></strong></p>
+                        <p class="list-group-item-text"><strong><?php echo $values['yearly_hub']; ?> + <?php echo $values['Previous_Due']; ?> - <?php echo $values['Paid']; ?> = <?php echo $values['Total_Pending']; ?></strong></p>
                     </li>
                     <li class="list-group-item">
                         <h6 class="list-group-item-head ing text-muted">Thali Delivered</h6>
