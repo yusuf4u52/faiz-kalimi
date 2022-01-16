@@ -12,8 +12,7 @@ if ($_POST) {
 
   if ($_POST['musaid']) {
     $clean_musaid = htmlentities(strip_tags($_POST['musaid']), ENT_QUOTES, 'UTF-8');
-    $change_musaid_query = "UPDATE `thalilist` SET `musaid` = '$clean_musaid' WHERE Thali = " . $_GET['thalino'];
-
+    $change_musaid_query = "UPDATE `thalilist` SET `musaid` = '$clean_musaid' WHERE Thali = '" . $_GET['thalino'] . "'";
     mysqli_query($link, $change_musaid_query);
   }
   header("Location: thalisearch.php?thalino=" . $_GET['thalino'] . "&general=" . $_GET['general'] . "&year=" . $_GET['year']);
