@@ -27,6 +27,7 @@ $previous_values = mysqli_fetch_assoc(
                     </li>
                 </ul>
 
+                <?php if(!is_null($previous_values)) { ?>                
                 <h2>Year <?php echo $previous_year; ?></h2>
                 <ul class="list-group col">
                     <li class="list-group-item">
@@ -61,6 +62,7 @@ $previous_values = mysqli_fetch_assoc(
                         </table>
                     </li>
                 </ul>
+                <?php } ?>
 
                 <h2>Year <?php echo $current_year['value']; ?></h2>
                 <ul class="list-group col">
