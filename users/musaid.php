@@ -56,7 +56,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'superadmin') {
 			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 				<?php
 				foreach ($musaid_list as $musaid) {
-					$result = mysqli_query($link, "SELECT * FROM thalilist where Total_Pending != 0 and musaid='" . $musaid['email'] . "'");
+					$result = mysqli_query($link, "SELECT * FROM thalilist where `Paid %` < 70 and musaid='" . $musaid['email'] . "' order by `Paid %`");
 					$thali_details = mysqli_fetch_all($result, MYSQLI_ASSOC);
 					$musaid_thali_count = count($thali_details);
 					if ($musaid_thali_count > 0) {
@@ -80,6 +80,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'superadmin') {
 												<th scope="col">Name</th>
 												<th scope="col">Total Hub</th>
 												<th scope="col">Pending</th>
+												<th scope="col">Paid %</th>
 												<th scope="col">Commited Date/RS</th>
 												<th scope="col">Comments</th>
 												<th scope="col">Action</th>
@@ -115,6 +116,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'superadmin') {
 														<td><?php echo $values['NAME']; ?></td>
 														<td><?php echo $values['yearly_hub']; ?></td>
 														<td><?php echo $values['Total_Pending']; ?></td>
+														<td><?php echo $values['Paid %']; ?></td>
 														<td><?php echo "<pre>" . implode(",\n", $all_dates) . "</pre>"; ?><input type="text" name="date" class="datepicker" autocomplete="off"><input type="number" name="rs"></td>
 														<td>
 															<?php
