@@ -62,7 +62,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 				<?php
 				foreach ($musaid_list as $musaid) {
-					$result = mysqli_query($link, "SELECT * FROM thalilist where `Paid %` < 70 and musaid='" . $musaid['email'] . "' order by `Paid %`");
+					$result = mysqli_query($link, "SELECT * FROM thalilist where `Paid %` < 70 and Active in (0,1) and musaid='" . $musaid['email'] . "' order by `Paid %`");
 					$thali_details = mysqli_fetch_all($result, MYSQLI_ASSOC);
 					$musaid_thali_count = count($thali_details);
 					if ($musaid_thali_count > 0) {
