@@ -81,6 +81,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 										<thead>
 											<tr>
 												<th scope="col">Thali#</th>
+												<th scope="col">Tiffin#</th>
 												<th scope="col">Action</th>
 												<th scope="col">Active</th>
 												<th scope="col">Name</th>
@@ -110,6 +111,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 																<img src="images/view.png" style="width:20px;height:20px;">
 															</a>
 														</td>
+														<td><?php echo $values['tiffinno']; ?></td>
 														<td>
 															<a target="_blank" href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=Salaam Bhai">WhatsApp</a>
 															<!-- <?php if ($values['Active'] == '1') { ?>
