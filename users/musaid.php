@@ -22,9 +22,15 @@ $previous_thalilist = "thalilist_" . $previous_year;
 $previous_receipts = "receipts_" . $previous_year;
 
 $max_days = mysqli_fetch_row(mysqli_query($link, "SELECT MAX(thalicount) as max FROM `thalilist`"));
-$max_days_previous = mysqli_fetch_row(mysqli_query($link, "SELECT MAX(thalicount) as max FROM `$previous_thalilist`"));
+$val = mysqli_query($link, "SELECT MAX(thalicount) as max FROM `$previous_thalilist`");
+if ($val !== FALSE) {
+	$max_days_previous = mysqli_fetch_row($val);
+} else {
+	$max_days_previous = 1;
+}
 
-if (isset($_SESSION['role']) && $_SESSION['role'] === 'superadmin') {
+
+if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'admin')) {
 	$musaid_list = mysqli_fetch_all(mysqli_query($link, "SELECT `id`,`email`,`username` FROM `users` WHERE `role` in ('musaid','admin','superadmin')"), MYSQLI_ASSOC);
 } else {
 	$musaid_list = array(

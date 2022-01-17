@@ -1,10 +1,10 @@
 <?php
-$previous_values = mysqli_fetch_assoc(
-    mysqli_query(
-        $link,
-        "SELECT id, Thali, NAME, CONTACT, yearly_hub, Total_Pending, Previous_Due, Paid, thalicount, WhatsApp FROM $previous_thalilist where Thali='" . $values['Thali'] . "'"
-    )
-);
+$val = mysqli_query($link, "SELECT id, Thali, NAME, CONTACT, yearly_hub, Total_Pending, Previous_Due, Paid, thalicount, WhatsApp FROM $previous_thalilist where Thali='" . $values['Thali'] . "'");
+if ($val !== FALSE) {
+    $previous_values = mysqli_fetch_assoc($val);
+} else {
+    $previous_values = null;
+}
 ?>
 
 <div class="modal" id="details-<?php echo $values['Thali']; ?>">
@@ -27,41 +27,41 @@ $previous_values = mysqli_fetch_assoc(
                     </li>
                 </ul>
 
-                <?php if(!is_null($previous_values)) { ?>                
-                <h2>Year <?php echo $previous_year; ?></h2>
-                <ul class="list-group col">
-                    <li class="list-group-item">
-                        <h6 class="list-group-item-head ing text-muted">Hub Pending <strong>(Yearly Takhmeen + Previous Due - Paid = Total Pending)</strong></h6>
-                        <p class="list-group-item-text"><strong><?php echo $previous_values['yearly_hub']; ?> + <?php echo $previous_values['Previous_Due']; ?> - <?php echo $previous_values['Paid']; ?> = <?php echo $previous_values['Total_Pending']; ?></strong></p>
-                    </li>
-                    <li class="list-group-item">
-                        <h6 class="list-group-item-head ing text-muted">Thali Delivered</h6>
-                        <p class="list-group-item-text"><strong><?php echo round($previous_values['thalicount'] * 100 / $max_days_previous[0]); ?>% of days</strong></p>
-                    </li>
-                    <li class="list-group-item">
-                        <table class="table table-striped table-hover">
-                            <tr>
-                                <td><b>Receipt No</b></td>
-                                <td><b>Amount</b></td>
-                                <td><b>Date</b></td>
-                            </tr>
-                            <?php
-                            $query = "SELECT r.* FROM $previous_receipts r, $previous_thalilist t WHERE r.userid = t.id and t.id ='" . $previous_values['id'] . "' ORDER BY Date ASC";
-                            $result = mysqli_query($link, $query);
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                foreach ($row as $key => $value) {
-                                    $row[$key] = stripslashes($value);
+                <?php if (!is_null($previous_values)) { ?>
+                    <h2>Year <?php echo $previous_year; ?></h2>
+                    <ul class="list-group col">
+                        <li class="list-group-item">
+                            <h6 class="list-group-item-head ing text-muted">Hub Pending <strong>(Yearly Takhmeen + Previous Due - Paid = Total Pending)</strong></h6>
+                            <p class="list-group-item-text"><strong><?php echo $previous_values['yearly_hub']; ?> + <?php echo $previous_values['Previous_Due']; ?> - <?php echo $previous_values['Paid']; ?> = <?php echo $previous_values['Total_Pending']; ?></strong></p>
+                        </li>
+                        <li class="list-group-item">
+                            <h6 class="list-group-item-head ing text-muted">Thali Delivered</h6>
+                            <p class="list-group-item-text"><strong><?php echo round($previous_values['thalicount'] * 100 / $max_days_previous[0]); ?>% of days</strong></p>
+                        </li>
+                        <li class="list-group-item">
+                            <table class="table table-striped table-hover">
+                                <tr>
+                                    <td><b>Receipt No</b></td>
+                                    <td><b>Amount</b></td>
+                                    <td><b>Date</b></td>
+                                </tr>
+                                <?php
+                                $query = "SELECT r.* FROM $previous_receipts r, $previous_thalilist t WHERE r.userid = t.id and t.id ='" . $previous_values['id'] . "' ORDER BY Date ASC";
+                                $result = mysqli_query($link, $query);
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    foreach ($row as $key => $value) {
+                                        $row[$key] = stripslashes($value);
+                                    }
+                                    echo "<tr>";
+                                    echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
+                                    echo "<td>" . nl2br($row['Amount']) . "</td>";
+                                    echo "<td class=\"hijridate\">" . nl2br($row['Date']) . "</td>";
+                                    echo "</tr>";
                                 }
-                                echo "<tr>";
-                                echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-                                echo "<td>" . nl2br($row['Amount']) . "</td>";
-                                echo "<td class=\"hijridate\">" . nl2br($row['Date']) . "</td>";
-                                echo "</tr>";
-                            }
-                            ?>
-                        </table>
-                    </li>
-                </ul>
+                                ?>
+                            </table>
+                        </li>
+                    </ul>
                 <?php } ?>
 
                 <h2>Year <?php echo $current_year['value']; ?></h2>
