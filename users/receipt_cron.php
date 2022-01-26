@@ -401,9 +401,9 @@ while (($column = fgetcsv($file)) !== FALSE) {
 // if active thalis are less than 10 then something is wrong
 // I had to put in this check because suddenly all thalis were getting deactivated
 // may be due to issues in getting data from sheet (dont know for sure)
-if (count($allThali) > 10) {
-    $allthalistring = "'" . implode("','", $allThali) . "'";
-    // deactivate sabil
-    mysqli_query($link, "update thalilist set Active=2 where Thali not in ($allthalistring)") or die(mysqli_error($link));
-}
+// if (count($allThali) > 10) {
+//     $allthalistring = "'" . implode("','", $allThali) . "'";
+//     // deactivate sabil
+//     mysqli_query($link, "update thalilist set Active=2 where Thali not in ($allthalistring)") or die(mysqli_error($link));
+// }
 echo "Success\n";
