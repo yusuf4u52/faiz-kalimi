@@ -113,7 +113,13 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 														</td>
 														<td><?php echo $values['tiffinno']; ?></td>
 														<td>
-															<a target="_blank" href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=Salaam Bhai">WhatsApp</a>
+															<?php
+															$msg = "Salaam " . $values['NAME'] . ",
+															%0AApna ghare Faizul Mawaidil Burhaniya ni barakat pohnchi rahi che. Apsi iltemas che k aap ni pending hoob ne jald c jald ada kariye ane hamne FMB khidmat team ne yari daiye.
+															%0A%0ASabil - " . $values['Thali'] . "
+															%0APending Hoob - " . $values['Total_Pending']
+															?>
+															<a target="_blank" href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo ($msg); ?>">WhatsApp</a>
 															<!-- <?php if ($values['Active'] == '1') { ?>
 																<a href="#" data-key="startstopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a>
 															<?php } else { ?>
