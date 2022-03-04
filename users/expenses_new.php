@@ -227,7 +227,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
             $result10 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $voluntary_tablename where Date like '%-$key-%' and Date > '1442-08-29'");
             $voluntary_received = mysqli_fetch_assoc($result10);
 
-            $result1 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Month = '" . $value . "' and Date > '2021-04-11'");
+            $result1 = mysqli_query($link, "SELECT SUM(Amount) as Amount FROM $account_tablename where Month = '$value' and Date > '2021-04-11'");
             $cash_paid = mysqli_fetch_assoc($result1);
 
             $yearly_total_savings += $hub_received['Amount'] + $niyaz_received['Amount'] + $zabihat_received['Amount'] + $ashara_received['Amount'] + $sherullah_received['Amount'] + $voluntary_received['Amount'] - $cash_paid['Amount'];
