@@ -70,7 +70,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
     }
 
     foreach ($months as $key => $month) {
-      $sf_breakup = mysqli_query($link, "SELECT * FROM $account_tablename where Month = '" . $month . "'") or die(mysqli_error($link));
+      $sf_breakup = mysqli_query($link, "SELECT * FROM $account_tablename where Month = '" . $month . "' and Date > '2021-04-11'") or die(mysqli_error($link));
   ?>
       <div class="modal" id="sfbreakup-<?php echo $month; ?>">
         <div class="modal-dialog">
