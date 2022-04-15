@@ -1,6 +1,27 @@
 CREATE TABLE receipts_%month% LIKE `receipts`;
 INSERT INTO receipts_%month% SELECT * FROM `receipts`;
 TRUNCATE TABLE receipts;
+
+CREATE TABLE ashara_%month% LIKE `ashara`;
+INSERT INTO ashara_%month% SELECT * FROM `ashara`;
+TRUNCATE TABLE ashara;
+
+CREATE TABLE niyaz_%month% LIKE `niyaz`;
+INSERT INTO niyaz_%month% SELECT * FROM `niyaz`;
+TRUNCATE TABLE niyaz;
+
+CREATE TABLE sherullah_%month% LIKE `sherullah`;
+INSERT INTO sherullah_%month% SELECT * FROM `sherullah`;
+TRUNCATE TABLE sherullah;
+
+CREATE TABLE voluntary_%month% LIKE `voluntary`;
+INSERT INTO voluntary_%month% SELECT * FROM `voluntary`;
+TRUNCATE TABLE voluntary;
+
+CREATE TABLE zabihat_%month% LIKE `zabihat`;
+INSERT INTO zabihat_%month% SELECT * FROM `zabihat`;
+TRUNCATE TABLE zabihat;
+
 CREATE TABLE sf_hisab_%month% LIKE `sf_hisab`;
 INSERT INTO sf_hisab_%month% SELECT * FROM `sf_hisab`;
 TRUNCATE TABLE `sf_hisab`;
