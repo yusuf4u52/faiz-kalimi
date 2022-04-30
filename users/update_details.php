@@ -151,7 +151,7 @@ if ($_POST) {
                   </div> -->
 
                   <div class="form-group">
-                    <label for="niyazdate" class="col-lg-2 control-label">niyaz date</label>
+                    <label for="niyazdate" class="col-lg-2 control-label">Niyaz Date</label>
                     <div class="col-lg-10">
                       <input type="text" class="form-control" id="niyazdate" name="niyazdate" value='<?php echo $niyazdate; ?>' <?php echo !empty($niyazdate) ? "disabled" : ""; ?>>
                     </div>

@@ -31,13 +31,13 @@ if (is_null($values['Active']) || $values['Active'] == 2) {
 // }
 
 // Redirect users to update details page if any details are missing
-if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['niyazdate']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['wingflat']) || empty($values['society']) || empty($values['Full_Address']))) {
+if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['wingflat']) || empty($values['society']) || empty($values['Full_Address']))) {
   header("Location: update_details.php?update_pending_info");
   exit;
 }
 
 // Redirect users to update details page if any details are missing only for thali takers
-if (!empty($values['yearly_hub']) && is_null($values['aata'])) {
+if ($values['yearly_hub'] == 72000 && empty($values['niyazdate'])) {
   header("Location: update_details.php?update_pending_info");
   exit;
 }
