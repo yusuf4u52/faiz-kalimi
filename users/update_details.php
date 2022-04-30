@@ -265,7 +265,7 @@ if ($_POST) {
         },
         autoUpdateInput: false,
         minDate: moment(),
-        maxDate: "2022-04-01",
+        maxDate: "2023-03-21",
         isInvalidDate: function(date) {
           if (date.day() === 0 || dates.reserved.includes(date.format("YYYY-MM-DD")) || dates.nonthali.includes(date.format("YYYY-MM-DD"))) {
             return true;
