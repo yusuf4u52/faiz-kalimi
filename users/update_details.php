@@ -132,7 +132,7 @@ if ($_POST) {
 
                 </div>
 
-                <?php if ($yearly_hub == 72000) { ?>
+                <?php if ($yearly_hub >= 72000) { ?>
                   <!-- <div class="form-group">
                     <label class="col-lg-2 control-label">Aata Required</label>
                     <div class="col-lg-10">
