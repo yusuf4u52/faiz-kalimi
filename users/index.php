@@ -37,10 +37,10 @@ if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONT
 }
 
 // Redirect users to update details page if any details are missing only for thali takers
-if ($values['yearly_hub'] >= 72000 && empty($values['niyazdate'])) {
-  header("Location: update_details.php?update_pending_info");
-  exit;
-}
+// if ($values['yearly_hub'] >= 72000 && empty($values['niyazdate'])) {
+//   header("Location: update_details.php?update_pending_info");
+//   exit;
+// }
 
 // Check if there is any enabled event that needs users response
 $enabled_events_query = mysqli_query($link, "SELECT * FROM events where showonpage='1'");
