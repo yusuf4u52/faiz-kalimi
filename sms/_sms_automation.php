@@ -104,3 +104,7 @@ try {
     echo "Error: " . $e->getMessage();
 }
 echo "########## sms completed ##############";
+// exit and dont send email of changes if tomorrow is miqaat.
+if ($day_diff == 1) {
+    exit;
+}
