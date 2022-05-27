@@ -296,7 +296,7 @@ if (!empty($values['yearly_hub'])) {
                       <td><?php echo $miqaat['1']; ?></td>
                       <td><?php echo $miqaat['2']; ?></td>
                       <?php if ($miqaat['2'] != 0 || $miqaat['2'] != "Miqaat Done") { ?>
-                        <td><a href="upi://pay?pa=201003297750@INDB0000173.ifsc.npci&pn=DAWOODI BOHRA JAMAT TRUST-KALIMI MOHALLA POONA-FMB&cu=INR&am=<?php echo $miqaat['2']; ?>">Pay</a></td>
+                        <td><a href="upi://pay?pa=50200068209839@HDFC0000029.ifsc.npci&pn=D B J TRUST K M POONA - FMB&cu=INR&am=<?php echo $miqaat['2']; ?>">Pay</a></td>
                       <?php } else { ?>
                         <td></td>
                       <?php } ?>
