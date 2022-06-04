@@ -406,9 +406,10 @@ if (count($allThali) > 10) {
     // deactivate sabil
     $row = mysqli_fetch_assoc(mysqli_query($link, "select * from thalilist WHERE Thali not in ($allthalistring) and Thali not like 'temp%'"));
     foreach ($row as $value) {
-        mysqli_query($link, "update thalilist set Active=2 where Thali='" . $value['Thali'] . "'") or die(mysqli_error($link));
         if ($value['Active'] == 1) {
             stoppermenant($value['Thali'], false);
+        } else {
+            mysqli_query($link, "update thalilist set Active=2 where Thali='" . $value['Thali'] . "'") or die(mysqli_error($link));
         }
     }
 }

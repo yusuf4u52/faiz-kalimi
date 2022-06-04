@@ -16,7 +16,7 @@ function stoppermenant($thali, $clearhub)
 	$name = mysqli_fetch_assoc($result);
 
 	mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`) VALUES ('" . $thali . "','" . $name['id'] . "', 'Stop Permanent','" . $today . "')") or die(mysqli_error($link));
-	mysqli_query($link, "UPDATE thalilist set Active='2', `old_thali` = `Thali`, `Thali` = NULL WHERE id = '" . $name['id'] . "'") or die(mysqli_error($link));
+	mysqli_query($link, "UPDATE thalilist set Active='2' WHERE id = '" . $name['id'] . "'") or die(mysqli_error($link));
 	if ($clearhub == "true") {
 		mysqli_query($link, "UPDATE thalilist set yearly_hub=yearly_hub - '" . $name['Total_Pending'] . "' WHERE id = '" . $name['id'] . "'") or die(mysqli_error($link));
 	}
