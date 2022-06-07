@@ -34,7 +34,7 @@
         session_start(); //session start
 
         include('connection.php');
-        require_once('libraries/Google/autoload.php');
+        require_once('../vendor/autoload.php');
 
         /************************************************
           Make an API request on behalf of a user. In
