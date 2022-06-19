@@ -4,6 +4,7 @@ include('_authCheck.php');
 include('../sms/_credentials.php');
 include('../sms/_helper.php');
 include('getHijriDate.php');
+include_once 'googlesheet_util.php';
 
 $today = getTodayDateHijri();
 
@@ -50,6 +51,8 @@ if ($_POST) {
   }
   $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid` ,`name`, `Amount`, `payment_type`, `trasaction_id`, `Date`, `received_by`) VALUES ('" . $receipt_number . "','" . $_POST['receipt_thali'] . "','" . $name['id'] . "','" . $name['NAME'] . "','" . $_POST['receipt_amount'] . "', '" . $_POST['payment_type'] . "','" . $_POST['transaction_id'] . "', '" . $today . "','" . $_SESSION['email'] . "')";
   mysqli_query($link, $sql) or die(mysqli_error($link));
+
+  // create_receipt_in_sheet($receipt_number, $_POST['receipt_thali'], $_POST['receipt_amount'], $_POST['payment_type'], $_POST['transaction_id']);
 
   $sql = "UPDATE thalilist set Paid = Paid + '" . $_POST['receipt_amount'] . "' WHERE thali = '" . $_POST['receipt_thali'] . "'";
   mysqli_query($link, $sql) or die(mysqli_error($link));
