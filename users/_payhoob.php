@@ -49,7 +49,7 @@ if ($_POST) {
     echo "Unable to find details of the thali #" . $_POST['receipt_thali'];
     exit;
   }
-  $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid` ,`name`, `Amount`, `payment_type`, `trasaction_id`, `Date`, `received_by`) VALUES ('" . $receipt_number . "','" . $_POST['receipt_thali'] . "','" . $name['id'] . "','" . $name['NAME'] . "','" . $_POST['receipt_amount'] . "', '" . $_POST['payment_type'] . "','" . $_POST['transaction_id'] . "', '" . $today . "','" . $_SESSION['email'] . "')";
+  $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid` ,`name`, `Amount`, `payment_type`, `transaction_id`, `Date`, `received_by`) VALUES ('" . $receipt_number . "','" . $_POST['receipt_thali'] . "','" . $name['id'] . "','" . $name['NAME'] . "','" . $_POST['receipt_amount'] . "', '" . $_POST['payment_type'] . "','" . $_POST['transaction_id'] . "', '" . $today . "','" . $_SESSION['email'] . "')";
   mysqli_query($link, $sql) or die(mysqli_error($link));
 
   // create_receipt_in_sheet($receipt_number, $_POST['receipt_thali'], $_POST['receipt_amount'], $_POST['payment_type'], $_POST['transaction_id']);
