@@ -1,6 +1,6 @@
 <?php
 include('connection.php');
-include('_authCheck.php.php');
+include('_authCheck.php');
 include('../sms/_credentials.php');
 include('../sms/_helper.php');
 include('getHijriDate.php');
@@ -8,6 +8,12 @@ include('getHijriDate.php');
 $today = getTodayDateHijri();
 
 if ($_POST) {
+
+  // validate if amount is present
+  if (empty($_POST['receipt_amount'])) {
+    echo "Provide Receipt Amount";
+    exit();
+  }
 
   //validate payment type is provided
   if (empty($_POST['payment_type'])) {
@@ -24,7 +30,9 @@ if ($_POST) {
   // getting receipt number
   $sql = mysqli_query($link, "SELECT MAX(`Receipt_No`) from receipts");
   $row = mysqli_fetch_row($sql);
-  $receipt_number = $row[0] + 1;
+  $last_receipt_number = explode("-", $row[0]);
+  $number = str_pad($last_receipt_number[1] + 1, 5, "0", STR_PAD_LEFT);
+  $receipt_number =  "FMB-" . $number;
 
   // validation
   if ($receipt_number == 1) {
@@ -62,7 +70,6 @@ if ($_POST) {
   $user_amount = $_POST['receipt_amount'];
   $user_thali = $_POST['receipt_thali'];
   $user_receipt = $receipt_number;
-  $user_date = $_POST['receipt_date'];
   $sql = mysqli_query($link, "SELECT NAME, Email_ID, CONTACT from thalilist where Thali='" . $user_thali . "'");
   $row = mysqli_fetch_row($sql);
   $user_name = helper_getFirstNameWithSuffix($row[0]);

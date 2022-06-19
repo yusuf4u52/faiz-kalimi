@@ -111,9 +111,10 @@ if ($_GET) {
                 <div id="receiptForm">
                   <input type="number" name="receipt_amount" placeholder="Receipt Amount" />
                   <select name="payment_type" id="payment_type">
+                    <option></option>
                     <option value="Cash">Cash</option>
                     <option value="Online">Online</option>
-                    <option value="Online">Cheque</option>
+                    <option value="Cheque">Cheque</option>
                   </select>
                   <input type="text" style="display:none" name="transaction_id" id="transaction_id" placeholder="Transaction ID" />
                   <input type="hidden" name="receipt_thali" />
@@ -193,7 +194,7 @@ if ($_GET) {
               // } else if(data == 'DuplicateReceiptNo') {
               //   alert('Receipt number already exists in database');
             } else {
-              alert('Update failed. Please do not add receipt again unless you check system values properly');
+              alert(data);
             }
           },
           error: function() {

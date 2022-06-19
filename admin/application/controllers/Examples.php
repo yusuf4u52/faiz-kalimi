@@ -125,9 +125,7 @@ class Examples extends CI_Controller
 		$crud->set_table('receipts');
 		$crud->unset_edit();
 		$crud->unset_delete();
-
-		$crud->columns('Receipt_No', 'Thali_No', 'name', 'Amount', 'Date', 'received_by');
-
+		$crud->unset_clone();
 		$output = $crud->render();
 
 		$this->_example_output($output);
