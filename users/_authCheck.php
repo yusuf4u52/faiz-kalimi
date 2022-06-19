@@ -23,6 +23,10 @@
 			"/fmb/users/_stop_thali_admin.php",
 			"/fmb/sms/index.php"
 		),
+		"staff" => array(
+			"/fmb/users/thalisearch.php",
+			"/fmb/users/_payhoob.php"
+		),
 		"all" => array(
 			"/fmb/users/index.php",
 			"/fmb/users/hoobHistory.php",
