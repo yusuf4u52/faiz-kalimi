@@ -45,6 +45,11 @@ while (($column = fgetcsv($file)) !== FALSE) {
                 $amount = str_replace(',', '', $amount);
                 $amount = intval($amount);
             }
+            $payment_type = "";
+            if (isset($column[5])) {
+                $payment_type = mysqli_real_escape_string($link, $column[5]);
+            }
+
             $date = "";
             if (isset($column[3])) {
                 $datefromcsv = mysqli_real_escape_string($link, $column[3]);
@@ -62,8 +67,8 @@ while (($column = fgetcsv($file)) !== FALSE) {
             $result = mysqli_query($link, $sql) or die(mysqli_error($link));
             $name = mysqli_fetch_assoc($result);
 
-            $sqlInsert = "insert into receipts (`Receipt_No`,`Thali_No`,`userid`, `name`, `Date`,`Amount`,`received_by`)
-                   values ('$receiptno', '$thalino', '" . $name['id'] . "', '" . $name['NAME'] . "', '$datestring', '$amount', '$receivedby')";
+            $sqlInsert = "insert into receipts (`Receipt_No`,`Thali_No`,`userid`, `name`, `payment_type`, `Date`,`Amount`,`received_by`)
+                   values ('$receiptno', '$thalino', '" . $name['id'] . "', '" . $name['NAME'] . "', '$payment_type', '$datestring', '$amount', '$receivedby')";
             mysqli_query($link, $sqlInsert) or die(mysqli_error($link));
 
             $sql = "UPDATE thalilist set Paid = Paid + '$amount' WHERE thali = '$thalino'";
