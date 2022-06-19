@@ -73,7 +73,7 @@ while (($column = fgetcsv($file)) !== FALSE) {
             $name = mysqli_fetch_assoc($result);
 
             $sqlInsert = "insert into receipts (`Receipt_No`,`Thali_No`,`userid`, `name`, `payment_type`, `Date`,`Amount`, `received_by`, `transaction_id`)
-                   values ('$receiptno', '$thalino', '" . $name['id'] . "', '" . $name['NAME'] . "', '$payment_type', '$datestring', '$amount', '$receivedby', '$transaction_id')";
+                   values ('$receiptno', '$thalino', '" . $name['id'] . "', '" . $name['NAME'] . "', '$payment_type', '$datestring', '$amount', '$receivedby', NULLIF('$transaction_id', ''))";
             mysqli_query($link, $sqlInsert) or die(mysqli_error($link));
 
             $sql = "UPDATE thalilist set Paid = Paid + '$amount' WHERE thali = '$thalino'";
