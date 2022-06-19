@@ -110,7 +110,7 @@ if ($_GET) {
               <div class="bs-component">
                 <div id="receiptForm">
                   <input type="number" name="receipt_amount" placeholder="Receipt Amount" />
-                  <select name="payment" id="payment">
+                  <select name="payment_type" id="payment_type">
                     <option value="Cash">Cash</option>
                     <option value="Online">Online</option>
                     <option value="Online">Cheque</option>
@@ -179,6 +179,7 @@ if ($_GET) {
         $('input[type!="button"]', receiptForm).each(function() {
           data = data + $(this).attr('name') + '=' + $(this).val() + '&';
         });
+        data = data + "payment_type=" + $('#payment_type').val();
         $.ajax({
           method: 'post',
           url: '_payhoob.php',
@@ -232,7 +233,7 @@ if ($_GET) {
           });
       });
 
-      $('#payment').on('change', function() {
+      $('#payment_type').on('change', function() {
         if ($(this).val() === "Cash") {
           $("#transaction_id").hide()
         } else {

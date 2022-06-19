@@ -10,13 +10,13 @@ $today = getTodayDateHijri();
 if ($_POST) {
 
   //validate payment type is provided
-  if (empty($_POST['payment'])) {
+  if (empty($_POST['payment_type'])) {
     echo "Provide payment type (Online or Cash or Cheque)";
     exit();
   }
 
   //validate if payment is by bank then transaction ID is also provided.
-  if ($_POST['payment'] == 'Online' && empty($_POST['transaction_id'])) {
+  if ($_POST['payment_type'] == 'Online' && empty($_POST['transaction_id'])) {
     echo "Provide payment transaction ID of the transfer";
     exit();
   }
@@ -40,7 +40,7 @@ if ($_POST) {
     echo "Unable to find details of the thali #" . $_POST['receipt_thali'];
     exit;
   }
-  $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid` ,`name`, `Amount`, `payment_type`, `trasaction_id`, `Date`, `received_by`) VALUES ('" . $receipt_number . "','" . $_POST['receipt_thali'] . "','" . $name['id'] . "','" . $name['NAME'] . "','" . $_POST['receipt_amount'] . "', '" . $_POST['payment'] . "','" . $_POST['transaction_id'] . "', '" . $today . "','" . $_SESSION['email'] . "')";
+  $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid` ,`name`, `Amount`, `payment_type`, `trasaction_id`, `Date`, `received_by`) VALUES ('" . $receipt_number . "','" . $_POST['receipt_thali'] . "','" . $name['id'] . "','" . $name['NAME'] . "','" . $_POST['receipt_amount'] . "', '" . $_POST['payment_type'] . "','" . $_POST['transaction_id'] . "', '" . $today . "','" . $_SESSION['email'] . "')";
   mysqli_query($link, $sql) or die(mysqli_error($link));
 
   $sql = "UPDATE thalilist set Paid = Paid + '" . $_POST['receipt_amount'] . "' WHERE thali = '" . $_POST['receipt_thali'] . "'";
