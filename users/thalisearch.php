@@ -110,6 +110,12 @@ if ($_GET) {
               <div class="bs-component">
                 <div id="receiptForm">
                   <input type="number" name="receipt_amount" placeholder="Receipt Amount" />
+                  <select name="payment" id="payment">
+                    <option value="Cash">Cash</option>
+                    <option value="Online">Online</option>
+                    <option value="Online">Cheque</option>
+                  </select>
+                  <input type="text" style="display:none" name="transaction_id" id="transaction_id" placeholder="Transaction ID" />
                   <input type="hidden" name="receipt_thali" />
                   <input type="button" name="cancel" value="cancel" />
                   <input type="button" name="save" value="save" />
@@ -225,6 +231,15 @@ if ($_GET) {
             location.reload();
           });
       });
+
+      $('#payment').on('change', function() {
+        if ($(this).val() === "Cash") {
+          $("#transaction_id").hide()
+        } else {
+          $("#transaction_id").show()
+        }
+      });
+
       <?php if ($_GET) : ?>
         window.location = '#tables';
       <?php endif; ?>
