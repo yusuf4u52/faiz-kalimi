@@ -14,7 +14,7 @@ while ($received = mysqli_fetch_assoc($amount_received_already)) {
   $amount_received_already_keyval[$received['email']] = $received['total_amount'];
 }
 
-$amount_paid = mysqli_query($link, "SELECT paid_by,sum(amount) as total_amount FROM `account` GROUP BY paid_by") or die(mysqli_error($link));
+$amount_paid = mysqli_query($link, "SELECT paid_by,sum(amount) as total_amount FROM `account` where type='Cash' GROUP BY paid_by") or die(mysqli_error($link));
 $amount_paid_keyval = array();
 while ($paid = mysqli_fetch_assoc($amount_paid)) {
   $amount_paid_keyval[$paid['paid_by']] = $paid['total_amount'];
