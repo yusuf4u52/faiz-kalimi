@@ -7,3 +7,4 @@ sms/_credentials.php
 vendor
 composer.lock
 *.json
+users/*.csv

@@ -328,6 +328,12 @@ while (($column = fgetcsv($file)) !== FALSE) {
                 $amount = str_replace(',', '', $amount);
                 $amount = intval($amount);
             }
+
+            $type = "";
+            if (isset($column[6])) {
+                $type = mysqli_real_escape_string($link, $column[6]);
+            }
+
             $date = "";
             if (isset($column[3])) {
                 $datefromcsv = mysqli_real_escape_string($link, $column[3]);
@@ -343,12 +349,17 @@ while (($column = fgetcsv($file)) !== FALSE) {
                 $description = mysqli_real_escape_string($link, $column[11]);
             }
 
+            $paid_by = "";
+            if (isset($column[13])) {
+                $paid_by = mysqli_real_escape_string($link, $column[13]);
+            }
+
             $sql = "select NAME,id from thalilist WHERE thali = '$thalino'";
             $result = mysqli_query($link, $sql) or die(mysqli_error($link));
             $name = mysqli_fetch_assoc($result);
 
-            $sqlInsert = "insert into account (`id`,`Date`,`Type`, `Amount`, `Month`,`Remarks`)
-                   values ('$voucherno', '$datestring', '$vendor', '$amount', '$datemonth', '$description')";
+            $sqlInsert = "insert into account (`id`,`Date`,`Type`,`vendor`, `Amount`, `Month`,`Remarks`,`paid_by`)
+                   values ('$voucherno', '$datestring', '$type','$vendor', '$amount', '$datemonth', '$description', '$paid_by')";
             mysqli_query($link, $sqlInsert) or die(mysqli_error($link));
         }
         $counter++;
