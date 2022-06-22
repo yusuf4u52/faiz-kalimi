@@ -93,6 +93,9 @@ class Examples extends CI_Controller
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('account');
+		$crud->unset_edit();
+		$crud->unset_delete();
+		$crud->unset_clone();
 
 		$output = $crud->render();
 
