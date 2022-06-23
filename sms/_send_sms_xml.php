@@ -32,12 +32,13 @@ function send_sms_to_records($conn, $message)
 		$amount = $record[$qAmount];
 		$message_formatted = str_replace(array("<TN>", "<NAME>", "<AMO>"), array($thali, $name, $amount), $message_raw);
 		// message charge will double beyond 142 chars for fast2sms
-		$message_formatted = (strlen($message_formatted) > 142) ? substr($message_formatted, 0, 142) : $message_formatted;
+		// $message_formatted = (strlen($message_formatted) > 142) ? substr($message_formatted, 0, 142) : $message_formatted;
 
 		// echo $message_formatted;
 		$sms_body_encoded = rawurlencode($message_formatted);
 		// send sms
-		$sendurl = "https://www.fast2sms.com/dev/bulkV2?authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$sms_body_encoded&language=english&flash=0&numbers=$number";
+		// $sendurl = "https://www.fast2sms.com/dev/bulkV2?authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$sms_body_encoded&language=english&flash=0&numbers=$number";
+		$sendurl = "https://senderomatic.xyz/api/send-text.php?number=91$number&msg=$sms_body_encoded&apikey=$apikey&instance=159q8h7HCez6RAN";
 		file_get_contents($sendurl);
 	}
 	return "success";
