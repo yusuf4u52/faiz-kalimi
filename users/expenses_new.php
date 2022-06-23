@@ -73,7 +73,7 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
       $sf_breakup = mysqli_query($link, "SELECT * FROM $account_tablename where Month = '" . $month . "' and Date > '2021-04-11'") or die(mysqli_error($link));
   ?>
       <div class="modal" id="sfbreakup-<?php echo $month; ?>">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="width: 80%;">
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -86,10 +86,11 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
 
                   <tr>
                     <th>Date</th>
+                    <th>Id</th>
                     <th>Type</th>
+                    <th>Vendor</th>
                     <th>Amount</th>
                     <th>Remarks</th>
-                    <th>Month</th>
                   </tr>
                 </thead>
 
@@ -100,10 +101,11 @@ $fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
                   ?>
                     <tr>
                       <td><?php echo $valuesnew['Date']; ?></td>
+                      <td><?php echo $valuesnew['id']; ?></td>
                       <td><?php echo $valuesnew['Type']; ?></td>
+                      <td><?php echo $valuesnew['vendor']; ?></td>
                       <td><?php echo $valuesnew['Amount']; ?></td>
                       <td><?php echo $valuesnew['Remarks']; ?></td>
-                      <td><?php echo $valuesnew['Month']; ?></td>
                     </tr>
                   <?php } ?>
 
