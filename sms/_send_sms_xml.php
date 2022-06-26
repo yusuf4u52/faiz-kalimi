@@ -4,7 +4,6 @@
 // from the XML api call
 function send_sms_to_records($conn, $message)
 {
-	set_time_limit(0);
 	require '_credentials.php';
 	//$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	//$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
