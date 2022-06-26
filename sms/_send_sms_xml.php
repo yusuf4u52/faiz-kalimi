@@ -4,6 +4,7 @@
 // from the XML api call
 function send_sms_to_records($conn, $message)
 {
+	set_time_limit(0);
 	require '_credentials.php';
 	//$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	//$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -38,7 +39,7 @@ function send_sms_to_records($conn, $message)
 		$sms_body_encoded = rawurlencode($message_formatted);
 		// send sms
 		// $sendurl = "https://www.fast2sms.com/dev/bulkV2?authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$sms_body_encoded&language=english&flash=0&numbers=$number";
-		$sendurl = "https://senderomatic.xyz/api/send-text.php?number=91$number&msg=$sms_body_encoded&apikey=$apikey&instance=159q8h7HCez6RAN";
+		$sendurl = "https://senderomatic.xyz/api/send-text.php?number=91$number&msg=$sms_body_encoded&media=https://'".$_SERVER['HTTP_HOST']."'/fmb/users/images/fmb-hdfc-qr.jpeg&apikey=$apikey&instance=159q8h7HCez6RAN";
 		file_get_contents($sendurl);
 	}
 	return "success";
