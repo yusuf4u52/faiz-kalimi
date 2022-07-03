@@ -425,8 +425,8 @@ while (($column = fgetcsv($file)) !== FALSE) {
 if (count($allThali) > 10) {
     $allthalistring = "'" . implode("','", $allThali) . "'";
     // deactivate sabil
-    $row = mysqli_fetch_assoc(mysqli_query($link, "select * from thalilist WHERE Thali not in ($allthalistring) and Thali not like 'temp%'"));
-    foreach ($row as $value) {
+    $row = mysqli_query($link, "select * from thalilist WHERE Thali not in ($allthalistring) and Thali not like 'temp%'");
+    while ($value = mysqli_fetch_assoc($row)) {
         if ($value['Active'] == 1) {
             stoppermenant($value['Thali'], false);
         } else {
