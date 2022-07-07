@@ -46,8 +46,8 @@ if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONT
 $enabled_events_query = mysqli_query($link, "SELECT * FROM events where showonpage='1'");
 $enabled_events_values = mysqli_fetch_assoc($enabled_events_query);
 
-if (empty($values['Transporter']) && !empty($enabled_events_values) && !isResponseReceived($enabled_events_values['id'])) {
-  // if (!empty($enabled_events_values)) {
+// if (empty($values['Transporter']) && !empty($enabled_events_values) && !isResponseReceived($enabled_events_values['id'])) {
+if (!empty($enabled_events_values) && !isResponseReceived($enabled_events_values['id'])) {
   header("Location: events.php");
   exit;
 }
