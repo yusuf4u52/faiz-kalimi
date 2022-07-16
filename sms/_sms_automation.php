@@ -105,6 +105,6 @@ try {
 }
 echo "########## sms completed ##############";
 // exit and dont send email of changes if tomorrow is miqaat.
-if ($day_diff == 1) {
+if ($day_diff == 0) {
     exit;
 }
