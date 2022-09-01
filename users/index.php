@@ -16,7 +16,7 @@ if (is_null($values['Active']) || $values['Active'] == 2) {
   session_unset();
   session_destroy();
 
-  $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send and email to kalimifaiz@gmail.com";
+  $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send and email to kalimimohallapoona@gmail.com";
   header("Location: login.php?status=$status");
   exit;
 }
@@ -25,7 +25,7 @@ if (is_null($values['Active']) || $values['Active'] == 2) {
 // if (!empty($values['Thali']) && empty($values['yearly_hub'])) {
 //   // header("Location: selectyearlyhub.php");
 //   $some_email = $_SESSION['email'];
-//   $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send and email to kalimifaiz@gmail.com";
+//   $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send and email to kalimimohallapoona@gmail.com";
 //   header("Location: login.php?status=$status");
 //   exit;
 // }
@@ -332,7 +332,7 @@ if (!empty($values['yearly_hub'])) {
   <?php include('_bottomJS.php'); ?>
 
   <div align="center">
-    <a href="mailto:kalimifaiz@gmail.com">kalimifaiz@gmail.com</a><br><br>
+    <a href="mailto:kalimimohallapoona@gmail.com">kalimimohallapoona@gmail.com</a><br><br>
   </div>
 </body>
 

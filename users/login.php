@@ -91,7 +91,7 @@
           echo '<h1>Login with Google</h1>';
           echo '<div><h3>Please click login button to connect to Google.</h3></div>';
           echo '<a class="login" href="' . $authUrl . '"><img src="images/google-login-button.png" /></a>';
-          echo '<br><br><br><a href="mailto:kalimifaiz@gmail.com">kalimifaiz@gmail.com</a>';
+          echo '<br><br><br><a href="mailto:kalimimohallapoona@gmail.com">kalimimohallapoona@gmail.com</a>';
           echo '</div>';
         } else {
 

@@ -18,7 +18,7 @@
   </div>
 
   <div align="center">
-    <a href="mailto:kalimifaiz@gmail.com">kalimifaiz@gmail.com</a><br><br>
+    <a href="mailto:kalimimohallapoona@gmail.com">kalimimohallapoona@gmail.com</a><br><br>
   </div>
 </body>
 

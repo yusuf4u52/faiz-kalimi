@@ -48,7 +48,7 @@ if ($_POST) {
   mysqli_close($link);
   $msgvar = "Salaam " . $firstname . "bhai,<br><br>New Registration form for Faiz ul Mawaid il Burhaniyah thali has been successfully submitted.<br>
   <b>Please contact Kalimi Mohalla Jamaat Office to start your thali.</b><br><br>
-  For any concerns mail kalimifaiz@gmail.com";
+  For any concerns mail kalimimohallapoona@gmail.com";
   sendEmail($email, 'New Registration Successful, Visit Faiz to start the thali', $msgvar, null);
   echo ("<SCRIPT LANGUAGE='JavaScript'>
     window.alert('Please contact Kalimi Mohalla Jamaat Office to start your thali. Address: Near Burhani Park, Kalimi Masjid, Yewlewadi, Office Time - 10AM to 12AM.')
