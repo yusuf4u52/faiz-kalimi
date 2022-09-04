@@ -59,7 +59,7 @@ foreach ($request as $transporter_name => $thalis) {
 //----------------- Transporter wise count daily----------------------
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $hijridate = getHijriDate($tomorrow_date);
-$msgvar .= "\n<b>Transporter Count $hijridate $day</b>\n";
+$msgvar .= "\n<b>Transporter Count $hijridate $day - $tomorrow_date</b>\n";
 $sql = mysqli_query($link, "SELECT
 					(case when Transporter IS NULL then 'No Transport' else Transporter end) AS Transporter,
 					count(*) as tcount,
@@ -126,6 +126,6 @@ $total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered
 $msgvar .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
 
 // send email
-sendEmail('kalimimohallapoona@gmail.com', 'Start Stop update ' . date('d/m/Y'), $msgvar, null, null, true);
+sendEmail('kalimimohallapoona@gmail.com', 'Start Stop update ' . $tomorrow_date, $msgvar, null, null, true);
 
 mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
