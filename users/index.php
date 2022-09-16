@@ -46,11 +46,11 @@ if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONT
 $query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_id = '" . $_SESSION['email'] . "'";
 $takesFmb = mysqli_num_rows(mysqli_query($link, $query));
 $result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
-while ($values = mysqli_fetch_assoc($result)) {
-  $showToNonFmbOnly = $values['showtononfmb'];
+while ($values1 = mysqli_fetch_assoc($result)) {
+  $showToNonFmbOnly = $values1['showtononfmb'];
   // skip redirects to events for fmb holder if the database flag is set to do so
   if ($showToNonFmbOnly == 1) {
-    if ($takesFmb == 0 && !isResponseReceived($values['id'])) {
+    if ($takesFmb == 0 && !isResponseReceived($values1['id'])) {
       header("Location: events.php");
       exit;
     }
