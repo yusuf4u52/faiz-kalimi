@@ -130,7 +130,7 @@ if (!empty($values['yearly_hub'])) {
       <div class="col-xs-6 col-sm-3 col-md-2">
 
         <?php
-        if ($values['yearly_hub'] != 0) {
+        if ($values['Transporter'] != 0) {
           if ($values['Active'] == 0) {
             if ($values['hardstop'] == 1) {
         ?>
