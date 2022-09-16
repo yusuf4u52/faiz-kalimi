@@ -43,13 +43,21 @@ if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONT
 // }
 
 // Check if there is any enabled event that needs users response
-$enabled_events_query = mysqli_query($link, "SELECT * FROM events where showonpage='1'");
-$enabled_events_values = mysqli_fetch_assoc($enabled_events_query);
-
-// if (empty($values['Transporter']) && !empty($enabled_events_values) && !isResponseReceived($enabled_events_values['id'])) {
-if (!empty($enabled_events_values) && !isResponseReceived($enabled_events_values['id'])) {
-  header("Location: events.php");
-  exit;
+$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_id = '" . $_SESSION['email'] . "'";
+$takesFmb = mysqli_num_rows(mysqli_query($link, $query));
+$result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
+while ($values = mysqli_fetch_assoc($result)) {
+  $showToNonFmbOnly = $values['showtononfmb'];
+  // skip redirects to events for fmb holder if the database flag is set to do so
+  if ($showToNonFmbOnly == 1) {
+    if ($takesFmb == 0 && !isResponseReceived($values['id'])) {
+      header("Location: events.php");
+      exit;
+    }
+  } else if (!isResponseReceived($values['id'])) {
+    header("Location: events.php");
+    exit;
+  }
 }
 
 // show the index page with hub miqaat breakdown
