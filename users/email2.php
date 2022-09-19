@@ -66,6 +66,7 @@ $sql = mysqli_query($link, "SELECT
     				sum(case when thalisize = 'Small' then 1 else 0 end) AS smallcount,
     				sum(case when thalisize = 'Medium' then 1 else 0 end) AS mediumcount,
 					sum(case when thalisize = 'Large' then 1 else 0 end) AS largecount,
+					sum(case when thalisize = 'Mini' then 1 else 0 end) AS minicount,
 					sum(case when thalisize IS NULL then 1 else 0 end) AS nullcount
 					FROM `thalilist` WHERE Active = 1 group by Transporter");
 $pivot = array();
@@ -75,9 +76,10 @@ while ($row = mysqli_fetch_assoc($sql)) {
 	$pivot["large"][$row['Transporter']] = $row['largecount'];
 	$pivot["medium"][$row['Transporter']] = $row['mediumcount'];
 	$pivot["small"][$row['Transporter']] = $row['smallcount'];
+	$pivot["mini"][$row['Transporter']] = $row['minicount'];
 	$pivot["no size"][$row['Transporter']] = $row['nullcount'];
-	$pivot["total"][$row['Transporter']] = (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'];
-	$insert_sql = "INSERT INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "', '" . $row['tcount'] . "')";
+	$pivot["total"][$row['Transporter']] = (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['minicount'] + (int) $row['nullcount'];
+	$insert_sql = "INSERT INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['tcount'] . "')";
 	mysqli_query($link, $insert_sql) or die(mysqli_error($link));
 }
 $transporters["total"] = 1;
