@@ -90,6 +90,7 @@ $totalcountonsize = mysqli_query($link, "SELECT
     				sum(case when thalisize = 'Small' then 1 else 0 end) AS small,
     				sum(case when thalisize = 'Medium' then 1 else 0 end) AS medium,
 					sum(case when thalisize = 'Large' then 1 else 0 end) AS large,
+					sum(case when thalisize = 'Mini' then 1 else 0 end) AS mini,
 					sum(case when thalisize IS NULL then 1 else 0 end) AS none
 					FROM `thalilist` WHERE Active = 1");
 
@@ -97,7 +98,8 @@ $result = mysqli_fetch_row($totalcountonsize);
 $pivot["small"]["total"] = $result[1];
 $pivot["medium"]["total"] = $result[2];
 $pivot["large"]["total"] = $result[3];
-$pivot["no size"]["total"] = $result[4];
+$pivot["mini"]["total"] = $result[4];
+$pivot["no size"]["total"] = $result[5];
 $pivot["total"]["total"] = $result[0];
 
 mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `small`,`medium`,`large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[1] . "','" . $result[2] . "','" . $$result[3] . "'," . $result[0] . ")") or die(mysqli_error($link));
