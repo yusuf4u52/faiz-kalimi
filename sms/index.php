@@ -2,7 +2,7 @@
 require '_credentials.php';
 require '../users/update_next_install.php';
 include('../users/_authCheck.php');
-header("Access-Control-Allow-Origin: www.fast2sms.com");
+header("Access-Control-Allow-Origin: senderomatic.xyz");
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   try {
