@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $multiselect_html = $multiselect_html . "\t<option>$val</option>\n";
   }
   $root_urls = array(
-    "real" => "https://www.fast2sms.com/dev/bulkV2?",
+    "real" => "https://senderomatic.xyz/api/send-media.php?",
     "telegram" => "http://murtazafaizstudent.pythonanywhere.com/sendhttp.php?",
     "email" => "http://murtazafaizstudent.pythonanywhere.com/sendsmtp?"
   );
