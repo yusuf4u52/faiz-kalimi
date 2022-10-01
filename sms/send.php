@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = urlencode($message_formatted);
 
         //$param["url"] = "authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$message&language=english&flash=0&numbers=$numbers";
-        $param["url"] = "number=91$number&msg=$message&media=https://".$_SERVER['HTTP_HOST']."/fmb/users/images/fmb-hdfc-qr.jpeg&apikey=$apikey&instance=G872gO9M5km6xef";
+        $param["url"] = "number=91$numbers&msg=$message&media=https://".$_SERVER['HTTP_HOST']."/fmb/users/images/fmb-hdfc-qr.jpeg&apikey=$apikey&instance=G872gO9M5km6xef";
         $param["number"] = $numbers;
         array_push($params, $param);
     }
