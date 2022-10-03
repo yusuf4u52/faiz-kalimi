@@ -39,6 +39,20 @@ class Examples extends CI_Controller
 		$this->_example_output($output);
 	}
 
+	function transporter_count()
+	{
+		session_start();
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('tzabuawala@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		} else
+			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
+
+		$crud = new grocery_CRUD();
+		$crud->set_table('transporter_daily_count');
+		$output = $crud->render();
+
+		$this->_example_output($output);
+	}
+
 	function notpickedup()
 	{
 		session_start();

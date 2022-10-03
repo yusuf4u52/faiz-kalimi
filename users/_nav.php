@@ -33,6 +33,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Backend <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
               <li><a href="/fmb/admin/index.php/examples/faiz">Admin</a></li>
+              <li><a href="/fmb/admin/index.php/examples/transporter_count">Transporter Thali Count</a></li>
               <li><a href="/fmb/admin/index.php/examples/receipts">Receipts</a></li>
               <li><a href="/fmb/admin/index.php/examples/payments">Payments</a></li>
               <li><a href="/fmb/admin/index.php/examples/change">CR NR</a></li>
