@@ -48,6 +48,7 @@ class Examples extends CI_Controller
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('transporter_daily_count');
+		$crud->columns('id', 'date', 'name', 'count');
 		$output = $crud->render();
 
 		$this->_example_output($output);
@@ -92,7 +93,7 @@ class Examples extends CI_Controller
 
 		$crud = new grocery_CRUD();
 		$crud->set_table('daily_hisab');
-		$crud->columns('id', 'date', 'name', 'count');
+
 		$output = $crud->render();
 
 		$this->_example_output($output);
