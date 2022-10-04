@@ -79,7 +79,7 @@ while ($row = mysqli_fetch_assoc($sql)) {
 	$pivot["mini"][$row['Transporter']] = $row['minicount'];
 	$pivot["no size"][$row['Transporter']] = $row['nullcount'];
 	$pivot["total"][$row['Transporter']] = (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['minicount'] + (int) $row['nullcount'];
-	$insert_sql = "INSERT OR REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`,`count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['tcount'] . "')";
+	$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`,`count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['tcount'] . "')";
 	mysqli_query($link, $insert_sql) or die(mysqli_error($link));
 }
 $transporters["total"] = 1;
