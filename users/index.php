@@ -170,7 +170,7 @@ if (!empty($values['yearly_hub'])) {
         } else {
       ?>
         <form>
-          <h5>You have not done hub takhmeen and so will not see START THALI button</h5>
+          <h5>You dont see a start button here probably because you are not taking barakat of thali or dont have a transporter assigned yet.</h5>
         </form>
       <?php }
       ?>
