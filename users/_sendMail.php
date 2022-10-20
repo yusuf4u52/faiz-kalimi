@@ -1,5 +1,5 @@
 <?php
-function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false, $addTransporter = false)
+function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = null, $addTransporter = false)
 {
 	require '../vendor/autoload.php';
 	require '../sms/_credentials.php';
@@ -10,10 +10,11 @@ function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = false, $ad
 	$email->addTo($to);
 
 	if ($addTransporter) {
-		$email->addTo("Taumiz2285@gmail.com");
+		$email->addTo("yusuf4u52@gmail.com");
 		$email->addTo("Moula.juned@gmail.com");
 		$email->addTo("khanbilalkbr@gmail.com");
 		$email->addTo("tinwalaabizer@gmail.com");
+		$email->addTo("mulla.moiz@gmail.com");
 	}
 
 	$email->addContent(
