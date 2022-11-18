@@ -115,7 +115,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 														<td>
 															<?php
 															$msg = "Salaam " . $values['NAME'] . ",
-															%0A%0AApna ghare Faizul Mawaidil Burhaniya ni barakat pohnchi rahi che. Apsi iltemas che k aap ni pending hoob ne jald c jald ada kariye ane hamne FMB khidmat team ne yari daiye.
+															%0A%0AAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Iltemas che k aapni pending hoob jald si jald ada kariye ane hamne FMB khidmat team ne yaari aapiye.
 															%0A%0ASabil - " . $values['Thali'] . "
 															%0APending Hoob - " . $values['Total_Pending']
 															?>
