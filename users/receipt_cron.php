@@ -60,7 +60,7 @@ while (($column = fgetcsv($file)) !== FALSE) {
                 $datefromcsv = mysqli_real_escape_string($link, $column[3]);
                 $datestring = getHijriDate($datefromcsv);
             } else {
-                echo "Date cannot be empty for " . $receiptno;
+                echo "Date cannot be empty for " . $receiptno . " and date " . $column[3];
             }
 
             $receivedby = "";
