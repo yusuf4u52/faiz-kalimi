@@ -83,7 +83,7 @@ if ($_POST) {
     . "Thali#:$user_thali\n"
     . "Pending:$user_pending";
   $sms_body_encoded = urlencode($sms_body);
-  $result = file_get_contents("https://www.fast2sms.com/dev/bulkV2?authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$sms_body_encoded&language=english&flash=0&numbers=$sms_to");
+  //$result = file_get_contents("https://www.fast2sms.com/dev/bulkV2?authorization=$smsauthkey&route=v3&sender_id=TXTIND&message=$sms_body_encoded&language=english&flash=0&numbers=$sms_to");
 
   echo $sms_body;
 }
