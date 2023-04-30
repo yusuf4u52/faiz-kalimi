@@ -61,7 +61,7 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                     <th>Transporter</th>
                     <th>Sector</th>
                     <th>Subsector</th>
-                    <th>Address</th>
+                    <th>Society</th>
                     <th>Name</th>
                     <th>Active</th>
                     <th>Action</th>
@@ -118,7 +118,7 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                             ?>
                           </select>
                         </td>
-                        <td><?php echo $values['Full_Address']; ?></td>
+                        <td><?php echo $values['Society']; ?></td>
                         <td><?php echo $values['NAME']; ?></td>
                         <td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
                         <td><input type='submit' value='Submit'></td>
