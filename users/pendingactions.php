@@ -118,7 +118,7 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                             ?>
                           </select>
                         </td>
-                        <td><?php echo $values['Society']; ?></td>
+                        <td><?php echo $values['society']; ?></td>
                         <td><?php echo $values['NAME']; ?></td>
                         <td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
                         <td><input type='submit' value='Submit'></td>
