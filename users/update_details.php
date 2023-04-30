@@ -150,13 +150,13 @@ if ($_POST) {
                     </div>
                   </div> -->
 
-                  <div class="form-group">
+                  <!-- <div class="form-group">
                     <label for="niyazdate" class="col-lg-2 control-label">Niyaz Date</label>
                     <div class="col-lg-10">
                       <input type="text" class="form-control" id="niyazdate" name="niyazdate" value='<?php echo $niyazdate; ?>' <?php echo !empty($niyazdate) ? "disabled" : ""; ?>>
                     </div>
                   </div>
-                <?php } ?>
+                <?php } ?> -->
 
                 <div class="form-group">
                   <label class="col-lg-2 control-label">Wing-Flat</label>
@@ -265,7 +265,7 @@ if ($_POST) {
         },
         autoUpdateInput: false,
         minDate: moment(),
-        maxDate: "2023-03-21",
+        maxDate: "2024-03-09",
         isInvalidDate: function(date) {
           if (date.day() === 0 || dates.reserved.includes(date.format("YYYY-MM-DD")) || dates.nonthali.includes(date.format("YYYY-MM-DD"))) {
             return true;
