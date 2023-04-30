@@ -15,7 +15,7 @@ if (is_null($_SESSION['fromLogin'])) {
 
 // check if request is in cut off time
 date_default_timezone_set('Asia/Kolkata');
-$cutoffTime = '19:00'; //Cut off at 8 pm
+$cutoffTime = '20:00'; //Cut off at 8 pm
 $startTime = '23:59'; //reset back to open at midnight
 
 $time = new DateTime($cutoffTime);
@@ -25,7 +25,7 @@ $time2 = date_format($time, 'H:i');
 
 $current = date("H:i");
 if ($current > $time1 && $current < $time2) {
-  $cutoffmessage =  'Start thali not allowed post 7 PM.';
+  $cutoffmessage =  'Start thali not allowed post 8 PM.';
   header("Location: index.php?status=$cutoffmessage");
   exit;
 }
