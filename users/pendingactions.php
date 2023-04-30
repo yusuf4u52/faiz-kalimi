@@ -2,7 +2,7 @@
 include('connection.php');
 include('_authCheck.php');
 
-$query = "SELECT * FROM thalilist";
+$query = "SELECT * FROM thalilist where Active=1";
 $query_new_transporter = $query . " WHERE Transporter is null and Active=1 UNION ";
 $query_new_sector = $query_new_transporter . $query . " WHERE (sector IS NULL OR subsector IS NULL) and Active in (0,1)";
 $result = mysqli_query($link, $query_new_sector);
