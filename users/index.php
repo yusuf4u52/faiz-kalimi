@@ -193,7 +193,7 @@ if (!empty($values['yearly_hub'])) {
             <div class="panel-body">
               <ul class="list-group col">
                 <li class="list-group-item">
-                  <h6 class="list-group-item-head ing text-muted">Thaali Number</h6>
+                  <h6 class="list-group-item-head ing text-muted">Sabeel Number</h6>
                   <p class="list-group-item-text"><strong><?php echo $values['Thali']; ?></strong></p>
                 </li>
                 <li class="list-group-item">
