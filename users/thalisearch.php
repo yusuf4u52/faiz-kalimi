@@ -166,6 +166,35 @@ if ($_GET) {
     </div>
   </div>
 
+  <div class="modal" id="changeThalisize">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="changethalisize.php">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Change Musaid</h4>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
+            <input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
+            <input type="hidden" name="Active" value="<?php echo $values['Active']; ?>">
+            <select name="thalisize" required='required' class="form-control">
+              <option value=''>Select</option>
+              <option value='Mini'>Mini</option>
+              <option value='Small'>Small</option>
+              <option value='Medium'>Medium</option>
+              <option value='Large'>Large</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <?php include('_bottomJS.php'); ?>
   <script>
     $(function() {
@@ -207,9 +236,9 @@ if ($_GET) {
       });
       $('[data-key="stopthaali"]').click(function() {
         stopThali_admin($(this).attr('data-thali'), $(this).attr('data-active'), false, false, function(data) {
-          if (data === 'success') {
+          // if (data === 'success') {
             location.reload();
-          }
+          // }
         });
       });
       $('[data-key="stoppermanant"]').click(function() {
