@@ -1,0 +1,39 @@
+{
+    "name": "Faizul Mawaidil Burhaniya (Kalimi Mohalla)",
+    "short_name" : "FMB (Kalimi)",
+    "description":"A FMB App for Kalimi Mohalla (Poona) Mumineen",
+    "lang": "en-GB",
+    "theme_color": "#7A62D3",
+    "background_color": "#F5F5F5",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/fmb",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "./styles/img/fmb-logo-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "./styles/img/fmb-logo-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "./styles/img/fmb-logo-191x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "./styles/img/fmb-logo-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "url": "https://kalimijamaatpoona.org/fmb/"
+ }
