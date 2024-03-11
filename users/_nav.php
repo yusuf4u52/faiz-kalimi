@@ -21,7 +21,7 @@
         <?php } ?>
 
         <?php
-        if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+        if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com'))) {
         ?>
           <li><a href="/fmb/users/pendingactions.php">Pending Actions</a></li>
           <li><a href="/fmb/users/_daily_hisab_entry.php">Daily Hisab</a></li>
@@ -29,6 +29,13 @@
           <li><a href="/fmb/users/requestarchive.txt">CR NR</a></li>
           <li><a href="/fmb/users/stopMultipleThaalis.php">Stop Thali</a></li>
           <li><a href="/fmb/users/expenses_new.php">Expenses</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menu Backend <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="/fmb/users/food_list.php">Add/Edit Food Item</a></li>
+              <li><a href="/fmb/users/menu_list.php">Add/Edit Menu</a></li>
+            </ul>
+          </li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Backend <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
