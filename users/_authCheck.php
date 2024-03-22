@@ -21,7 +21,9 @@
 			"/fmb/users/thalisearch.php",
 			"/fmb/users/pendingactions.php",
 			"/fmb/users/_stop_thali_admin.php",
-			"/fmb/sms/index.php"
+			"/fmb/sms/index.php",
+			"/fmb/users/foodlist.php",
+			"/fmb/users/menulist.php"
 		),
 		"staff" => array(
 			"/fmb/users/thalisearch.php",
@@ -33,7 +35,8 @@
 			"/fmb/users/events.php",
 			"/fmb/users/update_details.php",
 			"/fmb/users/selectyearlyhub.php",
-			"/fmb/users/selectyearlyhub_action.php"
+			"/fmb/users/selectyearlyhub_action.php",
+			"/fmb/users/viewmenu.php"
 		)
 	);
 	// fetch user role
