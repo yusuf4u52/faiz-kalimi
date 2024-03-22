@@ -19,6 +19,8 @@
 			"/fmb/users/admin_scripts.php",
 			"/fmb/users/stop_permanant.php",
 			"/fmb/users/thalisearch.php",
+			"/fmb/users/foodlist.php",
+			"/fmb/users/menulist.php",
 			"/fmb/users/pendingactions.php",
 			"/fmb/users/_stop_thali_admin.php",
 			"/fmb/sms/index.php"
