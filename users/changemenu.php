@@ -30,15 +30,17 @@ if( isset($_POST['menu_id']) && isset($_POST['thali']) ) {
             $sql = "INSERT INTO `user_menu` (`thali`,`menu_date`,`menu_item`) VALUES ('" . $_POST['thali'] . "', '" . $menu_date . "', '" . serialize($_POST['menu_item']) . "')";
         }
         mysqli_query($link, $sql) or die(mysqli_error($link));
-        $msg = 'Thaali edited for '.$menu_date;
+        $action = 'edit';
+        $date = $menu_date;
     } else {
-        $msg = 'RSVP has ended';
+        $action = 'rsvp';
+        $date = $menu_date;
     }
     if( isset($_POST['action']) && $_POST['action'] == 'change_menu' ) {
-        header("Location: /fmb/users/view_menu.php?msg=".$msg);
+        header("Location: /fmb/users/viewmenu.php?action=".$action."&date=".$menu_date);
     }
     if( isset($_POST['action']) && $_POST['action'] == 'admin_change_menu' ) { 
-        header("Location: /fmb/users/thalisearch.php?msg=".$msg);
+        header("Location: /fmb/users/thalisearch.php?thalino=".$_POST['thalino']."&general=".$_POST['general']."&year=".$_POST['year']."&action=".$action."&date=".$menu_date);
     }
 }
 ?>
