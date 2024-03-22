@@ -13,7 +13,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     <div class="panel-heading" role="tab" id="headingThaali">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" href="#collapseThaali" aria-expanded="true" aria-controls="collapseThaali">
-          Thaali Details
+          Thaali Details <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
         </a>
       </h4>
     </div>
@@ -96,7 +96,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     <div class="panel-heading" role="tab" id="headingMenu">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" href="#collapseMenu" aria-expanded="true" aria-controls="collapseMenu">
-          Menu Details
+          Menu Details <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
         </a>
       </h4>
     </div>
@@ -138,10 +138,11 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
             <tr>
               <td><?php echo date('d M Y', strtotime($menu_date)); ?></td>
               <td>
-                <?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] . '  (' . $menu_item['sabji']['qty'] . ')' : 'Empty'); ?><br />
-                <?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] . '  (' . $menu_item['tarkari']['qty'] . ')' : 'Empty'); ?><br />
-                <?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] . '  (' . $menu_item['rice']['qty'] . ')' : 'Empty'); ?><br />
-                <?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] . '  (' . $roti_qty . ')' : 'Empty'); ?>
+                <?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] . '  (' . $menu_item['sabji']['qty'] . ')<br/>' : ''); ?>
+                <?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] . '  (' . $menu_item['tarkari']['qty'] . ')<br/>' : ''); ?>
+                <?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] . '  (' . $menu_item['rice']['qty'] . ')<br/>' : ''); ?>
+                <?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] . '  (' . $roti_qty . ')<br/>' : ''); ?>
+                <?php echo (!empty($menu_item['extra']['item']) ? $menu_item['extra']['item'] . '  (' . $menu_item['extra']['qty'] . ')' : ''); ?>
               </td>
               <td><?php if (date('Y-m-d') < $menu_date) { ?><button type="button" class="btn btn-primary" data-target="#<?php echo $target; ?>" data-toggle="modal">Edit</button><?php } else { ?> <button type="button" class="btn btn-primary" disabled>RSVP Ended</button><?php } ?></td>
             </tr>
@@ -155,7 +156,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     <div class="panel-heading" role="tab" id="headingReceipt">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" href="#collapseReceipt" aria-expanded="true" aria-controls="collapseReceipt">
-          Receipt Details
+          Receipt Details <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
         </a>
       </h4>
     </div>
@@ -189,7 +190,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     <div class="panel-heading" role="tab" id="headingComment">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" href="#collapseComment" aria-expanded="true" aria-controls="collapseComment">
-          Comments
+          Comments <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
         </a>
       </h4>
     </div>
