@@ -13,7 +13,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     <div class="panel-heading" role="tab" id="headingThaali">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" href="#collapseThaali" aria-expanded="true" aria-controls="collapseThaali">
-          Thaali Details
+          Thaali Details <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
         </a>
       </h4>
     </div>
@@ -96,7 +96,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     <div class="panel-heading" role="tab" id="headingMenu">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" href="#collapseMenu" aria-expanded="true" aria-controls="collapseMenu">
-          Menu Details
+          Menu Details <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
         </a>
       </h4>
     </div>
@@ -155,7 +155,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     <div class="panel-heading" role="tab" id="headingReceipt">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" href="#collapseReceipt" aria-expanded="true" aria-controls="collapseReceipt">
-          Receipt Details
+          Receipt Details <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
         </a>
       </h4>
     </div>
@@ -189,7 +189,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     <div class="panel-heading" role="tab" id="headingComment">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" href="#collapseComment" aria-expanded="true" aria-controls="collapseComment">
-          Comments
+          Comments <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
         </a>
       </h4>
     </div>
