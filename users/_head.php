@@ -4,10 +4,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <link rel="stylesheet" href="/fmb/styles/css/bootstrap-theme-white-plum/bootstrap.min.css" />
-<link rel="stylesheet" href="/fmb/users/src/custom.min.css" />
 <link rel="stylesheet" href="/fmb/users/src/jquery.dynatable.css" />
 <link rel="icon" href="images/icon.png">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css">
+<link rel="stylesheet" href="/fmb/users/src/custom.min.css" />
 <style type="text/css">
 	.well {
 		background-color: #fff;
