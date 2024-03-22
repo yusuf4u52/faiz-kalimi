@@ -1,20 +1,24 @@
-(function($){
+var calendar;
+var Calendar = FullCalendar.Calendar;
+var events = [];
+
+(function () {
   $(window).scroll(function () {
-      var top = $(document).scrollTop();
-      $('.splash').css({
-        'background-position': '0px -'+(top/3).toFixed(2)+'px'
-      });
-      if(top > 50)
-        $('#home > .navbar').removeClass('navbar-transparent');
-      else
-        $('#home > .navbar').addClass('navbar-transparent');
+    var top = $(document).scrollTop();
+    $(".splash").css({
+      "background-position": "0px -" + (top / 3).toFixed(2) + "px",
+    });
+    if (top > 50) $("#home > .navbar").removeClass("navbar-transparent");
+    else $("#home > .navbar").addClass("navbar-transparent");
   });
 
-  $("a[href='#']").click(function(e) {
+  $("a[href='#']").click(function (e) {
     e.preventDefault();
   });
 
-  var $button = $("<div id='source-button' class='btn btn-primary btn-xs'>&lt; &gt;</div>").click(function(){
+  var $button = $(
+    "<div id='source-button' class='btn btn-primary btn-xs'>&lt; &gt;</div>"
+  ).click(function () {
     var html = $(this).parent().html();
     html = cleanSource(html);
     $("#source-modal pre").text(html);
@@ -24,19 +28,23 @@
   $('.bs-component [data-toggle="popover"]').popover();
   $('.bs-component [data-toggle="tooltip"]').tooltip();
 
-  $(".bs-component").hover(function(){
-    $(this).append($button);
-    $button.show();
-  }, function(){
-    $button.hide();
-  });
+  $(".bs-component").hover(
+    function () {
+      $(this).append($button);
+      $button.show();
+    },
+    function () {
+      $button.hide();
+    }
+  );
 
   function cleanSource(html) {
-    html = html.replace(/×/g, "&close;")
-               .replace(/«/g, "&laquo;")
-               .replace(/»/g, "&raquo;")
-               .replace(/←/g, "&larr;")
-               .replace(/→/g, "&rarr;");
+    html = html
+      .replace(/×/g, "&close;")
+      .replace(/«/g, "&laquo;")
+      .replace(/»/g, "&raquo;")
+      .replace(/←/g, "&larr;")
+      .replace(/→/g, "&rarr;");
 
     var lines = html.split(/\n/);
 
@@ -44,9 +52,9 @@
     lines.splice(-1, 1);
 
     var indentSize = lines[0].length - lines[0].trim().length,
-        re = new RegExp(" {" + indentSize + "}");
+      re = new RegExp(" {" + indentSize + "}");
 
-    lines = lines.map(function(line){
+    lines = lines.map(function (line) {
       if (line.match(re)) {
         line = line.substring(indentSize);
       }
@@ -59,7 +67,6 @@
     return lines;
   }
 
-  // Edit menu for users
   $('.btn-minus').on('click', function() {
     var $input = $(this).parent().siblings('input');
     var minCount = $input.attr('min');
@@ -119,7 +126,8 @@
       }
     }
     if( total > 4 ) {
-      alert('Total should not be greater than 4. Also 0.5 will also be count as 1');
+      $('.modal-body .validate').remove();
+      $('.modal-body').append('<div class="validate text-right" style="color:#f00"><small>Total should not be greater than 4. Also 0.5 will also be count as 1.</small></div>');
       return false;
     }
     return true
@@ -145,7 +153,10 @@
           title += row?.menu_item?.rice?.item + '<br/>';
         }
         if(row?.menu_item?.roti?.item !== undefined) {
-          title += row?.menu_item?.roti?.item;
+          title += row?.menu_item?.roti?.item + '<br/>';
+        }
+        if(row?.menu_item?.extra?.item !== undefined) {
+          title += row?.menu_item?.extra?.item;
         }
       }
       events.push({
@@ -174,6 +185,7 @@
         var details = $("#editmenu");
         var id = info.event.id;
         if (!!scheds[id]) {
+          details.find('.modal-body .validate').remove();
           details.find("input#menu_id").val(id);
           var GivenDate = new Date(scheds[id].menu_date);
           GivenDate.setDate(GivenDate.getDate() - 1);
@@ -186,11 +198,12 @@
             details.find("div#tarkari").attr('style','display:none');
             details.find("div#rice").attr('style','display:none');
             details.find("div#roti").attr('style','display:none');
+            details.find("div#extra").attr('style','display:none');
             details.find("button.edit-menu").addClass('hidden');
             details.find("button.rsvp-end").addClass('hidden');
             if(scheds[id]?.menu_item?.miqaat !== undefined) {
               details.find("div#miqaat").removeAttr('style','display:none');
-              details.find("div#miqaat").html('<h3>'+scheds[id].menu_item.miqaat+'</h3>');
+              details.find("div#miqaat").html('<div class="col-xs-12"><h3>'+scheds[id].menu_item.miqaat+'</h3></div>');
             }
           }
           if(scheds[id]?.menu_type == 'thaali') {
@@ -270,6 +283,21 @@
               details.find("label#roti").html('');
               details.find("input#roti").val('');
               details.find("input#rotiqty").val('');
+            }
+            if(scheds[id]?.menu_item?.extra?.item !== undefined) {
+              details.find("div#extra").removeAttr('style','display:none');
+              details.find("input#extra").removeAttr('disabled','disabled');
+              details.find("input#extraqty").removeAttr('disabled','disabled');
+              details.find("label#extra").html(scheds[id].menu_item.extra.item);
+              details.find("input#extra").val(scheds[id].menu_item.extra.item);
+              details.find("input#extraqty").val(scheds[id].menu_item.extra.qty);
+            } else {
+              details.find("div#extra").attr('style','display:none');
+              details.find("input#extra").attr('disabled','disabled');
+              details.find("input#extraqty").attr('disabled','disabled');
+              details.find("label#extra").html('');
+              details.find("input#extra").val('');
+              details.find("input#extraqty").val('');
             }
             if( CurrentDate > GivenDate ) { 
               details.find("button.edit-menu").addClass('hidden');
