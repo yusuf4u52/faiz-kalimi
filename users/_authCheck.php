@@ -19,6 +19,10 @@
 			"/fmb/users/admin_scripts.php",
 			"/fmb/users/stop_permanant.php",
 			"/fmb/users/thalisearch.php",
+			"/fmb/users/foodlist.php",
+			"/fmb/users/savefood.php",
+			"/fmb/users/menulist.php",
+			"/fmb/users/savemenu.php",
 			"/fmb/users/pendingactions.php",
 			"/fmb/users/_stop_thali_admin.php",
 			"/fmb/sms/index.php"
@@ -29,6 +33,8 @@
 		),
 		"all" => array(
 			"/fmb/users/index.php",
+			"/fmb/users/viewmenu.php",
+			"/fmb/users/changemenu.php",
 			"/fmb/users/hoobHistory.php",
 			"/fmb/users/events.php",
 			"/fmb/users/update_details.php",
