@@ -21,8 +21,7 @@ if ($_POST) {
 $current_year = mysqli_fetch_assoc(mysqli_query($link, "SELECT value FROM settings where `key`='current_year'"));
 $musaid_list = mysqli_query($link, "SELECT username, email FROM users");
 
-
-if ($_GET) {
+if (isset($_GET['year'])) {
   if ($current_year['value'] == $_GET['year']) {
     $thalilist_tablename = "thalilist";
     $receipts_tablename = "receipts";
@@ -55,6 +54,9 @@ if ($_GET) {
 <body>
   <?php include('_nav.php'); ?>
   <div class="container">
+    <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
+      <div class="alert alert-success" role="alert">Thali of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is edited successfully for thali no <strong><?php echo $_GET['thalino']; ?></strong></div>
+    <?php } ?>
     <!-- Forms
       ================================================== -->
     <div class="row">
@@ -99,9 +101,8 @@ if ($_GET) {
             </form>
           </div>
         </div>
-        <?php
-        if ($_GET) :
-        ?>
+
+        <?php if (isset($_GET['year'])) : ?>
           <div class="col-lg-12">
             <div class="col-lg-12">
               <div class="page-header">
@@ -109,17 +110,25 @@ if ($_GET) {
               </div>
               <div class="bs-component">
                 <div id="receiptForm">
-                  <input type="number" name="receipt_amount" placeholder="Receipt Amount" />
-                  <select name="payment_type" id="payment_type">
-                    <option></option>
-                    <option value="Cash">Cash</option>
-                    <option value="Online">Online</option>
-                    <option value="Cheque">Cheque</option>
-                  </select>
-                  <input type="text" style="display:none" name="transaction_id" id="transaction_id" placeholder="Transaction ID" />
-                  <input type="hidden" name="receipt_thali" />
-                  <input type="button" name="cancel" value="cancel" />
-                  <input type="button" name="save" value="save" />
+                  <div class="form-group row">
+                    <div class="col-xs-5 col-md-6">
+                      <input class="form-control" type="number" name="receipt_amount" placeholder="Receipt Amount" />
+                    </div>
+                    <div class="col-xs-3">
+                      <select class="form-control" name="payment_type" id="payment_type">
+                        <option></option>
+                        <option value="Cash">Cash</option>
+                        <option value="Online">Online</option>
+                        <option value="Cheque">Cheque</option>
+                      </select>
+                    </div>
+                    <div class="col-xs-4 col-md-3">
+                      <input type="text" style="display:none" name="transaction_id" id="transaction_id" placeholder="Transaction ID" />
+                      <input type="hidden" name="receipt_thali" />
+                      <input class="btn btn-default" type="button" name="cancel" value="Cancel" />
+                      <input class="btn btn-primary" type="button" name="save" value="Save" />
+                    </div>
+                  </div>
                 </div>
                 <?php
                 if (mysqli_num_rows($result) > 1)
@@ -133,6 +142,7 @@ if ($_GET) {
             </div>
           </div>
         <?php endif; ?>
+
       </div>
     </div>
   </div>
@@ -195,6 +205,149 @@ if ($_GET) {
     </div>
   </div>
 
+  <?php $adminmenu = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` >= '" . date('Y-m-d') . "' AND `menu_type` = 'thaali' order by `menu_date` DESC") or die(mysqli_error($link));
+  while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
+    if( !empty($values['Thali'])) {
+      $adminumenu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '".$amenu_values['menu_date']."' AND `thali` = '".$values['Thali']."'") or die(mysqli_error($link));
+    }
+    if(isset($adminumenu) && $adminumenu->num_rows > 0) {
+      $rowaumenu = $adminumenu->fetch_assoc();
+      echo $menu_id = $rowaumenu['id'];
+      $menu_date = $rowaumenu['menu_date'];
+      $menu_item = unserialize($rowaumenu['menu_item']);
+      if( !empty($menu_item['roti']['qty'])) {
+        $roti_qty = $menu_item['roti']['qty'];
+      }
+      $target = 'adminusermenu-'.$menu_id; 
+    } else {
+      $menu_id = $amenu_values['id'];
+      $menu_date = $amenu_values['menu_date'];
+      $menu_item = unserialize($amenu_values['menu_item']);
+      if( !empty($values['thalisize'])) {
+        if($values['thalisize'] == 'Mini') {
+          $roti_qty = $menu_item['roti']['tqty'];
+        }elseif($values['thalisize'] == 'Small') {
+          $roti_qty = $menu_item['roti']['sqty'];
+        } elseif($values['thalisize'] == 'Medium') {
+          $roti_qty = $menu_item['roti']['mqty'];
+        } elseif($values['thalisize'] == 'Large') {
+          $roti_qty = $menu_item['roti']['lqty'];
+        }
+      }
+      $target = 'adminmenu-'.$menu_id;
+    } ?>
+    <div class="modal" id="<?php echo $target; ?>">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="changemenu-<?php echo $menu_id; ?>" class="form-horizontal" method="post" action="changemenu.php">
+            <input type="hidden" name="action" value="admin_change_menu" />
+            <input type="hidden" name="menu_id" value="<?php echo $menu_id; ?>" />
+            <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+            <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
+            <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
+            <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">Edit Menu of <?php echo $amenu_values['menu_date']; ?> for thaali <?php echo $values['Thali']; ?></h4>
+            </div>
+            <div class="modal-body">
+              <?php if (!empty($menu_item['sabji']['item'])) { ?>
+                <div class="form-group row">
+                  <label for="sabji" class="col-xs-6 control-label"><?php echo $menu_item['sabji']['item']; ?></label>
+                  <div class="col-xs-6">
+                    <input type="hidden" class="form-control" name="menu_item[sabji][item]" id="sabji" value="<?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] : ''); ?>">
+                    <div class="input-group">
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary btn-minus" type="button">-</button>
+                      </span>
+                      <input type="number" class="form-control" name="menu_item[sabji][qty]" id="sabjiqty" value="<?php echo (!empty($menu_item['sabji']['qty']) ? $menu_item['sabji']['qty'] : '1'); ?>" min="0" max="2" readonly>
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary btn-plus" type="button">+</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              <?php } ?>
+              <?php if (!empty($menu_item['tarkari']['item'])) { ?>
+                <div class="form-group row">
+                  <label for="tarkari" class="col-xs-6 control-label"><?php echo $menu_item['tarkari']['item']; ?></label>
+                  <div class="col-xs-6">
+                    <input type="hidden" class="form-control" name="menu_item[tarkari][item]" id="tarkari" value="<?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] : ''); ?>">
+                    <div class="input-group">
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary btn-minus" type="button">-</button>
+                      </span>
+                      <input type="number" class="form-control" name="menu_item[tarkari][qty]" id="tarkariqty" value="<?php echo (!empty($menu_item['tarkari']['qty']) ? $menu_item['tarkari']['qty'] : '1'); ?>" min="0" max="2" readonly>
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary btn-plus" type="button">+</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              <?php } ?>
+              <?php if (!empty($menu_item['rice']['item'])) { ?>
+                <div class="form-group row">
+                  <label for="rice" class="col-xs-6 control-label"><?php echo $menu_item['rice']['item']; ?></label>
+                  <div class="col-xs-6">
+                    <input type="hidden" class="form-control" name="menu_item[rice][item]" id="rice" value="<?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] : ''); ?>">
+                    <div class="input-group">
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary btn-minus" type="button">-</button>
+                      </span>
+                      <input type="number" class="form-control" name="menu_item[rice][qty]" id="riceqty" value="<?php echo (!empty($menu_item['rice']['qty']) ? $menu_item['rice']['qty'] : '1'); ?>" min="0" max="2" readonly>
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary btn-plus" type="button">+</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              <?php } ?>
+              <?php if (!empty($menu_item['roti']['item'])) { ?>
+                <div class="form-group row">
+                  <label for="roti" class="col-xs-6 control-label"><?php echo $menu_item['roti']['item']; ?></label>
+                  <div class="col-xs-6">
+                    <input type="hidden" class="form-control" name="menu_item[roti][item]" id="roti" value="<?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] : ''); ?>">
+                    <div class="input-group">
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary btn-minus" type="button">-</button>
+                      </span>
+                      <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty" value="<?php echo (!empty($roti_qty) ? $roti_qty : '1'); ?>" min="0" max="3" readonly>
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary btn-plus" type="button">+</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              <?php } ?>
+              <?php if (!empty($menu_item['extra']['item'])) { ?>
+                <div class="form-group row">
+                  <label for="roti" class="col-xs-6 control-label"><?php echo $menu_item['extra']['item']; ?></label>
+                  <div class="col-xs-6">
+                    <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="<?php echo (!empty($menu_item['extra']['item']) ? $menu_item['extra']['item'] : ''); ?>">
+                    <div class="input-group">
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary btn-minus" type="button">-</button>
+                      </span>
+                      <input type="number" class="form-control" name="menu_item[extra][qty]" id="riceqty" value="<?php echo (!empty($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>" min="0" max="1" readonly>
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary btn-plus" type="button">+</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              <?php } ?>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  <?php }
+  mysqli_free_result($adminmenu); ?>
+
   <?php include('_bottomJS.php'); ?>
   <script>
     $(function() {
@@ -237,7 +390,7 @@ if ($_GET) {
       $('[data-key="stopthaali"]').click(function() {
         stopThali_admin($(this).attr('data-thali'), $(this).attr('data-active'), false, false, function(data) {
           // if (data === 'success') {
-            location.reload();
+          location.reload();
           // }
         });
       });

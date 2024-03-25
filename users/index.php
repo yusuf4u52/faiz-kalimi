@@ -117,9 +117,7 @@ if (!empty($values['yearly_hub'])) {
 }
 ?>
 <!DOCTYPE html>
-
 <!-- saved from url=(0029)http://bootswatch.com/flatly/ -->
-
 <html lang="en">
 
 <head>
@@ -127,58 +125,38 @@ if (!empty($values['yearly_hub'])) {
 </head>
 
 <body>
-
   <?php include('_nav.php'); ?>
-
   <div class="container">
-    <br />
-    <br />
-
     <div class="row">
-      <div class="col-xs-6 col-sm-3 col-md-2">
-
+      <div class="col-xs-12">
         <?php
         if (!empty($values['yearly_hub'])) {
           if ($values['Active'] == 0) {
-            if ($values['hardstop'] == 1) {
-        ?>
-              <input type="button" onclick="alert('<?php echo "You are not allowed to start your thali: " . $values['hardstop_comment'] ?>')" name="start_thali" value="Start Thaali" class="btn btn-success" />
-            <?php
-
-            } else {
-            ?>
-
+            if ($values['hardstop'] == 1) { ?>
+              <input type="button" onclick="alert('You are not allowed to start your thali: <?php echo $values['hardstop_comment']; ?>')" name="start_thali" value="Start Thaali" class="btn btn-success" />
+            <?php } else { ?>
               <form method="POST" action="start_thali.php" onsubmit='return confirm("Are you sure?");' data-key="LazyLoad" class="hidden">
                 <input type="submit" name="start_thali" value="Start Thaali" class="btn btn-success" />
               </form>
-
             <?php
             }
-          } else {
-            ?>
-
-            <form method="POST" action="stop_thali.php" onsubmit='return confirm("Are you sure?");' data-key="LazyLoad" class="hidden">
-              <input type="submit" name="stop_thali" value="Stop Thaali" class="btn btn-danger" />
-            </form>
-
-          <?php } ?>
-
-      </div>
-
-      <div class="col-xs-6 col-sm-3 col-md-2">
-      <?php
-        } else {
-      ?>
-        <form>
+          } else { ?>
+            <div class="row">
+              <div class="col-xs-6">
+                <form method="POST" action="stop_thali.php" onsubmit='return confirm("Are you sure?");' data-key="LazyLoad" class="hidden">
+                  <input type="submit" name="stop_thali" value="Stop Thaali" class="btn btn-danger" />
+                </form>
+              </div>
+              <div class="col-xs-6 text-right">
+                <a href="viewmenu.php" class="btn btn-success" data-key="LazyLoad">View Menu</a>
+              </div>
+            </div>
+          <?php }
+        } else { ?>
           <h5>You dont see a start button here probably because you are not taking barakat of thali or dont have a transporter assigned yet.</h5>
-        </form>
-      <?php }
-      ?>
+        <?php } ?>
       </div>
     </div>
-
-    <br />
-
     <div class="row">
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
