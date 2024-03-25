@@ -1,20 +1,23 @@
-(function($){
+(function ($) {
+  var calendar;
+  var Calendar = FullCalendar.Calendar;
+  var events = [];
   $(window).scroll(function () {
-      var top = $(document).scrollTop();
-      $('.splash').css({
-        'background-position': '0px -'+(top/3).toFixed(2)+'px'
-      });
-      if(top > 50)
-        $('#home > .navbar').removeClass('navbar-transparent');
-      else
-        $('#home > .navbar').addClass('navbar-transparent');
+    var top = $(document).scrollTop();
+    $('.splash').css({
+      'background-position': '0px -' + (top / 3).toFixed(2) + 'px'
+    });
+    if (top > 50)
+      $('#home > .navbar').removeClass('navbar-transparent');
+    else
+      $('#home > .navbar').addClass('navbar-transparent');
   });
 
-  $("a[href='#']").click(function(e) {
+  $("a[href='#']").click(function (e) {
     e.preventDefault();
   });
 
-  var $button = $("<div id='source-button' class='btn btn-primary btn-xs'>&lt; &gt;</div>").click(function(){
+  var $button = $("<div id='source-button' class='btn btn-primary btn-xs'>&lt; &gt;</div>").click(function () {
     var html = $(this).parent().html();
     html = cleanSource(html);
     $("#source-modal pre").text(html);
@@ -24,19 +27,19 @@
   $('.bs-component [data-toggle="popover"]').popover();
   $('.bs-component [data-toggle="tooltip"]').tooltip();
 
-  $(".bs-component").hover(function(){
+  $(".bs-component").hover(function () {
     $(this).append($button);
     $button.show();
-  }, function(){
+  }, function () {
     $button.hide();
   });
 
   function cleanSource(html) {
     html = html.replace(/×/g, "&close;")
-               .replace(/«/g, "&laquo;")
-               .replace(/»/g, "&raquo;")
-               .replace(/←/g, "&larr;")
-               .replace(/→/g, "&rarr;");
+      .replace(/«/g, "&laquo;")
+      .replace(/»/g, "&raquo;")
+      .replace(/←/g, "&larr;")
+      .replace(/→/g, "&rarr;");
 
     var lines = html.split(/\n/);
 
@@ -44,9 +47,9 @@
     lines.splice(-1, 1);
 
     var indentSize = lines[0].length - lines[0].trim().length,
-        re = new RegExp(" {" + indentSize + "}");
+      re = new RegExp(" {" + indentSize + "}");
 
-    lines = lines.map(function(line){
+    lines = lines.map(function (line) {
       if (line.match(re)) {
         line = line.substring(indentSize);
       }
@@ -60,11 +63,11 @@
   }
 
   // Edit menu for users
-  $('.btn-minus').on('click', function() {
+  $('.btn-minus').on('click', function () {
     var $input = $(this).parent().siblings('input');
     var minCount = $input.attr('min');
     var count = parseFloat($input.val());
-    if(count <= 1) {
+    if (count <= 1) {
       var count = parseFloat($input.val()) - 0.5;
       count = count < minCount ? minCount : count;
     } else {
@@ -76,11 +79,11 @@
     return false;
   })
 
-  $('.btn-plus').on('click', function() {
+  $('.btn-plus').on('click', function () {
     var $input = $(this).parent().siblings('input');
     var maxCount = $input.attr('max');
     var count = parseFloat($input.val());
-    if(count >= 1) {
+    if (count >= 1) {
       var count = parseFloat($input.val()) + 1;
       count = count > maxCount ? maxCount : count;
     } else {
@@ -92,33 +95,33 @@
     return false;
   });
 
-  $('#changemenu').on( "submit", function() {
+  $('#changemenu').on("submit", function () {
     var total = 0;
     var sabjiqty = parseFloat($('#sabjiqty').val());
-    var tarkariqty = parseFloat($('#tarkariqty').val()); 
+    var tarkariqty = parseFloat($('#tarkariqty').val());
     var riceqty = parseFloat($('#riceqty').val());
-    if(sabjiqty > 0) {
-      if(sabjiqty == 0.5) {
+    if (sabjiqty > 0) {
+      if (sabjiqty == 0.5) {
         total = total + 1;
       } else {
         total = total + sabjiqty;
       }
     }
-    if(tarkariqty > 0) {
-      if(tarkariqty == 0.5) {
+    if (tarkariqty > 0) {
+      if (tarkariqty == 0.5) {
         total = total + 1;
       } else {
         total = total + tarkariqty;
       }
     }
-    if(riceqty > 0) {
-      if(riceqty == 0.5) {
+    if (riceqty > 0) {
+      if (riceqty == 0.5) {
         total = total + 1;
       } else {
         total = total + riceqty;
       }
     }
-    if( total > 4 ) {
+    if (total > 4) {
       alert('Total should not be greater than 4. Also 0.5 will also be count as 1');
       return false;
     }
@@ -129,22 +132,22 @@
     Object.keys(scheds).map((k) => {
       var row = scheds[k];
       var title = '';
-      if(row.menu_type == 'miqaat') {
-        if(row?.menu_item?.miqaat !== undefined) {
+      if (row.menu_type == 'miqaat') {
+        if (row?.menu_item?.miqaat !== undefined) {
           title += row?.menu_item?.miqaat;
         }
       }
-      if(row.menu_type == 'thaali') {
-        if(row?.menu_item?.sabji?.item !== undefined) {
+      if (row.menu_type == 'thaali') {
+        if (row?.menu_item?.sabji?.item !== undefined) {
           title += row?.menu_item?.sabji?.item + '<br/>';
         }
-        if(row?.menu_item?.tarkari?.item !== undefined) {
+        if (row?.menu_item?.tarkari?.item !== undefined) {
           title += row?.menu_item?.tarkari?.item + '<br/>';
         }
-        if(row?.menu_item?.rice?.item !== undefined) {
+        if (row?.menu_item?.rice?.item !== undefined) {
           title += row?.menu_item?.rice?.item + '<br/>';
         }
-        if(row?.menu_item?.roti?.item !== undefined) {
+        if (row?.menu_item?.roti?.item !== undefined) {
           title += row?.menu_item?.roti?.item;
         }
       }
@@ -177,101 +180,101 @@
           details.find("input#menu_id").val(id);
           var GivenDate = new Date(scheds[id].menu_date);
           GivenDate.setDate(GivenDate.getDate() - 1);
-          GivenDate.setHours(20,0,0,0);
+          GivenDate.setHours(20, 0, 0, 0);
           var CurrentDate = new Date();
-          CurrentDate.setHours(0,0,0,0);
-          if(scheds[id]?.menu_type == 'miqaat') {
-            details.find(".modal-title").html('Miqaat on '+scheds[id].menu_date);
-            details.find("div#sabji").attr('style','display:none');
-            details.find("div#tarkari").attr('style','display:none');
-            details.find("div#rice").attr('style','display:none');
-            details.find("div#roti").attr('style','display:none');
+          CurrentDate.setHours(0, 0, 0, 0);
+          if (scheds[id]?.menu_type == 'miqaat') {
+            details.find(".modal-title").html('Miqaat on ' + scheds[id].menu_date);
+            details.find("div#sabji").attr('style', 'display:none');
+            details.find("div#tarkari").attr('style', 'display:none');
+            details.find("div#rice").attr('style', 'display:none');
+            details.find("div#roti").attr('style', 'display:none');
             details.find("button.edit-menu").addClass('hidden');
             details.find("button.rsvp-end").addClass('hidden');
-            if(scheds[id]?.menu_item?.miqaat !== undefined) {
-              details.find("div#miqaat").removeAttr('style','display:none');
-              details.find("div#miqaat").html('<h3>'+scheds[id].menu_item.miqaat+'</h3>');
+            if (scheds[id]?.menu_item?.miqaat !== undefined) {
+              details.find("div#miqaat").removeAttr('style', 'display:none');
+              details.find("div#miqaat").html('<h3>' + scheds[id].menu_item.miqaat + '</h3>');
             }
           }
-          if(scheds[id]?.menu_type == 'thaali') {
-            details.find(".modal-title").html('View/Edit Menu of '+scheds[id].menu_date);
-            details.find("div#miqaat").attr('style','display:none');
-            if(scheds[id]?.menu_item?.sabji?.item !== undefined) {
-              details.find("div#sabji").removeAttr('style','display:none');
-              details.find("input#sabji").removeAttr('disabled','disabled');
-              details.find("input#sabjiqty").removeAttr('disabled','disabled');
+          if (scheds[id]?.menu_type == 'thaali') {
+            details.find(".modal-title").html('View/Edit Menu of ' + scheds[id].menu_date);
+            details.find("div#miqaat").attr('style', 'display:none');
+            if (scheds[id]?.menu_item?.sabji?.item !== undefined) {
+              details.find("div#sabji").removeAttr('style', 'display:none');
+              details.find("input#sabji").removeAttr('disabled', 'disabled');
+              details.find("input#sabjiqty").removeAttr('disabled', 'disabled');
               details.find("label#sabji").html(scheds[id].menu_item.sabji.item);
               details.find("input#sabji").val(scheds[id].menu_item.sabji.item);
               details.find("input#sabjiqty").val(scheds[id].menu_item.sabji.qty);
             } else {
-              details.find("div#sabji").attr('style','display:none');
-              details.find("input#sabji").attr('disabled','disabled');
-              details.find("input#sabjiqty").attr('disabled','disabled');
+              details.find("div#sabji").attr('style', 'display:none');
+              details.find("input#sabji").attr('disabled', 'disabled');
+              details.find("input#sabjiqty").attr('disabled', 'disabled');
               details.find("label#sabji").html('');
               details.find("input#sabji").val('');
               details.find("input#sabjiqty").val('');
             }
-            if(scheds[id]?.menu_item?.tarkari?.item !== undefined) {
-              details.find("div#tarkari").removeAttr('style','display:none');
-              details.find("input#tarkari").removeAttr('disabled','disabled');
-              details.find("input#tarkariqty").removeAttr('disabled','disabled');
+            if (scheds[id]?.menu_item?.tarkari?.item !== undefined) {
+              details.find("div#tarkari").removeAttr('style', 'display:none');
+              details.find("input#tarkari").removeAttr('disabled', 'disabled');
+              details.find("input#tarkariqty").removeAttr('disabled', 'disabled');
               details.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
               details.find("input#tarkari").val(scheds[id].menu_item.tarkari.item);
               details.find("input#tarkariqty").val(scheds[id].menu_item.tarkari.qty);
             } else {
-              details.find("div#tarkari").attr('style','display:none');
-              details.find("input#tarkari").attr('disabled','disabled');
-              details.find("input#tarkariqty").attr('disabled','disabled');
+              details.find("div#tarkari").attr('style', 'display:none');
+              details.find("input#tarkari").attr('disabled', 'disabled');
+              details.find("input#tarkariqty").attr('disabled', 'disabled');
               details.find("label#tarkari").html('');
               details.find("input#tarkari").val('');
               details.find("input#tarkariqty").val('');
             }
-            if(scheds[id]?.menu_item?.rice?.item !== undefined) {
-              details.find("div#rice").removeAttr('style','display:none');
-              details.find("input#rice").removeAttr('disabled','disabled');
-              details.find("input#riceqty").removeAttr('disabled','disabled');
+            if (scheds[id]?.menu_item?.rice?.item !== undefined) {
+              details.find("div#rice").removeAttr('style', 'display:none');
+              details.find("input#rice").removeAttr('disabled', 'disabled');
+              details.find("input#riceqty").removeAttr('disabled', 'disabled');
               details.find("label#rice").html(scheds[id].menu_item.rice.item);
               details.find("input#rice").val(scheds[id].menu_item.rice.item);
               details.find("input#riceqty").val(scheds[id].menu_item.rice.qty);
             } else {
-              details.find("div#rice").attr('style','display:none');
-              details.find("input#rice").attr('disabled','disabled');
-              details.find("input#riceqty").attr('disabled','disabled');
+              details.find("div#rice").attr('style', 'display:none');
+              details.find("input#rice").attr('disabled', 'disabled');
+              details.find("input#riceqty").attr('disabled', 'disabled');
               details.find("label#rice").html('');
               details.find("input#rice").val('');
               details.find("input#riceqty").val('');
             }
-            if(scheds[id]?.menu_item?.roti?.item !== undefined) {
-              details.find("div#roti").removeAttr('style','display:none');
-              details.find("input#roti").removeAttr('disabled','disabled');
-              details.find("input#rotiqty").removeAttr('disabled','disabled');
+            if (scheds[id]?.menu_item?.roti?.item !== undefined) {
+              details.find("div#roti").removeAttr('style', 'display:none');
+              details.find("input#roti").removeAttr('disabled', 'disabled');
+              details.find("input#rotiqty").removeAttr('disabled', 'disabled');
               details.find("label#roti").html(scheds[id].menu_item.roti.item);
               details.find("input#roti").val(scheds[id].menu_item.roti.item);
-              if(scheds[id]?.menu_item?.roti?.qty !== undefined) {
+              if (scheds[id]?.menu_item?.roti?.qty !== undefined) {
                 details.find("input#rotiqty").val(scheds[id].menu_item.roti.qty);
               } else {
-                if(scheds[id].thalisize == 'Mini') {
+                if (scheds[id].thalisize == 'Mini') {
                   details.find("input#rotiqty").val(scheds[id].menu_item.roti.tqty);
                 }
-                if(scheds[id].thalisize == 'Small') {
+                if (scheds[id].thalisize == 'Small') {
                   details.find("input#rotiqty").val(scheds[id].menu_item.roti.sqty);
                 }
-                if(scheds[id].thalisize == 'Medium') {
+                if (scheds[id].thalisize == 'Medium') {
                   details.find("input#rotiqty").val(scheds[id].menu_item.roti.mqty);
                 }
-                if(scheds[id].thalisize == 'Large') {
+                if (scheds[id].thalisize == 'Large') {
                   details.find("input#rotiqty").val(scheds[id].menu_item.roti.lqty);
                 }
               }
             } else {
-              details.find("div#roti").attr('style','display:none');
-              details.find("input#roti").attr('disabled','disabled');
-              details.find("input#rotiqty").attr('disabled','disabled');
+              details.find("div#roti").attr('style', 'display:none');
+              details.find("input#roti").attr('disabled', 'disabled');
+              details.find("input#rotiqty").attr('disabled', 'disabled');
               details.find("label#roti").html('');
               details.find("input#roti").val('');
               details.find("input#rotiqty").val('');
             }
-            if( CurrentDate > GivenDate ) { 
+            if (CurrentDate > GivenDate) {
               details.find("button.edit-menu").addClass('hidden');
               details.find("button.rsvp-end").removeClass('hidden');
             } else {
@@ -285,9 +288,9 @@
           alert("Event is undefined");
         }
       },
-      eventContent: function( info ) {
-        return {html: info.event.title};
-    },
+      eventContent: function (info) {
+        return { html: info.event.title };
+      },
       editable: true,
     });
 
