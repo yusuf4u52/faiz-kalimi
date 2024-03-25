@@ -17,6 +17,14 @@ $(function () {
     var hijri = el[prop];
     el[prop] = moment(hijri, "iYYYY-iM-iD").format("iD iMMMM iYYYY");
   }
+
+  $('.menu_type').click(function () {
+    var type = $(this).val();
+    $(this).closest('form').find('div.thaali').addClass('hidden');
+    $(this).closest('form').find('div.miqaat').addClass('hidden');
+    $(this).closest('form').find('div.'+type).removeClass('hidden');
+  });
+
 });
 
 function stopThali_admin(
