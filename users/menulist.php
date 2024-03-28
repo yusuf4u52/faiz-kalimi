@@ -23,6 +23,9 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
         <?php if (isset($_GET['action']) && $_GET['action'] == 'delete') { ?>
             <div class="alert alert-success" role="alert">Menu/Miqaat of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is deleted successfully.</div>
         <?php } ?>
+        <?php if (isset($_GET['action']) && $_GET['action'] == 'existed') { ?>
+            <div class="alert alert-warning" role="alert">Menu/Miqaat of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is already existed.</div>
+        <?php } ?>
         <button type="button" class="btn btn-primary" data-target="#addmenu" data-toggle="modal">Add Menu</button><br><br>
         <table class="table table-striped table-hover" id="my-table">
             <thead>
@@ -50,7 +53,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                 <?php echo (!empty($menu_item['extra']['item']) ? $menu_item['extra']['item'] . '  (' . $menu_item['extra']['qty'] . ')<br />' : ''); ?>
                             <?php } ?>
                         </td>
-                        <td><?php if (date('Y-m-d') < $values['menu_date']) { ?><button type="button" class="btn btn-primary" data-target="#editmenu-<?php echo $values['id']; ?>" data-toggle="modal">Edit</button><?php } ?> <button type="button" class="btn btn-primary" data-target="#deletemenu-<?php echo $values['id']; ?>" data-toggle="modal">Delete</button></td>
+                        <td><?php if (date('Y-m-d') < $values['menu_date']) { ?><button type="button" class="btn btn-success" data-target="#editmenu-<?php echo $values['id']; ?>" data-toggle="modal" style="margin-bottom:5px"><i class="fas fa-edit"></i></button><?php } ?> <button type="button" class="btn btn-danger" data-target="#deletemenu-<?php echo $values['id']; ?>" data-toggle="modal" style="margin-bottom:5px"><i class="fas fa-trash"></i></button></td>
                     </tr>
                 <?php }
                 mysqli_free_result($result); ?>
@@ -75,7 +78,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                             <div class="form-group row">
                                 <label for="menu_date" class="col-xs-4 control-label">Menu Date</label>
                                 <div class="col-xs-8">
-                                    <input type="date" class="form-control" min="<?php echo date('Y-m-d'); ?>" name="menu_date" value="<?php echo $values['menu_date']; ?>" required>
+                                    <input type="date" class="form-control" min="<?php echo date('Y-m-d'); ?>" name="menu_date" value="<?php echo $values['menu_date']; ?>" readonly>
                                 </div>
                             </div>
                             <div class="form-group row">

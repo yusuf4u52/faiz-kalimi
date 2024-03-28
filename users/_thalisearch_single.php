@@ -106,7 +106,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
         <table class="table table-striped table-hover">
           <tr>
             <th><b>Date</b></th>
-            <th><b>Menu Item</b></th>
+            <th width="50%"><b>Menu Item</b></th>
             <th><b>Action</b></th>
           </tr>
           <?php while ($menu_values = mysqli_fetch_assoc($menu_list)) {
@@ -143,7 +143,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
                 <?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] . '  (' . $menu_item['rice']['qty'] . ')' : 'Empty'); ?><br />
                 <?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] . '  (' . $roti_qty . ')' : 'Empty'); ?>
               </td>
-              <td><?php if (date('Y-m-d') < $menu_date) { ?><button type="button" class="btn btn-primary" data-target="#<?php echo $target; ?>" data-toggle="modal">Edit</button><?php } else { ?> <button type="button" class="btn btn-primary" disabled>RSVP Ended</button><?php } ?></td>
+              <td><?php if (date('Y-m-d') < $menu_date) { ?><button type="button" class="btn btn-success" data-target="#<?php echo $target; ?>" data-toggle="modal"><i class="fas fa-edit"></i></button><?php } else { ?> <button type="button" class="btn btn-warning" disabled>RSVP Ended</button><?php } ?></td>
             </tr>
           <?php mysqli_free_result($user_menu); }
           mysqli_free_result($menu_list); ?>
