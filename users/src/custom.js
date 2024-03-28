@@ -122,9 +122,11 @@
       }
     }
     if (total > 4) {
-      alert('Total should not be greater than 4. Also 0.5 will also be count as 1');
+      $('.modal-body #validate').remove();
+      $('.modal-body').append('<div id="validate" class="row text-center"><div class="col-xs-12"><small style="color:#f00">Total should not be greater than 4. Also 0.5 will also be count as 1</small><div>');
       return false;
     }
+    $('.modal-body #validate').remove();
     return true
   });
 
@@ -149,6 +151,9 @@
         }
         if (row?.menu_item?.roti?.item !== undefined) {
           title += row?.menu_item?.roti?.item;
+        }
+        if (row?.menu_item?.extra?.item !== undefined) {
+          title += row?.menu_item?.extra?.item;
         }
       }
       events.push({
@@ -178,6 +183,7 @@
         var id = info.event.id;
         if (!!scheds[id]) {
           details.find("input#menu_id").val(id);
+          details.find('.modal-body #validate').remove();
           var GivenDate = new Date(scheds[id].menu_date);
           GivenDate.setDate(GivenDate.getDate() - 1);
           GivenDate.setHours(20, 0, 0, 0);
@@ -189,6 +195,7 @@
             details.find("div#tarkari").attr('style', 'display:none');
             details.find("div#rice").attr('style', 'display:none');
             details.find("div#roti").attr('style', 'display:none');
+            details.find("div#extra").attr('style', 'display:none');
             details.find("button.edit-menu").addClass('hidden');
             details.find("button.rsvp-end").addClass('hidden');
             if (scheds[id]?.menu_item?.miqaat !== undefined) {
@@ -274,6 +281,21 @@
               details.find("input#roti").val('');
               details.find("input#rotiqty").val('');
             }
+            if (scheds[id]?.menu_item?.extra?.item !== undefined) {
+              details.find("div#extra").removeAttr('style', 'display:none');
+              details.find("input#extra").removeAttr('disabled', 'disabled');
+              details.find("input#extraqty").removeAttr('disabled', 'disabled');
+              details.find("label#extra").html(scheds[id].menu_item.extra.item);
+              details.find("input#extra").val(scheds[id].menu_item.extra.item);
+              details.find("input#extraqty").val(scheds[id].menu_item.extra.qty);
+            } else {
+              details.find("div#extra").attr('style', 'display:none');
+              details.find("input#extra").attr('disabled', 'disabled');
+              details.find("input#extraqty").attr('disabled', 'disabled');
+              details.find("label#extra").html('');
+              details.find("input#extra").val('');
+              details.find("input#extraqty").val('');
+            }
             if (CurrentDate > GivenDate) {
               details.find("button.edit-menu").addClass('hidden');
               details.find("button.rsvp-end").removeClass('hidden');
@@ -296,4 +318,4 @@
 
   calendar.render();
 
-})();
+})(jQuery);

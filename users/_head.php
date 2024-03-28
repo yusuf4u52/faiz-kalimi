@@ -3,6 +3,7 @@
 <title>Faizul Mawaidil Burhaniya (Kalimi Mohalla)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<link rel= "manifest" href= "/fmb/manifest.json" />
 <link rel="stylesheet" href="/fmb/styles/css/bootstrap-theme-white-plum/bootstrap.min.css" />
 <link rel="stylesheet" href="/fmb/users/src/jquery.dynatable.css" />
 <link rel="icon" href="images/icon.png">

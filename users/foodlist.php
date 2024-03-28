@@ -51,7 +51,7 @@ $result = mysqli_query($link, "SELECT * FROM food_list order by `dish_name` ASC"
                     <tr>
                         <td><?php echo $values['dish_name']; ?></td>
                         <td><?php echo $dish_type; ?></td>
-                        <td><button type="button" class="btn btn-primary" data-target="#editfood-<?php echo $values['id']; ?>" data-toggle="modal">Edit</button> <button type="button" class="btn btn-primary" data-target="#deletefood-<?php echo $values['id']; ?>" data-toggle="modal">Delete</button></td>
+                        <td><button type="button" class="btn btn-success" data-target="#editfood-<?php echo $values['id']; ?>" data-toggle="modal" style="margin-bottom:5px"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-danger" data-target="#deletefood-<?php echo $values['id']; ?>" data-toggle="modal" style="margin-bottom:5px"><i class="fas fa-trash"></i></button></td>
                     </tr>
                 <?php }
                 mysqli_free_result($result); ?>

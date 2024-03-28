@@ -159,7 +159,7 @@ if (!empty($values['yearly_hub'])) {
     </div>
     <div class="row">
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default">
+        <div class="panel panel-default" style="margin-top: 20px;">
           <div class="panel-heading" role="tab" id="headingOne">
             <h4 class="panel-title">
               <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
@@ -317,7 +317,7 @@ if (!empty($values['yearly_hub'])) {
 
   <?php include('_bottomJS.php'); ?>
 
-  <div align="center">
+  <div class="text-center">
     <a href="mailto:kalimimohallapoona@gmail.com">kalimimohallapoona@gmail.com</a><br><br>
   </div>
 </body>

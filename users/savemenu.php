@@ -70,12 +70,24 @@ if( isset($_POST['menu_type']) && isset($_POST['menu_item']) ) {
 }
 
 if( isset($_POST['action']) && $_POST['action'] == 'add_menu' ) {
-    $sql = "INSERT INTO menu_list (`menu_date`,`menu_type`,`menu_item`) VALUES ('" . $_POST['menu_date'] . "', '" . $_POST['menu_type'] . "', '" . serialize($menu_item) . "')";
-    mysqli_query($link, $sql) or die(mysqli_error($link));
-    header("Location: /fmb/users/menulist.php?action=add&date=".$_POST['menu_date']);
+    $user_menu_date = mysqli_query($link, "SELECT `menu_date` FROM menu_list WHERE `menu_date` = '".$_POST['menu_date']."'") or die(mysqli_error($link));
+    if(isset($user_menu_date) && $user_menu_date->num_rows > 0) {
+        header("Location: /fmb/users/menulist.php?action=existed&date=".$_POST['menu_date']);
+    } else {
+        $sql = "INSERT INTO menu_list (`menu_date`,`menu_type`,`menu_item`) VALUES ('" . $_POST['menu_date'] . "', '" . $_POST['menu_type'] . "', '" . serialize($menu_item) . "')";
+        mysqli_query($link, $sql) or die(mysqli_error($link));
+        header("Location: /fmb/users/menulist.php?action=add&date=".$_POST['menu_date']);
+    }
 }
 
 if( isset($_POST['action']) && $_POST['action'] == 'edit_menu' ) {
+    $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '".$_POST['menu_date']."'") or die(mysqli_error($link));
+    if($user_menu->num_rows > 0) {
+        while ($menu_values = mysqli_fetch_assoc($user_menu)) {
+            $menu_delete = "DELETE FROM user_menu WHERE `id` = '".$menu_values['id']."'";
+            mysqli_query($link,$menu_delete) or die(mysqli_error($link));
+        }
+    }
     $sql = "UPDATE menu_list SET `menu_date` = '".$_POST['menu_date']."', `menu_type` = '" . $_POST['menu_type'] . "', `menu_item` = '".serialize($menu_item)."' WHERE `id` = '".$_POST['menu_id']."'";
     mysqli_query($link,$sql) or die(mysqli_error($link));
     header("Location: /fmb/users/menulist.php?action=edit&date=".$_POST['menu_date']);
