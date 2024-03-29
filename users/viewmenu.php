@@ -34,6 +34,12 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
     <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
       <div class="alert alert-success" role="alert">Thali of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is edited successfully.</div>
     <?php } ?>
+    <?php if (isset($_GET['action']) && $_GET['action'] == 'nochange') { ?>
+      <div class="alert alert-warning" role="alert">No change found for Thali of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> or you have revert to the original quantity.</div>
+    <?php } ?>
+    <?php if (isset($_GET['action']) && $_GET['action'] == 'rsvp') { ?>
+      <div class="alert alert-danger" role="alert">You can't edit the thali now because RSVP time for editing Thali of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is finished.</div>
+    <?php } ?>
     <?php $sched_res = [];
     while ($values = mysqli_fetch_assoc($result)) {
       $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '".$values['menu_date']."' AND `thali` = '".$_SESSION['thali']."'") or die(mysqli_error($link));
