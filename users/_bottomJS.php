@@ -8,13 +8,4 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
 <script src="javascript/index.js?v=1"></script>
 <script src="src/custom.js?v=1"></script>
-<script type="text/javascript">
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", function() {
-        navigator.serviceWorker
-            .register("/fmb/sw.js")
-            .then(res => console.log("service worker registered"))
-            .catch(err => console.log("service worker not registered", err))
-        })
-    }
-</script>
+<script type="text/javascript" src="/fmb/styles/js/register-sw.js"></script>

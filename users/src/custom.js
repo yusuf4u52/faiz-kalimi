@@ -121,7 +121,7 @@
     }
     if (total > 4) {
       $('.modal-body #validate').remove();
-      $('.modal-body').append('<div id="validate" class="row text-center"><div class="col-xs-12"><small style="color:#f00">Total should not be greater than 4. Also 0.5 will also be count as 1</small><div>');
+      $('.modal-body').append('<div id="validate" class="row text-center"><div class="col-xs-12"><small class="text-danger">Total should not be greater than 4. Also 0.5 will also be count as 1</small><div>');
       return false;
     }
     $('.modal-body #validate').remove();
