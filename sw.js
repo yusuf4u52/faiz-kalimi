@@ -1,8 +1,8 @@
 'use strict';
  
 const cacheName = 'fmb-kalimi-cache-2.2.25';
-const startPage = 'http://localhost/fmb/';
-const offlinePage = 'http://localhost/fmb/';
+const startPage = 'https://kalimijamaatpoona.org/fmb/';
+const offlinePage = 'https://kalimijamaatpoona.org/fmb/';
 const filesToCache = [startPage, offlinePage];
 const neverCacheUrls = [/\/users\/viewmenu.php/,/\/admin/];
 
