@@ -8,7 +8,7 @@ error_reporting(0);
 $day = date("l", strtotime("tomorrow"));
 if ($day == 'Sunday') {
 	echo "Skipping email as no thali on Sunday.";
-	//exit;
+	exit;
 }
 
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
@@ -48,7 +48,7 @@ if ($menu_item->num_rows > 0) {
 				$msgvar .= '<tr>
 			</thead>
 			<tbody>';
-				$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, thalisize, Transporter from thalilist");
+				$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, thalisize from thalilist WHERE `Transporter` LIKE '".$row_trans."'");
 				while ($row = mysqli_fetch_assoc($thali)) {
 					$user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $tomorrow_date . "' AND `thali` = '" . $row['Thali'] . "'");
 					if ($user_menu->num_rows > 0) {
@@ -82,4 +82,4 @@ if ($menu_item->num_rows > 0) {
 }
 
 // send email
-sendEmail('kalimimohallapoona@gmail.com', 'Updated Menu of' . $tomorrow_date, $msgvar, null, null, true);
+sendEmail('kalimimohallapoona@gmail.com', 'Update Menu of' . $tomorrow_date, $msgvar, null, null, true);
