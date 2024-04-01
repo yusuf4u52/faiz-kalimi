@@ -25,8 +25,9 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menu Backend <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
-              <li><a href="/fmb/users/foodlist.php">Add/Edit Food Item</a></li>
-              <li><a href="/fmb/users/menulist.php">Add/Edit Menu</a></li>
+              <li><a href="/fmb/users/foodlist.php">Food Items</a></li>
+              <li><a href="/fmb/users/menulist.php">Menu List</a></li>
+              <li><a href="/fmb/users/usermenu.php">User Menu</a></li>
             </ul>
           </li>
         <?php

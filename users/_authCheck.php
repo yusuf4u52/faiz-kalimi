@@ -23,6 +23,7 @@
 			"/fmb/users/savefood.php",
 			"/fmb/users/menulist.php",
 			"/fmb/users/savemenu.php",
+			"/fmb/users/usermenu.php",
 			"/fmb/users/pendingactions.php",
 			"/fmb/users/_stop_thali_admin.php",
 			"/fmb/sms/index.php"

@@ -1,4 +1,5 @@
 if ('serviceWorker' in navigator) {
+    var offline_message = 1;
     window.addEventListener('load', function () {
         navigator.serviceWorker.register('/fmb/sw.js')
             .then(function (registration) {
@@ -16,7 +17,7 @@ if ('serviceWorker' in navigator) {
         const snackbarTimeToHide = 5000; // 5s
         let isOffline = false,
             snackbarTimeoutHide = null,
-            goOfflineMsg = superpwa_sw.offline_message_txt,
+            goOfflineMsg = 'You\'re offline <a href="javascript:location.reload()">refresh</a>',
             backOnlineMsg = 'You\'re back online <a href="javascript:location.reload()">refresh</a>';
 
         /**
@@ -155,7 +156,7 @@ if ('serviceWorker' in navigator) {
                 }
                 isOffline = false;
             } else {
-                if (superpwa_sw.offline_message == 1) {
+                if (offline_message == 1) {
                     showSnackbar(goOfflineMsg);
                     isOffline = true;
                 }
