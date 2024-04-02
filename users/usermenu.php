@@ -2,7 +2,6 @@
 include('connection.php');
 include('_authCheck.php');
 
-print_r($_POST);
 if(isset($_POST['search']) ) {
     $menu_list = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $_POST['menu_date'] . "' LIMIT 1");
 } elseif(isset($_POST['email'])) {
@@ -20,13 +19,13 @@ if(isset($_POST['search']) ) {
     <?php include('_nav.php'); ?>
     <div class="container">
         <?php if (isset($_GET['action']) && $_GET['action'] == 'send') { ?>
-            <div class="alert alert-success" role="alert">Email of Menu dated <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is send successfully.</div>
+            <div class="alert alert-success" role="alert">Updated Menu Email of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is being send successfully.</div>
         <?php } ?>
         <form id="usermenu" class="form-horizontal" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
             <div class="form-group row">
                 <label for="menu_date" class="col-xs-4 control-label">Menu Date</label>
                 <div class="col-xs-4">
-                <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('- 1 day')); ?>" name="menu_date" value="<?php echo ( !empty($_POST['menu_date']) ? $_POST['menu_date'] : ''); ?>" required >
+                <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('- 1 week')); ?>" name="menu_date" value="<?php echo ( !empty($_POST['menu_date']) ? $_POST['menu_date'] : ''); ?>" required >
                 </div>
                 <div class="col-xs-4 col-md-3">
                     <input class="btn btn-primary" type="submit" name="search" value="Search" />

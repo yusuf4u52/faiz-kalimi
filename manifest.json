@@ -5,22 +5,36 @@
     "description":"A FMB App for Kalimi Mohalla (Poona) Mumineen",
     "icons": [
         {
-            "src": "./styles/img/fmb-logo-72x72.png",
-            "sizes": "72x72",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "./styles/img/fmb-logo-144x144.png",
-            "sizes": "144x144",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "./styles/img/fmb-logo-191x192.png",
+            "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-192x192.png",
             "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image\/png",
+            "purpose": "any"
+        },
+        {
+            "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-192x192.png",
+            "sizes": "192x192",
+            "type": "image\/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-512x512.png",
+            "sizes": "512x512",
+            "type": "image\/png",
+            "purpose": "any"
+        },
+        {
+            "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-512x512.png",
+            "sizes": "512x512",
+            "type": "image\/png",
+            "purpose": "maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-screenshot.png",
+            "type": "image\/png",
+            "sizes": "472x649",
+            "form_factor": "narrow"
         }
     ],
     "background_color": "#F5F5F5",
@@ -37,7 +51,7 @@
             "description":"A FMB App for Kalimi Mohalla (Poona) Mumineen",
             "icons": [
                 {
-                    "src": "./styles/img/fmb-logo-191x192.png",
+                    "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-192x192.png",
                     "sizes": "192x192"
                 }
             ]
