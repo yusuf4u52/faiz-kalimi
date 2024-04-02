@@ -76,23 +76,23 @@ if ($menu_item->num_rows > 0) {
 									$row_user = $user_menu->fetch_assoc();
 									$user_menu_item = unserialize($row_user['menu_item']);
 									$msgvar .= '<tr>
-										<td>'.$row['Thali'].'</td>
-										<td>'.$row['tiffinno'].'</td>
-										<td>'.$row['thalisize'].'</td>';
+										<td align="center">'.$row['Thali'].'</td>
+										<td align="center">'.$row['tiffinno'].'</td>
+										<td align="center">'.$row['thalisize'].'</td>';
 										if (!empty($user_menu_item['sabji']['item'])) {
-											$msgvar .= '<td>' . $user_menu_item['sabji']['qty'] . '</td>';
+											$msgvar .= '<td align="center">' . $user_menu_item['sabji']['qty'] . '</td>';
 										}
 										if (!empty($user_menu_item['tarkari']['item'])) {
-											$msgvar .= '<td>' . $user_menu_item['tarkari']['qty'] . '</td>';
+											$msgvar .= '<td align="center">' . $user_menu_item['tarkari']['qty'] . '</td>';
 										}
 										if (!empty($user_menu_item['rice']['item'])) {
-											$msgvar .= '<td>' . $user_menu_item['rice']['qty'] . '</td>';
+											$msgvar .= '<td align="center">' . $user_menu_item['rice']['qty'] . '</td>';
 										}
 										if (!empty($user_menu_item['roti']['item'])) {
-											$msgvar .= '<td>' . $user_menu_item['roti']['qty'] . '</td>';
+											$msgvar .= '<td align="center">' . $user_menu_item['roti']['qty'] . '</td>';
 										}
 										if (!empty($user_menu_item['extra']['item'])) {
-											$msgvar .= '<td>' . $user_menu_item['extra']['qty'] . '</td>';
+											$msgvar .= '<td align="center">' . $user_menu_item['extra']['qty'] . '</td>';
 										}
 									$msgvar .= '<tr>';
 								}
@@ -109,5 +109,5 @@ if ($menu_item->num_rows > 0) {
 sendEmail('kalimimohallapoona@gmail.com', 'Update Menu of' . $tomorrow_date, $msgvar, null, null, true);
 
 if(isset($_GET['date'])) {
-	header("Location: /fmb/users/usermenu.php?action=send&date=" . $_GET['date']);
+	header("Location: /fmb/users/usermenu.php?action=send&date=" . $_GET['date']);	
 }

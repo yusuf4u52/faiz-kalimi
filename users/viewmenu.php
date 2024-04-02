@@ -15,6 +15,7 @@ if (is_null($_SESSION['fromLogin'])) {
 $thalisize = mysqli_query($link, "SELECT `thalisize` FROM thalilist where `id` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
 if(isset($thalisize) && $thalisize->num_rows > 0) {
   $thalisize = $thalisize->fetch_assoc();
+  $thalisize = $thalisize['thalisize'];
 }
 
 $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));

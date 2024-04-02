@@ -30,8 +30,8 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
     if ($CurrentDate < $GivenDate) {
         $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $menu_date . "'") or die(mysqli_error($link));
         if ($menu_item->num_rows > 0) {
-            $menu_item = $menu_item->fetch_column();
-            $menu_item = unserialize($menu_item);
+            $menu_item = $menu_item->fetch_assoc();
+            $menu_item = unserialize($menu_item['menu_item']);
             if (!empty($menu_item['sabji']['item'])) {
                 if ($menu_item['sabji']['qty'] !== $_POST['menu_item']['sabji']['qty']) {
                     $change = 'yes';
