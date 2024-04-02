@@ -14,7 +14,7 @@ if (is_null($_SESSION['fromLogin'])) {
 
 $thalisize = mysqli_query($link, "SELECT `thalisize` FROM thalilist where `id` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
 if(isset($thalisize) && $thalisize->num_rows > 0) {
-  $thalisize = $thalisize->fetch_column();
+  $thalisize = $thalisize->fetch_assoc();
 }
 
 $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));
@@ -33,6 +33,12 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
   <div class="container">
     <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
       <div class="alert alert-success" role="alert">Thali of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is edited successfully.</div>
+    <?php } ?>
+    <?php if (isset($_GET['action']) && $_GET['action'] == 'nochange') { ?>
+      <div class="alert alert-warning" role="alert">No change found for Thali of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> or you have revert to the original quantity.</div>
+    <?php } ?>
+    <?php if (isset($_GET['action']) && $_GET['action'] == 'rsvp') { ?>
+      <div class="alert alert-danger" role="alert">You can't edit the thali now because RSVP time for editing Thali of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is finished.</div>
     <?php } ?>
     <?php $sched_res = [];
     while ($values = mysqli_fetch_assoc($result)) {
@@ -78,7 +84,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                       <button class="btn btn-primary btn-plus" type="button">+</button>
                     </span>
                   </div>
-                  <small style="color:#f00"><strong>Note:</strong> 0.5 means half dabba.</small>
+                  <small class="text-info"><strong>Note:</strong> 0.5 means half dabba.</small>
                 </div>
               </div>
               <div id="tarkari" class="form-group row" style="display:none;">
@@ -94,7 +100,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                       <button class="btn btn-primary btn-plus" type="button">+</button>
                     </span>
                   </div>
-                  <small style="color:#f00"><strong>Note:</strong> 0.5 means half dabba.</small>
+                  <small class="text-info"><strong>Note:</strong> 0.5 means half dabba.</small>
                 </div>
               </div>
               <div id="rice" class="form-group row" style="display:none;">
@@ -110,7 +116,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                       <button class="btn btn-primary btn-plus" type="button">+</button>
                     </span>
                   </div>
-                  <small style="color:#f00"><strong>Note:</strong> 0.5 means half dabba.</small>
+                  <small class="text-info"><strong>Note:</strong> 0.5 means half dabba.</small>
                 </div>
               </div>
               <div id="roti" class="form-group row" style="display:none;">
@@ -118,7 +124,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                 <div class="col-xs-6">
                   <input type="hidden" class="form-control" name="menu_item[roti][item]" id="roti" value="">
                   <input type="text" class="form-control" name="menu_item[roti][qty]" id="rotiqty" value="" min="1" max="2" readonly>
-                  <small style="color:#f00">Please contact admin to change quantity.</small>
+                  <small class="text-info">Please contact admin to change quantity.</small>
                 </div>
               </div>
               <div id="extra" class="form-group row" style="display:none;">
@@ -126,7 +132,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                 <div class="col-xs-6">
                   <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="">
                   <input type="text" class="form-control" name="menu_item[extra][qty]" id="extraqty" value="" min="1" max="2" readonly>
-                  <small style="color:#f00">Please contact admin to change quantity.</small>
+                  <small class="text-info">Please contact admin to change quantity.</small>
                 </div>
               </div>
             </div>

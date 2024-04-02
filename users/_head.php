@@ -3,7 +3,19 @@
 <title>Faizul Mawaidil Burhaniya (Kalimi Mohalla)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<link rel= "manifest" href= "/fmb/manifest.json" />
+<!-- Manifest added for Progressive Web Apps -->
+<link rel="manifest" href="/fmb/manifest.json">
+<link rel="prefetch" href="/fmb/manifest.json">
+<meta name="theme-color" content="#7A62D3">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="apple-mobile-web-app-title" content="Faizul Mawaidil Burhaniya (Kalimi Mohalla)">
+<meta name="application-name" content="Faizul Mawaidil Burhaniya (Kalimi Mohalla)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon"  href="/fmb/styles/img/fmb-logo-192x192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="/fmb/styles/img/fmb-logo-192x192.png">
+<!-- / PWA -->
 <link rel="stylesheet" href="/fmb/styles/css/bootstrap-theme-white-plum/bootstrap.min.css" />
 <link rel="stylesheet" href="/fmb/users/src/jquery.dynatable.css" />
 <link rel="icon" href="images/icon.png">

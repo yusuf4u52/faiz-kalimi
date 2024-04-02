@@ -6,6 +6,10 @@ body>.navbar{-webkit-transition:background-color 300ms ease-in;transition:backgr
     }
 }
 
+.dynatable-head {
+    background-color: #7A62D3;
+}
+
 .font-bold {
     font-weight: bold;
 }
