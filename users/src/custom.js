@@ -60,6 +60,28 @@
     return lines;
   }
 
+  $( "#from_date" ).datepicker({
+    defaultDate: "+1w",
+    dateFormat: 'dd-mm-yy',
+    changeMonth: true,
+    numberOfMonths: 1,
+    minDate: '+1d',
+    onClose: function( selectedDate ) {
+      $( "#to_date" ).datepicker( "option", "minDate", selectedDate );
+    }
+  });
+  
+  $( "#to_date" ).datepicker({
+    defaultDate: "+1w",
+    dateFormat: 'dd-mm-yy',
+    changeMonth: true,
+    numberOfMonths: 1,
+    minDate: '+1d',
+    onClose: function( selectedDate ) {
+      $( "#from_date" ).datepicker( "option", "maxDate", selectedDate );
+    }
+  });
+
   // Edit menu for users
   $('.btn-minus').on('click', function () {
     var $input = $(this).parent().siblings('input');
@@ -136,6 +158,11 @@
     Object.keys(scheds).map((k) => {
       var row = scheds[k];
       var title = '';
+      if (row.menu_type == 'stop_thali') {
+        if (row?.menu_item !== undefined) {
+          title += row?.menu_item;
+        }
+      }
       if (row.menu_type == 'miqaat') {
         if (row?.menu_item?.miqaat !== undefined) {
           title += row?.menu_item?.miqaat;
@@ -192,8 +219,24 @@
         var CurrentDate = new Date();
         CurrentDate.setHours(0, 0, 0, 0);
         const menu_date = new Date(scheds[id].menu_date);
+        if (scheds[id]?.menu_type == 'stop_thali') {
+          details.find(".modal-title").html('Stopped Thali on <strong>' + menu_date.toDateString() + '</strong>');
+          details.find("div#miqaat").attr('style', 'display:none');
+          details.find("div#sabji").attr('style', 'display:none');
+          details.find("div#tarkari").attr('style', 'display:none');
+          details.find("div#rice").attr('style', 'display:none');
+          details.find("div#roti").attr('style', 'display:none');
+          details.find("div#extra").attr('style', 'display:none');
+          details.find("button.edit-menu").addClass('hidden');
+          details.find("button.rsvp-end").addClass('hidden');
+          if (scheds[id]?.menu_item !== undefined) {
+            details.find("div#stop").removeAttr('style', 'display:none');
+            details.find("div#stop").html('<h3>You have opted to stop thali on this date.</h3>');
+          }
+        }
         if (scheds[id]?.menu_type == 'miqaat') {
           details.find(".modal-title").html('Miqaat on <strong>' + menu_date.toDateString() + '</strong>');
+          details.find("div#stop").attr('style', 'display:none');
           details.find("div#sabji").attr('style', 'display:none');
           details.find("div#tarkari").attr('style', 'display:none');
           details.find("div#rice").attr('style', 'display:none');
@@ -207,8 +250,10 @@
           }
         }
         if (scheds[id]?.menu_type == 'thaali') {
+          console.log(scheds[id]);
           details.find(".modal-title").html('View/Edit Menu of <strong>' +   menu_date.toDateString() + '</strong>');
           details.find("div#miqaat").attr('style', 'display:none');
+          details.find("div#stop").attr('style', 'display:none');
           if (scheds[id]?.menu_item?.sabji?.item !== undefined) {
             details.find("div#sabji").removeAttr('style', 'display:none');
             details.find("input#sabji").removeAttr('disabled', 'disabled');

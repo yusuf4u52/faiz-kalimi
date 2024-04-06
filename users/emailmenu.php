@@ -27,7 +27,7 @@ if ($menu_item->num_rows > 0) {
 					<td align="left">
 						<img src="https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo.png" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="152" height="62"> 
 					</td>
-					<td align="right"><strong>'.date('l, dS F Y', strtotime($tomorrow_date)).'</strong></td>
+					<td align="right"><strong>Updated Thali of '.date('l, dS F Y', strtotime($tomorrow_date)).'</strong></td>
 				</tr>
 			</table>';
 			$row_menu = $menu_item->fetch_assoc();
@@ -104,6 +104,8 @@ if ($menu_item->num_rows > 0) {
 		$msgvar .= '</td>
 	<table>';
 }
+
+//echo $msgvar; die;
 
 // send email
 sendEmail('kalimimohallapoona@gmail.com', 'Update Menu of' . $tomorrow_date, $msgvar, null, null, true);
