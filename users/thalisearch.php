@@ -1,6 +1,6 @@
 <?php
-include('connection.php');
-include('_authCheck.php');
+include ('connection.php');
+include ('_authCheck.php');
 
 if ($_POST) {
   if ($_POST['comment']) {
@@ -22,7 +22,8 @@ $current_year = mysqli_fetch_assoc(mysqli_query($link, "SELECT value FROM settin
 $musaid_list = mysqli_query($link, "SELECT username, email FROM users");
 
 if (isset($_GET['year'])) {
-  if ($current_year['value'] == $_GET['year']) {
+  if (1438 == $_GET['year']) {
+    //if ($current_year['value'] == $_GET['year']) {
     $thalilist_tablename = "thalilist";
     $receipts_tablename = "receipts";
   } else {
@@ -49,13 +50,19 @@ if (isset($_GET['year'])) {
 <!-- saved from url=(0029)http://bootswatch.com/flatly/ -->
 <html lang="en">
 
-<head><?php include('_head.php'); ?></head>
+<head>
+  <?php include ('_head.php'); ?>
+</head>
 
 <body>
-  <?php include('_nav.php'); ?>
+  <?php include ('_nav.php'); ?>
   <div class="container">
     <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
-      <div class="alert alert-success" role="alert">Thali of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is edited successfully for thali no <strong><?php echo $_GET['thalino']; ?></strong></div>
+      <div class="alert alert-success" role="alert">Thali of <strong>
+          <?php echo date('d M Y', strtotime($_GET['date'])); ?>
+        </strong> is edited successfully for thali no <strong>
+          <?php echo $_GET['thalino']; ?>
+        </strong></div>
     <?php } ?>
     <!-- Forms
       ================================================== -->
@@ -79,7 +86,8 @@ if (isset($_GET['year'])) {
                 <div class="form-group">
                   <label for="inputGeneral" class="col-lg-2 control-label">Other</label>
                   <div class="col-lg-10">
-                    <input type="text" class="form-control" id="inputGeneral" placeholder="Contact/ ITS no / Email / Name" name="general">
+                    <input type="text" class="form-control" id="inputGeneral"
+                      placeholder="Contact/ ITS no / Email / Name" name="general">
                   </div>
                 </div>
                 <div class="form-group">
@@ -87,7 +95,10 @@ if (isset($_GET['year'])) {
                   <div class="col-lg-10">
                     <select class="form-control" id="year" name="year">
                       <?php for ($i = 1438; $i <= 1450; $i++) { ?>
-                        <option value="<?php echo $i; ?>" <?php if ($current_year['value'] == $i) echo "selected"; ?>><?php echo $i; ?></option>
+                        <option value="<?php echo $i; ?>" <?php if ($current_year['value'] == $i)
+                             echo "selected"; ?>>
+                          <?php echo $i; ?>
+                        </option>
                       <?php } ?>
                     </select>
                   </div>
@@ -102,7 +113,7 @@ if (isset($_GET['year'])) {
           </div>
         </div>
 
-        <?php if (isset($_GET['year'])) : ?>
+        <?php if (isset($_GET['year'])): ?>
           <div class="col-lg-12">
             <div class="col-lg-12">
               <div class="page-header">
@@ -123,7 +134,8 @@ if (isset($_GET['year'])) {
                       </select>
                     </div>
                     <div class="col-xs-4 col-md-3">
-                      <input type="text" style="display:none" name="transaction_id" id="transaction_id" placeholder="Transaction ID" />
+                      <input type="text" style="display:none" name="transaction_id" id="transaction_id"
+                        placeholder="Transaction ID" />
                       <input type="hidden" name="receipt_thali" />
                       <input class="btn btn-default" type="button" name="cancel" value="Cancel" />
                       <input class="btn btn-primary" type="button" name="save" value="Save" />
@@ -132,9 +144,9 @@ if (isset($_GET['year'])) {
                 </div>
                 <?php
                 if (mysqli_num_rows($result) > 1)
-                  include('_thalisearch_multiple.php');
+                  include ('_thalisearch_multiple.php');
                 else if (mysqli_num_rows($result) == 1)
-                  include('_thalisearch_single.php');
+                  include ('_thalisearch_single.php');
                 else
                   echo "No records found";
                 ?>
@@ -160,9 +172,11 @@ if (isset($_GET['year'])) {
               <option value=''>Select</option>
               <?php
               while ($musaid = mysqli_fetch_assoc($musaid_list)) {
-              ?>
-                <option value='<?php echo $musaid['email']; ?>'><?php echo $musaid['username']; ?></option>
-              <?php
+                ?>
+                <option value='<?php echo $musaid['email']; ?>'>
+                  <?php echo $musaid['username']; ?>
+                </option>
+                <?php
               }
               ?>
             </select>
@@ -207,34 +221,34 @@ if (isset($_GET['year'])) {
 
   <?php $adminmenu = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` >= '" . date('Y-m-d') . "' AND `menu_type` = 'thaali' order by `menu_date` DESC") or die(mysqli_error($link));
   while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
-    if( !empty($values['Thali'])) {
-      $adminumenu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '".$amenu_values['menu_date']."' AND `thali` = '".$values['Thali']."'") or die(mysqli_error($link));
+    if (!empty($values['Thali'])) {
+      $adminumenu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $amenu_values['menu_date'] . "' AND `thali` = '" . $values['Thali'] . "'") or die(mysqli_error($link));
     }
-    if(isset($adminumenu) && $adminumenu->num_rows > 0) {
+    if (isset($adminumenu) && $adminumenu->num_rows > 0) {
       $rowaumenu = $adminumenu->fetch_assoc();
       echo $menu_id = $rowaumenu['id'];
       $menu_date = $rowaumenu['menu_date'];
       $menu_item = unserialize($rowaumenu['menu_item']);
-      if( !empty($menu_item['roti']['qty'])) {
+      if (!empty($menu_item['roti']['qty'])) {
         $roti_qty = $menu_item['roti']['qty'];
       }
-      $target = 'adminusermenu-'.$menu_id; 
+      $target = 'adminusermenu-' . $menu_id;
     } else {
       $menu_id = $amenu_values['id'];
       $menu_date = $amenu_values['menu_date'];
       $menu_item = unserialize($amenu_values['menu_item']);
-      if( !empty($values['thalisize'])) {
-        if($values['thalisize'] == 'Mini') {
+      if (!empty($values['thalisize'])) {
+        if ($values['thalisize'] == 'Mini') {
           $roti_qty = $menu_item['roti']['tqty'];
-        }elseif($values['thalisize'] == 'Small') {
+        } elseif ($values['thalisize'] == 'Small') {
           $roti_qty = $menu_item['roti']['sqty'];
-        } elseif($values['thalisize'] == 'Medium') {
+        } elseif ($values['thalisize'] == 'Medium') {
           $roti_qty = $menu_item['roti']['mqty'];
-        } elseif($values['thalisize'] == 'Large') {
+        } elseif ($values['thalisize'] == 'Large') {
           $roti_qty = $menu_item['roti']['lqty'];
         }
       }
-      $target = 'adminmenu-'.$menu_id;
+      $target = 'adminmenu-' . $menu_id;
     } ?>
     <div class="modal" id="<?php echo $target; ?>">
       <div class="modal-dialog">
@@ -248,19 +262,27 @@ if (isset($_GET['year'])) {
             <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title">Edit Menu of <?php echo $amenu_values['menu_date']; ?> for thaali <?php echo $values['Thali']; ?></h4>
+              <h4 class="modal-title">Edit Menu of
+                <?php echo $amenu_values['menu_date']; ?> for thaali
+                <?php echo $values['Thali']; ?>
+              </h4>
             </div>
             <div class="modal-body">
               <?php if (!empty($menu_item['sabji']['item'])) { ?>
                 <div class="form-group row">
-                  <label for="sabji" class="col-xs-6 control-label"><?php echo $menu_item['sabji']['item']; ?></label>
+                  <label for="sabji" class="col-xs-6 control-label">
+                    <?php echo $menu_item['sabji']['item']; ?>
+                  </label>
                   <div class="col-xs-6">
-                    <input type="hidden" class="form-control" name="menu_item[sabji][item]" id="sabji" value="<?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] : ''); ?>">
+                    <input type="hidden" class="form-control" name="menu_item[sabji][item]" id="sabji"
+                      value="<?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] : ''); ?>">
                     <div class="input-group">
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-minus" type="button">-</button>
                       </span>
-                      <input type="number" class="form-control" name="menu_item[sabji][qty]" id="sabjiqty" value="<?php echo (!empty($menu_item['sabji']['qty']) ? $menu_item['sabji']['qty'] : '1'); ?>" min="0" max="2" readonly>
+                      <input type="number" class="form-control" name="menu_item[sabji][qty]" id="sabjiqty"
+                        value="<?php echo (!empty($menu_item['sabji']['qty']) ? $menu_item['sabji']['qty'] : '1'); ?>"
+                        min="0" max="2" readonly>
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
@@ -270,14 +292,19 @@ if (isset($_GET['year'])) {
               <?php } ?>
               <?php if (!empty($menu_item['tarkari']['item'])) { ?>
                 <div class="form-group row">
-                  <label for="tarkari" class="col-xs-6 control-label"><?php echo $menu_item['tarkari']['item']; ?></label>
+                  <label for="tarkari" class="col-xs-6 control-label">
+                    <?php echo $menu_item['tarkari']['item']; ?>
+                  </label>
                   <div class="col-xs-6">
-                    <input type="hidden" class="form-control" name="menu_item[tarkari][item]" id="tarkari" value="<?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] : ''); ?>">
+                    <input type="hidden" class="form-control" name="menu_item[tarkari][item]" id="tarkari"
+                      value="<?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] : ''); ?>">
                     <div class="input-group">
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-minus" type="button">-</button>
                       </span>
-                      <input type="number" class="form-control" name="menu_item[tarkari][qty]" id="tarkariqty" value="<?php echo (!empty($menu_item['tarkari']['qty']) ? $menu_item['tarkari']['qty'] : '1'); ?>" min="0" max="2" readonly>
+                      <input type="number" class="form-control" name="menu_item[tarkari][qty]" id="tarkariqty"
+                        value="<?php echo (!empty($menu_item['tarkari']['qty']) ? $menu_item['tarkari']['qty'] : '1'); ?>"
+                        min="0" max="2" readonly>
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
@@ -287,14 +314,19 @@ if (isset($_GET['year'])) {
               <?php } ?>
               <?php if (!empty($menu_item['rice']['item'])) { ?>
                 <div class="form-group row">
-                  <label for="rice" class="col-xs-6 control-label"><?php echo $menu_item['rice']['item']; ?></label>
+                  <label for="rice" class="col-xs-6 control-label">
+                    <?php echo $menu_item['rice']['item']; ?>
+                  </label>
                   <div class="col-xs-6">
-                    <input type="hidden" class="form-control" name="menu_item[rice][item]" id="rice" value="<?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] : ''); ?>">
+                    <input type="hidden" class="form-control" name="menu_item[rice][item]" id="rice"
+                      value="<?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] : ''); ?>">
                     <div class="input-group">
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-minus" type="button">-</button>
                       </span>
-                      <input type="number" class="form-control" name="menu_item[rice][qty]" id="riceqty" value="<?php echo (!empty($menu_item['rice']['qty']) ? $menu_item['rice']['qty'] : '1'); ?>" min="0" max="2" readonly>
+                      <input type="number" class="form-control" name="menu_item[rice][qty]" id="riceqty"
+                        value="<?php echo (!empty($menu_item['rice']['qty']) ? $menu_item['rice']['qty'] : '1'); ?>" min="0"
+                        max="2" readonly>
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
@@ -304,14 +336,18 @@ if (isset($_GET['year'])) {
               <?php } ?>
               <?php if (!empty($menu_item['roti']['item'])) { ?>
                 <div class="form-group row">
-                  <label for="roti" class="col-xs-6 control-label"><?php echo $menu_item['roti']['item']; ?></label>
+                  <label for="roti" class="col-xs-6 control-label">
+                    <?php echo $menu_item['roti']['item']; ?>
+                  </label>
                   <div class="col-xs-6">
-                    <input type="hidden" class="form-control" name="menu_item[roti][item]" id="roti" value="<?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] : ''); ?>">
+                    <input type="hidden" class="form-control" name="menu_item[roti][item]" id="roti"
+                      value="<?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] : ''); ?>">
                     <div class="input-group">
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-minus" type="button">-</button>
                       </span>
-                      <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty" value="<?php echo (!empty($roti_qty) ? $roti_qty : '1'); ?>" min="0" max="3" readonly>
+                      <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty"
+                        value="<?php echo (!empty($roti_qty) ? $roti_qty : '1'); ?>" min="0" max="3" readonly>
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
@@ -321,14 +357,19 @@ if (isset($_GET['year'])) {
               <?php } ?>
               <?php if (!empty($menu_item['extra']['item'])) { ?>
                 <div class="form-group row">
-                  <label for="roti" class="col-xs-6 control-label"><?php echo $menu_item['extra']['item']; ?></label>
+                  <label for="roti" class="col-xs-6 control-label">
+                    <?php echo $menu_item['extra']['item']; ?>
+                  </label>
                   <div class="col-xs-6">
-                    <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="<?php echo (!empty($menu_item['extra']['item']) ? $menu_item['extra']['item'] : ''); ?>">
+                    <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra"
+                      value="<?php echo (!empty($menu_item['extra']['item']) ? $menu_item['extra']['item'] : ''); ?>">
                     <div class="input-group">
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-minus" type="button">-</button>
                       </span>
-                      <input type="number" class="form-control" name="menu_item[extra][qty]" id="riceqty" value="<?php echo (!empty($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>" min="0" max="1" readonly>
+                      <input type="number" class="form-control" name="menu_item[extra][qty]" id="riceqty"
+                        value="<?php echo (!empty($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>"
+                        min="0" max="1" readonly>
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
@@ -348,18 +389,20 @@ if (isset($_GET['year'])) {
   <?php }
   mysqli_free_result($adminmenu); ?>
 
-  <?php include('_bottomJS.php'); ?>
+  <?php include ('_bottomJS.php'); ?>
   <script>
-    $(function() {
+    $(function () {
+
       var receiptForm = $('#receiptForm');
       receiptForm.hide();
-      $('[data-key="payhoob"]').click(function() {
+      $('[data-key="payhoob"]').click(function () {
         $('[name="receipt_thali"]', receiptForm).val($(this).attr('data-thali'));
         receiptForm.show();
       });
-      $('[name="save"]').click(function() {
+
+      $('[name="save"]').click(function () {
         var data = '';
-        $('input[type!="button"]', receiptForm).each(function() {
+        $('input[type!="button"]', receiptForm).each(function () {
           data = data + $(this).attr('name') + '=' + $(this).val() + '&';
         });
         data = data + "payment_type=" + $('#payment_type').val();
@@ -368,7 +411,7 @@ if (isset($_GET['year'])) {
           url: '_payhoob.php',
           async: 'false',
           data: data,
-          success: function(data) {
+          success: function (data) {
             if (data.includes("Success")) {
               alert('Hoob sucessfully updated.');
               receiptForm.hide();
@@ -379,22 +422,64 @@ if (isset($_GET['year'])) {
               alert(data);
             }
           },
-          error: function() {
+          error: function () {
             alert('Try again');
           }
         });
       });
-      $('[name="cancel"]').click(function() {
+
+      $('[name="cancel"]').click(function () {
         receiptForm.hide();
       });
-      $('[data-key="stopthaali"]').click(function() {
-        stopThali_admin($(this).attr('data-thali'), $(this).attr('data-active'), false, false, function(data) {
+
+      $('[data-key="stopthaali"]').click(function () {
+        /*stopThali_admin($(this).attr('data-thali'), $(this).attr('data-active'), false, false, function(data) {
           // if (data === 'success') {
-          location.reload();
+            location.reload();
           // }
+        });*/
+        var thaaliId = $(this).attr('data-thali');
+        var active = $(this).attr('data-active');
+        var data = "thaali_id=" + thaaliId + "&active=" + active;
+        var hardStop = false;
+        if (hardStop) {
+          data += "&hardstop=1&hardstopcomment=" + hardStopComment;
+        }
+        $.ajax({
+          method: "post",
+          url: "_stop_thali_admin.php",
+          async: true,
+          data: data,
+          success: function (data) {
+            if (data.includes("success")) {
+              alert("Thaali #" + thaaliId + " Operation Successfull!");
+            } else if (data === "404") {
+              alert(
+                "Thaali #" +
+                thaaliId +
+                " does not exists or is already stopped. Contact Mustafa Manawar or Yusuf Rampur for further details."
+              );
+            } else {
+              alert(
+                "Something went wrong while stopping thaali #" +
+                thaaliId +
+                ". Please contact Mustafa Manawar or Yusuf Rampur"
+              );
+            }
+            location.reload();
+          },
+          error: function () {
+            alert(
+              "Something went wrong while stopping thaali #" +
+              thaaliId +
+              ". Please contact Mustafa Manawar or Yusuf Rampur"
+            );
+            location.reload();
+          },
         });
       });
-      $('[data-key="stoppermanant"]').click(function() {
+
+      $('[data-key="stoppermanant"]').click(function () {
         var c = confirm("Are you sure you want to permanently stop this thali?");
         if (c == false) {
           return;
@@ -407,16 +492,16 @@ if (isset($_GET['year'])) {
           clearHub = "false";
         }
         $.post("stop_permanant.php", {
-            Thaliid: $(this).data("thali"),
-            clear: clearHub
-          },
-          function(data, status) {
+          Thaliid: $(this).data("thali"),
+          clear: clearHub
+        },
+          function (data, status) {
             alert("Thali Stopped Successfully and Number released to be re-used");
             location.reload();
           });
       });
 
-      $('#payment_type').on('change', function() {
+      $('#payment_type').on('change', function () {
         if ($(this).val() === "Cash") {
           $("#transaction_id").hide()
         } else {
@@ -424,7 +509,7 @@ if (isset($_GET['year'])) {
         }
       });
 
-      <?php if ($_GET) : ?>
+      <?php if ($_GET): ?>
         window.location = '#tables';
       <?php endif; ?>
     });

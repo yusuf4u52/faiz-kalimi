@@ -133,6 +133,7 @@ if (!empty($values['yearly_hub'])) {
         if (!empty($values['yearly_hub'])) {
           if ($values['Active'] == 0) {
             if ($values['hardstop'] == 1) { ?>
+              <!--<h5>You are not allowed to start your thali: <?php echo $values['hardstop_comment']; ?></h5>-->
               <input type="button" onclick="alert('You are not allowed to start your thali: <?php echo $values['hardstop_comment']; ?>')" name="start_thali" value="Start Thaali" class="btn btn-success" />
             <?php } else { ?>
               <form method="POST" action="start_thali.php" onsubmit='return confirm("Are you sure?");' data-key="LazyLoad" class="hidden">
@@ -146,6 +147,7 @@ if (!empty($values['yearly_hub'])) {
                 <form method="POST" action="stop_thali.php" onsubmit='return confirm("Are you sure?");' data-key="LazyLoad" class="hidden">
                   <input type="submit" name="stop_thali" value="Stop Thaali" class="btn btn-danger" />
                 </form>
+                <!--<a href="stopthali.php" class="btn btn-warning" data-key="LazyLoad">Stop Thali</a>-->
               </div>
               <div class="col-xs-6 text-right">
                 <a href="viewmenu.php" class="btn btn-success" data-key="LazyLoad">View Menu</a>

@@ -29,8 +29,8 @@ $time2 = date_format($time, 'H:i');
 $current = date("H:i");
 if ($current > $time1 && $current < $time2) {
   $cutoffmessage =  'Stop thali not allowed post 8 PM.';
-  header("Location: index.php?status=$cutoffmessage");
-  exit;
+  //header("Location: index.php?status=$cutoffmessage");
+  //exit;
 }
 
 $update = mysqli_query($link, "UPDATE thalilist set Active='0' WHERE id = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));

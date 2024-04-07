@@ -60,6 +60,10 @@
     return lines;
   }
 
+  $("#from_date, #to_date").keydown(function (event) {
+    event.preventDefault();
+  });
+
   $( "#from_date" ).datepicker({
     defaultDate: "+1w",
     dateFormat: 'dd-mm-yy',
@@ -76,7 +80,7 @@
     dateFormat: 'dd-mm-yy',
     changeMonth: true,
     numberOfMonths: 1,
-    minDate: '+1d',
+    maxDate: '+1m',
     onClose: function( selectedDate ) {
       $( "#from_date" ).datepicker( "option", "maxDate", selectedDate );
     }
@@ -191,181 +195,181 @@
         start: row.menu_date,
       });
     });
-  }
 
-  var date = new Date();
-  var d = date.getDate(),
-  m = date.getMonth(),
-  y = date.getFullYear(),
-  calendar = new Calendar(document.getElementById("calendar"), {
-    headerToolbar: {
-      left: "prev,next",
-      right: "dayGridMonth,dayGridWeek",
-      center: "title",
-    },
-    selectable: true,
-    themeSystem: "bootstrap",
-    events: events,
-    eventClick: function (info) {
-      $("#changemenu")[0].reset();
-      var details = $("#editmenu");
-      var id = info.event.id;
-      if (!!scheds[id]) {
-        details.find("input#menu_id").val(id);
-        details.find('.modal-body #validate').remove();
-        var GivenDate = new Date(scheds[id].menu_date);
-        GivenDate.setDate(GivenDate.getDate() - 1);
-        GivenDate.setHours(20, 0, 0, 0);
-        var CurrentDate = new Date();
-        CurrentDate.setHours(0, 0, 0, 0);
-        const menu_date = new Date(scheds[id].menu_date);
-        if (scheds[id]?.menu_type == 'stop_thali') {
-          details.find(".modal-title").html('Stopped Thali on <strong>' + menu_date.toDateString() + '</strong>');
-          details.find("div#miqaat").attr('style', 'display:none');
-          details.find("div#sabji").attr('style', 'display:none');
-          details.find("div#tarkari").attr('style', 'display:none');
-          details.find("div#rice").attr('style', 'display:none');
-          details.find("div#roti").attr('style', 'display:none');
-          details.find("div#extra").attr('style', 'display:none');
-          details.find("button.edit-menu").addClass('hidden');
-          details.find("button.rsvp-end").addClass('hidden');
-          if (scheds[id]?.menu_item !== undefined) {
-            details.find("div#stop").removeAttr('style', 'display:none');
-            details.find("div#stop").html('<h3>You have opted to stop thali on this date.</h3>');
-          }
-        }
-        if (scheds[id]?.menu_type == 'miqaat') {
-          details.find(".modal-title").html('Miqaat on <strong>' + menu_date.toDateString() + '</strong>');
-          details.find("div#stop").attr('style', 'display:none');
-          details.find("div#sabji").attr('style', 'display:none');
-          details.find("div#tarkari").attr('style', 'display:none');
-          details.find("div#rice").attr('style', 'display:none');
-          details.find("div#roti").attr('style', 'display:none');
-          details.find("div#extra").attr('style', 'display:none');
-          details.find("button.edit-menu").addClass('hidden');
-          details.find("button.rsvp-end").addClass('hidden');
-          if (scheds[id]?.menu_item?.miqaat !== undefined) {
-            details.find("div#miqaat").removeAttr('style', 'display:none');
-            details.find("div#miqaat").html('<h3>' + scheds[id].menu_item.miqaat + '</h3>');
-          }
-        }
-        if (scheds[id]?.menu_type == 'thaali') {
-          console.log(scheds[id]);
-          details.find(".modal-title").html('View/Edit Menu of <strong>' +   menu_date.toDateString() + '</strong>');
-          details.find("div#miqaat").attr('style', 'display:none');
-          details.find("div#stop").attr('style', 'display:none');
-          if (scheds[id]?.menu_item?.sabji?.item !== undefined) {
-            details.find("div#sabji").removeAttr('style', 'display:none');
-            details.find("input#sabji").removeAttr('disabled', 'disabled');
-            details.find("input#sabjiqty").removeAttr('disabled', 'disabled');
-            details.find("label#sabji").html(scheds[id].menu_item.sabji.item);
-            details.find("input#sabji").val(scheds[id].menu_item.sabji.item);
-            details.find("input#sabjiqty").val(scheds[id].menu_item.sabji.qty);
-          } else {
+    var date = new Date();
+    var d = date.getDate(),
+    m = date.getMonth(),
+    y = date.getFullYear(),
+    calendar = new Calendar(document.getElementById("calendar"), {
+      headerToolbar: {
+        left: "prev,next",
+        right: "dayGridMonth,dayGridWeek",
+        center: "title",
+      },
+      selectable: true,
+      themeSystem: "bootstrap",
+      events: events,
+      eventClick: function (info) {
+        $("#changemenu")[0].reset();
+        var details = $("#editmenu");
+        var id = info.event.id;
+        if (!!scheds[id]) {
+          details.find("input#menu_id").val(id);
+          details.find('.modal-body #validate').remove();
+          var GivenDate = new Date(scheds[id].menu_date);
+          GivenDate.setDate(GivenDate.getDate() - 1);
+          GivenDate.setHours(20, 0, 0, 0);
+          var CurrentDate = new Date();
+          CurrentDate.setHours(0, 0, 0, 0);
+          const menu_date = new Date(scheds[id].menu_date);
+          if (scheds[id]?.menu_type == 'stop_thali') {
+            details.find(".modal-title").html('Stopped Thali on <strong>' + menu_date.toDateString() + '</strong>');
+            details.find("div#miqaat").attr('style', 'display:none');
             details.find("div#sabji").attr('style', 'display:none');
-            details.find("input#sabji").attr('disabled', 'disabled');
-            details.find("input#sabjiqty").attr('disabled', 'disabled');
-            details.find("label#sabji").html('');
-            details.find("input#sabji").val('');
-            details.find("input#sabjiqty").val('');
-          }
-          if (scheds[id]?.menu_item?.tarkari?.item !== undefined) {
-            details.find("div#tarkari").removeAttr('style', 'display:none');
-            details.find("input#tarkari").removeAttr('disabled', 'disabled');
-            details.find("input#tarkariqty").removeAttr('disabled', 'disabled');
-            details.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
-            details.find("input#tarkari").val(scheds[id].menu_item.tarkari.item);
-            details.find("input#tarkariqty").val(scheds[id].menu_item.tarkari.qty);
-          } else {
             details.find("div#tarkari").attr('style', 'display:none');
-            details.find("input#tarkari").attr('disabled', 'disabled');
-            details.find("input#tarkariqty").attr('disabled', 'disabled');
-            details.find("label#tarkari").html('');
-            details.find("input#tarkari").val('');
-            details.find("input#tarkariqty").val('');
-          }
-          if (scheds[id]?.menu_item?.rice?.item !== undefined) {
-            details.find("div#rice").removeAttr('style', 'display:none');
-            details.find("input#rice").removeAttr('disabled', 'disabled');
-            details.find("input#riceqty").removeAttr('disabled', 'disabled');
-            details.find("label#rice").html(scheds[id].menu_item.rice.item);
-            details.find("input#rice").val(scheds[id].menu_item.rice.item);
-            details.find("input#riceqty").val(scheds[id].menu_item.rice.qty);
-          } else {
             details.find("div#rice").attr('style', 'display:none');
-            details.find("input#rice").attr('disabled', 'disabled');
-            details.find("input#riceqty").attr('disabled', 'disabled');
-            details.find("label#rice").html('');
-            details.find("input#rice").val('');
-            details.find("input#riceqty").val('');
-          }
-          if (scheds[id]?.menu_item?.roti?.item !== undefined) {
-            details.find("div#roti").removeAttr('style', 'display:none');
-            details.find("input#roti").removeAttr('disabled', 'disabled');
-            details.find("input#rotiqty").removeAttr('disabled', 'disabled');
-            details.find("label#roti").html(scheds[id].menu_item.roti.item);
-            details.find("input#roti").val(scheds[id].menu_item.roti.item);
-            if (scheds[id]?.menu_item?.roti?.qty !== undefined) {
-              details.find("input#rotiqty").val(scheds[id].menu_item.roti.qty);
-            } else {
-              if (scheds[id].thalisize == 'Mini') {
-                details.find("input#rotiqty").val(scheds[id].menu_item.roti.tqty);
-              }
-              if (scheds[id].thalisize == 'Small') {
-                details.find("input#rotiqty").val(scheds[id].menu_item.roti.sqty);
-              }
-              if (scheds[id].thalisize == 'Medium') {
-                details.find("input#rotiqty").val(scheds[id].menu_item.roti.mqty);
-              }
-              if (scheds[id].thalisize == 'Large') {
-                details.find("input#rotiqty").val(scheds[id].menu_item.roti.lqty);
-              }
-            }
-          } else {
             details.find("div#roti").attr('style', 'display:none');
-            details.find("input#roti").attr('disabled', 'disabled');
-            details.find("input#rotiqty").attr('disabled', 'disabled');
-            details.find("label#roti").html('');
-            details.find("input#roti").val('');
-            details.find("input#rotiqty").val('');
-          }
-          if (scheds[id]?.menu_item?.extra?.item !== undefined) {
-            details.find("div#extra").removeAttr('style', 'display:none');
-            details.find("input#extra").removeAttr('disabled', 'disabled');
-            details.find("input#extraqty").removeAttr('disabled', 'disabled');
-            details.find("label#extra").html(scheds[id].menu_item.extra.item);
-            details.find("input#extra").val(scheds[id].menu_item.extra.item);
-            details.find("input#extraqty").val(scheds[id].menu_item.extra.qty);
-          } else {
             details.find("div#extra").attr('style', 'display:none');
-            details.find("input#extra").attr('disabled', 'disabled');
-            details.find("input#extraqty").attr('disabled', 'disabled');
-            details.find("label#extra").html('');
-            details.find("input#extra").val('');
-            details.find("input#extraqty").val('');
-          }
-          if (CurrentDate > GivenDate) {
             details.find("button.edit-menu").addClass('hidden');
-            details.find("button.rsvp-end").removeClass('hidden');
-          } else {
-            details.find("button.edit-menu").removeClass('hidden');
             details.find("button.rsvp-end").addClass('hidden');
+            if (scheds[id]?.menu_item !== undefined) {
+              details.find("div#stop").removeAttr('style', 'display:none');
+              details.find("div#stop").html('<h3>You have opted to stop thali on this date.</h3>');
+            }
           }
+          if (scheds[id]?.menu_type == 'miqaat') {
+            details.find(".modal-title").html('Miqaat on <strong>' + menu_date.toDateString() + '</strong>');
+            details.find("div#stop").attr('style', 'display:none');
+            details.find("div#sabji").attr('style', 'display:none');
+            details.find("div#tarkari").attr('style', 'display:none');
+            details.find("div#rice").attr('style', 'display:none');
+            details.find("div#roti").attr('style', 'display:none');
+            details.find("div#extra").attr('style', 'display:none');
+            details.find("button.edit-menu").addClass('hidden');
+            details.find("button.rsvp-end").addClass('hidden');
+            if (scheds[id]?.menu_item?.miqaat !== undefined) {
+              details.find("div#miqaat").removeAttr('style', 'display:none');
+              details.find("div#miqaat").html('<h3>' + scheds[id].menu_item.miqaat + '</h3>');
+            }
+          }
+          if (scheds[id]?.menu_type == 'thaali') {
+            console.log(scheds[id]);
+            details.find(".modal-title").html('View/Edit Menu of <strong>' +   menu_date.toDateString() + '</strong>');
+            details.find("div#miqaat").attr('style', 'display:none');
+            details.find("div#stop").attr('style', 'display:none');
+            if (scheds[id]?.menu_item?.sabji?.item !== undefined) {
+              details.find("div#sabji").removeAttr('style', 'display:none');
+              details.find("input#sabji").removeAttr('disabled', 'disabled');
+              details.find("input#sabjiqty").removeAttr('disabled', 'disabled');
+              details.find("label#sabji").html(scheds[id].menu_item.sabji.item);
+              details.find("input#sabji").val(scheds[id].menu_item.sabji.item);
+              details.find("input#sabjiqty").val(scheds[id].menu_item.sabji.qty);
+            } else {
+              details.find("div#sabji").attr('style', 'display:none');
+              details.find("input#sabji").attr('disabled', 'disabled');
+              details.find("input#sabjiqty").attr('disabled', 'disabled');
+              details.find("label#sabji").html('');
+              details.find("input#sabji").val('');
+              details.find("input#sabjiqty").val('');
+            }
+            if (scheds[id]?.menu_item?.tarkari?.item !== undefined) {
+              details.find("div#tarkari").removeAttr('style', 'display:none');
+              details.find("input#tarkari").removeAttr('disabled', 'disabled');
+              details.find("input#tarkariqty").removeAttr('disabled', 'disabled');
+              details.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
+              details.find("input#tarkari").val(scheds[id].menu_item.tarkari.item);
+              details.find("input#tarkariqty").val(scheds[id].menu_item.tarkari.qty);
+            } else {
+              details.find("div#tarkari").attr('style', 'display:none');
+              details.find("input#tarkari").attr('disabled', 'disabled');
+              details.find("input#tarkariqty").attr('disabled', 'disabled');
+              details.find("label#tarkari").html('');
+              details.find("input#tarkari").val('');
+              details.find("input#tarkariqty").val('');
+            }
+            if (scheds[id]?.menu_item?.rice?.item !== undefined) {
+              details.find("div#rice").removeAttr('style', 'display:none');
+              details.find("input#rice").removeAttr('disabled', 'disabled');
+              details.find("input#riceqty").removeAttr('disabled', 'disabled');
+              details.find("label#rice").html(scheds[id].menu_item.rice.item);
+              details.find("input#rice").val(scheds[id].menu_item.rice.item);
+              details.find("input#riceqty").val(scheds[id].menu_item.rice.qty);
+            } else {
+              details.find("div#rice").attr('style', 'display:none');
+              details.find("input#rice").attr('disabled', 'disabled');
+              details.find("input#riceqty").attr('disabled', 'disabled');
+              details.find("label#rice").html('');
+              details.find("input#rice").val('');
+              details.find("input#riceqty").val('');
+            }
+            if (scheds[id]?.menu_item?.roti?.item !== undefined) {
+              details.find("div#roti").removeAttr('style', 'display:none');
+              details.find("input#roti").removeAttr('disabled', 'disabled');
+              details.find("input#rotiqty").removeAttr('disabled', 'disabled');
+              details.find("label#roti").html(scheds[id].menu_item.roti.item);
+              details.find("input#roti").val(scheds[id].menu_item.roti.item);
+              if (scheds[id]?.menu_item?.roti?.qty !== undefined) {
+                details.find("input#rotiqty").val(scheds[id].menu_item.roti.qty);
+              } else {
+                if (scheds[id].thalisize == 'Mini') {
+                  details.find("input#rotiqty").val(scheds[id].menu_item.roti.tqty);
+                }
+                if (scheds[id].thalisize == 'Small') {
+                  details.find("input#rotiqty").val(scheds[id].menu_item.roti.sqty);
+                }
+                if (scheds[id].thalisize == 'Medium') {
+                  details.find("input#rotiqty").val(scheds[id].menu_item.roti.mqty);
+                }
+                if (scheds[id].thalisize == 'Large') {
+                  details.find("input#rotiqty").val(scheds[id].menu_item.roti.lqty);
+                }
+              }
+            } else {
+              details.find("div#roti").attr('style', 'display:none');
+              details.find("input#roti").attr('disabled', 'disabled');
+              details.find("input#rotiqty").attr('disabled', 'disabled');
+              details.find("label#roti").html('');
+              details.find("input#roti").val('');
+              details.find("input#rotiqty").val('');
+            }
+            if (scheds[id]?.menu_item?.extra?.item !== undefined) {
+              details.find("div#extra").removeAttr('style', 'display:none');
+              details.find("input#extra").removeAttr('disabled', 'disabled');
+              details.find("input#extraqty").removeAttr('disabled', 'disabled');
+              details.find("label#extra").html(scheds[id].menu_item.extra.item);
+              details.find("input#extra").val(scheds[id].menu_item.extra.item);
+              details.find("input#extraqty").val(scheds[id].menu_item.extra.qty);
+            } else {
+              details.find("div#extra").attr('style', 'display:none');
+              details.find("input#extra").attr('disabled', 'disabled');
+              details.find("input#extraqty").attr('disabled', 'disabled');
+              details.find("label#extra").html('');
+              details.find("input#extra").val('');
+              details.find("input#extraqty").val('');
+            }
+            if (CurrentDate > GivenDate) {
+              details.find("button.edit-menu").addClass('hidden');
+              details.find("button.rsvp-end").removeClass('hidden');
+            } else {
+              details.find("button.edit-menu").removeClass('hidden');
+              details.find("button.rsvp-end").addClass('hidden');
+            }
+          }
+          details.find("#edit").attr("data-id", id);
+          details.modal("show");
+        } else {
+          alert("Event is undefined");
         }
-        details.find("#edit").attr("data-id", id);
-        details.modal("show");
-      } else {
-        alert("Event is undefined");
-      }
-    },
-    windowResize: function(arg) {
-      calendar.updateSize();
-    },
-    eventContent: function (info) {
-      return { html: info.event.title };
-    },
-    editable: true,
-  });
-  calendar.render();
+      },
+      windowResize: function(arg) {
+        calendar.updateSize();
+      },
+      eventContent: function (info) {
+        return { html: info.event.title };
+      },
+      editable: true,
+    });
+    calendar.render();
+  }
 
 })(jQuery);
