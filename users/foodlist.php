@@ -15,13 +15,6 @@ $result = mysqli_query($link, "SELECT * FROM food_list order by `dish_name` ASC"
 <body>
     <?php include('_nav.php'); ?>
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="page-header">
-                    <h2 id="forms">Food List</h2>
-                </div>
-            </div>
-        </div>
         <?php if (isset($_GET['action']) && $_GET['action'] == 'add') { ?>
             <div class="alert alert-success" role="alert"><strong><?php echo $_GET['dish']; ?></strong> added successfully.</div>
         <?php } ?>
@@ -113,7 +106,7 @@ $result = mysqli_query($link, "SELECT * FROM food_list order by `dish_name` ASC"
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
                         </div>
                     </form>
                 </div>
@@ -191,7 +184,7 @@ $result = mysqli_query($link, "SELECT * FROM food_list order by `dish_name` ASC"
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add Food Item</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
                 </form>
             </div>

@@ -18,13 +18,6 @@ if(isset($_POST['search']) ) {
 <body>
     <?php include('_nav.php'); ?>
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="page-header">
-                    <h2 id="forms">User Menu</h2>
-                </div>
-            </div>
-        </div>
         <?php if (isset($_GET['action']) && $_GET['action'] == 'send') { ?>
             <div class="alert alert-success" role="alert">Updated Menu Email of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is being send successfully.</div>
         <?php } ?>

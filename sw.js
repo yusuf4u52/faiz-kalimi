@@ -4,14 +4,14 @@ const cacheName = 'fmb-kalimi-cache-2.2.25';
 const startPage = 'https://kalimijamaatpoona.org/fmb/';
 const offlinePage = 'https://kalimijamaatpoona.org/fmb/';
 const filesToCache = [startPage, offlinePage];
-const neverCacheUrls = [/\/users\/viewmenu.php/,/\/users\/stopthali.php/,/\/users\/src\/custom.js/,/\/admin/];
+const neverCacheUrls = [/\/users\/viewmenu.php/,/\/admin/];
 
 // Install
 self.addEventListener('install', function(e) {
-	console.log('Service worker installation');
+	console.log('SuperPWA service worker installation');
 	e.waitUntil(
 		caches.open(cacheName).then(function(cache) {
-			console.log('Service worker caching dependencies');
+			console.log('SuperPWA service worker caching dependencies');
 			filesToCache.map(function(url) {
 				return cache.add(url).catch(function (reason) {
 					return console.log( String(reason) + ' ' + url);
