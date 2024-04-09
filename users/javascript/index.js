@@ -24,54 +24,55 @@
     $(this).closest('form').find('div.miqaat').addClass('hidden');
     $(this).closest('form').find('div.' + type).removeClass('hidden');
   });
+})(jQuery);
 
-  function stopThali_admin(
-    thaaliId,
-    active,
-    hardStop,
-    hardStopComment,
-    successCallback,
-    failureCallback
-  ) {
-    var data = "thaali_id=" + thaaliId + "&active=" + active;
-    if (hardStop) {
-      data += "&hardstop=1&hardstopcomment=" + hardStopComment;
-    }
-    $.ajax({
-      method: "post",
-      url: "_stop_thali_admin.php",
-      async: true,
-      data: data,
-      success: function (data) {
-        if (data.includes("success")) {
-          alert("Thaali #" + thaaliId + " Operation Successfull!");
-        } else if (data === "404") {
-          alert(
-            "Thaali #" +
-            thaaliId +
-            " does not exists or is already stopped. Contact Mustafa Manawar or Yusuf Rampur for further details."
-          );
-        } else {
-          alert(
-            "Something went wrong while stopping thaali #" +
-            thaaliId +
-            ". Please contact Mustafa Manawar or Yusuf Rampur"
-          );
-        }
-        if (successCallback) {
-          successCallback(data);
-        }
-      },
-      error: function () {
+function stopThali_admin(
+  thaaliId,
+  active,
+  hardStop,
+  hardStopComment,
+  successCallback,
+  failureCallback
+) {
+  var data = "thaali_id=" + thaaliId + "&active=" + active;
+  if (hardStop) {
+    data += "&hardstop=1&hardstopcomment=" + hardStopComment;
+  }
+  $.ajax({
+    method: "post",
+    url: "_stop_thali_admin.php",
+    async: true,
+    data: data,
+    success: function (data) {
+      if (data.includes("success")) {
+        alert("Thaali #" + thaaliId + " Operation Successfull!");
+      } else if (data === "404") {
+        alert(
+          "Thaali #" +
+          thaaliId +
+          " does not exists or is already stopped. Contact Mustafa Manawar or Yusuf Rampur for further details."
+        );
+      } else {
         alert(
           "Something went wrong while stopping thaali #" +
           thaaliId +
           ". Please contact Mustafa Manawar or Yusuf Rampur"
         );
-        if (failureCallback) {
-          failureCallback();
-        }
-      },
-    });
-  }
-})(jQuery);
+      }
+      if (successCallback) {
+        successCallback(data);
+      }
+    },
+    error: function () {
+      alert(
+        "Something went wrong while stopping thaali #" +
+        thaaliId +
+        ". Please contact Mustafa Manawar or Yusuf Rampur"
+      );
+      if (failureCallback) {
+        failureCallback();
+      }
+    },
+  });
+}
+
