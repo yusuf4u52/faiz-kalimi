@@ -208,6 +208,8 @@
       },
       selectable: true,
       themeSystem: "bootstrap",
+      contentHeight: "auto",
+      editable: true,
       events: events,
       eventClick: function (info) {
         $("#changemenu")[0].reset();
@@ -361,13 +363,9 @@
           alert("Event is undefined");
         }
       },
-      windowResize: function(arg) {
-        calendar.updateSize();
-      },
       eventContent: function (info) {
         return { html: info.event.title };
       },
-      editable: true,
     });
     calendar.render();
   }

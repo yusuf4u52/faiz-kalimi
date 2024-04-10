@@ -14,6 +14,13 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
 <body>
     <?php include('_nav.php'); ?>
     <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header">
+                    <h2 id="forms">Menu List</h2>
+                </div>
+            </div>
+        </div>
         <?php if (isset($_GET['action']) && $_GET['action'] == 'add') { ?>
             <div class="alert alert-success" role="alert">Menu/Miqaat of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is added successfully.</div>
         <?php } ?>
@@ -171,7 +178,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
                     </form>
                 </div>
@@ -309,7 +316,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Add Menu</button>
                     </div>
                 </form>
             </div>
