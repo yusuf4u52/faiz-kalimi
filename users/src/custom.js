@@ -60,32 +60,6 @@
     return lines;
   }
 
-  $("#from_date, #to_date").keydown(function (event) {
-    event.preventDefault();
-  });
-
-  $( "#from_date" ).datepicker({
-    defaultDate: "+1w",
-    dateFormat: 'dd-mm-yy',
-    changeMonth: true,
-    numberOfMonths: 1,
-    minDate: '+1d',
-    onClose: function( selectedDate ) {
-      $( "#to_date" ).datepicker( "option", "minDate", selectedDate );
-    }
-  });
-  
-  $( "#to_date" ).datepicker({
-    defaultDate: "+1w",
-    dateFormat: 'dd-mm-yy',
-    changeMonth: true,
-    numberOfMonths: 1,
-    maxDate: '+1m',
-    onClose: function( selectedDate ) {
-      $( "#from_date" ).datepicker( "option", "maxDate", selectedDate );
-    }
-  });
-
   // Edit menu for users
   $('.btn-minus').on('click', function () {
     var $input = $(this).parent().siblings('input');
