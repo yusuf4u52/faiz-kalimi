@@ -92,11 +92,15 @@
     var minCount = $input.attr('min');
     var count = parseFloat($input.val());
     if (count <= 1) {
-      var count = parseFloat($input.val()) - 0.5;
+      count = parseFloat($input.val()) - 0.5;
       count = count < minCount ? minCount : count;
     } else {
-      var count = parseFloat($input.val()) - 1;
+      count = parseFloat($input.val()) - 1;
       count = count < minCount ? minCount : count;
+    }
+    $(this).closest('.input-group').find(".btn-plus").removeClass('disabled');
+    if(count == minCount) {
+      $(this).addClass('disabled');
     }
     $input.val(count);
     $input.change();
@@ -108,11 +112,15 @@
     var maxCount = $input.attr('max');
     var count = parseFloat($input.val());
     if (count >= 1) {
-      var count = parseFloat($input.val()) + 1;
+      count = parseFloat($input.val()) + 1;
       count = count > maxCount ? maxCount : count;
     } else {
-      var count = parseFloat($input.val()) + 0.5;
+      count = parseFloat($input.val()) + 0.5;
       count = count > maxCount ? maxCount : count;
+    }
+    $(this).closest('.input-group').find(".btn-minus").removeClass('disabled');
+    if(count == maxCount) {
+      $(this).addClass('disabled');
     }
     $input.val(count);
     $input.change();
@@ -255,7 +263,6 @@
             }
           }
           if (scheds[id]?.menu_type == 'thaali') {
-            console.log(scheds[id]);
             details.find(".modal-title").html('View/Edit Menu of <strong>' +   menu_date.toDateString() + '</strong>');
             details.find("div#miqaat").attr('style', 'display:none');
             details.find("div#stop").attr('style', 'display:none');
@@ -266,6 +273,7 @@
               details.find("label#sabji").html(scheds[id].menu_item.sabji.item);
               details.find("input#sabji").val(scheds[id].menu_item.sabji.item);
               details.find("input#sabjiqty").val(scheds[id].menu_item.sabji.qty);
+              details.find("input#sabjiqty").attr('max', scheds[id].menu_item.sabji.qty);
             } else {
               details.find("div#sabji").attr('style', 'display:none');
               details.find("input#sabji").attr('disabled', 'disabled');
@@ -273,6 +281,7 @@
               details.find("label#sabji").html('');
               details.find("input#sabji").val('');
               details.find("input#sabjiqty").val('');
+              details.find("input#sabjiqty").removeAttr('max');
             }
             if (scheds[id]?.menu_item?.tarkari?.item !== undefined) {
               details.find("div#tarkari").removeAttr('style', 'display:none');
@@ -281,6 +290,7 @@
               details.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
               details.find("input#tarkari").val(scheds[id].menu_item.tarkari.item);
               details.find("input#tarkariqty").val(scheds[id].menu_item.tarkari.qty);
+              details.find("input#tarkariqty").attr('max', scheds[id].menu_item.tarkari.qty);
             } else {
               details.find("div#tarkari").attr('style', 'display:none');
               details.find("input#tarkari").attr('disabled', 'disabled');
@@ -288,6 +298,7 @@
               details.find("label#tarkari").html('');
               details.find("input#tarkari").val('');
               details.find("input#tarkariqty").val('');
+              details.find("input#tarkari").removeAttr('max');
             }
             if (scheds[id]?.menu_item?.rice?.item !== undefined) {
               details.find("div#rice").removeAttr('style', 'display:none');
@@ -296,6 +307,7 @@
               details.find("label#rice").html(scheds[id].menu_item.rice.item);
               details.find("input#rice").val(scheds[id].menu_item.rice.item);
               details.find("input#riceqty").val(scheds[id].menu_item.rice.qty);
+              details.find("input#riceqty").attr('max', scheds[id].menu_item.rice.qty);
             } else {
               details.find("div#rice").attr('style', 'display:none');
               details.find("input#rice").attr('disabled', 'disabled');
@@ -303,6 +315,7 @@
               details.find("label#rice").html('');
               details.find("input#rice").val('');
               details.find("input#riceqty").val('');
+              details.find("input#riceqty").removeAttr('max');
             }
             if (scheds[id]?.menu_item?.roti?.item !== undefined) {
               details.find("div#roti").removeAttr('style', 'display:none');

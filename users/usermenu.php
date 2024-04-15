@@ -71,11 +71,12 @@ if(isset($_POST['search']) ) {
                 <tbody>
                     <?php $thali = mysqli_query($link, "SELECT `thali` FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "'");
                     if ($thali->num_rows > 0) {
+                        $thalino = array(); 
                         while ($row_thali = mysqli_fetch_assoc($thali)) {
                             $thalino[] = $row_thali['thali']; 
                         }
                         $sabeelno = implode(", ", $thalino);
-                        $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE Thali IN (".$sabeelno.")"); 
+                        $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE Thali IN (".$sabeelno.") AND `hardstop` != 1 AND Active != 0"); 
                         while ($row = mysqli_fetch_assoc($thali)) {
                             $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "' AND `thali` = '" . $row['Thali'] . "'");
                             if ($user_menu->num_rows > 0) {

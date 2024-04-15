@@ -27,7 +27,7 @@ if ($menu_item->num_rows > 0) {
 					<td align="left">
 						<img src="https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo.png" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="152" height="62"> 
 					</td>
-					<td align="right"><strong>'.date('l, dS F Y', strtotime($tomorrow_date)).'</strong></td>
+					<td align="right"><strong>Updated Thali of '.date('l, dS F Y', strtotime($tomorrow_date)).'</strong></td>
 				</tr>
 			</table>';
 			$row_menu = $menu_item->fetch_assoc();
@@ -38,7 +38,7 @@ if ($menu_item->num_rows > 0) {
 					$thalino[] = $row_thali['thali']; 
 				}
 				$sabeelno = implode(", ", $thalino);
-				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Thali IN (".$sabeelno.")");
+				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND Thali IN (".$sabeelno.")");
 				while ($row_trans = mysqli_fetch_assoc($transporter)) {
 					$msgvar .= '<table border="0" width="640" cellpadding="3" cellspacing="3" bgcolor="#7A62D3" style="color:#FFFFFF; padding:0.5rem;">
 						<tr>
@@ -69,7 +69,7 @@ if ($menu_item->num_rows > 0) {
 							$msgvar .= '<tr>
 						</thead>
 						<tbody>';
-							$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, thalisize from thalilist WHERE `Transporter` LIKE '".$row_trans['Transporter']."' AND Thali IN (".$sabeelno.")");
+							$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, thalisize from thalilist WHERE `Transporter` LIKE '".$row_trans['Transporter']."' AND Thali IN (".$sabeelno.") AND `hardstop` != 1 AND Active != 0");
 							while ($row = mysqli_fetch_assoc($thali)) {
 								$user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $tomorrow_date . "' AND `thali` = '" . $row['Thali'] . "'");
 								if ($user_menu->num_rows > 0) {
