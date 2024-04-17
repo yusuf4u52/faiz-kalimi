@@ -432,49 +432,10 @@ if (isset($_GET['year'])) {
       });
 
       $('[data-key="stopthaali"]').click(function () {
-        /*stopThali_admin($(this).attr('data-thali'), $(this).attr('data-active'), false, false, function(data) {
+        stopThali_admin($(this).attr('data-thali'), $(this).attr('data-active'), false, false, function(data) {
           // if (data === 'success') {
             location.reload();
           // }
-        });*/
-        var thaaliId = $(this).attr('data-thali');
-        var active = $(this).attr('data-active');
-        var data = "thaali_id=" + thaaliId + "&active=" + active;
-        var hardStop = false;
-        if (hardStop) {
-          data += "&hardstop=1&hardstopcomment=" + hardStopComment;
-        }
-        $.ajax({
-          method: "post",
-          url: "_stop_thali_admin.php",
-          async: true,
-          data: data,
-          success: function (data) {
-            if (data.includes("success")) {
-              alert("Thaali #" + thaaliId + " Operation Successfull!");
-            } else if (data === "404") {
-              alert(
-                "Thaali #" +
-                thaaliId +
-                " does not exists or is already stopped. Contact Mustafa Manawar or Yusuf Rampur for further details."
-              );
-            } else {
-              alert(
-                "Something went wrong while stopping thaali #" +
-                thaaliId +
-                ". Please contact Mustafa Manawar or Yusuf Rampur"
-              );
-            }
-            location.reload();
-          },
-          error: function () {
-            alert(
-              "Something went wrong while stopping thaali #" +
-              thaaliId +
-              ". Please contact Mustafa Manawar or Yusuf Rampur"
-            );
-            location.reload();
-          },
         });
       });
 
