@@ -144,11 +144,6 @@
     Object.keys(scheds).map((k) => {
       var row = scheds[k];
       var title = '';
-      if (row.menu_type == 'stop_thali') {
-        if (row?.menu_item !== undefined) {
-          title += row?.menu_item;
-        }
-      }
       if (row.menu_type == 'miqaat') {
         if (row?.menu_item?.miqaat !== undefined) {
           title += row?.menu_item?.miqaat;
@@ -206,24 +201,8 @@
           var CurrentDate = new Date();
           CurrentDate.setHours(0, 0, 0, 0);
           const menu_date = new Date(scheds[id].menu_date);
-          if (scheds[id]?.menu_type == 'stop_thali') {
-            details.find(".modal-title").html('Stopped Thali on <strong>' + menu_date.toDateString() + '</strong>');
-            details.find("div#miqaat").attr('style', 'display:none');
-            details.find("div#sabji").attr('style', 'display:none');
-            details.find("div#tarkari").attr('style', 'display:none');
-            details.find("div#rice").attr('style', 'display:none');
-            details.find("div#roti").attr('style', 'display:none');
-            details.find("div#extra").attr('style', 'display:none');
-            details.find("button.edit-menu").addClass('hidden');
-            details.find("button.rsvp-end").addClass('hidden');
-            if (scheds[id]?.menu_item !== undefined) {
-              details.find("div#stop").removeAttr('style', 'display:none');
-              details.find("div#stop").html('<h3>You have opted to stop thali on this date.</h3>');
-            }
-          }
           if (scheds[id]?.menu_type == 'miqaat') {
             details.find(".modal-title").html('Miqaat on <strong>' + menu_date.toDateString() + '</strong>');
-            details.find("div#stop").attr('style', 'display:none');
             details.find("div#sabji").attr('style', 'display:none');
             details.find("div#tarkari").attr('style', 'display:none');
             details.find("div#rice").attr('style', 'display:none');
@@ -239,7 +218,6 @@
           if (scheds[id]?.menu_type == 'thaali') {
             details.find(".modal-title").html('View/Edit Menu of <strong>' +   menu_date.toDateString() + '</strong>');
             details.find("div#miqaat").attr('style', 'display:none');
-            details.find("div#stop").attr('style', 'display:none');
             if (scheds[id]?.menu_item?.sabji?.item !== undefined) {
               details.find("div#sabji").removeAttr('style', 'display:none');
               details.find("input#sabji").removeAttr('disabled', 'disabled');

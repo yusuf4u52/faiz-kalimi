@@ -96,7 +96,6 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
                 <h4 class="modal-title"></h4>
               </div>
               <div class="modal-body">
-                <div id="stop" class="row text-center" style="display:none;"></div>
                 <div id="miqaat" class="row text-center" style="display:none;"></div>
                 <div id="sabji" class="form-group row" style="display:none;">
                   <label for="sabji" class="col-xs-6 control-label" id="sabji"></label>
