@@ -58,26 +58,17 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
 
       <?php $sched_res = [];
       while ($values = mysqli_fetch_assoc($result)) {
-        $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `thali` = '".$_SESSION['thali']."' AND '".$values['menu_date']."' BETWEEN `from_date` AND `to_date`") or die(mysqli_error($link));
-        if ($stop_thali->num_rows == 0) {
-          $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $values['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
-          if ($user_menu->num_rows > 0) {
-            $row = $user_menu->fetch_assoc();
-            $values['menu_item'] = unserialize($row['menu_item']);
-            $values['sdate'] = date("F d, Y h:i A", strtotime($row['menu_date']));
-          } else {
-            $values['menu_item'] = unserialize($values['menu_item']);
-            $values['sdate'] = date("F d, Y h:i A", strtotime($values['menu_date']));
-          }
-          $values['thalisize'] = $thalisize;
-          $sched_res[$values['id']] = $values;
+        $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $values['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
+        if ($user_menu->num_rows > 0) {
+          $row = $user_menu->fetch_assoc();
+          $values['menu_item'] = unserialize($row['menu_item']);
+          $values['sdate'] = date("F d, Y h:i A", strtotime($row['menu_date']));
         } else {
-          $values['menu_type'] = 'stop_thali';
-          $values['menu_item'] = 'Stopped Thali';
+          $values['menu_item'] = unserialize($values['menu_item']);
           $values['sdate'] = date("F d, Y h:i A", strtotime($values['menu_date']));
-          $values['thalisize'] = $thalisize;
-          $sched_res[$values['id']] = $values;
         }
+        $values['thalisize'] = $thalisize;
+        $sched_res[$values['id']] = $values;
       }
       $sched_res = json_encode($sched_res); ?>
 
@@ -179,6 +170,11 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
     } ?>
 
     <?php include ('_bottomJS.php'); ?>
+
+    <div class="text-center">
+      <a href="mailto:kalimimohallapoona@gmail.com">kalimimohallapoona@gmail.com</a><br><br>
+    </div>
+
 </body>
 
 </html>
