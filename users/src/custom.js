@@ -140,7 +140,6 @@
   var Calendar = FullCalendar.Calendar;
   var events = [];
 
-  var scheds;
   if (scheds !== undefined) {
     Object.keys(scheds).map((k) => {
       var row = scheds[k];
