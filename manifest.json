@@ -41,7 +41,7 @@
     "theme_color": "#7A62D3",
     "display": "standalone",
     "dir": "ltr",
-    "orientation": "portrait",
+    "orientation": "any",
     "start_url": ".",
     "scope": "\/",
     "shortcuts": [

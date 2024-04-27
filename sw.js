@@ -8,10 +8,10 @@ const neverCacheUrls = [/\/users\/viewmenu.php/,/\/admin/];
 
 // Install
 self.addEventListener('install', function(e) {
-	console.log('SuperPWA service worker installation');
+	console.log('Service worker installation');
 	e.waitUntil(
 		caches.open(cacheName).then(function(cache) {
-			console.log('SuperPWA service worker caching dependencies');
+			console.log('Service worker caching dependencies');
 			filesToCache.map(function(url) {
 				return cache.add(url).catch(function (reason) {
 					return console.log( String(reason) + ' ' + url);
@@ -72,7 +72,7 @@ self.addEventListener('fetch', function(e) {
 	
 	// Return if the current request url is in the never cache list
 	if ( ! neverCacheUrls.every(checkNeverCacheList, e.request.url) ) {
-	  console.log( 'SuperPWA: Current request is excluded from cache.' );
+	  console.log( 'Current request is excluded from cache.' );
 	  return;
 	}
 	
