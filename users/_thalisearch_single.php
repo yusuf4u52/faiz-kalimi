@@ -102,6 +102,21 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     </div>
     <div id="collapseMenu" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingMenu">
       <div class="panel-body">
+        <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
+          <div class="alert alert-success" role="alert">Thali of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is edited successfully for thali no <strong><?php echo $_GET['thalino']; ?></strong></div>
+        <?php } ?>
+        <?php if (isset($_GET['action']) && $_GET['action'] == 'nochange') { ?>
+          <div class="alert alert-warning" role="alert">No change found for Thali of <strong>
+              <?php echo date('d M Y', strtotime($_GET['date'])); ?>
+            </strong>.</div>
+        <?php } ?>
+        <?php if (isset($_GET['action']) && $_GET['action'] == 'rsvp') { ?>
+          <div class="alert alert-danger" role="alert">You can't edit the thali now because RSVP time for editing Thali of
+            <strong>
+              <?php echo date('d M Y', strtotime($_GET['date'])); ?>
+            </strong> is finished.
+          </div>
+        <?php } ?>
         <?php $menu_list = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` >= '".date('Y-m-d')."' AND `menu_type` = 'thaali' order by `menu_date` DESC") or die(mysqli_error($link)); ?>
         <table class="table table-striped table-hover">
           <tr>
@@ -110,7 +125,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
             <th><b>Action</b></th>
           </tr>
           <?php while ($menu_values = mysqli_fetch_assoc($menu_list)) {
-            $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '".$menu_values['menu_date']."' AND `thali` = '".$values['Thali']."'") or die(mysqli_error($link));
+            $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '".$menu_values['menu_date']."' AND `thali` = '".$values['id']."'") or die(mysqli_error($link));
             if($user_menu->num_rows > 0) {
               $row = $user_menu->fetch_assoc();
               $menu_id = $row['id'];
@@ -138,10 +153,10 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
             <tr>
               <td><?php echo date('d M Y', strtotime($menu_date)); ?></td>
               <td>
-                <?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] . '  (' . $menu_item['sabji']['qty'] . ')' : 'Empty'); ?><br />
-                <?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] . '  (' . $menu_item['tarkari']['qty'] . ')' : 'Empty'); ?><br />
-                <?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] . '  (' . $menu_item['rice']['qty'] . ')' : 'Empty'); ?><br />
-                <?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] . '  (' . $roti_qty . ')' : 'Empty'); ?>
+                <?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] . '  (' . $menu_item['sabji']['qty'] . ')<br />' : ''); ?><br />
+                <?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] . '  (' . $menu_item['tarkari']['qty'] . ')<br />' : ''); ?><br />
+                <?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] . '  (' . $menu_item['rice']['qty'] . ')<br />' : ''); ?><br />
+                <?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] . '  (' . $roti_qty . ')<br />' : ''); ?>
               </td>
               <td><?php if (date('Y-m-d') < $menu_date) { ?><button type="button" class="btn btn-success" data-target="#<?php echo $target; ?>" data-toggle="modal"><i class="fas fa-edit"></i></button><?php } else { ?> <button type="button" class="btn btn-warning" disabled>RSVP Ended</button><?php } ?></td>
             </tr>

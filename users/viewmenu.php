@@ -3,6 +3,7 @@ include ('connection.php');
 include ('_authCheck.php');
 
 if (isset($_POST['fromLogin'])) {
+  session_start();
   $_SESSION['fromLogin'] = $_POST['fromLogin'];
   $_SESSION['thaliid'] = $_POST['thaliid'];
   $_SESSION['thali'] = $_POST['thali'];
@@ -12,7 +13,7 @@ if (is_null($_SESSION['fromLogin'])) {
   header("Location: login.php");
 }
 
-$takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_SESSION['thali'] . "' AND `hardstop` != 1 AND Active != 0") or die(mysqli_error($link));
+$takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_SESSION['thaliid'] . "' AND `hardstop` != 1 AND Active != 0") or die(mysqli_error($link));
 
 ?>
 
@@ -34,10 +35,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
       </div>
     </div>
     <?php if (isset($takesFmb) && $takesFmb->num_rows > 0) {
-      $takesFmb = $takesFmb->fetch_assoc();
-      $thalisize = $takesFmb['thalisize'];
-      $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));
-
+      
       if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
         <div class="alert alert-success" role="alert">Thali of <strong>
             <?php echo date('d M Y', strtotime($_GET['date'])); ?>
@@ -56,9 +54,12 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
         </div>
       <?php } ?>
 
-      <?php $sched_res = [];
+      <?php $takesFmb = $takesFmb->fetch_assoc();
+      $thalisize = $takesFmb['thalisize'];
+      $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));
+      $sched_res = [];
       while ($values = mysqli_fetch_assoc($result)) {
-        $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $values['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
+        $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $values['menu_date'] . "' AND `thali` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
         if ($user_menu->num_rows > 0) {
           $row = $user_menu->fetch_assoc();
           $values['menu_item'] = unserialize($row['menu_item']);
@@ -80,7 +81,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
             <form id="changemenu" class="form-horizontal" method="post" action="changemenu.php">
               <input type="hidden" name="action" value="change_menu" />
               <input type="hidden" id="menu_id" name="menu_id" value="" />
-              <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thali']; ?>" />
+              <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thaliid']; ?>" />
               <input type="hidden" id="thalisize" name="thalisize" value="<?php echo $thalisize; ?>" />
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -162,12 +163,13 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
           </div>
         </div>
       </div>
-      <script>
-        var scheds = JSON.parse('<?php echo $sched_res; ?>');
-      </script>
     <?php } else {
       echo '<h3>You are not allowed to view menu as your thali is stopped.</h3>';
     } ?>
+
+    <script>
+      var scheds = JSON.parse('<?php echo $sched_res; ?>');
+    </script>
 
     <?php include ('_bottomJS.php'); ?>
 

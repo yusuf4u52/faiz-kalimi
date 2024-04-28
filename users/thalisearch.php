@@ -54,9 +54,7 @@ if (isset($_GET['year'])) {
 <body>
   <?php include('_nav.php'); ?>
   <div class="container">
-    <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
-      <div class="alert alert-success" role="alert">Thali of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is edited successfully for thali no <strong><?php echo $_GET['thalino']; ?></strong></div>
-    <?php } ?>
+    
     <!-- Forms
       ================================================== -->
     <div class="row">
@@ -242,7 +240,7 @@ if (isset($_GET['year'])) {
           <form id="changemenu-<?php echo $menu_id; ?>" class="form-horizontal" method="post" action="changemenu.php">
             <input type="hidden" name="action" value="admin_change_menu" />
             <input type="hidden" name="menu_id" value="<?php echo $menu_id; ?>" />
-            <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+            <input type="hidden" name="thali" value="<?php echo $values['id']; ?>" />
             <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
             <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
             <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
@@ -260,7 +258,7 @@ if (isset($_GET['year'])) {
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-minus" type="button">-</button>
                       </span>
-                      <input type="number" class="form-control" name="menu_item[sabji][qty]" id="sabjiqty" value="<?php echo (!empty($menu_item['sabji']['qty']) ? $menu_item['sabji']['qty'] : '1'); ?>" min="0" max="2" readonly>
+                      <input type="number" class="form-control" name="menu_item[sabji][qty]" id="sabjiqty" value="<?php echo (!empty($menu_item['sabji']['qty']) ? $menu_item['sabji']['qty'] : '1'); ?>" min="0" readonly>
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
@@ -277,7 +275,7 @@ if (isset($_GET['year'])) {
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-minus" type="button">-</button>
                       </span>
-                      <input type="number" class="form-control" name="menu_item[tarkari][qty]" id="tarkariqty" value="<?php echo (!empty($menu_item['tarkari']['qty']) ? $menu_item['tarkari']['qty'] : '1'); ?>" min="0" max="2" readonly>
+                      <input type="number" class="form-control" name="menu_item[tarkari][qty]" id="tarkariqty" value="<?php echo (!empty($menu_item['tarkari']['qty']) ? $menu_item['tarkari']['qty'] : '1'); ?>" min="0" readonly>
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
@@ -294,7 +292,7 @@ if (isset($_GET['year'])) {
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-minus" type="button">-</button>
                       </span>
-                      <input type="number" class="form-control" name="menu_item[rice][qty]" id="riceqty" value="<?php echo (!empty($menu_item['rice']['qty']) ? $menu_item['rice']['qty'] : '1'); ?>" min="0" max="2" readonly>
+                      <input type="number" class="form-control" name="menu_item[rice][qty]" id="riceqty" value="<?php echo (!empty($menu_item['rice']['qty']) ? $menu_item['rice']['qty'] : '1'); ?>" min="0" readonly>
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
@@ -311,7 +309,7 @@ if (isset($_GET['year'])) {
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-minus" type="button">-</button>
                       </span>
-                      <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty" value="<?php echo (!empty($roti_qty) ? $roti_qty : '1'); ?>" min="0" max="3" readonly>
+                      <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty" value="<?php echo (!empty($roti_qty) ? $roti_qty : '1'); ?>" min="0" readonly>
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
@@ -328,7 +326,7 @@ if (isset($_GET['year'])) {
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-minus" type="button">-</button>
                       </span>
-                      <input type="number" class="form-control" name="menu_item[extra][qty]" id="riceqty" value="<?php echo (!empty($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>" min="0" max="1" readonly>
+                      <input type="number" class="form-control" name="menu_item[extra][qty]" id="riceqty" value="<?php echo (!empty($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>" min="0" readonly>
                       <span class="input-group-btn">
                         <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
