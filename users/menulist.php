@@ -160,7 +160,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                             </div>
                                             <div class="col-xs-3">
                                                 <label for="rotilqty" class="control-label">Large</label>
-                                                <input type="number" class="form-control" name="menu_item[roti][lqty]" id="rotilqty" min="1" value="<?php echo (!empty($menu_item['roti']['lqty']) ? $menu_item['roti']['lqty'] : '3'); ?>">
+                                                <input type="number" class="form-control" name="menu_item[roti][lqty]" id="rotilqty" min="1" value="<?php echo (!empty($menu_item['roti']['lqty']) ? $menu_item['roti']['lqty'] : '2'); ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -298,7 +298,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                         </div>
                                         <div class="col-xs-3">
                                             <label for="rotilqty" class="control-label">Large</label>
-                                            <input type="number" class="form-control" name="menu_item[roti][lqty]" id="rotilqty" value="3" min="1">
+                                            <input type="number" class="form-control" name="menu_item[roti][lqty]" id="rotilqty" value="2" min="1">
                                         </div>
                                     </div>
                                 </div>
