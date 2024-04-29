@@ -75,10 +75,10 @@ if(isset($_POST['search']) ) {
                         while ($row_thali = mysqli_fetch_assoc($thali)) {
                             $thalino[] = $row_thali['thali']; 
                         }
-                        $thaliid = implode(", ", $thalino);
-                        $thali = mysqli_query($link, "SELECT id, Thali, tiffinno, thalisize, Transporter from thalilist WHERE id IN (".$thaliid.") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter"); 
+                        $sabeelno = implode(", ", $thalino);
+                        $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE Thali IN (".$sabeelno.") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter"); 
                         while ($row = mysqli_fetch_assoc($thali)) {
-                            $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "' AND `thali` = '" . $row['id'] . "' ORDER BY thali");
+                            $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
                             if ($user_menu->num_rows > 0) {
                                 $row_user = $user_menu->fetch_assoc();
 								$user_menu_item = unserialize($row_user['menu_item']); ?>

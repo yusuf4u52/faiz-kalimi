@@ -54,7 +54,6 @@ if (isset($_GET['year'])) {
 <body>
   <?php include('_nav.php'); ?>
   <div class="container">
-    
     <!-- Forms
       ================================================== -->
     <div class="row">
@@ -206,11 +205,11 @@ if (isset($_GET['year'])) {
   <?php $adminmenu = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` >= '" . date('Y-m-d') . "' AND `menu_type` = 'thaali' order by `menu_date` DESC") or die(mysqli_error($link));
   while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
     if( !empty($values['Thali'])) {
-      $adminumenu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '".$amenu_values['menu_date']."' AND `thali` = '".$values['id']."'") or die(mysqli_error($link));
+      $adminumenu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '".$amenu_values['menu_date']."' AND `thali` = '".$values['Thali']."'") or die(mysqli_error($link));
     }
     if(isset($adminumenu) && $adminumenu->num_rows > 0) {
       $rowaumenu = $adminumenu->fetch_assoc();
-      $menu_id = $rowaumenu['id'];
+      echo $menu_id = $rowaumenu['id'];
       $menu_date = $rowaumenu['menu_date'];
       $menu_item = unserialize($rowaumenu['menu_item']);
       if( !empty($menu_item['roti']['qty'])) {
@@ -240,7 +239,7 @@ if (isset($_GET['year'])) {
           <form id="changemenu-<?php echo $menu_id; ?>" class="form-horizontal" method="post" action="changemenu.php">
             <input type="hidden" name="action" value="admin_change_menu" />
             <input type="hidden" name="menu_id" value="<?php echo $menu_id; ?>" />
-            <input type="hidden" name="thali" value="<?php echo $values['id']; ?>" />
+            <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
             <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
             <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
             <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />

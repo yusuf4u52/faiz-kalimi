@@ -37,10 +37,10 @@ if ($menu_item->num_rows > 0) {
 				while ($row_thali = mysqli_fetch_assoc($thali)) {
 					$thalino[] = $row_thali['thali']; 
 				}
-				$thaliid = implode(", ", $thalino);
-				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND id IN (".$thaliid.") ORDER BY Transporter");
+				$sabeelno = implode(", ", $thalino);
+				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND Thali IN (".$sabeelno.") ORDER BY Transporter");
 				while ($row_trans = mysqli_fetch_assoc($transporter)) {
-					$msgvar .= '<table border="0" width="640" cellpadding="3" cellspacing="3" bgcolor="#7A62D3" style="color:#FFFFFF; padding:0.5rem; margin-top:1rem;">
+					$msgvar .= '<table border="0" width="640" cellpadding="3" cellspacing="3" bgcolor="#7A62D3" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
 						<tr>
 							<th align="center"><strong>'.$row_trans['Transporter'].'</strong></th>
 						</tr>
@@ -48,7 +48,7 @@ if ($menu_item->num_rows > 0) {
 					<table width="640" cellpadding="0" cellspacing="0" border="1" bgcolor="#ffffff" style="color:#333333; padding:0.5rem;">
 						<thead>
 							<tr bgcolor="#7A62D3" style="color:#FFFFFF;">
-								<th>Sabeel No</th>
+								<th>Thali No</th>
 								<th>Tiffin No</th>
 								<th>Tiffin Size</th>';
 								if (!empty($menu_item['sabji']['item'])) {
@@ -69,9 +69,9 @@ if ($menu_item->num_rows > 0) {
 							$msgvar .= '<tr>
 						</thead>
 						<tbody>';
-							$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, thalisize from thalilist WHERE `Transporter` LIKE '".$row_trans['Transporter']."' AND id IN (".$thaliid.") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
+							$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, thalisize from thalilist WHERE `Transporter` LIKE '".$row_trans['Transporter']."' AND Thali IN (".$sabeelno.") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
 							while ($row = mysqli_fetch_assoc($thali)) {
-								$user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $tomorrow_date . "' AND `thali` = '" . $row['id'] . "' ORDER BY thali");
+								$user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $tomorrow_date . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
 								if ($user_menu->num_rows > 0) {
 									$row_user = $user_menu->fetch_assoc();
 									$user_menu_item = unserialize($row_user['menu_item']);
