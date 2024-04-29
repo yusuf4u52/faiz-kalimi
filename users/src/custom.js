@@ -224,7 +224,6 @@
               details.find("label#sabji").html(scheds[id].menu_item.sabji.item);
               details.find("input#sabji").val(scheds[id].menu_item.sabji.item);
               details.find("input#sabjiqty").val(scheds[id].menu_item.sabji.qty);
-              details.find("input#sabjiqty").attr('max', scheds[id].menu_item.sabji.qty);
               if (scheds[id]?.max_item?.sabji?.item !== undefined) {
                 if(scheds[id]?.menu_item?.sabji?.qty == scheds[id]?.max_item?.sabji?.qty) {
                   details.find('input#sabjiqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
@@ -256,7 +255,6 @@
               details.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
               details.find("input#tarkari").val(scheds[id].menu_item.tarkari.item);
               details.find("input#tarkariqty").val(scheds[id].menu_item.tarkari.qty);
-              details.find("input#tarkariqty").attr('max', scheds[id].menu_item.tarkari.qty);
               if (scheds[id]?.max_item?.tarkari?.item !== undefined) {
                 if(scheds[id]?.menu_item?.tarkari?.qty == scheds[id]?.max_item?.tarkari?.qty) {
                   details.find('input#tarkariqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
@@ -288,7 +286,6 @@
               details.find("label#rice").html(scheds[id].menu_item.rice.item);
               details.find("input#rice").val(scheds[id].menu_item.rice.item);
               details.find("input#riceqty").val(scheds[id].menu_item.rice.qty);
-              details.find("input#riceqty").attr('max', scheds[id].menu_item.rice.qty);
               if (scheds[id]?.max_item?.rice?.item !== undefined) {
                 if(scheds[id]?.menu_item?.rice?.qty == scheds[id]?.max_item?.rice?.qty) {
                   details.find('input#riceqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
