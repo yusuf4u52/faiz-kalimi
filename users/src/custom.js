@@ -226,10 +226,8 @@
               details.find("input#sabjiqty").val(scheds[id].menu_item.sabji.qty);
               if (scheds[id]?.max_item?.sabji?.item !== undefined) {
                 if(scheds[id]?.menu_item?.sabji?.qty == scheds[id]?.max_item?.sabji?.qty) {
-                  details.find('input#sabjiqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
                   details.find('input#sabjiqty').closest('.input-group').find(".btn-plus").addClass('disabled');
                 } else if(scheds[id]?.menu_item?.sabji?.qty == 0 ) {
-                  details.find('input#sabjiqty').closest('.input-group').find(".btn-plus").removeClass('disabled');
                   details.find('input#sabjiqty').closest('.input-group').find(".btn-minus").addClass('disabled');
                 }
                 details.find("input#sabjiqty").attr('max', scheds[id].max_item.sabji.qty);
@@ -257,10 +255,8 @@
               details.find("input#tarkariqty").val(scheds[id].menu_item.tarkari.qty);
               if (scheds[id]?.max_item?.tarkari?.item !== undefined) {
                 if(scheds[id]?.menu_item?.tarkari?.qty == scheds[id]?.max_item?.tarkari?.qty) {
-                  details.find('input#tarkariqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
                   details.find('input#tarkariqty').closest('.input-group').find(".btn-plus").addClass('disabled');
                 } else if(scheds[id]?.menu_item?.tarkari?.qty == 0 ) {
-                  details.find('input#tarkariqty').closest('.input-group').find(".btn-plus").removeClass('disabled');
                   details.find('input#tarkariqty').closest('.input-group').find(".btn-minus").addClass('disabled');
                 }
                 details.find("input#tarkariqty").attr('max', scheds[id].max_item.tarkari.qty);
@@ -288,10 +284,8 @@
               details.find("input#riceqty").val(scheds[id].menu_item.rice.qty);
               if (scheds[id]?.max_item?.rice?.item !== undefined) {
                 if(scheds[id]?.menu_item?.rice?.qty == scheds[id]?.max_item?.rice?.qty) {
-                  details.find('input#riceqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
                   details.find('input#riceqty').closest('.input-group').find(".btn-plus").addClass('disabled');
                 } else if(scheds[id]?.menu_item?.rice?.qty == 0) {
-                  details.find('input#riceqty').closest('.input-group').find(".btn-plus").removeClass('disabled');
                   details.find('input#riceqty').closest('.input-group').find(".btn-minus").addClass('disabled');
                 }
                 details.find("input#riceqty").attr('max', scheds[id].max_item.rice.qty);
