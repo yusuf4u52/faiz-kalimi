@@ -34,10 +34,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
       </div>
     </div>
     <?php if (isset($takesFmb) && $takesFmb->num_rows > 0) {
-      $takesFmb = $takesFmb->fetch_assoc();
-      $thalisize = $takesFmb['thalisize'];
-      $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));
-
+      
       if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
         <div class="alert alert-success" role="alert">Thali of <strong>
             <?php echo date('d M Y', strtotime($_GET['date'])); ?>
@@ -56,7 +53,10 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
         </div>
       <?php } ?>
 
-      <?php $sched_res = [];
+      <?php $takesFmb = $takesFmb->fetch_assoc();
+      $thalisize = $takesFmb['thalisize'];
+      $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));
+      $sched_res = [];
       while ($values = mysqli_fetch_assoc($result)) {
         $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $values['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
         if ($user_menu->num_rows > 0) {

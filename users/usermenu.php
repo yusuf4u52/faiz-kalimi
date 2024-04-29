@@ -46,7 +46,7 @@ if(isset($_POST['search']) ) {
             <table class="table table-striped table-hover" id="my-table">
                 <thead>
                     <tr>
-                        <th>Thali No</th>
+                        <th>Sabeel No</th>
                         <th>Tiffin No</th>
                         <th>Tiffin Size</th>
                         <th>Transporter</th>
@@ -76,9 +76,9 @@ if(isset($_POST['search']) ) {
                             $thalino[] = $row_thali['thali']; 
                         }
                         $sabeelno = implode(", ", $thalino);
-                        $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE Thali IN (".$sabeelno.") AND `hardstop` != 1 AND Active != 0"); 
+                        $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE Thali IN (".$sabeelno.") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter"); 
                         while ($row = mysqli_fetch_assoc($thali)) {
-                            $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "' AND `thali` = '" . $row['Thali'] . "'");
+                            $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
                             if ($user_menu->num_rows > 0) {
                                 $row_user = $user_menu->fetch_assoc();
 								$user_menu_item = unserialize($row_user['menu_item']); ?>
