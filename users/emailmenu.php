@@ -37,7 +37,7 @@ if ($menu_item->num_rows > 0) {
 				while ($row_thali = mysqli_fetch_assoc($thali)) {
 					$thalino[] = $row_thali['thali']; 
 				}
-				$sabeelno = implode(", ", $thalino);
+				$sabeelno = "'" . implode ( "', '", $thalino ) . "'";
 				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND Thali IN (".$sabeelno.") ORDER BY Transporter");
 				while ($row_trans = mysqli_fetch_assoc($transporter)) {
 					$msgvar .= '<table border="0" width="640" cellpadding="3" cellspacing="3" bgcolor="#7A62D3" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
