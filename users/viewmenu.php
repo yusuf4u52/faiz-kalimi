@@ -67,6 +67,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
           $values['menu_item'] = unserialize($row['menu_item']);
           $values['sdate'] = date("F d, Y h:i A", strtotime($row['menu_date']));
         } else {
+          $values['max_item'] = unserialize($values['menu_item']);
           $values['menu_item'] = unserialize($values['menu_item']);
           $values['sdate'] = date("F d, Y h:i A", strtotime($values['menu_date']));
         }
@@ -152,7 +153,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
                   <div class="col-xs-6">
                     <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="">
                     <input type="text" class="form-control" name="menu_item[extra][qty]" id="extraqty" value="" readonly>
-                    <small class="text-info">Please contact admin to change quantity.</small>
+                    <small class="text-info">Please contact admin to change quantity.</small> 
                   </div>
                 </div>
               </div>

@@ -231,9 +231,6 @@
                 } else if(scheds[id]?.menu_item?.sabji?.qty == 0 ) {
                   details.find('input#sabjiqty').closest('.input-group').find(".btn-minus").addClass('disabled');
                 }
-              } else {
-                details.find("input#sabjiqty").attr('max', scheds[id].menu_item.sabji.qty);
-                details.find('input#sabjiqty').closest('.input-group').find(".btn-plus").addClass('disabled');
               }
             } else {
               details.find("div#sabji").attr('style', 'display:none');
@@ -260,9 +257,6 @@
                 } else if(scheds[id]?.menu_item?.tarkari?.qty == 0 ) {
                   details.find('input#tarkariqty').closest('.input-group').find(".btn-minus").addClass('disabled');
                 }
-              } else {
-                details.find("input#tarkariqty").attr('max', scheds[id].menu_item.tarkari.qty);
-                details.find('input#tarkariqty').closest('.input-group').find(".btn-plus").addClass('disabled');
               }
             } else {
               details.find("div#tarkari").attr('style', 'display:none');
@@ -270,7 +264,7 @@
               details.find("input#tarkariqty").attr('disabled', 'disabled');
               details.find("label#tarkari").html('');
               details.find("input#tarkari").val('');
-              details.find("input#tarkariqty").val('');
+              details.find("input#tarkariqty").val(''); 
               details.find("input#tarkari").removeAttr('max');
               details.find('input#tarkariqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
               details.find('input#tarkariqty').closest('.input-group').find(".btn-plus").removeClass('disabled');
@@ -289,9 +283,6 @@
                 } else if(scheds[id]?.menu_item?.rice?.qty == 0) {
                   details.find('input#riceqty').closest('.input-group').find(".btn-minus").addClass('disabled');
                 }
-              } else {
-                details.find("input#riceqty").attr('max', scheds[id].menu_item.rice.qty);
-                details.find('input#riceqty').closest('.input-group').find(".btn-plus").addClass('disabled');
               }
             } else {
               details.find("div#rice").attr('style', 'display:none');
