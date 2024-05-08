@@ -14,7 +14,7 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
             $menu_date = $menu_date['menu_date'];
         }
     }
-
+    
     date_default_timezone_set('Asia/Kolkata');
     if (isset($_POST['action']) && $_POST['action'] == 'change_menu') {
         $GivenDate = new DateTime($menu_date . '20:00:00');
@@ -33,19 +33,20 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
         if ($menu_item->num_rows > 0) {
             $menu_item = $menu_item->fetch_assoc();
             $menu_item = unserialize($menu_item['menu_item']);
+            $change = 'no';
             if (!empty($menu_item['sabji']['item'])) {
                 if ($menu_item['sabji']['qty'] !== $_POST['menu_item']['sabji']['qty']) {
                     $change = 'yes';
-                } elseif (!empty($menu_item['tarkari']['item'])) {
-                    if ($menu_item['tarkari']['qty'] !== $_POST['menu_item']['tarkari']['qty']) {
-                        $change = 'yes';
-                    } elseif (!empty($menu_item['rice']['item'])) {
-                        if ($menu_item['rice']['qty'] !== $_POST['menu_item']['rice']['qty']) {
-                            $change = 'yes';
-                        } else {
-                            $change = 'no';
-                        }
-                    }
+                }
+            } 
+            if (!empty($menu_item['tarkari']['item'])) {
+                if ($menu_item['tarkari']['qty'] !== $_POST['menu_item']['tarkari']['qty']) {
+                    $change = 'yes';
+                }
+            } 
+            if (!empty($menu_item['rice']['item'])) {
+                if ($menu_item['rice']['qty'] !== $_POST['menu_item']['rice']['qty']) {
+                    $change = 'yes';
                 }
             }
         }
