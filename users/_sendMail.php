@@ -11,10 +11,12 @@ function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = null, $add
 
 	if ($addTransporter) {
 		$email->addTo("yusuf4u52@gmail.com");
-		$email->addTo("Moula.juned@gmail.com");
+		//$email->addTo("Moula.juned@gmail.com");
+		$email->addTo("moula1981sk@gmail.com");
 		$email->addTo("khanbilalkbr@gmail.com");
 		$email->addTo("mulla.moiz@gmail.com");
 		$email->addTo("abbas.saifee5@gmail.com");
+		$email->addTo("moizlife@gmail.com");
 	}
 
 	$email->addContent(
