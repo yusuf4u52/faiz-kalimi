@@ -195,11 +195,12 @@
         if (!!scheds[id]) {
           details.find("input#menu_id").val(id);
           details.find('.modal-body #validate').remove();
-          var GivenDate = new Date(scheds[id].menu_date);
+          var GivenDate = new Date(scheds[id].menu_date).toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+          GivenDate = new Date(GivenDate);
           GivenDate.setDate(GivenDate.getDate() - 1);
           GivenDate.setHours(20, 0, 0, 0);
-          var CurrentDate = new Date();
-          CurrentDate.setHours(0, 0, 0, 0);
+          var CurrentDate = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+          CurrentDate = new Date(CurrentDate);
           const menu_date = new Date(scheds[id].menu_date);
           if (scheds[id]?.menu_type == 'miqaat') {
             details.find(".modal-title").html('Miqaat on <strong>' + menu_date.toDateString() + '</strong>');
@@ -225,7 +226,22 @@
               details.find("label#sabji").html(scheds[id].menu_item.sabji.item);
               details.find("input#sabji").val(scheds[id].menu_item.sabji.item);
               details.find("input#sabjiqty").val(scheds[id].menu_item.sabji.qty);
-              details.find("input#sabjiqty").attr('max', scheds[id].menu_item.sabji.qty);
+              if (scheds[id]?.max_item?.sabji?.item !== undefined) {
+                if(scheds[id]?.menu_item?.sabji?.qty < scheds[id]?.max_item?.sabji?.qty) {
+                  details.find('input#sabjiqty').closest('.input-group').find(".btn-plus").removeClass('disabled');
+                } else {
+                  details.find('input#sabjiqty').closest('.input-group').find(".btn-plus").addClass('disabled');
+                }
+                if(scheds[id]?.menu_item?.sabji?.qty > 0 ) {
+                  details.find('input#sabjiqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
+                } else {
+                  details.find('input#sabjiqty').closest('.input-group').find(".btn-minus").addClass('disabled');
+                }
+                details.find("input#sabjiqty").attr('max', scheds[id].max_item.sabji.qty);
+              } else {
+                details.find('input#sabjiqty').closest('.input-group').find(".btn-plus").addClass('disabled');
+                details.find("input#sabjiqty").attr('max', scheds[id].menu_item.sabji.qty);
+              }
             } else {
               details.find("div#sabji").attr('style', 'display:none');
               details.find("input#sabji").attr('disabled', 'disabled');
@@ -234,6 +250,8 @@
               details.find("input#sabji").val('');
               details.find("input#sabjiqty").val('');
               details.find("input#sabjiqty").removeAttr('max');
+              details.find('input#sabjiqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
+              details.find('input#sabjiqty').closest('.input-group').find(".btn-plus").removeClass('disabled');
             }
             if (scheds[id]?.menu_item?.tarkari?.item !== undefined) {
               details.find("div#tarkari").removeAttr('style', 'display:none');
@@ -242,7 +260,22 @@
               details.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
               details.find("input#tarkari").val(scheds[id].menu_item.tarkari.item);
               details.find("input#tarkariqty").val(scheds[id].menu_item.tarkari.qty);
-              details.find("input#tarkariqty").attr('max', scheds[id].menu_item.tarkari.qty);
+              if (scheds[id]?.max_item?.tarkari?.item !== undefined) {
+                if(scheds[id]?.menu_item?.tarkari?.qty < scheds[id]?.max_item?.tarkari?.qty) {
+                  details.find('input#tarkariqty').closest('.input-group').find(".btn-plus").removeClass('disabled');
+                } else {
+                  details.find('input#tarkariqty').closest('.input-group').find(".btn-plus").addClass('disabled');
+                }
+                if(scheds[id]?.menu_item?.tarkari?.qty > 0 ) {
+                  details.find('input#tarkariqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
+                } else {
+                  details.find('input#tarkariqty').closest('.input-group').find(".btn-minus").addClass('disabled');
+                }
+                details.find("input#tarkariqty").attr('max', scheds[id].max_item.tarkari.qty);
+              } else {
+                details.find('input#tarkariqty').closest('.input-group').find(".btn-plus").addClass('disabled');
+                details.find("input#tarkariqty").attr('max', scheds[id].menu_item.tarkari.qty);
+              }
             } else {
               details.find("div#tarkari").attr('style', 'display:none');
               details.find("input#tarkari").attr('disabled', 'disabled');
@@ -251,6 +284,8 @@
               details.find("input#tarkari").val('');
               details.find("input#tarkariqty").val('');
               details.find("input#tarkari").removeAttr('max');
+              details.find('input#tarkariqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
+              details.find('input#tarkariqty').closest('.input-group').find(".btn-plus").removeClass('disabled');
             }
             if (scheds[id]?.menu_item?.rice?.item !== undefined) {
               details.find("div#rice").removeAttr('style', 'display:none');
@@ -259,7 +294,22 @@
               details.find("label#rice").html(scheds[id].menu_item.rice.item);
               details.find("input#rice").val(scheds[id].menu_item.rice.item);
               details.find("input#riceqty").val(scheds[id].menu_item.rice.qty);
-              details.find("input#riceqty").attr('max', scheds[id].menu_item.rice.qty);
+              if (scheds[id]?.max_item?.rice?.item !== undefined) {
+                if(scheds[id]?.menu_item?.rice?.qty < scheds[id]?.max_item?.rice?.qty) {
+                  details.find('input#riceqty').closest('.input-group').find(".btn-plus").removeClass('disabled');
+                } else {
+                  details.find('input#riceqty').closest('.input-group').find(".btn-plus").addClass('disabled');
+                } 
+                if(scheds[id]?.menu_item?.rice?.qty > 0) {
+                  details.find('input#riceqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
+                } else {
+                  details.find('input#riceqty').closest('.input-group').find(".btn-minus").addClass('disabled');
+                }
+                details.find("input#riceqty").attr('max', scheds[id].max_item.rice.qty);
+              } else {
+                details.find('input#riceqty').closest('.input-group').find(".btn-plus").addClass('disabled');
+                details.find("input#riceqty").attr('max', scheds[id].menu_item.rice.qty);
+              }
             } else {
               details.find("div#rice").attr('style', 'display:none');
               details.find("input#rice").attr('disabled', 'disabled');
@@ -268,6 +318,8 @@
               details.find("input#rice").val('');
               details.find("input#riceqty").val('');
               details.find("input#riceqty").removeAttr('max');
+              details.find('input#riceqty').closest('.input-group').find(".btn-minus").removeClass('disabled');
+              details.find('input#riceqty').closest('.input-group').find(".btn-plus").removeClass('disabled');
             }
             if (scheds[id]?.menu_item?.roti?.item !== undefined) {
               details.find("div#roti").removeAttr('style', 'display:none');

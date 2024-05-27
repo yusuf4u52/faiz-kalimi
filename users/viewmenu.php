@@ -61,9 +61,13 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
         $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $values['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
         if ($user_menu->num_rows > 0) {
           $row = $user_menu->fetch_assoc();
+          $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $row['menu_date'] . "'") or die(mysqli_error($link));
+          $max_item = $menu_item->fetch_assoc();
+          $values['max_item'] = unserialize($max_item['menu_item']);
           $values['menu_item'] = unserialize($row['menu_item']);
           $values['sdate'] = date("F d, Y h:i A", strtotime($row['menu_date']));
         } else {
+          $values['max_item'] = unserialize($values['menu_item']);
           $values['menu_item'] = unserialize($values['menu_item']);
           $values['sdate'] = date("F d, Y h:i A", strtotime($values['menu_date']));
         }
@@ -98,7 +102,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
                       </span>
                       <input type="number" class="form-control" name="menu_item[sabji][qty]" id="sabjiqty" value="" min="0" readonly>
                       <span class="input-group-btn">
-                        <button class="btn btn-primary btn-plus disabled" type="button">+</button>
+                        <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
                     </div>
                     <small class="text-info"><strong>Note:</strong> 0.5 means half dabba.</small>
@@ -114,7 +118,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
                       </span>
                       <input type="number" class="form-control" name="menu_item[tarkari][qty]" id="tarkariqty" value="" min="0" readonly>
                       <span class="input-group-btn">
-                        <button class="btn btn-primary btn-plus disabled" type="button">+</button>
+                        <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
                     </div>
                     <small class="text-info"><strong>Note:</strong> 0.5 means half dabba.</small>
@@ -130,7 +134,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
                       </span>
                       <input type="number" class="form-control" name="menu_item[rice][qty]" id="riceqty" value="" min="0" readonly>
                       <span class="input-group-btn">
-                        <button class="btn btn-primary btn-plus disabled" type="button">+</button>
+                        <button class="btn btn-primary btn-plus" type="button">+</button>
                       </span>
                     </div>
                     <small class="text-info"><strong>Note:</strong> 0.5 means half dabba.</small>
@@ -149,7 +153,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
                   <div class="col-xs-6">
                     <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="">
                     <input type="text" class="form-control" name="menu_item[extra][qty]" id="extraqty" value="" readonly>
-                    <small class="text-info">Please contact admin to change quantity.</small>
+                    <small class="text-info">Please contact admin to change quantity.</small> 
                   </div>
                 </div>
               </div>
