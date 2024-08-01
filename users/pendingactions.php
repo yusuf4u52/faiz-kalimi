@@ -10,7 +10,7 @@ $query_new_thali = $query . " WHERE Thali is null and Active is null";
 $result_new_thali = mysqli_query($link, $query_new_thali);
 
 $transporter_list = array();
-$query = "SELECT Name FROM transporters";
+$query = "SELECT Distinct(Transporter) as Name FROM thalilist where Transporter is not NULL";
 $result1 = mysqli_query($link, $query);
 while ($values1 = mysqli_fetch_assoc($result1)) {
   $transporter_list[] = $values1['Name'];
