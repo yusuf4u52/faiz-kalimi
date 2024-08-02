@@ -4,6 +4,7 @@ include('getHijriDate.php');
 include '../backup/_email_backup.php';
 include '../sms/_sms_automation.php';
 require_once '_sendMail.php';
+include('emailmenu.php');
 
 error_reporting(0);
 $day = date("l", strtotime("tomorrow"));
