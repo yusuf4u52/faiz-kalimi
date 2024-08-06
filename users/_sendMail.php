@@ -16,6 +16,9 @@ function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = null, $add
 		$email->addTo("mulla.moiz@gmail.com");
 		$email->addTo("abbas.saifee5@gmail.com");
 		$email->addTo("moizlife@gmail.com");
+		$email->addTo("tinwalaabizer@gmail.com");
+		$email->addTo("hussainbarnagarwala14@gmail.com");
+		$email->addTo("kanchwalaabizer@gmail.com");
 	}
 
 	$email->addContent(

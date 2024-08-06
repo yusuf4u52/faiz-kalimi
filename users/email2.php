@@ -46,21 +46,21 @@ while ($row = mysqli_fetch_assoc($sql)) {
 	$processed[] = $row['id'];
 }
 foreach ($request as $transporter_name => $thalis) {
-	$msgvar .= "<b>" . $transporter_name . "</b>\n";
+	$msg .= "<b>" . $transporter_name . "</b>\n";
 	foreach ($thalis as $operation_type => $thali_details) {
-		$msgvar .= "<b>" . $operation_type . "</b>\n";
+		$msg .= "<b>" . $operation_type . "</b>\n";
 		foreach ($thali_details as $thaliuser) {
-			$msgvar .= 	sprintf("%s - %s - %s - %s - %s - %s\n", $thaliuser['tiffinno'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
-			$msgvar .= "\n";
+			$msg .= 	sprintf("%s - %s - %s - %s - %s - %s\n", $thaliuser['tiffinno'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
+			$msg .= "\n";
 		}
 	}
-	$msgvar .= 	"\n";
+	$msg .= 	"\n";
 }
 
 //----------------- Transporter wise count daily----------------------
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $hijridate = getHijriDate($tomorrow_date);
-$msgvar .= "\n<b>Transporter Count $hijridate $day - $tomorrow_date</b>\n";
+$msg .= "\n<b>Transporter Count $hijridate $day - $tomorrow_date</b>\n";
 $sql = mysqli_query($link, "SELECT
 					(case when Transporter IS NULL then 'No Transport' else Transporter end) AS Transporter,
 					count(*) as tcount,
@@ -106,7 +106,7 @@ $pivot["total"]["total"] = $result[0];
 mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `small`,`medium`,`large`,`mini`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[1] . "','" . $result[2] . "','" . $result[3] . "','" . $result[4] . "'," . $result[0] . ")") or die(mysqli_error($link));
 
 mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
-$msgvar = str_replace("\n", "<br>", $msgvar);
+$msg = str_replace("\n", "<br>", $msg);
 
 $pivotTable = "<table border='1' ><tr><td></td>";
 foreach ($transporters as $tname => $value) {
@@ -123,14 +123,14 @@ foreach ($pivot as $size => $tcountArr) {
 }
 $pivotTable .= "</table>";
 
-$msgvar .= $pivotTable;
+$msg .= $pivotTable;
 
 // add total registered count
 $registered_but_not_active = mysqli_query($link, "SELECT * FROM thalilist WHERE Active='0' and (Transporter <> '' or Transporter is not null)");
 $total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered_but_not_active);
-$msgvar .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
+$msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
 
 // send email
-sendEmail('kalimimohallapoona@gmail.com', 'Start Stop update ' . $tomorrow_date, $msgvar, null, null, true);
+sendEmail('kalimimohallapoona@gmail.com', 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
 
 mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
