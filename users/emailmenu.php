@@ -20,7 +20,7 @@ $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_
 if ($menu_item->num_rows > 0) {
 	$msgvar .= '<table border="0" bgcolor="#F5F5F5" width="100%" cellpadding="3" cellspacing="3">
 		<td align="center" valign="top">
-			<table border="0" width="640" cellpadding="0" cellspacing="0" bgcolor="#F5F5F5" style="color:#333333; padding:1rem;">
+			<table border="0" width="1140" cellpadding="0" cellspacing="0" bgcolor="#F5F5F5" style="color:#333333; padding:1rem;">
 				<tr>
 					<td align="left">
 						<img src="https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo.png" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="152" height="62"> 
@@ -38,36 +38,38 @@ if ($menu_item->num_rows > 0) {
 				$sabeelno = "'" . implode ( "', '", $thalino ) . "'";
 				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND Thali IN (".$sabeelno.") ORDER BY Transporter");
 				while ($row_trans = mysqli_fetch_assoc($transporter)) {
-					$msgvar .= '<table border="0" width="640" cellpadding="3" cellspacing="3" bgcolor="#7A62D3" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
+					$msgvar .= '<table border="0" width="1140" cellpadding="3" cellspacing="3" bgcolor="#7A62D3" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
 						<tr>
 							<th align="center"><strong>'.$row_trans['Transporter'].'</strong></th>
 						</tr>
 					</table>
-					<table width="640" cellpadding="0" cellspacing="0" border="1" bgcolor="#ffffff" style="color:#333333; padding:0.5rem;">
+					<table width="1140" cellpadding="0" cellspacing="0" border="1" bgcolor="#ffffff" style="color:#333333; padding:0.5rem;">
 						<thead>
 							<tr bgcolor="#7A62D3" style="color:#FFFFFF;">
-								<th>Thali No</th>
-								<th>Tiffin No</th>
-								<th>Tiffin Size</th>';
+								<th width="7%">Sabeel No</th>
+								<th width="7%">Tiffin No</th>
+								<th width="7%">Tiffin Size</th>';
 								if (!empty($menu_item['sabji']['item'])) {
-									$msgvar .= '<th>' . $menu_item['sabji']['item'] . '</th>';
+									$msgvar .= '<th width="7%">' . $menu_item['sabji']['item'] . '</th>';
 								}
 								if (!empty($menu_item['tarkari']['item'])) {
-									$msgvar .= '<th>' . $menu_item['tarkari']['item'] . '</th>';
+									$msgvar .= '<th width="7%">' . $menu_item['tarkari']['item'] . '</th>';
 								}
 								if (!empty($menu_item['rice']['item'])) {
-									$msgvar .= '<th>' . $menu_item['rice']['item'] . '</th>';
+									$msgvar .= '<th width="7%">' . $menu_item['rice']['item'] . '</th>';
 								}
 								if (!empty($menu_item['roti']['item'])) {
-									$msgvar .= '<th>' . $menu_item['roti']['item'] . '</th>';
+									$msgvar .= '<th width="7%">' . $menu_item['roti']['item'] . '</th>';
 								}
 								if (!empty($menu_item['extra']['item'])) {
-									$msgvar .= '<th>' . $menu_item['extra']['item'] . '</th>';
+									$msgvar .= '<th width="7%">' . $menu_item['extra']['item'] . '</th>';
 								}
-							$msgvar .= '<tr>
+							$msgvar .= '<th>Name / Contact</th>
+								<th>Flat / Society</th>
+							<tr>
 						</thead>
 						<tbody>';
-							$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, thalisize from thalilist WHERE `Transporter` LIKE '".$row_trans['Transporter']."' AND Thali IN (".$sabeelno.") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
+							$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, `NAME`, CONTACT, thalisize, wingflat, society from thalilist WHERE `Transporter` LIKE '".$row_trans['Transporter']."' AND Thali IN (".$sabeelno.") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
 							while ($row = mysqli_fetch_assoc($thali)) {
 								$user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $tomorrow_date . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
 								if ($user_menu->num_rows > 0) {
@@ -92,7 +94,9 @@ if ($menu_item->num_rows > 0) {
 										if (!empty($user_menu_item['extra']['item'])) {
 											$msgvar .= '<td align="center">' . $user_menu_item['extra']['qty'] . '</td>';
 										}
-									$msgvar .= '<tr>';
+									$msgvar .= '<td align="center">'.$row['NAME'].'</td>
+										<td align="center">'.$row['wingflat'].' '.$row['society'].'</td>
+									<tr>';
 								}
 							}
 						$msgvar .= '</tbody>
