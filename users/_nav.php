@@ -34,7 +34,7 @@
         }
         ?>
         <?php
-        if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+        if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com'))) {
         ?>
           <li><a href="/fmb/users/pendingactions.php">Pending Actions</a></li>
           <li><a href="/fmb/users/_daily_hisab_entry.php">Daily Hisab</a></li>

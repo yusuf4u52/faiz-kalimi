@@ -27,7 +27,7 @@ class Examples extends CI_Controller
 	function faiz()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('tzabuawala@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 
