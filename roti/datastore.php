@@ -9,6 +9,33 @@ function get_current_miqaat()
     return fetch_data($query);
 }
 
+function get_last_miqaat()
+{
+    $query = 'SELECT id,name,details,start_datetime,end_datetime 
+    FROM miqaat 
+    WHERE TIMESTAMPDIFF(SECOND, end_datetime, now()) >= 0 and id > 0
+    order by id desc limit 1';
+
+    return run_statement($query);
+}
+
+function get_current_or_last_miqaat()
+{
+    $result = get_current_miqaat();
+    if (!is_record_found($result)) {
+        $result = get_last_miqaat();
+    }
+    return $result;
+}
+
+function get_sector_list() {
+    $query = 'select sector, subsector, sectorits, sub_sectorits 
+    FROM subsector 
+    ORDER BY sector';
+
+    return fetch_data($query);
+}
+
 function get_miqaat_byid($id)
 {
     $query = "SELECT id,name,details,start_datetime,end_datetime FROM miqaat 
@@ -39,6 +66,30 @@ from thalilist T
 left Join subsector Sub on T.subsector = Sub.subsector 
 left join subsector Sec on Sec.sub_sectorits = 'Masoolin' and Sec.sector = T.sector
 where thali ='$sabeel'";
+    return fetch_data($query);
+}
+
+function get_roti_report($miqaat, $value=null, $type=null)
+{
+    $query = "select 
+    t.thali, r.full_name, d.roti_count, 
+    s.sectorits, s.sub_sectorits, 
+    s.incharge_female_fullname
+    FROM roti_data d
+    JOIN roti_maker r ON r.sabeel = d.sabeel
+    join miqaat m ON m.id = d.event
+    join thalilist t ON d.sabeel = t.thali
+    join subsector s ON s.subsector = t.subsector
+    WHERE d.event = '$miqaat' ";
+
+    if( isset($type) && isset($value) ) {
+        if( $type === 'SS' ) {
+            $query .= " AND t.subsector = '$value'";
+        } else {
+            $query .= " AND t.sector = '$value'";
+        } 
+    }
+
     return fetch_data($query);
 }
 

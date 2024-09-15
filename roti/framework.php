@@ -147,7 +147,7 @@ function change_data($sql)
 }
 function is_record_found($result)
 {
-    return $result->success && $result->count > 0 ? true : false;
+    return isset($result) && $result->success && $result->count > 0 ? true : false;
 }
 
 
