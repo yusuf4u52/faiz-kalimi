@@ -1,6 +1,5 @@
 <?php
-$link = mysqli_connect('localhost', 'olivezrt_rnd','@livezrt_rnd','olivezrt_goldenbird');
-//include '../users/connection.php';
+include '../users/connection.php';
 
 /********************************* 
  * 
