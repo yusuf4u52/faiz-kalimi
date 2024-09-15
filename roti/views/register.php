@@ -57,7 +57,7 @@ function content_display()
       </div>
       <div class="form-group">
         <label for="email">Roti Packet Count (1 Packet = 4 Roti)</label>
-        <select class="form-control" name="roti_count" id="roti_count">
+        <select class="form-select" name="roti_count" id="roti_count">
           <?php for ($i = 1; $i < 26; $i++) {
             $value = $i == 1 ? "1 Packet" : "$i Packets";            
             echo "<option value='$i'>$value</option>";
