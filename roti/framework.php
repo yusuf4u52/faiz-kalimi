@@ -1,5 +1,6 @@
 <?php
-include '../users/connection.php';
+$link = mysqli_connect('localhost', 'olivezrt_rnd','@livezrt_rnd','olivezrt_goldenbird');
+//include '../users/connection.php';
 
 /********************************* 
  * 
@@ -147,7 +148,7 @@ function change_data($sql)
 }
 function is_record_found($result)
 {
-    return $result->success && $result->count > 0 ? true : false;
+    return isset($result) && $result->success && $result->count > 0 ? true : false;
 }
 
 
