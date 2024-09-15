@@ -56,7 +56,7 @@ $sabeel = $_POST['sabeel'];
                     <th>Roti Packets Count (1 Packet = 4 Roti)</th>
                     <td>
                         <div class="form-group">
-                            <select class="form-control" name="roti_count" id="roti_count">
+                            <select class="form-select" name="roti_count" id="roti_count">
    <?php for($i = 1; $i < 26; $i++) {
     $selected = '';
     $value = $i == 1 ? "1 Packet" : "$i Packets";
