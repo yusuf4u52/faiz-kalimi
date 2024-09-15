@@ -31,9 +31,9 @@ function content_display()
 
     <div class='col-xs-12'>
       <div class="form-group">
-        <label for="email">Sabeel Number (3 digit number)</label>
+        <label for="email">Sabeel Number (numbers only)</label>
         <input type="text" class="form-control" id="sabeel" placeholder="Enter sabeel number" name="sabeel"
-          pattern="^[0-9]{3}$" required>
+          pattern="^[0-9]{3,5}$" required>
       </div>
       <div class="form-group" style="text-align: center; vertical-align: middle; font-weight:20px;margin-top: 25px;">
         <button type="submit" class="btn btn-success">Next</button>
