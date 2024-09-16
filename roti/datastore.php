@@ -102,8 +102,10 @@ function get_roti_report($miqaat, $itsid=null)
     WHERE rd.event = '$miqaat' ";
 
     if( isset($itsid) ) {
-        $query .= " AND (msl.ITS_NO = '$itsid' OR msd.ITS_NO = '$itsid');";
+        $query .= " AND (msl.ITS_NO = '$itsid' OR msd.ITS_NO = '$itsid') ";
     }
+
+    $query .= ' ORDER BY t.subsector,rm.sabeel;';
 
     return fetch_data($query);
 }
