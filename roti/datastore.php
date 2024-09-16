@@ -73,6 +73,7 @@ function get_roti_report($miqaat, $value=null, $type=null)
 {
     $query = "select 
     t.thali, r.full_name, d.roti_count, 
+    s.sector, s.subsector,
     s.sectorits, s.sub_sectorits, 
     s.incharge_female_fullname
     FROM roti_data d
