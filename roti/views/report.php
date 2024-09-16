@@ -1,11 +1,12 @@
 <?php
 function content_display()
 {
-    $roti_report_by_type = null;
-    $roti_report_by_value = null;
+    $itsid = '';
     if (is_post()) {
-        $filter = $_POST['sub_sector'];
-        list($roti_report_by_type, $roti_report_by_value) = explode("~", $filter);
+        $itsid = $_POST['itsid'];
+        if( $itsid === '99999999' ) {
+            $itsid = null;
+        }
     }
 
     $miqaat_result = get_current_or_last_miqaat();
@@ -16,39 +17,23 @@ function content_display()
     $miqaat_id = $miqaat['id'] ?? 0;
     $miqaat_name = $miqaat['name'] ?? 'Error';
 
-    $result = get_roti_report($miqaat_id, $roti_report_by_value, $roti_report_by_type);
+    $result = get_roti_report($miqaat_id, $itsid);
     $data = $result->data;
-    $hdr = ['Sabeel Num', 'Packet Count', 'Name', 'Sector', 'Sub Sector', 'Incharge'];
-    $cols = ['thali', 'roti_count', 'full_name', 'sectorits', 'subsector', 'incharge_female_fullname'];
-
-    $sector_result = get_sector_list();
-    $sector_data = $sector_result->data;
+    $hdr = ['Sabeel Num', 'Packet Count', 'Name', 'Mobile', 'Sector', 'Sub Sector'];
+    $cols = ['sabeel','roti_count', 'full_name', 'mobile', 'sector_its', 'subsector'];
     ?>
-    <h5>Report for <?= $miqaat_name ?></h5>
+    <h5>Roti Report for <?= $miqaat_name ?></h5>
     <div class='col-xs-12'>
         <form action="" method="post">
             <div class="input-group">
-                <select class="form-select custom_select" name="sub_sector" id="sub_sector">
-                    <?php
-                    foreach ($sector_data as $row) {
-                        $is_masool = $row['sub_sectorits'] === 'Masoolin' ? true : false;
-                        if ($is_masool) {
-                            $key = "S~{$row['sector']}";
-                        } else {
-                            $key = "SS~{$row['subsector']}";
-                        }
-                        //$value = $row['sectorits'] . ' - ' . $row['sub_sectorits'];
-                        $value = $row['sector'] . '-' . $row['subsector'] . ' (' . $row['sectorits'] . ' - ' . $row['sub_sectorits'] . ')';
-                        echo "<option value='$key'>$value</option>";
-                    }
-                    ?>
-                </select>
+                <input required type="text" class="form-control" name="itsid" id="itsid" placeholder="ITS ID" pattern="^[0-9]{8}$" value="<?=$itsid??''?>">                
                 <div class="input-group-append">
                     <button class="btn btn-success" type="submit">Search</button>
                 </div>
             </div>
         </form>
         <br/>
+        <div class="table-responsive">
         <table class="table">
             <?php
             echo '<tr><th>' . implode('</th><th>', $hdr) . '</th></tr>';
@@ -63,6 +48,7 @@ function content_display()
             }
             ?>
         </table>
+        </div>
         <h4>Total Packet Count - <?= $packet_count ?></h4>
     </div>
     <?php
