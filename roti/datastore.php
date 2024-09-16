@@ -16,7 +16,7 @@ function get_last_miqaat()
     WHERE TIMESTAMPDIFF(SECOND, end_datetime, now()) >= 0 and id > 0
     order by id desc limit 1';
 
-    return run_statement($query);
+    return fetch_data($query);
 }
 
 function get_current_or_last_miqaat()
