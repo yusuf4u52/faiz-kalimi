@@ -37,7 +37,8 @@ function content_display()
                         } else {
                             $key = "SS~{$row['subsector']}";
                         }
-                        $value = $row['sectorits'] . ' - ' . $row['sub_sectorits'];
+                        //$value = $row['sectorits'] . ' - ' . $row['sub_sectorits'];
+                        $value = $row['sector'] . '-' . $row['subsector'] . ' (' . $row['sectorits'] . ' - ' . $row['sub_sectorits'] . ')';
                         echo "<option value='$key'>$value</option>";
                     }
                     ?>
