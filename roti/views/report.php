@@ -1,9 +1,11 @@
 <?php
 function content_display()
 {
-    $itsid = '';
+    $itsid = 'abcd';
+    $showITS = '';
     if (is_post()) {
         $itsid = $_POST['itsid'];
+        $showITS = $itsid;
         if( $itsid === '99999999' ) {
             $itsid = null;
         }
@@ -17,6 +19,8 @@ function content_display()
     $miqaat_id = $miqaat['id'] ?? 0;
     $miqaat_name = $miqaat['name'] ?? 'Error';
 
+
+    
     $result = get_roti_report($miqaat_id, $itsid);
     $data = $result->data;
     $hdr = ['Sabeel Num', 'Packet Count', 'Name', 'Mobile', 'Sector', 'Sub Sector'];
@@ -26,7 +30,7 @@ function content_display()
     <div class='col-xs-12'>
         <form action="" method="post">
             <div class="input-group">
-                <input required type="text" class="form-control" name="itsid" id="itsid" placeholder="ITS ID" pattern="^[0-9]{8}$" value="<?=$itsid??''?>">                
+                <input required type="text" class="form-control" name="itsid" id="itsid" placeholder="ITS ID" pattern="^[0-9]{8}$" value="<?=$showITS?>">                
                 <div class="input-group-append">
                     <button class="btn btn-success" type="submit">Search</button>
                 </div>
