@@ -19,7 +19,7 @@ function content_display()
     $result = get_roti_report($miqaat_id, $roti_report_by_value, $roti_report_by_type);
     $data = $result->data;
     $hdr = ['Sabeel Num', 'Packet Count', 'Name', 'Sector', 'Sub Sector', 'Incharge'];
-    $cols = ['thali', 'roti_count', 'full_name', 'sectorits', 'sub_sectorits', 'incharge_female_fullname'];
+    $cols = ['thali', 'roti_count', 'full_name', 'sectorits', 'subsector', 'incharge_female_fullname'];
 
     $sector_result = get_sector_list();
     $sector_data = $sector_result->data;
