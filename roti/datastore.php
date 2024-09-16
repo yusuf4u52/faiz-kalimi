@@ -69,26 +69,40 @@ where thali ='$sabeel'";
     return fetch_data($query);
 }
 
-function get_roti_report($miqaat, $value=null, $type=null)
+function get_roti_report($miqaat, $itsid=null)
 {
-    $query = "select 
-    t.thali, r.full_name, d.roti_count, 
-    s.sector, s.subsector,
-    s.sectorits, s.sub_sectorits, 
-    s.incharge_female_fullname
-    FROM roti_data d
-    JOIN roti_maker r ON r.sabeel = d.sabeel
-    join miqaat m ON m.id = d.event
-    join thalilist t ON d.sabeel = t.thali
-    join subsector s ON s.subsector = t.subsector
-    WHERE d.event = '$miqaat' ";
+    // $query = "select 
+    // t.thali, r.full_name, d.roti_count, 
+    // s.sector,s.subsector,
+    // s.sectorits, s.sub_sectorits, 
+    // s.incharge_female_fullname
+    // FROM roti_data d
+    // JOIN roti_maker r ON r.sabeel = d.sabeel
+    // join miqaat m ON m.id = d.event
+    // join thalilist t ON d.sabeel = t.thali
+    // join subsector s ON s.subsector = t.subsector
+    // WHERE d.event = '$miqaat' ";
 
-    if( isset($type) && isset($value) ) {
-        if( $type === 'SS' ) {
-            $query .= " AND t.subsector = '$value'";
-        } else {
-            $query .= " AND t.sector = '$value'";
-        } 
+    // if( isset($type) && isset($value) ) {
+    //     if( $type === 'SS' ) {
+    //         $query .= " AND t.subsector = '$value'";
+    //     } else {
+    //         $query .= " AND t.sector = '$value'";
+    //     } 
+    // }
+
+    $query = "select distinct
+    IFNULL(msd.sectorits,msl.sectorits) as sector_its,
+    t.subsector,rm.sabeel,rd.roti_count, rm.full_name,rm.mobile
+    FROM roti_data rd
+    Join thalilist t on  t.Thali=sabeel
+    Join roti_maker rm on rm.sabeel = t.thali
+    Join get_kg_details msl on t.sector = msl.sector and msl.KG_Type ='Masoolin'
+    Join get_kg_details msd on t.subsector = msd.subsector and msd.KG_Type ='Musaidin'
+    WHERE rd.event = '$miqaat' ";
+
+    if( isset($itsid) ) {
+        $query .= " AND (msl.ITS_NO = '$itsid' OR msd.ITS_NO = '$itsid');";
     }
 
     return fetch_data($query);
