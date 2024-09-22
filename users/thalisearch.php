@@ -304,15 +304,7 @@ if (isset($_GET['year'])) {
                   <label for="roti" class="col-xs-6 control-label"><?php echo $menu_item['roti']['item']; ?></label>
                   <div class="col-xs-6">
                     <input type="hidden" class="form-control" name="menu_item[roti][item]" id="roti" value="<?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] : ''); ?>">
-                    <div class="input-group">
-                      <span class="input-group-btn">
-                        <button class="btn btn-primary btn-minus" type="button">-</button>
-                      </span>
-                      <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty" value="<?php echo (!empty($roti_qty) ? $roti_qty : '1'); ?>" min="0" readonly>
-                      <span class="input-group-btn">
-                        <button class="btn btn-primary btn-plus" type="button">+</button>
-                      </span>
-                    </div>
+                    <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty" value="<?php echo (!empty($roti_qty) ? $roti_qty : '1'); ?>" min="0" readonly>
                   </div>
                 </div>
               <?php } ?>
@@ -321,16 +313,7 @@ if (isset($_GET['year'])) {
                   <label for="roti" class="col-xs-6 control-label"><?php echo $menu_item['extra']['item']; ?></label>
                   <div class="col-xs-6">
                     <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="<?php echo (!empty($menu_item['extra']['item']) ? $menu_item['extra']['item'] : ''); ?>">
-                    <div class="input-group">
-                      <span class="input-group-btn">
-                        <button class="btn btn-primary btn-minus" type="button">-</button>
-                      </span>
-                      <input type="number" class="form-control" name="menu_item[extra][qty]" id="riceqty" value="<?php echo (!empty($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>" min="0" readonly>
-                      <span class="input-group-btn">
-                        <button class="btn btn-primary btn-plus" type="button">+</button>
-                      </span>
-                    </div>
-                  </div>
+                    <input type="number" class="form-control" name="menu_item[extra][qty]" id="extraqty" value="<?php echo (!empty($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>" min="0" readonly>
                 </div>
               <?php } ?>
             </div>

@@ -1,5 +1,6 @@
 <?php
 include ('connection.php');
+include('getHijriDate.php');
 require_once '_sendMail.php';
 
 error_reporting(0);
@@ -15,8 +16,10 @@ if(isset($_GET['date'])) {
 	$tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 }
 
+$hijridate = getHijriDate($tomorrow_date);
+
 $msgvar = '';
-$menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' LIMIT 1");
+$menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . " AND `menu_type` = thaali' LIMIT 1");
 if ($menu_item->num_rows > 0) {
 	$msgvar .= '<table border="0" bgcolor="#F5F5F5" width="100%" cellpadding="3" cellspacing="3">
 		<td align="center" valign="top">
@@ -25,7 +28,7 @@ if ($menu_item->num_rows > 0) {
 					<td align="left">
 						<img src="https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo.png" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="152" height="62"> 
 					</td>
-					<td align="right"><strong>Updated Thali of '.date('l, dS F Y', strtotime($tomorrow_date)).'</strong></td>
+					<td align="right"><strong>Updated Thali of '.$day .'<br/>'.$hijridate.' '.$tomorrow_date.'</strong></td>
 				</tr>
 			</table>';
 			$row_menu = $menu_item->fetch_assoc();
@@ -43,10 +46,9 @@ if ($menu_item->num_rows > 0) {
 							<th align="center"><strong>'.$row_trans['Transporter'].'</strong></th>
 						</tr>
 					</table>
-					<table width="1140" cellpadding="0" cellspacing="0" border="1" bgcolor="#ffffff" style="color:#333333; padding:0.5rem;">
+					<table width="1140" cellpadding="0" cellspacing="0" border="1" bgcolor="#ffffff" style="color:#333333;">
 						<thead>
 							<tr bgcolor="#7A62D3" style="color:#FFFFFF;">
-								<th width="7%">Sabeel No</th>
 								<th width="7%">Tiffin No</th>
 								<th width="7%">Tiffin Size</th>';
 								if (!empty($menu_item['sabji']['item'])) {
@@ -65,6 +67,7 @@ if ($menu_item->num_rows > 0) {
 									$msgvar .= '<th width="7%">' . $menu_item['extra']['item'] . '</th>';
 								}
 							$msgvar .= '<th>Name</th>
+								<th>Contact</th>
 								<th>Flat / Society</th>
 							<tr>
 						</thead>
@@ -76,7 +79,6 @@ if ($menu_item->num_rows > 0) {
 									$row_user = $user_menu->fetch_assoc();
 									$user_menu_item = unserialize($row_user['menu_item']);
 									$msgvar .= '<tr>
-										<td align="center">'.$row['Thali'].'</td>
 										<td align="center">'.$row['tiffinno'].'</td>
 										<td align="center">'.$row['thalisize'].'</td>';
 										if (!empty($user_menu_item['sabji']['item'])) {
@@ -95,6 +97,7 @@ if ($menu_item->num_rows > 0) {
 											$msgvar .= '<td align="center">' . $user_menu_item['extra']['qty'] . '</td>';
 										}
 									$msgvar .= '<td align="center">'.$row['NAME'].'</td>
+										<td align="center">'.$row['CONTACT'].'</td>
 										<td align="center">'.$row['wingflat'].' '.$row['society'].'</td>
 									<tr>';
 								}
@@ -106,6 +109,8 @@ if ($menu_item->num_rows > 0) {
 		$msgvar .= '</td>
 	<table>';
 }
+
+$msgvar;
 
 // send email
 sendEmail('kalimimohallapoona@gmail.com', 'Update Menu of' . $tomorrow_date, $msgvar, null, null, true);

@@ -17,10 +17,11 @@ while ($row_extra = mysqli_fetch_assoc($extramsg)) {
 	$sql = mysqli_query($link, "SELECT * from thalilist WHERE extraRoti != 0 AND `Transporter` LIKE '".$row_extra['Transporter']."'");
 	$msg .= "<b>" . $row_extra['Transporter'] . "</b><br/>";
 	while ($row = mysqli_fetch_assoc($sql)) {
-		$msg .= "<b>Extra Roti</b> - ".$row['extraRoti']."<br/>";
-		$msg .= 	sprintf("%s - %s - %s - %s - %s - %s\n", $row['tiffinno'], $row['thalisize'], $row['NAME'], $row['CONTACT'], $row['wingflat'], $row['society']);
+		$msg .= "<b>".$row['extraRoti']." Extra Roti</b> - ";
+		$msg .= sprintf("%s - %s - %s - %s - %s - %s<br/>", $row['tiffinno'], $row['thalisize'], $row['NAME'], $row['CONTACT'], $row['wingflat'], $row['society']);
+		$msg .= '<br/>';
 	}
-	$msg .= 	"<br/><br/><br/>";
+	$msg .= '<br/>';
 }
 
 $transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 ORDER BY Transporter");
@@ -31,7 +32,7 @@ while ($row_trans = mysqli_fetch_assoc($transporter)) {
 
 $thaliSize = array();
 $hijridate = getHijriDate($tomorrow_date);
-$msg .= "\n<b>Roti Count $hijridate $day - $tomorrow_date</b><br/><br/>";
+$msg .= "<br/><b>Roti Count on $hijridate $day - $tomorrow_date</b><br/>";
 $rotiTable = "<table border='1' ><tr><td style='padding: 2px 10px 2px 10px;'>Size</td>";
 foreach ($transporters as $transporter) {
 	$totalCount = 0;

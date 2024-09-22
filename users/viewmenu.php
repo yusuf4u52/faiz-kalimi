@@ -41,7 +41,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
           </strong> is edited successfully.</div>
       <?php } ?>
       <?php if (isset($_GET['action']) && $_GET['action'] == 'nochange') { ?>
-        <div class="alert alert-warning" role="alert">No change found for Thali of <strong>
+        <div class="alert alert-warning" role="alert">You have't change anything on Thali of <strong>
             <?php echo date('d M Y', strtotime($_GET['date'])); ?>
           </strong>.</div>
       <?php } ?>
@@ -153,7 +153,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
                   <div class="col-xs-6">
                     <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="">
                     <input type="text" class="form-control" name="menu_item[extra][qty]" id="extraqty" value="" readonly>
-                    <small class="text-info">Please contact admin to change quantity.</small> 
+                    <small class="text-info">No option to change the quantity.</small> 
                   </div>
                 </div>
               </div>

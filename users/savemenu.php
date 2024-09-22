@@ -96,6 +96,9 @@ if( isset($_POST['action']) && $_POST['action'] == 'edit_menu' ) {
 if( isset($_POST['action']) && $_POST['action'] == 'delete_menu' ) {
     $sql = "DELETE FROM menu_list WHERE `id` = '".$_POST['menu_id']."'";
     mysqli_query($link,$sql) or die(mysqli_error($link));
+
+    $sqluser = "DELETE FROM user_menu WHERE `id` = '".$_POST['menu_id']."'";
+    mysqli_query($link,$sqluser) or die(mysqli_error($link));
     header("Location: /fmb/users/menulist.php?action=delete&date=".$_POST['menu_date']);
 }
 ?>
