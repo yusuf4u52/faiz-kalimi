@@ -65,13 +65,13 @@
     var $input = $(this).parent().siblings('input');
     var minCount = $input.attr('min');
     var count = parseFloat($input.val());
-    if (count <= 1) {
+    //if (count <= 1) {
       count = parseFloat($input.val()) - 0.5;
       count = count < minCount ? minCount : count;
-    } else {
+    /*} else {
       count = parseFloat($input.val()) - 1;
       count = count < minCount ? minCount : count;
-    }
+    }*/
     $(this).closest('.input-group').find(".btn-plus").removeClass('disabled');
     if(count == minCount) {
       $(this).addClass('disabled');
@@ -85,13 +85,13 @@
     var $input = $(this).parent().siblings('input');
     var maxCount = $input.attr('max');
     var count = parseFloat($input.val());
-    if (count >= 1) {
+    /*if (count >= 1) {
       count = parseFloat($input.val()) + 1;
       count = count > maxCount ? maxCount : count;
-    } else {
+    } else {*/
       count = parseFloat($input.val()) + 0.5;
       count = count > maxCount ? maxCount : count;
-    }
+    //}
     $(this).closest('.input-group').find(".btn-minus").removeClass('disabled');
     if(count == maxCount) {
       $(this).addClass('disabled');
