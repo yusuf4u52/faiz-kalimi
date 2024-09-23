@@ -314,6 +314,7 @@ if (isset($_GET['year'])) {
                   <div class="col-xs-6">
                     <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="<?php echo (!empty($menu_item['extra']['item']) ? $menu_item['extra']['item'] : ''); ?>">
                     <input type="number" class="form-control" name="menu_item[extra][qty]" id="extraqty" value="<?php echo (!empty($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>" min="0" readonly>
+				   </div>
                 </div>
               <?php } ?>
             </div>
