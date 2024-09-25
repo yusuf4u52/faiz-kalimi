@@ -1,0 +1,65 @@
+{
+    "id": "kalimijamaatpoona.fmb",
+    "name": "Faizul Mawaidil Burhaniya (Kalimi Mohalla)",
+    "short_name" : "FMB (Kalimi)",
+    "description":"A FMB App for Kalimi Mohalla (Poona) Mumineen",
+    "lang": "en-GB",
+    "theme_color": "#7A62D3",
+    "background_color": "#F5F5F5",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": ".",
+    "orientation": "portrait",
+    "dir": "ltr",
+    "icons": [
+        {
+            "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-192x192.png",
+            "sizes": "192x192",
+            "type": "image\/png",
+            "purpose": "any"
+        },
+        {
+            "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-192x192.png",
+            "sizes": "192x192",
+            "type": "image\/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-512x512.png",
+            "sizes": "512x512",
+            "type": "image\/png",
+            "purpose": "any"
+        },
+        {
+            "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-512x512.png",
+            "sizes": "512x512",
+            "type": "image\/png",
+            "purpose": "maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-screenshot.png",
+            "type": "image\/png",
+            "sizes": "472x649",
+            "form_factor": "narrow"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "FMB (Kalimi)",
+            "url": "\/",
+            "description":"A FMB App for Kalimi Mohalla (Poona) Mumineen",
+            "icons": [
+                {
+                    "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+    "launch_handler": {
+        "client_mode": "auto"
+    },
+    "handle_links": "preferred" 
+}
