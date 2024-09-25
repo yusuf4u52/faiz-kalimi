@@ -1,5 +1,5 @@
 <?php
-include '../users/connection.php';
+include_once './../fmb/users/connection.php';
 
 /********************************* 
  * 
