@@ -24,6 +24,8 @@ DEFINED('SESSION_TABLE_NAME') or DEFINE('SESSION_TABLE_NAME', 'kq_php_sessions')
 DEFINED('THE_SESSION_ID') or DEFINE('THE_SESSION_ID', 'Khatm_alQuran_App_786110');
 DEFINED('TRANSIT_DATA') or DEFINE('TRANSIT_DATA', 'transit_data');
 
+DEFINED('TIME_ZONE') or DEFINE('TIME_ZONE', 'Asia/Kolkata');
+
 
 
 ini_set('display_errors', 1);
@@ -45,7 +47,7 @@ function get_set_and_go()
     if (function_exists('application_custom_configuration')) {
         application_custom_configuration();
     }
-
+    date_default_timezone_set(TIME_ZONE);
     process_the_request(CURRENT_DIR);
 
     $page = getPageName();

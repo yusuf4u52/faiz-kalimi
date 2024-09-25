@@ -4,9 +4,12 @@ removeSessionData('transit_data');
 
 
 $miqaat_name = 'No Miqaat';
+$end_datetime = null;
 $result = get_current_miqaat();
 if (is_record_found($result)) {
-    $miqaat_name = $result->data[0]['name'];
+    $miqaat = $result->data[0];
+    $miqaat_name = $miqaat['name'];
+    $end_datetime = date_create($miqaat['end_datetime']);
 }
 
 ?>
@@ -48,30 +51,13 @@ if (is_record_found($result)) {
     <div class="container-fluid mt-3" style="margin-top:80px">  
     <div class="mt-4 p-5 rounded">
         <h5 class="color-brown">Miqaat : <?= $miqaat_name ?></h5>
+        <?php
+        if( isset($end_datetime) ) {
+            $miqaat_ends = date_format($end_datetime, 'd/m/Y H:i:s');
+            echo "<h6>Fill Survey before : $miqaat_ends</h6>";
+        }
+        ?>
         <hr/>
-
-        <!-- <h2>Example of Jumbotron</h2> -->
-        <!-- <div class="mt-4 p-5 bg-primary text-white rounded"> -->
-
-        <!-- <div class="row">
-            <div class="col-4">
-                <img class='img-fluid' width="100" height="100" src="assets/imgs/RotiAmal.JPG"
-                    style="opacity: .8"><br />
-            </div>
-            <div class="col-8">
-                <div class="header" style="text-align: center; vertical-align: middle; font-weight:20px">
-                    <h4 class="color-brown"><strong>Faiz ul Mawaid il Burhaniyah</strong></h4>
-                    <h5 class="color-brown">(Kalimi Mohalla)</h5>
-                    <h5 class="color-brown">Miqaat : <?= $miqaat_name ?></h5>
-                </div>
-            </div>
-        </div>
-
-        <hr />
-        <hr /> -->
-
-        <!-- <h2>Example of Jumbotron</h2> -->
-        <!-- <div class="mt-4 p-5 bg-primary text-white rounded"> -->
             <?php if (isset($message)) { ?>
                 <div class="card">
                     <div class="card-header">
@@ -89,12 +75,7 @@ if (is_record_found($result)) {
             ?>
         </div>
     </div>
-
-
-
-    <!-- <nav class="navbar fixed-bottom navbar-light">
-        <a class="navbar-brand" href="#">Fixed bottom</a>
-    </nav> -->
+    
 </body>
 
 </html>
