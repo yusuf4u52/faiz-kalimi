@@ -9,7 +9,6 @@ application/cache/
 application/config/migration.php
 application/config/autoload.php
 application/config/config.php
-application/config/constants.php
 application/config/memcached.php
 application/config/database.php
 application/config/doctypes.php
