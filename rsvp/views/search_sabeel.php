@@ -46,7 +46,7 @@ function content_display()
             <input type="hidden" name="hof_id" id="hof_id" value="<?= $hof_id ?>">
             <input type="hidden" name="action" id="action" value="show">
             <div class="form-group">
-                <button type="submit" class="btn btn-warning">Add member</button>
+                <button type="submit" class="btn btn-warning">Add mehman</button>
             </div>
         </form>
         <br />
