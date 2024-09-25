@@ -2,7 +2,7 @@
 
 $result = get_current_miqaat();
 if (!is_record_found($result)) {
-  do_redirect_with_message('/error', 'No active miqaat for "Mohabbat Ni Roti". Please visit later.');
+  do_redirect_with_message('/error', 'No active miqaat. Please visit later.');
 }
 $miqaat_id = $result->data[0]['id'];
 setAppData('miqaat_id', $miqaat_id);
@@ -11,7 +11,7 @@ function content_display()
 {
   $miqaat_id = getAppData('miqaat_id');
   ?>
-  <h6>Sabeel Search</h6>
+  <h6>Search Page</h6>
   <form action="search_sabeel" method="post">
     <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
     <div class="input-group mb-3">
