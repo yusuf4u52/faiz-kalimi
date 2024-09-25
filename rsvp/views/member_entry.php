@@ -16,6 +16,7 @@ if ($action === 'register') {
     $add_member_result = add_family_member($hof_id, $sabeel, $its_id, $full_name, $gender, $age);
 
     if (is_record_found($add_member_result)) {
+        add_attendance_for($its_id, $hof_id, $miqaat_id);
         setSessionData(TRANSIT_DATA, 'Member added successfully!');
         auto_post_redirect('search_sabeel', ['hof_id' => $hof_id, 'miqaat_id' => $miqaat_id]);
     } else {
