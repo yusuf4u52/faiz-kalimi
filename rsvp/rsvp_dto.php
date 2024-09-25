@@ -177,3 +177,9 @@ if (isset($family_its_list) && count($family_its_list) > 0) {
 change_multi_data($query);
 return $count;
 }
+
+function add_attendance_for($its_id,$hof_id,$miqaat_id) {
+    $query = "INSERT INTO rsvp_miqaat_survey_data (its_id, hof_id, miqaat_id) 
+    VALUES ('$its_id','$hof_id','$miqaat_id');";
+    return change_data($query);
+}
