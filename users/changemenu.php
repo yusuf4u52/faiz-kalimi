@@ -3,10 +3,7 @@ include ('connection.php');
 include ('_authCheck.php');
 
 if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
-<<<<<<< HEAD
    
-=======
->>>>>>> 6e0623b69bf0cdd191d053f4fddbe13de88cd2c1
     $menu_list = mysqli_query($link, "SELECT `menu_date` FROM menu_list WHERE `id` = '" . $_POST['menu_id'] . "'") or die(mysqli_error($link));
     if (isset($menu_list) && $menu_list->num_rows > 0) {
         $menu_date = $menu_list->fetch_assoc();
