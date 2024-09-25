@@ -35,8 +35,8 @@ function content_display()
     $records = getAppData('records');
     $sabeel = getAppData('sabeel');
 
-    $hdr = ['Select', 'ITS ID', 'Name'];
-    $cols = ['its_id', 'full_name'];
+    $hdr = ['Select', 'Name'];
+    $cols = ['full_name'];
     ?>
     <h5>Family Records</h5>
     <div class='col-xs-12'>
@@ -46,7 +46,7 @@ function content_display()
             <input type="hidden" name="hof_id" id="hof_id" value="<?= $hof_id ?>">
             <input type="hidden" name="action" id="action" value="show">
             <div class="form-group">
-                <button type="submit" class="btn btn-warning">Add member</button>
+                <button type="submit" class="btn btn-warning">Add mehman</button>
             </div>
         </form>
         <br />

@@ -163,12 +163,12 @@ function mark_attendance($hof_id, $miqaat_id, $family_its_list) {
 
 $count = 0;
 if (isset($family_its_list) && count($family_its_list) > 0) {
-    $query .= "INSERT INTO rsvp_miqaat_survey_data (its_id, hof_id, miqaat_id) VALUES ";
+    $query .= "INSERT INTO rsvp_miqaat_survey_data (its_id, hof_id, miqaat_id, created_at) VALUES ";
     foreach ($family_its_list as $its_id) {
         if( $count > 0 ) {
             $query .= ',';
         }
-        $query .= "('$its_id','$hof_id','$miqaat_id')";
+        $query .= "('$its_id','$hof_id','$miqaat_id', now())";
         $count++;
     }
     $query .= ';';
@@ -176,4 +176,10 @@ if (isset($family_its_list) && count($family_its_list) > 0) {
 
 change_multi_data($query);
 return $count;
+}
+
+function add_attendance_for($its_id,$hof_id,$miqaat_id) {
+    $query = "INSERT INTO rsvp_miqaat_survey_data (its_id, hof_id, miqaat_id, created_at) 
+    VALUES ('$its_id','$hof_id','$miqaat_id', now());";
+    return change_data($query);
 }
