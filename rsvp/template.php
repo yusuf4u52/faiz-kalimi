@@ -48,6 +48,7 @@ if (is_record_found($result)) {
     <div class="container-fluid mt-3" style="margin-top:80px">  
     <div class="mt-4 p-5 rounded">
         <h5 class="color-brown">Miqaat : <?= $miqaat_name ?></h5>
+        <hr/>
 
         <!-- <h2>Example of Jumbotron</h2> -->
         <!-- <div class="mt-4 p-5 bg-primary text-white rounded"> -->
