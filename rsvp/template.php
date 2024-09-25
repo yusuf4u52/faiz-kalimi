@@ -14,7 +14,7 @@ if (is_record_found($result)) {
 <html lang="en">
 
 <head>
-    <title>FMB - Roti Khidmat</title>
+    <title>RSVP - Kalimi Mohalla</title>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
