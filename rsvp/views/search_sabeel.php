@@ -35,8 +35,8 @@ function content_display()
     $records = getAppData('records');
     $sabeel = getAppData('sabeel');
 
-    $hdr = ['Select', 'ITS ID', 'Name'];
-    $cols = ['its_id', 'full_name'];
+    $hdr = ['Select', 'Name'];
+    $cols = ['full_name'];
     ?>
     <h5>Family Records</h5>
     <div class='col-xs-12'>
