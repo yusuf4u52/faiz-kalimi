@@ -65,7 +65,7 @@ function content_display()
                 name='family_its_list[]' id='family_its_list[]'></td>";
                         foreach ($cols as $col) {
                             echo "<td>{$row["$col"]}</td>";
-                        }
+                        }                        
                         echo '</tr>';
                     }
                     ?>

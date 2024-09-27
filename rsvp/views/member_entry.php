@@ -12,45 +12,34 @@ if ($action === 'register') {
     $gender = $_POST['gender'];
     $age = $_POST['age'];
 
-
     $add_member_result = add_family_member($hof_id, $sabeel, $its_id, $full_name, $gender, $age);
-
     if (is_record_found($add_member_result)) {
         add_attendance_for($its_id, $hof_id, $miqaat_id);
         setSessionData(TRANSIT_DATA, 'Mehman added successfully!');
         auto_post_redirect('search_sabeel', ['hof_id' => $hof_id, 'miqaat_id' => $miqaat_id]);
     } else {
-        setSessionData(TRANSIT_DATA, 'Oops! failed to add the member.');
+        setSessionData(TRANSIT_DATA, "Oops! failed to add. Seems ITS ($its_id) is already used.");
     }
-
-    //   $output = register_roti_maker($sabeel, $itsid, $full_name, $contact, $roti_count, $miqaat_id);
-//   // $msg = $output === 'negative' ? 'Ops! Registration failed. Try again.' :
-//   //   ($output === 'fail' ? 'Ops! Registered, but failed to take Roti count. Try again please.' : 'Thanks! your input is registered.');
-
-    //   if ($output === 'negative') {
-//     setSessionData(TRANSIT_DATA, 'Sorry, failed to register, try again.');
-//   } else if ($output === 'fail') {
-//     auto_post_redirect('fetch_data', ['sabeel' => $sabeel, 'miqaat_id' => $miqaat_id]);
-//   } else {
-//     auto_post_redirect('acknowledge', ['sabeel' => $sabeel, 'miqaat_id' => $miqaat_id]);
-//   }
-//   //do_redirect_with_message('/data_entry', $msg);
 }
-
-// if (isset($sabeel) && isset($miqaat_id)) {
-//   setAppData('sabeel', $sabeel);
-//   setAppData('miqaat_id', $miqaat_id);
-// } else {
-//   do_redirect('/data_entry');
-// }
 
 function content_display()
 {
     $sabeel = $_POST['sabeel'];
     $miqaat_id = $_POST['miqaat_id'];
     $hof_id = $_POST['hof_id'];
-    ?>
-    <h6>Add Family Member</h6>
+    ?>    
+    <div class="row">
+        <div class="col-8"><h6>Add Mehman</h6></div>
+        <div class="col-4" style="text-align: right;">
+        <form method="post" action="search_sabeel">
+            <input type="hidden" value="<?= $sabeel ?>" name="sabeel" id="sabeel">
+            <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
+            <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
+            <button type="submit" class="btn btn-warning">Back</button>
+        </form>
+        
+        </div>
+    </div>        
     <form method="post">
         <input type="hidden" value="register" name="action" id="action" />
         <input type="hidden" value="<?= $sabeel ?>" name="sabeel" id="sabeel">
