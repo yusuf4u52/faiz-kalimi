@@ -36,7 +36,7 @@ if (is_record_found($result)) {
     <nav class="navbar fixed-top navbar-expand-sm bg-primary navbar-dark">
         <div class="container-fluid">
             <div class="navbar-brand">
-            <img class='img-fluid' width="30" height="30" src="assets/imgs/Logo.png">            
+            <img class='img-fluid' width="30" height="30" src="<?= getAppData('BASE_URI') ?>/assets/imgs/Logo.png">            
             <a class="navbar-brand" href="<?= getAppData('BASE_URI') ?>">Miqaat RSVP (Kalimi Mohalla)</a>
             </div>
             <!-- <a class="navbar-brand" href="<?= getAppData('BASE_URI') ?>">FMB</a>
@@ -58,6 +58,8 @@ if (is_record_found($result)) {
         }
         ?>
         <hr/>
+
+        
             <?php if (isset($message)) { ?>
                 <div class="card">
                     <div class="card-header">
@@ -75,7 +77,8 @@ if (is_record_found($result)) {
             ?>
         </div>
     </div>
-    
+
+
 </body>
 
 </html>

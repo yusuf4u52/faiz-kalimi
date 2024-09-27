@@ -152,33 +152,79 @@ function add_family_hof($hof_id)
     return change_data($query);
 }
 
-function get_miqaat_stats_report() {
-    $query = 'SELECT * FROM vw_miqaat_ginti;';
+function query_for_miqaat_count()
+{
+    return 'select m.id AS id,
+    m.name AS name,
+    m.start_datetime AS start_datetime,
+    m.end_datetime AS end_datetime,
+    sd.its_id AS its_id,
+    i.sector,
+    i.subsector,
+    sd.created_at AS created_at,
+    i.full_name AS full_name,
+    i.age AS age,
+    i.gender AS gender,
+    (case when ((i.age > -(1)) 
+    and (i.age < 6)) 
+    then "Infant" when ((i.age > 5) and (i.age < 11)) 
+    then "Child" when (i.age >= 11) then "Adult" else "NA" end) AS Type 
+
+    FROM rsvp_miqaat m 
+    join rsvp_miqaat_survey_data sd on sd.miqaat_id = m.id 
+    join its_data i on i.its_id = sd.its_id';
+}
+
+function get_miqaat_stats_report()
+{
+    $inner_query =  query_for_miqaat_count();
+    $query = 
+    'SELECT id, name AS name,start_datetime AS start_datetime,end_datetime AS end_datetime,
+    sum((case when ((gender = "Male") and ((Type = "Child") or (Type = "Adult"))) then 1 else 0 end)) AS mardo,
+    sum((case when ((gender = "Female") and ((Type = "Child") or (Type = "Adult"))) then 1 else 0 end)) AS bairo,
+    sum((case when ((Type = "Infant") and ((gender = "Male") or (gender = "Female"))) then 1 else 0 end)) AS infant,
+    sum((case when (((gender = "Male") or (gender = "Female")) and ((Type = "Child") or (Type = "Adult"))) then 1 else 0 end)) AS total 
+    from ('.$inner_query.') x 
+    GROUP BY name,start_datetime,end_datetime';
+
     return fetch_data($query);
 }
 
-function mark_attendance($hof_id, $miqaat_id, $family_its_list) {
+function get_miqaat_sector_count($id) {
+    $inner_query =  query_for_miqaat_count();
+    $query = "select 
+    name, sector, subsector, count(id) as count
+    from ($inner_query) x
+    WHERE id = '$id'
+    GROUP BY name, sector, subsector";
+
+    return fetch_data($query);
+}
+
+function mark_attendance($hof_id, $miqaat_id, $family_its_list)
+{
     $query = "DELETE FROM rsvp_miqaat_survey_data 
         WHERE hof_id='$hof_id' and miqaat_id='$miqaat_id';";
 
-$count = 0;
-if (isset($family_its_list) && count($family_its_list) > 0) {
-    $query .= "INSERT INTO rsvp_miqaat_survey_data (its_id, hof_id, miqaat_id, created_at) VALUES ";
-    foreach ($family_its_list as $its_id) {
-        if( $count > 0 ) {
-            $query .= ',';
+    $count = 0;
+    if (isset($family_its_list) && count($family_its_list) > 0) {
+        $query .= "INSERT INTO rsvp_miqaat_survey_data (its_id, hof_id, miqaat_id, created_at) VALUES ";
+        foreach ($family_its_list as $its_id) {
+            if ($count > 0) {
+                $query .= ',';
+            }
+            $query .= "('$its_id','$hof_id','$miqaat_id', now())";
+            $count++;
         }
-        $query .= "('$its_id','$hof_id','$miqaat_id', now())";
-        $count++;
+        $query .= ';';
     }
-    $query .= ';';
+
+    change_multi_data($query);
+    return $count;
 }
 
-change_multi_data($query);
-return $count;
-}
-
-function add_attendance_for($its_id,$hof_id,$miqaat_id) {
+function add_attendance_for($its_id, $hof_id, $miqaat_id)
+{
     $query = "INSERT INTO rsvp_miqaat_survey_data (its_id, hof_id, miqaat_id, created_at) 
     VALUES ('$its_id','$hof_id','$miqaat_id', now());";
     return change_data($query);
