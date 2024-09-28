@@ -65,7 +65,21 @@ function content_display()
                 name='family_its_list[]' id='family_its_list[]'></td>";
                         foreach ($cols as $col) {
                             echo "<td>{$row["$col"]}</td>";
-                        }                        
+                        }
+                        if( $row['mohallah'] === 'Other' && $row['hof_id'] != $row['its_id']) {
+                            ?>
+                            <!-- <td>
+                            <form method="post" action="delete_member">
+                                <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
+                                <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
+                                <input type="hidden" value="<?= $row['its_id'] ?>" name="its_id" id="its_id">
+                                <input type="hidden" value="show" name="action" id="action">
+
+                                <button type="submit" class="btn btn-warning">Delete</button>
+                            </form>
+                            </td> -->
+                            <?php
+                        }                       
                         echo '</tr>';
                     }
                     ?>
@@ -74,7 +88,7 @@ function content_display()
             <div class="form-group" style="text-align: right; vertical-align: middle; font-weight:20px;margin-top: 25px;">
                 <button type="submit" class="btn btn-success">Save</button>
             </div>
-        </form>
+        </form>        
     </div>
     <?php
 } ?>
