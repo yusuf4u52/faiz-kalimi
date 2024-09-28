@@ -48,26 +48,26 @@ function content_display()
 
         <div class='col-xs-12'>
             <div class="mb-3 row">
-                <label for="staticEmail" class="col-sm-4 col-form-label">HOF ID</label>
-                <div class="col-sm-8">
+                <label for="staticEmail" class="col-sm-3 col-form-label">HOF ID</label>
+                <div class="col-sm-9">
                 <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="<?= $hof_id ?>">                
                 </div>
             </div>
             <div class="mb-3 row">
-                <label for="its_id" class="col-sm-4 col-form-label">ITS ID</label>
-                <div class="col-sm-8">
+                <label for="its_id" class="col-sm-3 col-form-label">ITS ID</label>
+                <div class="col-sm-9">
                     <input type="text" pattern="^[0-9]{8}$" required class="form-control" id="its_id" name="its_id">
                 </div>
             </div>
             <div class="mb-3 row">
-                <label for="full_name" class="col-sm-4 col-form-label">Full name</label>
-                <div class="col-sm-8">
+                <label for="full_name" class="col-sm-3 col-form-label">Full name</label>
+                <div class="col-sm-9">
                     <input type="text" required class="form-control" id="full_name" name="full_name">
                 </div>
             </div>
             <div class="mb-3 row">
-                <label for="gender" class="col-sm-4 col-form-label">Gender</label>
-                <div class="col-sm-8">
+                <label for="gender" class="col-sm-3 col-form-label">Gender</label>
+                <div class="col-sm-9">
                 <select class="form-select" name="gender" id="gender">
                     <option>Male</option>
                     <option>Female</option>
@@ -75,8 +75,8 @@ function content_display()
                 </div>
             </div>
             <div class="mb-3 row">
-                <label for="age" class="col-sm-4 col-form-label">Age</label>
-                <div class="col-sm-8">
+                <label for="age" class="col-sm-3 col-form-label">Age</label>
+                <div class="col-sm-9">
                     <input type="text"  pattern="^[0-9]{1,2}$" required class="form-control" id="age" name="age">
                 </div>
             </div>
