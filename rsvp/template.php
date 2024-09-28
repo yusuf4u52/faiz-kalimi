@@ -61,10 +61,9 @@ if (is_record_found($result)) {
 
         
             <?php if (isset($message)) { ?>
-                <div class="card">
-                    <div class="card-header">
-                        <?= $message ?>
-                    </div>
+                <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    <strong><?= $message ?></strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php } ?>
 
