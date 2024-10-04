@@ -1,4 +1,11 @@
 <?php
+function select_query_for_miqaat() {
+    return 'SELECT id,name,details,
+    CONVERT_TZ(start_datetime, "+00:00","+05:30") as start_datetime,
+    CONVERT_TZ(end_datetime, "+00:00","+05:30") as end_datetime,
+    survey_for FROM rsvp_miqaat ';
+}
+
 /**
  * Get the current active miqaat details
  * 
@@ -6,8 +13,8 @@
  */
 function get_current_miqaat()
 {
-    $query = 'SELECT id,name,details,start_datetime,end_datetime,survey_for FROM rsvp_miqaat 
-    WHERE TIMESTAMPDIFF(SECOND, start_datetime, now()) >= 0 and
+    $query = select_query_for_miqaat() . ' WHERE 
+    TIMESTAMPDIFF(SECOND, start_datetime, now()) >= 0 and
     TIMESTAMPDIFF(SECOND, end_datetime, now()) <= 0 and id > 0 limit 1';
 
     return fetch_data($query);
@@ -21,8 +28,7 @@ function get_current_miqaat()
  */
 function get_miqaat_by_id($miqaat_id)
 {
-    $query = "SELECT id,name,details,start_datetime,end_datetime,survey_for FROM rsvp_miqaat 
-    WHERE id = '$miqaat_id';";
+    $query = select_query_for_miqaat() . " WHERE id = '$miqaat_id';";
 
     return fetch_data($query);
 }
@@ -33,9 +39,7 @@ function get_miqaat_by_id($miqaat_id)
  */
 function get_last_miqaat()
 {
-    $query = 'SELECT id,name,details,start_datetime,end_datetime,survey_for 
-    FROM rsvp_miqaat 
-    WHERE TIMESTAMPDIFF(SECOND, end_datetime, now()) >= 0 and id > 0
+    $query = select_query_for_miqaat() . ' WHERE TIMESTAMPDIFF(SECOND, end_datetime, now()) >= 0 and id > 0
     order by id desc limit 1';
 
     return fetch_data($query);
