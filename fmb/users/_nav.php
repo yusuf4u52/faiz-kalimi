@@ -15,13 +15,12 @@
         <?php if ($_SESSION['role']) { ?>
           <li><a href="/fmb/users/musaid.php">Musaid</a></li>
         <?php } ?>
-        <?php if ($_SESSION['email'] == 'saminabarnagarwala2812@gmail.com') { ?>
+        <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'saminabarnagarwala2812@gmail.com'))) { ?>
           <li><a href="/fmb/users/thalisearch.php">Thaali Search</a></li>
         <?php } ?>
         <?php
         if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com'))) {
         ?>
-          <li><a href="/fmb/users/thalisearch.php">Thaali Search</a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menu Backend <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
@@ -34,7 +33,7 @@
         }
         ?>
         <?php
-        if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com','colombowalat@gmail.com'))) {
+        if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'colombowalat@gmail.com'))) {
         ?>
           <li><a href="/fmb/users/pendingactions.php">Pending Actions</a></li>
           <li><a href="/fmb/users/_daily_hisab_entry.php">Daily Hisab</a></li>
