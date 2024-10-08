@@ -15,7 +15,7 @@
         <?php if ($_SESSION['role']) { ?>
           <li><a href="/fmb/users/musaid.php">Musaid</a></li>
         <?php } ?>
-        <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'saminabarnagarwala2812@gmail.com'))) { ?>
+        <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com', 'tinwalaabizer@gmail.com', 'saminabarnagarwala2812@gmail.com'))) { ?>
           <li><a href="/fmb/users/thalisearch.php">Thaali Search</a></li>
         <?php } ?>
         <?php
