@@ -97,8 +97,8 @@ function get_roti_report($miqaat, $itsid=null)
     FROM roti_data rd
     Join thalilist t on  t.Thali=sabeel
     Join roti_maker rm on rm.sabeel = t.thali
-    Join get_kg_details msl on t.sector = msl.sector and msl.KG_Type ='Masoolin'
-    Join get_kg_details msd on t.subsector = msd.subsector and msd.KG_Type ='Musaidin'
+    left Join get_kg_details msl on t.sector = msl.sector and msl.KG_Type ='Masoolin'
+    left Join get_kg_details msd on t.subsector = msd.subsector and msd.KG_Type ='Musaidin'
     WHERE rd.event = '$miqaat' ";
 
     if( isset($itsid) ) {
