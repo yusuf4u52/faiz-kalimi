@@ -1,6 +1,4 @@
 <?php
-include_once './../fmb/users/connection.php';
-
 /********************************* 
  * 
  */
@@ -27,7 +25,6 @@ DEFINED('TRANSIT_DATA') or DEFINE('TRANSIT_DATA', 'transit_data');
 DEFINED('TIME_ZONE') or DEFINE('TIME_ZONE', 'Asia/Kolkata');
 
 
-
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -47,7 +44,9 @@ function get_set_and_go()
     if (function_exists('application_custom_configuration')) {
         application_custom_configuration();
     }
+
     date_default_timezone_set(TIME_ZONE);
+
     process_the_request(CURRENT_DIR);
 
     $page = getPageName();
@@ -102,62 +101,63 @@ function getPageName()
     return $page;
 }
 
+
 /**
  * Database Function
  */
 
- function execute_query($sql, $update = false, $multi=false)
- {
-     global $link;
-     $resp = json_decode('{}');
-     $resp->data = [];
-     $resp->success = false;
-     $resp->count = 0;
- 
-     try {
-         //code...
-         
-         $result = $multi ? mysqli_multi_query($link, $sql) : mysqli_query($link, $sql);
- 
-         if ($update) {
-             $resp->count = mysqli_affected_rows($link);
-         } else {
-             if (($count = $result->num_rows) > 0) {
-                 $resp->data = $result->fetch_all(MYSQLI_ASSOC);
-                 $resp->count = $count;
-             }
-             // Free result set
-             $result->free_result();
-         }
- 
-         $resp->success = true;
- 
-     } catch (exception $th) {
-         $resp->error = mysqli_error($link);
-     }
- 
-     return $resp;
- }
- 
- function fetch_data($sql)
- {
-     return execute_query($sql, false, false);
- }
- 
- function change_data($sql)
- {
-     return execute_query($sql, true, false);
- }
- 
- function change_multi_data($sql)
- {
-     return execute_query($sql, true, true);
- }
- 
- function is_record_found($result)
- {
-     return isset($result) && $result->success && $result->count > 0 ? true : false;
- }
+function execute_query($sql, $update = false, $multi = false)
+{
+    global $link;
+    $resp = json_decode('{}');
+    $resp->data = [];
+    $resp->success = false;
+    $resp->count = 0;
+
+    try {
+        //code...
+
+        $result = $multi ? mysqli_multi_query($link, $sql) : mysqli_query($link, $sql);
+
+        if( is_bool($result) ) {
+            $resp->count = mysqli_affected_rows($link);
+        } else {
+            if (($count = $result->num_rows) > 0) {
+                $resp->data = $result->fetch_all(MYSQLI_ASSOC);
+                $resp->count = $count;
+            }
+            // Free result set
+            $result->free_result();
+        }
+        
+        $resp->success = true;
+
+    } catch (exception $th) {
+        $resp->error = mysqli_error($link);
+    }
+
+    return $resp;
+}
+
+function fetch_data($sql)
+{
+    return execute_query($sql, false, false);
+}
+
+function change_data($sql)
+{
+    return execute_query($sql, true, false);
+}
+
+function change_multi_data($sql)
+{
+    return execute_query($sql, true, true);
+}
+
+function is_record_found($result)
+{
+    return isset($result) && $result->success && $result->count > 0 ? true : false;
+}
 
 
 /**
@@ -220,7 +220,7 @@ function process_the_request($current_directory)
 
 function auto_post_redirect($page, $data)
 {
-    DEFINED('NO_TEMPLATE') or DEFINE('NO_TEMPLATE',true);
+    DEFINED('NO_TEMPLATE') or DEFINE('NO_TEMPLATE', true);
 
     echo "<form id='myForm' action='$page' method='POST'>";
     foreach ($data as $key => $value) {
