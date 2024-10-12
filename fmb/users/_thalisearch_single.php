@@ -122,19 +122,17 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
             <th><b>Action</b></th>
           </tr>
           <?php while ($menu_values = mysqli_fetch_assoc($menu_list)) {
+            $menu_id = $menu_values['id'];
+            $menu_date = $menu_values['menu_date'];
             $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '".$menu_values['menu_date']."' AND `thali` = '".$values['Thali']."'") or die(mysqli_error($link));
             if($user_menu->num_rows > 0) {
               $row = $user_menu->fetch_assoc();
-              $menu_id = $row['id'];
-              $menu_date = $row['menu_date'];
               $menu_item = unserialize($row['menu_item']);
               if( !empty($menu_item['roti']['qty'])) {
                 $roti_qty = $menu_item['roti']['qty'];
               }
               $target = 'adminusermenu-'.$menu_id; 
              } else {
-              $menu_id = $menu_values['id'];
-              $menu_date = $menu_values['menu_date'];
               $menu_item = unserialize($menu_values['menu_item']);
               if($values['thalisize'] == 'Mini') {
                 $roti_qty = $menu_item['roti']['tqty'];

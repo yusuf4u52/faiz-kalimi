@@ -14,4 +14,5 @@
 <script type="text/javascript" src="/fmb/styles/js/pulltorefresh-sw.js"></script>
 <script src="javascript/index.js?v=1"></script>
 <script src="src/custom.js?v=1"></script>
+<script src="src/menu.js?v=1"></script>
 
