@@ -2,6 +2,7 @@
 include ('connection.php');
 include('getHijriDate.php');
 require_once '_sendMail.php';
+include('emailroti.php');
 
 error_reporting(0);
 $day = date("l", strtotime("tomorrow"));
@@ -18,10 +19,10 @@ if(isset($_GET['date'])) {
 
 $hijridate = getHijriDate($tomorrow_date);
 
-$msgvar = '';
+$msgmenu = '';
 $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . " AND `menu_type` = thaali' LIMIT 1");
 if ($menu_item->num_rows > 0) {
-	$msgvar .= '<table border="0" bgcolor="#F5F5F5" width="100%" cellpadding="3" cellspacing="3">
+	$msgmenu .= '<table border="0" bgcolor="#F5F5F5" width="100%" cellpadding="3" cellspacing="3">
 		<td align="center" valign="top">
 			<table border="0" width="1140" cellpadding="0" cellspacing="0" bgcolor="#F5F5F5" style="color:#333333; padding:1rem;">
 				<tr>
@@ -41,7 +42,7 @@ if ($menu_item->num_rows > 0) {
 				$sabeelno = "'" . implode ( "', '", $thalino ) . "'";
 				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND Thali IN (".$sabeelno.") ORDER BY Transporter");
 				while ($row_trans = mysqli_fetch_assoc($transporter)) {
-					$msgvar .= '<table border="0" width="1140" cellpadding="3" cellspacing="3" bgcolor="#7A62D3" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
+					$msgmenu .= '<table border="0" width="1140" cellpadding="3" cellspacing="3" bgcolor="#7A62D3" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
 						<tr>
 							<th align="center"><strong>'.$row_trans['Transporter'].'</strong></th>
 						</tr>
@@ -52,21 +53,15 @@ if ($menu_item->num_rows > 0) {
 								<th width="7%">Tiffin No</th>
 								<th width="7%">Tiffin Size</th>';
 								if (!empty($menu_item['sabji']['item'])) {
-									$msgvar .= '<th width="7%">' . $menu_item['sabji']['item'] . '</th>';
+									$msgmenu .= '<th width="7%">' . $menu_item['sabji']['item'] . '</th>';
 								}
 								if (!empty($menu_item['tarkari']['item'])) {
-									$msgvar .= '<th width="7%">' . $menu_item['tarkari']['item'] . '</th>';
+									$msgmenu .= '<th width="7%">' . $menu_item['tarkari']['item'] . '</th>';
 								}
 								if (!empty($menu_item['rice']['item'])) {
-									$msgvar .= '<th width="7%">' . $menu_item['rice']['item'] . '</th>';
+									$msgmenu .= '<th width="7%">' . $menu_item['rice']['item'] . '</th>';
 								}
-								if (!empty($menu_item['roti']['item'])) {
-									$msgvar .= '<th width="7%">' . $menu_item['roti']['item'] . '</th>';
-								}
-								if (!empty($menu_item['extra']['item'])) {
-									$msgvar .= '<th width="7%">' . $menu_item['extra']['item'] . '</th>';
-								}
-							$msgvar .= '<th>Name</th>
+							$msgmenu .= '<th>Name</th>
 								<th>Contact</th>
 								<th>Flat / Society</th>
 							<tr>
@@ -78,42 +73,36 @@ if ($menu_item->num_rows > 0) {
 								if ($user_menu->num_rows > 0) {
 									$row_user = $user_menu->fetch_assoc();
 									$user_menu_item = unserialize($row_user['menu_item']);
-									$msgvar .= '<tr>
+									$msgmenu .= '<tr>
 										<td align="center">'.$row['tiffinno'].'</td>
 										<td align="center">'.$row['thalisize'].'</td>';
 										if (!empty($user_menu_item['sabji']['item'])) {
-											$msgvar .= '<td align="center">' . $user_menu_item['sabji']['qty'] . '</td>';
+											$msgmenu .= '<td align="center">' . $user_menu_item['sabji']['qty'] . '</td>';
 										}
 										if (!empty($user_menu_item['tarkari']['item'])) {
-											$msgvar .= '<td align="center">' . $user_menu_item['tarkari']['qty'] . '</td>';
+											$msgmenu .= '<td align="center">' . $user_menu_item['tarkari']['qty'] . '</td>';
 										}
 										if (!empty($user_menu_item['rice']['item'])) {
-											$msgvar .= '<td align="center">' . $user_menu_item['rice']['qty'] . '</td>';
+											$msgmenu .= '<td align="center">' . $user_menu_item['rice']['qty'] . '</td>';
 										}
-										if (!empty($user_menu_item['roti']['item'])) {
-											$msgvar .= '<td align="center">' . $user_menu_item['roti']['qty'] . '</td>';
-										}
-										if (!empty($user_menu_item['extra']['item'])) {
-											$msgvar .= '<td align="center">' . $user_menu_item['extra']['qty'] . '</td>';
-										}
-									$msgvar .= '<td align="center">'.$row['NAME'].'</td>
+									$msgmenu .= '<td align="center">'.$row['NAME'].'</td>
 										<td align="center">'.$row['CONTACT'].'</td>
 										<td align="center">'.$row['wingflat'].' '.$row['society'].'</td>
 									<tr>';
 								}
 							}
-						$msgvar .= '</tbody>
+						$msgmenu .= '</tbody>
 					</table>';
 				}
 			}
-		$msgvar .= '</td>
+		$msgmenu .= '</td>
 	<table>';
 }
 
-$msgvar;
+$msgmenu;
 
 // send email
-sendEmail('kalimimohallapoona@gmail.com', 'Update Menu of' . $tomorrow_date, $msgvar, null, null, true);
+sendEmail('kalimimohallapoona@gmail.com', 'Update Menu of' . $tomorrow_date, $msgmenu, null, null, true);
 
 if(isset($_GET['date'])) {
 	header("Location: /fmb/users/usermenu.php?action=send&date=" . $_GET['date']);	

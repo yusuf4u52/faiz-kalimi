@@ -3,7 +3,7 @@ include ('connection.php');
 include ('_authCheck.php');
 
 if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
-    
+   
     $menu_list = mysqli_query($link, "SELECT `menu_date` FROM menu_list WHERE `id` = '" . $_POST['menu_id'] . "'") or die(mysqli_error($link));
     if (isset($menu_list) && $menu_list->num_rows > 0) {
         $menu_date = $menu_list->fetch_assoc();
@@ -71,7 +71,7 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
         $date = $menu_date;
     }
     if (isset($_POST['action']) && $_POST['action'] == 'change_menu') {
-        header("Location: /fmb/users/viewmenu.php?action=" . $action . "&date=" . $menu_date);
+        header("Location: /fmb/users/index.php?action=" . $action . "&date=" . $menu_date);
     }
     if (isset($_POST['action']) && $_POST['action'] == 'admin_change_menu') {
         header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thalino'] . "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=" . $action . "&date=" . $menu_date);

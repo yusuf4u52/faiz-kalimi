@@ -147,7 +147,7 @@ if (!empty($values['yearly_hub'])) {
                   <input type="submit" name="stop_thali" value="Stop Thaali" class="btn btn-danger" />
                 </form>
               </div>
-              <div class="col-xs-6 text-right">
+              <div class="col-xs-6 text-right" style="display:none">
                 <a href="viewmenu.php" class="btn btn-success" data-key="LazyLoad">View Menu</a>
               </div>
             </div>
@@ -159,15 +159,31 @@ if (!empty($values['yearly_hub'])) {
     </div>
     <div class="row">
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default" style="margin-top: 20px;">
+
+      <div class="panel panel-default" style="margin-top: 20px;">
           <div class="panel-heading" role="tab" id="headingOne">
             <h4 class="panel-title">
               <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                View Menu <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
+              </a>
+            </h4>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+              <?php include('viewmenu.php'); ?>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default" style="margin-top: 20px;">
+          <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                 Thaali Details <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
               </a>
             </h4>
           </div>
-          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
             <div class="panel-body">
               <ul class="list-group col">
                 <li class="list-group-item">
@@ -259,12 +275,12 @@ if (!empty($values['yearly_hub'])) {
         <div class="panel panel-default" style="margin-top: 20px;">
           <div class="panel-heading" role="tab" id="headingTwo">
             <h4 class="panel-title">
-              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                 Hoob Breakdown <span class="text-muted" style="font-size: 12px; float: right;">(Click to Expand/Collapse)</span>
               </a>
             </h4>
           </div>
-          <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
+          <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
             <div class="panel-body">
               <h5 class="col-xs-12">The niyaaz amount will be payable throughout the year on the following miqaats. If possible do contribute the whole amount in Lailat ul Qadr</h5>
               <table class='table table-striped'>

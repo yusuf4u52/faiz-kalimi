@@ -26,7 +26,7 @@ if(isset($_POST['search']) ) {
             </div>
         </div>
         <?php if (isset($_GET['action']) && $_GET['action'] == 'send') { ?>
-            <div class="alert alert-success" role="alert">Updated Menu Email of <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is being send successfully.</div>
+            <div class="alert alert-success" role="alert">Edited list of Menu or roti dated <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is being send successfully.</div>
         <?php } ?>
         <form id="usermenu" class="form-horizontal" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
             <div class="form-group row">
