@@ -2,7 +2,6 @@
 $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_SESSION['thali'] . "' AND `hardstop` != 1 AND Active != 0") or die(mysqli_error($link));
 ?>
 
-<div class="container">
   <?php if (isset($takesFmb) && $takesFmb->num_rows > 0) {
 
     if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
@@ -145,4 +144,3 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
   <?php } else {
     echo '<h3>You are not allowed to view menu as your thali is stopped.</h3>';
   } ?>
-</div>  

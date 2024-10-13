@@ -30,7 +30,7 @@ if (isset($_GET['year'])) {
     $receipts_tablename = "receipts_" . $_GET['year'];
   }
 
-  $query = "SELECT id, Thali, NAME, CONTACT,musaid, thalisize, Active, Transporter, thalicount, Full_Address, Thali_start_date, Thali_stop_date, Paid, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist";
+  $query = "SELECT id, Thali, tiffinno, NAME, CONTACT,musaid, thalisize, Active, Transporter, thalicount, Full_Address, Thali_start_date, Thali_stop_date, Paid, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist";
   if (!empty($_GET['thalino'])) {
     $query .= " WHERE Thali LIKE '%" . addslashes($_GET['thalino']) . "%'";
   } else if (!empty($_GET['general'])) {
@@ -68,9 +68,9 @@ if (isset($_GET['year'])) {
             <form class="form-horizontal">
               <fieldset>
                 <div class="form-group">
-                  <label for="inputThalino" class="col-lg-2 control-label">Thali No</label>
+                  <label for="inputThalino" class="col-lg-2 control-label">Sabeel No</label>
                   <div class="col-lg-10">
-                    <input type="text" class="form-control" id="inputThalino" placeholder="Thali No" name="thalino">
+                    <input type="text" class="form-control" id="inputThalino" placeholder="Sabeel No" name="thalino">
                   </div>
                 </div>
                 <div class="form-group">

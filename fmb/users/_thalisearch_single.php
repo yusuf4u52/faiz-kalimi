@@ -35,8 +35,12 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
             <a data-toggle="modal" href="#changeThalisize">Change Thali Size</a>
           </li>
           <li class="list-group-item">
-            <h6 class="list-group-item-head ing text-muted">Thaali Number</h6>
+            <h6 class="list-group-item-head ing text-muted">Sabeel Number</h6>
             <p class="list-group-item-text"><strong><?php echo $values['Thali']; ?></strong></p>
+          </li>
+          <li class="list-group-item">
+            <h6 class="list-group-item-head ing text-muted">Tiffin Number</h6>
+            <p class="list-group-item-text"><strong><?php echo $values['tiffinno']; ?></strong></p>
           </li>
           <li class="list-group-item">
             <h6 class="list-group-item-head ing text-muted">Name</h6>

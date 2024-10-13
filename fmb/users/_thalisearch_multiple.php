@@ -6,7 +6,8 @@
       <th>Pay Hoob</th>
       <th>Stop Thaali</th>
       <th>Stop Permanant</th>
-      <th>Thali No</th>
+      <th>Sabeel No</th>
+      <th>Tiffin No</th>
       <th>Name</th>
       <th>Mobile No</th>
       <th>Active</th>
@@ -39,6 +40,7 @@
         <?php } ?>
       </td>
       <td><?php echo $values['Thali']; ?></td>
+      <td><?php echo $values['tiffinno']; ?></td>
       <td><?php echo $values['NAME']; ?></td>
       <td><?php echo $values['CONTACT']; ?></td>
       <td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
