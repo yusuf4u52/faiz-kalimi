@@ -4,7 +4,7 @@ const cacheName = 'fmb-kalimi-cache-2.2.25';
 const startPage = 'https://kalimijamaatpoona.org/fmb/';
 const offlinePage = 'https://kalimijamaatpoona.org/fmb/';
 const filesToCache = [startPage, offlinePage];
-const neverCacheUrls = [/\/users\/viewmenu.php/,/\/users\/src\/menu.js/,/\/admin/];
+const neverCacheUrls = [/\/users\/viewmenu.php/,/\/users\/assets\/js/,/\/admin/];
 
 // Install
 self.addEventListener('install', function(e) {
