@@ -34,7 +34,7 @@ if (isset($_GET['menu_date'])) {
                                             <input type="date" class="form-control"
                                                 min="<?php echo date('Y-m-d', strtotime('- 1 week')); ?>"
                                                 name="menu_date"
-                                                value="<?php echo (!empty($_POST['menu_date']) ? $_POST['menu_date'] : ''); ?>"
+                                                value="<?php echo (!empty($_GET['menu_date']) ? $_GET['menu_date'] : ''); ?>"
                                                 required>
                                         </div>
                                         <div class="col-4 col-md-3">
@@ -74,7 +74,7 @@ if (isset($_GET['menu_date'])) {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php $thali = mysqli_query($link, "SELECT `thali` FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "'");
+                                                <?php $thali = mysqli_query($link, "SELECT `thali` FROM user_menu WHERE `menu_date` = '" . $_GET['menu_date'] . "'");
                                                 if ($thali->num_rows > 0) {
                                                     $thalino = array();
                                                     while ($row_thali = mysqli_fetch_assoc($thali)) {
@@ -83,7 +83,7 @@ if (isset($_GET['menu_date'])) {
                                                     $sabeelno = "'" . implode("', '", $thalino) . "'";
                                                     $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE Thali IN (" . $sabeelno . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
                                                     while ($row = mysqli_fetch_assoc($thali)) {
-                                                        $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
+                                                        $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
                                                         if ($user_menu->num_rows > 0) {
                                                             $row_user = $user_menu->fetch_assoc();
                                                             $user_menu_item = unserialize($row_user['menu_item']); ?>
