@@ -3,7 +3,7 @@ include('header.php');
 include('navbar.php');
 
 if (isset($_GET['menu_date'])) {
-    $menu_list = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $_POST['menu_date'] . "' LIMIT 1");
+    $menu_list = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $_GET['menu_date'] . "' LIMIT 1");
 }
 ?>
 
