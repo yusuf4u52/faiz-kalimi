@@ -34,7 +34,7 @@ if (isset($_GET['menu_date'])) {
                                             <input type="date" class="form-control"
                                                 min="<?php echo date('Y-m-d', strtotime('- 1 week')); ?>"
                                                 name="menu_date"
-                                                value="<?php echo (!empty($_POST['menu_date']) ? $_POST['menu_date'] : ''); ?>"
+                                                value="<?php echo (!empty($_GET['menu_date']) ? $_GET['menu_date'] : ''); ?>"
                                                 required>
                                         </div>
                                         <div class="col-4 col-md-3">
