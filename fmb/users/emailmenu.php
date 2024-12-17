@@ -4,15 +4,8 @@ include('getHijriDate.php');
 require_once '_sendMail.php';
 include('emailroti.php');
 
-error_reporting(0);
-$day = date("l", strtotime("tomorrow"));
-if ($day == 'Sunday') {
-	echo "Skipping email as no thali on Sunday.";
-	exit;
-}
-
-if(isset($_GET['date'])) {
-	$tomorrow_date = $_GET['date'];		
+if(isset($_GET['menu_date'])) {
+	$tomorrow_date = $_GET['menu_date'];		
 } else {
 	$tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 }
@@ -20,11 +13,11 @@ if(isset($_GET['date'])) {
 $hijridate = getHijriDate($tomorrow_date);
 
 $msgmenu = '';
-$menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . " AND `menu_type` = thaali' LIMIT 1");
+$menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` = 'thaali' LIMIT 1");
 if ($menu_item->num_rows > 0) {
-	$msgmenu .= '<table border="0" bgcolor="#F5F5F5" width="100%" cellpadding="3" cellspacing="3">
+	$msgmenu .= '<table border="0" bgcolor="#FFFFFF" width="100%" cellpadding="3" cellspacing="3">
 		<td align="center" valign="top">
-			<table border="0" width="1140" cellpadding="0" cellspacing="0" bgcolor="#F5F5F5" style="color:#333333; padding:1rem;">
+			<table border="0" width="1140" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="color:#333333; padding:1rem;">
 				<tr>
 					<td align="left">
 						<img src="https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo.png" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="152" height="62"> 
@@ -42,14 +35,14 @@ if ($menu_item->num_rows > 0) {
 				$sabeelno = "'" . implode ( "', '", $thalino ) . "'";
 				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND Thali IN (".$sabeelno.") ORDER BY Transporter");
 				while ($row_trans = mysqli_fetch_assoc($transporter)) {
-					$msgmenu .= '<table border="0" width="1140" cellpadding="3" cellspacing="3" bgcolor="#7A62D3" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
+					$msgmenu .= '<table border="0" width="1140" cellpadding="3" cellspacing="3" bgcolor="#778b2a" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
 						<tr>
 							<th align="center"><strong>'.$row_trans['Transporter'].'</strong></th>
 						</tr>
 					</table>
 					<table width="1140" cellpadding="0" cellspacing="0" border="1" bgcolor="#ffffff" style="color:#333333;">
 						<thead>
-							<tr bgcolor="#7A62D3" style="color:#FFFFFF;">
+							<tr bgcolor="#778b2a" style="color:#FFFFFF;">
 								<th width="7%">Tiffin No</th>
 								<th width="7%">Tiffin Size</th>';
 								if (!empty($menu_item['sabji']['item'])) {
@@ -97,13 +90,16 @@ if ($menu_item->num_rows > 0) {
 			}
 		$msgmenu .= '</td>
 	<table>';
-}
 
-$msgmenu;
+	$msgmenu;
 
-// send email
-sendEmail('kalimimohallapoona@gmail.com', 'Update Menu of' . $tomorrow_date, $msgmenu, null, null, true);
+	// send email
+	sendEmail('kalimimohallapoona@gmail.com', 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
 
-if(isset($_GET['date'])) {
-	header("Location: /fmb/users/usermenu.php?action=send&date=" . $_GET['date']);	
+	if(isset($_GET['menu_date'])) {
+		header("Location: /fmb/users/usermenu.php?action=send&date=" . $_GET['menu_date']);	
+	}
+} else {
+	echo "Skipping email as no thali on Miqaat or any other reason.";
+	exit;
 }
