@@ -4,17 +4,15 @@ include('navbar.php');
 
 if ($_POST) {
 	if (!empty($_POST['date']) && !empty($_POST['rs']) && !empty($_POST['comment'])) {
-		echo "1sst";
+		//echo "1sst";
 		mysqli_query($link, "INSERT INTO `hub_commitment` (`author_id`, `thali`, `comments`, `commit_date`, `rs`) VALUES ('" . $_SESSION['thaliid'] . "', '" . $_POST['Thali'] . "', '" . mysqli_real_escape_string($link, $_POST['comment']) . "', '" . $_POST['date'] . "', '" . $_POST['rs'] . "')") or die(mysqli_error($link));
 	} else if (!empty($_POST['date']) && !empty($_POST['rs'])) {
-		echo "2ndt";
+		//echo "2ndt";
 		mysqli_query($link, "INSERT INTO `hub_commitment` (`author_id`,`thali`, `commit_date`, `rs`) VALUES ('" . $_SESSION['thaliid'] . "', '" . $_POST['Thali'] . "', '" . $_POST['date'] . "', '" . $_POST['rs'] . "')") or die(mysqli_error($link));
 	} else if (!empty($_POST['comment'])) {
-		echo "3rd";
+		//echo "3rd";
 		mysqli_query($link, "INSERT INTO `hub_commitment` (`author_id`,`thali`, `comments`) VALUES ('" . $_SESSION['thaliid'] . "', '" . $_POST['Thali'] . "', '" . mysqli_real_escape_string($link, $_POST['comment']) . "')") or die(mysqli_error($link));
 	}
-	header("Location: musaid.php");
-	exit;
 }
 
 $current_year = mysqli_fetch_assoc(mysqli_query($link, "SELECT value FROM settings where `key`='current_year'"));
@@ -94,8 +92,8 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 													$all_dates = array_column($all_data, 0);
 													$comments = mysqli_fetch_all(mysqli_query($link, "SELECT `hub_commitment`.`comments`, `hub_commitment`.`timestamp`, `thalilist`.`Email_ID` FROM hub_commitment INNER JOIN `thalilist` on `hub_commitment`.`author_id` = `thalilist`.`id` where comments is not null and `hub_commitment`.`thali`='" . $values['Thali'] . "' ORDER BY `timestamp` DESC"), MYSQLI_ASSOC);
 													?>
-													<form method="post">
-														<tr>
+													<tr>	
+														<form method="post">
 															<input type='hidden' value='<?php echo $values['Thali']; ?>' name='Thali'>
 															<td>
 																<?php echo $values['Thali']; ?>
@@ -147,8 +145,8 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 																<textarea name="comment" class="form-control" rows="3"></textarea>
 															</td>
 															<td><button type='submit' class="btn btn-light btn-sm">Save</button></td>
-														</tr>
-													</form>
+														</form>
+													</tr>
 												<?php } ?>
 											</tbody>
 										</table>
