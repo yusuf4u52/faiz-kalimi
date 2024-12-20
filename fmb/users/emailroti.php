@@ -17,7 +17,6 @@ if ($menu_item->num_rows > 0) {
 		$large = $menu_item['roti']['lqty'];
 	} else {
 		echo "Tomorrow no roti.";
-		exit;
 	}
 
 	$msgroti = '';
