@@ -31,26 +31,18 @@ if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
         $CurrentDate = date('Y-m-d H:i:s');
     }
 
-    $dates = getAllDates($_POST['start_date'], $_POST['end_date']);
-
     if ($CurrentDate < $GivenDate) { 
+
+        $dates = getAllDates($_POST['start_date'], $_POST['end_date']);
 
         foreach($dates as $date) {
             $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
             if ($stop_thali->num_rows > 0) {
-                $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-                if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
-                    $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                    mysqli_query($link,$user_del) or die(mysqli_error($link));
-                }
+                $update_stop = "UPDATE INTO `stop_thali` SET `stop_date` = '".$date."' WHERE `stop_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'";
+                mysqli_query($link, $update_stop) or die(mysqli_error($link));
             } else {
                 $insert_stop = "INSERT INTO `stop_thali` (`thali`,`stop_date`) VALUES ('" . $_POST['thali'] . "', '" . $date . "')";
                 mysqli_query($link, $insert_stop) or die(mysqli_error($link));
-                $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-                if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
-                    $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                    mysqli_query($link,$user_del) or die(mysqli_error($link));
-                }
             }
         }
         $action = 'srange';

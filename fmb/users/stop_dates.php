@@ -29,7 +29,7 @@ include('navbar.php');
                                         <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
                                     </strong> to <strong>
                                         <?php echo date('d M Y', strtotime($_GET['edate'])); ?>
-                                    </strong>. Click <a href="/fmb/users/stop_dates.php">here</a> to view stopped dates.</div>
+                                    </strong>.</div>
                             <?php }
                             if (isset($_GET['action']) && $_GET['action'] == 'sedit') { ?>
                                 <div class="alert alert-warning" role="alert">RSVP ended to stop thali of <strong>
@@ -101,7 +101,7 @@ include('navbar.php');
                                                 <td><?php if (date('Y-m-d H:i:s') < $stop_date) { ?><button type="button"
                                                             class="btn btn-light"
                                                             data-bs-target="#startthali-<?php echo $values['id']; ?>"
-                                                            data-bs-toggle="modal" style="margin-bottom:5px">Start Thali</button><?php } else { ?> <button type="button"
+                                                            data-bs-toggle="modal" style="margin-bottom:5px">Delete</button><?php } else { ?> <button type="button"
                                                             class="btn btn-light" disabled>RSVP Ended</button> <?php } ?>
                                                 </td>
                                             </tr>
@@ -132,7 +132,7 @@ grouped_dates AS (
 )
 SELECT `id`, `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date;") or die(mysqli_error($link));
 if (isset($stop_dates) && $stop_dates->num_rows > 0) {
-    while ($values = mysqli_fetch_assoc($stop_dates)) { ?>
+    while ($values = mysqli_fetch_assoc($stop_dates)) { ?>  
         <div class="modal fade" id="startthali-<?php echo $values['id']; ?>">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -143,17 +143,15 @@ if (isset($stop_dates) && $stop_dates->num_rows > 0) {
                         <input type="hidden" name="start_date" value="<?php echo $values['start_date']; ?>" />
                         <input type="hidden" name="end_date" value="<?php echo $values['end_date']; ?>" />
                         <div class="modal-header">
-                            <h4 class="modal-title fs-5">Start Thali</h4>
+                            <h4 class="modal-title fs-5">Delete Stop Dates</h4>
                             <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
                                     class="bi bi-x-lg"></i></button>
                         </div>
                         <div class="modal-body">
-                            <p> Are you sure you want to <strong>Start Thali</strong> from
-                                <strong><?php echo date('d M Y', strtotime($values['start_date'])); ?></strong> to <strong><?php echo date('d M Y', strtotime($values['end_date'])); ?></strong>?
-                            </p>
+                            <p> Are you sure you want to delete stop dates?</p>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-light">Start</button>
+                            <button type="submit" class="btn btn-light">Delete</button>
                         </div>
                     </form>
                 </div>
