@@ -38,7 +38,7 @@ if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
         foreach($dates as $date) {
             $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
             if ($stop_thali->num_rows > 0) {
-                $update_stop = "UPDATE INTO `stop_thali` SET `stop_date` = '".$date."' WHERE `stop_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'";
+                $update_stop = "UPDATE `stop_thali` SET `stop_date` = '".$date."' WHERE `stop_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'";
                 mysqli_query($link, $update_stop) or die(mysqli_error($link));
             } else {
                 $insert_stop = "INSERT INTO `stop_thali` (`thali`,`stop_date`) VALUES ('" . $_POST['thali'] . "', '" . $date . "')";
