@@ -15,14 +15,6 @@ if ($menu_item->num_rows > 0) {
 		$small = $menu_item['roti']['sqty'];
 		$medium = $menu_item['roti']['mqty'];
 		$large = $menu_item['roti']['lqty'];
-<<<<<<< HEAD
-	
-		$msgroti = '';
-=======
-	} else {
-		echo "Tomorrow no roti.";
-	}
->>>>>>> cb8d003d21c116a1f1fa39c85747a32b29e50689
 
 		if($roti === 'Roti') {
 			$extramsg = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND extraRoti != 0 ORDER BY Transporter");
