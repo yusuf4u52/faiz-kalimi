@@ -1,22 +1,22 @@
 <?php
-include('_authCheck.php');
-include('_bottomJS.php');
 include('../registration/call_api.php');
+include('header.php');
+include('navbar.php');
 
 if (isset($_GET['update'])) {
     CallAPIForAll();
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Scripts for Admin</title>
-	<?php include('_head.php'); ?>
-</head>
-<body>
-	<?php include('_nav.php'); ?>
-	<a href="integrity_check.php" class="btn btn-info" role="button">Receipts Integrity</a>
-	<a href="../monthchange/month_change.php" class="btn btn-info" role="button">Year Change</a>
-	<a href="admin_scripts.php?update=true" class="btn btn-info" role="button">Update From ITS</a>
-</body>
-</html>
+<div class="fmb-content mt-5 text-center">
+	<div class="container">
+        <div class="row">
+            <div class="col-12">
+				<a href="integrity_check.php" class="btn btn-light" role="button">Receipts Integrity</a>
+				<a href="../monthchange/month_change.php" class="btn btn-light" role="button">Year Change</a>
+				<a href="admin_scripts.php?update=true" class="btn btn-light" role="button">Update From ITS</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php include('footer.php'); ?>
