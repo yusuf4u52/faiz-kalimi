@@ -1,6 +1,6 @@
 <?php
-include('connection.php');
-include('_authCheck.php');
+include('header.php');
+include('navbar.php');
 include('../sms/_credentials.php');
 include('getHijriDate.php');
 
@@ -27,78 +27,31 @@ if ($_POST) {
 }
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head><?php include('_head.php'); ?></head>
-
-<body>
-
-  <?php include('_nav.php'); ?>
-
+<div class="content mt-5">
   <div class="container">
-
-    <!-- Forms
-
-      ================================================== -->
-
     <div class="row">
-
-      <div class="col-lg-12">
-
-        <div class="page-header">
-
-          <h2 id="forms">Fine thalis that didn't Pickup</h2>
-
-        </div>
-
-      </div>
-
-
-
-      <div class="row">
-
-        <div class="col-lg-6">
-
-          <div class="well bs-component">
-
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="mb-3">Fine thalis that didn't Pickup</h2>
             <form method="post" class="form-horizontal">
-
-              <fieldset>
-
-
-                <div class="form-group">
-
-                  <label for="inputThalino" class="col-lg-2 control-label">Thali No</label>
-
-                  <div class="col-lg-10">
-
-                    <input type="text" class="form-control" id="inputThalino" placeholder="e.g. 508,37" name="thalino">
-
-                  </div>
-
+              <div class="mb-3 row">
+                <label for="inputThalino" class="col-2 control-label">Thali No</label>
+                <div class="col-10">
+                  <input type="text" class="form-control" id="inputThalino" placeholder="e.g. 508,37" name="thalino">
                 </div>
-
-
-                <div class="form-group">
-
-                  <div class="col-lg-10 col-lg-offset-2">
-
-                    <button type="submit" class="btn btn-primary">Submit</button>
-
-                  </div>
-
+              </div>
+              <div class="mb-3 row">
+                <div class="col-10 offset-2">
+                  <button type="submit" class="btn btn-light">Submit</button>
                 </div>
-
-              </fieldset>
-
+              </div>
             </form>
-
           </div>
-
         </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <?php include('_bottomJS.php'); ?>
-</body>
-
-</html>
+<?php include('footer.php'); ?>
