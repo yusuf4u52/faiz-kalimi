@@ -81,7 +81,7 @@ while ($values1 = mysqli_fetch_assoc($result)) {
                     }
                     ?>
                     <?php
-                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'colombowalat@gmail.com'))) {
+                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com', 'tinwalaabizer@gmail.com'))) {
                         ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/pendingactions.php">Pending Actions</a></li>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/_daily_hisab_entry.php">Daily Hisab</a></li>

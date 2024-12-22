@@ -1,6 +1,6 @@
 <?php
-include('connection.php');
-include('_authCheck.php');
+include('header.php');
+include('navbar.php');
 
 $query = "SELECT * FROM thalilist";
 $query_new_transporter = $query . " WHERE Transporter is null and Active=1";
@@ -30,30 +30,15 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
   $subsector_list[] = $subsector_value['subsector'];
 }
 ?>
-<!DOCTYPE html>
-<!-- saved from url=(0029)http://bootswatch.com/flatly/ -->
-<html lang="en">
-
-<head>
-  <?php include('_head.php'); ?>
-</head>
-
-<body>
-  <?php include('_nav.php'); ?>
-
+<div class="content mt-5">
   <div class="container">
-    <!-- Forms
-      ================================================== -->
     <div class="row">
-      <div class="row">
-        <div class="col-lg-12">
-
-          <div class="col-lg-12">
-            <div class="page-header">
-              <h2 id="tables">Transporter request</h2>
-            </div>
-            <div class="bs-component">
-              <table class="table table-striped table-hover ">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="transporter">
+              <h2 class="mb-3">Transporter request</h2>
+              <table class="table table-striped table-hover display" width="100%">
                 <thead>
                   <tr>
                     <th>Thali No</th>
@@ -69,10 +54,9 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                 <tbody>
                   <?php
                   while ($values = mysqli_fetch_assoc($result)) {
-                  ?>
+                    ?>
                     <form action='savetransporter.php' method='post'>
                       <tr>
-
                         <td>
                           <?php echo $values['Thali']; ?>
                           <input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
@@ -80,14 +64,14 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                         <td>
                           <?php
                           if ($values['yearly_hub'] != "0") {
-                          ?>
+                            ?>
                             <select class='transporter' name='transporter' required>
                               <option value=''>Select</option>
                               <?php
                               foreach ($transporter_list as $tname) {
-                              ?>
+                                ?>
                                 <option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>><?php echo $tname; ?></option>
-                              <?php
+                                <?php
                               }
                               ?>
                             </select>
@@ -98,9 +82,9 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                             <option value=''>Select</option>
                             <?php
                             foreach ($sector_list as $sector_name) {
-                            ?>
+                              ?>
                               <option value='<?php echo $sector_name; ?>' <?php echo ($sector_name == $values['sector']) ? 'selected' : ''; ?>><?php echo $sector_name; ?></option>
-                            <?php
+                              <?php
                             }
                             ?>
                           </select>
@@ -110,9 +94,10 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                             <option value=''>Select</option>
                             <?php
                             foreach ($subsector_list as $subsector_name) {
-                            ?>
-                              <option value='<?php echo $subsector_name; ?>' <?php echo ($subsector_name == $values['subsector']) ? 'selected' : ''; ?>><?php echo $subsector_name; ?></option>
-                            <?php
+                              ?>
+                              <option value='<?php echo $subsector_name; ?>' <?php echo ($subsector_name == $values['subsector']) ? 'selected' : ''; ?>><?php echo $subsector_name; ?>
+                              </option>
+                              <?php
                             }
                             ?>
                           </select>
@@ -126,38 +111,17 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
                   <?php } ?>
                 </tbody>
               </table>
-            </div><!-- /example -->
-
-          </div>
-
-          <div class="col-lg-12">
-            <div class="page-header">
-              <h2 id="tables">New Thali</h2>
             </div>
-            <?php
-            $sql = mysqli_query($link, "
-            SELECT (
-t1.Thali +1
-) AS gap_starts_at, (
-SELECT MIN( t3.Thali ) -1
-FROM thalilist t3
-WHERE t3.Thali > t1.Thali
-) AS gap_ends_at
-FROM thalilist t1
-WHERE NOT 
-EXISTS (
-SELECT t2.Thali
-FROM thalilist t2
-WHERE t2.Thali = t1.Thali +1
-)
-HAVING gap_ends_at IS NOT NULL 
-LIMIT 0 , 30");
-            $row = mysqli_fetch_row($sql);
-            $plusone = $row[0];
-            echo "Thali No. :: $plusone  can be given";
-            ?>
-            <div class="bs-component">
-              <table class="table table-striped table-hover ">
+            <div class="new-thali mt-5">
+              <h2 class="mb-3">New Thali</h2>
+              <?php
+              $sql = mysqli_query($link, "
+            SELECT (t1.Thali +1) AS gap_starts_at, (SELECT MIN( t3.Thali )-1 FROM thalilist t3 WHERE t3.Thali > t1.Thali) AS gap_ends_at FROM thalilist t1 WHERE NOT  EXISTS ( SELECT t2.Thali FROM thalilist t2 WHERE t2.Thali = t1.Thali +1 ) HAVING gap_ends_at IS NOT NULL  LIMIT 0 , 30");
+              $row = mysqli_fetch_row($sql);
+              $plusone = $row[0];
+              echo "Thali No. :: $plusone  can be given";
+              ?>
+              <table class="table table-striped table-hover display">
                 <thead>
                   <tr>
                     <th>Thali No</th>
@@ -173,10 +137,9 @@ LIMIT 0 , 30");
                 <tbody>
                   <?php
                   while ($values = mysqli_fetch_assoc($result_new_thali)) {
-                  ?>
+                    ?>
                     <form action='activatethali.php' method='post'>
                       <tr>
-
                         <td>
                           <input type='hidden' value='<?php echo $values['Email_ID']; ?>' name='email'>
                           <input type='hidden' value='<?php echo $values['id']; ?>' name='id'>
@@ -191,9 +154,9 @@ LIMIT 0 , 30");
                             <option value=''>Select</option>
                             <?php
                             foreach ($transporter_list as $tname) {
-                            ?>
+                              ?>
                               <option value='<?php echo $tname; ?>'><?php echo $tname; ?></option>
-                            <?php
+                              <?php
                             }
                             ?>
                           </select>
@@ -204,14 +167,15 @@ LIMIT 0 , 30");
                             <?php
                             $musaid_list = mysqli_query($link, "SELECT username, email FROM users");
                             while ($musaid = mysqli_fetch_assoc($musaid_list)) {
-                            ?>
+                              ?>
                               <option value='<?php echo $musaid['email']; ?>'><?php echo $musaid['username']; ?></option>
-                            <?php
+                              <?php
                             }
                             ?>
                           </select>
                         </td>
-                        <td><input type='text' name="hub" size=8 required='required' value="<?php echo $values['yearly_hub']; ?>"></td>
+                        <td><input type='text' name="hub" size=8 required='required'
+                            value="<?php echo $values['yearly_hub']; ?>"></td>
                         </td>
                         <td><?php echo $values['Full_Address']; ?></td>
                         <td><?php echo $values['NAME']; ?></td>
@@ -224,37 +188,11 @@ LIMIT 0 , 30");
                 </tbody>
               </table>
             </div><!-- /example -->
-
           </div>
-
-
         </div>
       </div>
     </div>
   </div>
-  <?php include('_bottomJS.php'); ?>
-  <script type="text/javascript">
-    $(function() {
-      // Handler for .ready() called.
-      /* $(".transporter").change(function() {
-        if (confirm('Are you sure?')) {
-          $.ajax({
-            type: "POST",
-            url: "savetransporter.php",
-            data: {
-              'data': this.value
-            },
-            success: function(data) {
-              window.location.href = window.location.href;
-            }
-          });
-        } else {
-          return false;
-        }
-      }); */
-    });
-  </script>
+</div>
 
-</body>
-
-</html>
+<?php include('footer.php'); ?>

@@ -7,7 +7,7 @@ if (!isset($_SESSION)) {
 }
 
 if (!isset($_SESSION['fromLogin'])) {
-	header("Location: login.php");
+	header("Location: /fmb/index.php");
 	exit;
 }
 
