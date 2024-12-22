@@ -109,7 +109,7 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 													<td><?php echo $values['society']; ?></td>
 													<td><?php echo $values['NAME']; ?></td>
 													<td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
-													<td><input type='submit' value='Submit'></td>
+													<td><button type="submit" class="btn btn-light btn-sm">Submit</button></td>
 												</tr>
 											</form>
 										<?php } ?>
@@ -193,8 +193,8 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 													<td><?php echo $values['Full_Address']; ?></td>
 													<td><?php echo $values['NAME']; ?></td>
 													<td><?php echo $values['CONTACT']; ?></td>
-													<td><input type='submit' value='Activate'> <input class="ms-2"
-															type='submit' value='Reject' formaction="reject.php"></td>
+													<td><button type="submit" class="btn btn-light btn-sm me-2 mb-2">Activate</button>
+													<button class="btn btn-light btn-sm mb-2" type="submit" formaction="/fmb/users/reject.php">Reject</button></td>
 												</form>
 											</tr>
 										<?php } ?>
