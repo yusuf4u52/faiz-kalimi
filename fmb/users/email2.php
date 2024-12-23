@@ -16,7 +16,7 @@ if ($menu_item->num_rows > 0) {
 	exit;
 }
 
-$stop_thali = mysqli_query($link, "SELECT `thali` FROM stop_thali WHERE `stop_date` = '" . $tomorrow_date . "'");
+$stop_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` != '" . $today_date . "' AND `stop_date` = '" . $tomorrow_date . "'");
 if ($stop_thali->num_rows > 0) {
 	while ($stop = mysqli_fetch_assoc($stop_thali)) {
 		$start_list = mysqli_query($link, "SELECT `id`, `Thali` FROM thalilist WHERE `Thali` = '" . $stop['thali'] . "' AND `Active` = '1' LIMIT 1");
@@ -32,7 +32,7 @@ if ($stop_thali->num_rows > 0) {
 }
 
 
-$start_thali = mysqli_query($link, "SELECT `thali` FROM stop_thali WHERE  `stop_date` = '" . $today_date . "' AND `stop_date` != '" . $tomorrow_date . "'");
+$start_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE  `stop_date` = '" . $today_date . "' AND `stop_date` != '" . $tomorrow_date . "'");
 if ($start_thali->num_rows > 0) {
 	while ($starts = mysqli_fetch_assoc($start_thali)) {
 		$stop_list = mysqli_query($link, "SELECT `id`, `Thali` FROM thalilist WHERE `Thali` = '" . $starts['Thali'] . "' AND `Active` = '0'");
@@ -138,7 +138,7 @@ $msg .= $pivotTable;
 // add total registered count
 $registered_but_not_active = mysqli_query($link, "SELECT * FROM thalilist WHERE Active='0' and (Transporter <> '' or Transporter is not null)");
 $total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered_but_not_active);
-echo $msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
+$msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
 
 // send email
 sendEmail('kalimimohallapoona@gmail.com', 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
