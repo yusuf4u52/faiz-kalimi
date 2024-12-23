@@ -90,6 +90,15 @@ if (isset($_GET['year'])) {
                 <strong><?php echo $values['Thali']; ?></strong> is stopped successfully.
               </div>
             <?php }
+            if (isset($_GET['action']) && $_GET['action'] == 'start') { ?>
+              <div class="alert alert-success" role="alert">Stop thali dates from <strong>
+                  <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
+                </strong> to <strong>
+                  <?php echo date('d M Y', strtotime($_GET['edate'])); ?>
+                </strong> for sabeel no
+                <strong><?php echo $values['Thali']; ?></strong> is deleted successfully.
+              </div>
+            <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'spermanant') { ?>
               <div class="alert alert-danger" role="alert">Thali is stopped permanently for sabeel no
                 <strong><?php echo $values['Thali']; ?></strong>
@@ -282,7 +291,7 @@ if (isset($_GET['year'])) {
         </div>
         <div class="modal-body">
           <p> Are you sure you want to permanently stop thali of sabeel no
-              <strong><?php echo $values['Thali']; ?></strong>?
+            <strong><?php echo $values['Thali']; ?></strong>?
           </p>
         </div>
         <div class="modal-footer">
@@ -414,8 +423,7 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
               <div class="col-6">
                 <div class="form-check form-switch d-flex align-items-center">
                   <input class="form-check-input" type="checkbox" role="switch" id="status" name="status" <?php echo ($status == 'start' ? 'checked' : ''); ?>>
-                  <label id="status" class="form-check-label ms-1"
-                    for="status" <?php echo ($status == 'start' ? 'style=color:#3C5A05;' : 'style=color:#ff0000;'); ?>><?php echo ($status == 'start' ? 'Start' : 'Stop'); ?></label>
+                  <label id="status" class="form-check-label ms-1" for="status" <?php echo ($status == 'start' ? 'style=color:#3C5A05;' : 'style=color:#ff0000;'); ?>><?php echo ($status == 'start' ? 'Start' : 'Stop'); ?></label>
                 </div>
               </div>
             </div>
@@ -503,5 +511,44 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
   </div>
 <?php }
 mysqli_free_result($adminmenu); ?>
+
+<?php
+$stop_dates = mysqli_query($link, "WITH ranked_dates AS (
+    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `stop_date` > '" . date('Y-m-d') . "' AND `Thali` = '" . $_SESSION['thali'] . "'
+),
+grouped_dates AS (
+    SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
+)
+SELECT `id`, `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date;") or die(mysqli_error($link));
+if (isset($stop_dates) && $stop_dates->num_rows > 0) {
+  while ($values = mysqli_fetch_assoc($stop_dates)) { ?>
+    <div class="modal fade" id="startthali-<?php echo $values['id']; ?>">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="startthali-<?php echo $values['id']; ?>" class="form-horizontal" method="post" action="stopthali.php"
+            autocomplete="off">
+            <input type="hidden" name="action" value="admin_start_thali" />
+            <input type="hidden" name="thali" value="<?php echo $values['thali']; ?>" />
+            <input type="hidden" name="start_date" value="<?php echo $values['start_date']; ?>" />
+            <input type="hidden" name="end_date" value="<?php echo $values['end_date']; ?>" />
+            <div class="modal-header">
+              <h4 class="modal-title fs-5">Delete Stop Thali Dates</h4>
+              <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
+                  class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="modal-body">
+              <p> Are you sure you want to delete the stop dates?
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-light">Delete</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  <?php }
+}
+mysqli_free_result($stop_dates); ?>
 
 <?php include('footer.php'); ?>
