@@ -118,6 +118,14 @@
     $('[name="cancel"]').click(function () {
         receiptForm.hide();
     });
+	
+	$('[data-key="stopthaali"]').click(function() {
+        stopThali_admin($(this).attr('data-thali'), $(this).attr('data-active'), false, false, function(data) {
+          // if (data === 'success') {
+          location.reload();
+          // }
+        });
+    });
 
     $('[data-key="stoppermanant"]').click(function () {
         var c = confirm("Are you sure you want to permanently stop this thali?");
