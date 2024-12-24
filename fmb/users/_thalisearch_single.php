@@ -45,7 +45,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
           </li>
           <?php if ($values['Active'] == '0') { ?>
             <li class="nav-item">
-                <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a> |
+                <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a>
             </li>
           <?php } ?>
           <?php if ($values['Active'] != '2') { ?>
