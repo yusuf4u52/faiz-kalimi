@@ -10,11 +10,6 @@ error_reporting(0);
 $today_date = date("Y-m-d");
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $hijridate = getHijriDate($tomorrow_date);
-$menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` != 'thaali' LIMIT 1");
-if ($menu_item->num_rows > 0) {
-	echo "Skipping email as no thali on Miqaat or any other reason.";
-	exit;
-}
 
 $stop_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` != '" . $today_date . "' AND `stop_date` = '" . $tomorrow_date . "'");
 if ($stop_thali->num_rows > 0) {
@@ -31,7 +26,6 @@ if ($stop_thali->num_rows > 0) {
 	}
 }
 
-
 $start_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE  `stop_date` = '" . $today_date . "' AND `stop_date` != '" . $tomorrow_date . "'");
 if ($start_thali->num_rows > 0) {
 	while ($starts = mysqli_fetch_assoc($start_thali)) {
@@ -45,6 +39,12 @@ if ($start_thali->num_rows > 0) {
 			mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('" . $list['Thali'] . "','" . $list['id'] . "', 'Start Thali','" . $hijridate . "')") or die(mysqli_error($link));
 		}
 	}
+}
+
+$menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` != 'thaali' LIMIT 1");
+if ($menu_item->num_rows > 0) {
+	echo "Skipping email as no thali on Miqaat or any other reason.";
+	exit;
 }
 
 $sql = mysqli_query($link, "SELECT t.id, c.Thali, t.tiffinno, t.thalisize, t.NAME, t.CONTACT, t.Transporter,t.wingflat, t.society, t.Full_Address, c.Operation,c.id 
