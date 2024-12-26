@@ -36,18 +36,12 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
             <a class="nav-link" href="#" data-key="payhoob" data-thali="<?php echo $values['Thali']; ?>">Pay Hoob</a>
           </li>
           <li class="nav-item"><?php
-            /*if ($values['Active'] == '1') { ?>
-              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a> |
+            if ($values['Active'] == '1') { ?>
+              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a>
             <?php } else { ?>
-              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a> |
-            <?php } */ ?>
-            <a class="nav-link" data-bs-toggle="modal" href="#stop_thali">Stop Thaali</a>
+              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a>
+            <?php } ?>
           </li>
-          <?php if ($values['Active'] == '0') { ?>
-            <li class="nav-item">
-                <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a>
-            </li>
-          <?php } ?>
           <?php if ($values['Active'] != '2') { ?>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="modal" href="#stop_permanent">Stop Permanent</a>
@@ -187,7 +181,16 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     </div>
   </div>
   <div class="tab-pane fade" id="stop" role="tabpanel" aria-labelledby="menu-tab">
-    <h4 class="mb-3">Stop Dates</h4>
+    <div class="row">
+      <div class="col-6">
+          <h4 class="mb-5">Stop Dates</h4>
+      </div>
+      <div class="col-6 text-end">
+        <button type="button" class="btn btn-light" data-bs-target="#stop_thali"
+            data-bs-toggle="modal">Stop
+            Thali</button>
+      </div>
+    </div>
     <?php
     date_default_timezone_set('Asia/Kolkata');
     $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
