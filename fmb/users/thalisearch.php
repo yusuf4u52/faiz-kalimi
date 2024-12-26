@@ -75,11 +75,13 @@ if (isset($_GET['year'])) {
               </div>
             <?php }
             if (isset($action) && $action == 'comment') { ?>
-              <div class="alert alert-success" role="alert">A new comment is added.</div>
+              <div class="alert alert-success" role="alert">A new comment is added for sabeel no
+              <strong><?php echo $_GET['thalino']; ?></strong>.</div>
             <?php }
             if (isset($action) && $action == 'csize') { ?>
               <div class="alert alert-success" role="alert">Thali size is changes to
-                <strong><?php echo $csize; ?></strong>.
+                <strong><?php echo $csize; ?></strong> for sabeel no
+                <strong><?php echo $_GET['thalino']; ?></strong>.
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'srange') { ?>
@@ -87,7 +89,7 @@ if (isset($_GET['year'])) {
                   <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
                 </strong> to <strong>
                   <?php echo date('d M Y', strtotime($_GET['edate'])); ?></strong> for sabeel no
-                <strong><?php echo $values['Thali']; ?></strong> is stopped successfully.
+                <strong><?php echo $_GET['thalino']; ?></strong> is stopped successfully.
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'start') { ?>
@@ -96,59 +98,59 @@ if (isset($_GET['year'])) {
                 </strong> to <strong>
                   <?php echo date('d M Y', strtotime($_GET['edate'])); ?>
                 </strong> for sabeel no
-                <strong><?php echo $values['Thali']; ?></strong> is deleted successfully.
+                <strong><?php echo $_GET['thalino']; ?></strong> is deleted successfully.
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'spermanant') { ?>
               <div class="alert alert-danger" role="alert">Thali is stopped permanently for sabeel no
-                <strong><?php echo $values['Thali']; ?></strong>
+                <strong><?php echo $_GET['thalino']; ?></strong>
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'sedit') { ?>
               <div class="alert alert-warning" role="alert">RSVP ended to stop thali of <strong>
                   <?php echo date('d M Y', strtotime($_GET['sdate'])); ?> for sabeel no
-                  <strong><?php echo $values['Thali']; ?></strong>
+                  <strong><?php echo $_GET['thalino']; ?></strong>
                 </strong>.</div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
               <div class="alert alert-success" role="alert">Thali of
                 <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is edited successfully for sabeel
                 no
-                <strong><?php echo $values['Thali']; ?></strong>
+                <strong><?php echo $_GET['thalino']; ?></strong>
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'sedit') { ?>
               <div class="alert alert-success" role="alert">Thali of <strong>
                   <?php echo date('d M Y', strtotime($_GET['date'])); ?>
                 </strong> is started & edited successfully for sabeel no
-                <strong><?php echo $values['Thali']; ?></strong>.
+                <strong><?php echo $_GET['thalino']; ?></strong>.
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'nochange') { ?>
               <div class="alert alert-warning" role="alert">No change found for Thali of
                 <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> for sabeel no
-                <strong><?php echo $values['Thali']; ?></strong>.
+                <strong><?php echo $_GET['thalino']; ?></strong>.
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'snochange') { ?>
               <div class="alert alert-success" role="alert">Thali of <strong>
                   <?php echo date('d M Y', strtotime($_GET['date'])); ?>
                 </strong> is started successfully for sabeel no
-                <strong><?php echo $values['Thali']; ?></strong>.
+                <strong><?php echo $_GET['thalino']; ?></strong>.
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'astop') { ?>
               <div class="alert alert-warning" role="alert">Thali of <strong>
                   <?php echo date('d M Y', strtotime($_GET['date'])); ?>
                 </strong> is already stopped for sabeel no
-                <strong><?php echo $values['Thali']; ?></strong>.
+                <strong><?php echo $_GET['thalino']; ?></strong>.
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'stop') { ?>
               <div class="alert alert-success" role="alert">Thali of <strong>
                   <?php echo date('d M Y', strtotime($_GET['date'])); ?>
                 </strong> is stopped successfully for sabeel no
-                <strong><?php echo $values['Thali']; ?></strong>.
+                <strong><?php echo $_GET['thalino']; ?></strong>.
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'rsvp') { ?>
@@ -157,27 +159,27 @@ if (isset($_GET['year'])) {
                 of
                 <strong>
                   <?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> for sabeel no
-                <strong><?php echo $values['Thali']; ?></strong> is finished.
+                <strong><?php echo $_GET['thalino']; ?></strong> is finished.
               </div>
             <?php } ?>
             <form class="form-horizontal" autocomplete="off">
               <div class="mb-3 row">
                 <label for="inputThalino" class="col-3 control-label">Sabeel No</label>
                 <div class="col-9">
-                  <input type="text" class="form-control" id="inputThalino" placeholder="Sabeel No" name="thalino">
+                  <input type="text" class="form-control" id="inputThalino" placeholder="Sabeel No" name="thalino" value="<?php echo (!empty($_GET['thalino']) ? $_GET['thalino'] : ''); ?>">
                 </div>
               </div>
               <div class="mb-3 row">
                 <label for="inputThalino" class="col-3 control-label">Tiffin No</label>
                 <div class="col-9">
-                  <input type="text" class="form-control" id="inputTiffinno" placeholder="Tiffin No" name="tiffinno">
+                  <input type="text" class="form-control" id="inputTiffinno" placeholder="Tiffin No" name="tiffinno" value="<?php echo (!empty($_GET['tiffinno']) ? $_GET['tiffinno'] : ''); ?>">
                 </div>
               </div>
               <div class="mb-3 row">
                 <label for="inputGeneral" class="col-3 control-label">Other</label>
                 <div class="col-9">
                   <input type="text" class="form-control" id="inputGeneral" placeholder="Contact/ ITS no / Email / Name"
-                    name="general">
+                    name="general" value="<?php echo (!empty($_GET['general']) ? $_GET['general'] : ''); ?>">
                 </div>
               </div>
               <div class="mb-3 row">
@@ -251,7 +253,6 @@ if (isset($_GET['year'])) {
       <form id="admin_stop" class="form-horizontal" method="post" action="stopthali.php" autocomplete="off">
         <input type="hidden" name="action" value="admin_stop_thali" />
         <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
-        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
         <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
         <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
         <div class="modal-header">
