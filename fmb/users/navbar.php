@@ -66,7 +66,21 @@ while ($values1 = mysqli_fetch_assoc($result)) {
                         </li>
                     <?php } ?>
                     <?php
-                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com'))) {
+                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) {
+                        ?>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">Start/Stop Backend</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/fmb/users/userstart.php">User Start Thali</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/userstop.php">User Stop Thali</a></li>
+                            </ul>
+                        </li>
+                        <?php
+                    }
+                    ?>
+                    <?php
+                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) {
                         ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"

@@ -515,7 +515,7 @@ mysqli_free_result($adminmenu); ?>
 
 <?php
 $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `stop_date` > '" . date('Y-m-d') . "' AND `Thali` = '" . $values['Thali'] . "'
+    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `stop_date` >= '" . date('Y-m-d') . "' AND `Thali` = '" . $values['Thali'] . "'
 ),
 grouped_dates AS (
     SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
@@ -529,9 +529,12 @@ if (isset($stop_dates) && $stop_dates->num_rows > 0) {
           <form id="startthali-<?php echo $values['id']; ?>" class="form-horizontal" method="post" action="stopthali.php"
             autocomplete="off">
             <input type="hidden" name="action" value="admin_start_thali" />
-            <input type="hidden" name="thali" value="<?php echo $values['thali']; ?>" />
             <input type="hidden" name="start_date" value="<?php echo $values['start_date']; ?>" />
             <input type="hidden" name="end_date" value="<?php echo $values['end_date']; ?>" />
+            <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+            <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
+            <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
+            <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
             <div class="modal-header">
               <h4 class="modal-title fs-5">Delete Stop Thali Dates</h4>
               <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i

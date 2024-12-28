@@ -11,6 +11,11 @@ include('navbar.php');
             <h2 class="mb-3">Thali Details</h2>
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
+                <div class="fw-bold">Thali Status</div>
+                <p class="list-group-item-text">
+                  <?php echo ($values['Active'] == '1') ? '<span style="color:#3C5A05">Start</span>' : '<span style="color:#ff0000">Stop</span>'; ?>
+              </li>
+              <li class="list-group-item">
                 <div class="fw-bold">Sabeel Number</div>
                 <?php echo $values['Thali']; ?>
               </li>
@@ -58,11 +63,6 @@ include('navbar.php');
                     <span class="badge rounded-pill"><?php echo $values['Total_Pending']; ?></span>
                   </li>
                 </ul>
-              </li>
-              <li class="list-group-item">
-                <div class="fw-bold">Is Active?</div>
-                <p class="list-group-item-text">
-                  <?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?>
               </li>
               <li class="list-group-item">
                 <div class="fw-bold">Transporter</div>

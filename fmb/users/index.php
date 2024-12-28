@@ -22,8 +22,11 @@ include('navbar.php');
                   <?php } ?>
                 </div>
               </div>
+              
+              <div class="alert alert-info" role="alert">Please click <a href="/fmb/users/thali_details.php">here</a> to check your thali status.</div>
 
-              <?php if (isset($_GET['action']) && $_GET['action'] == 'srange') { ?>
+              <?php 
+              if (isset($_GET['action']) && $_GET['action'] == 'srange') { ?>
                 <div class="alert alert-success" role="alert">Your thali is stopped from <strong>
                     <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
                   </strong> to <strong>

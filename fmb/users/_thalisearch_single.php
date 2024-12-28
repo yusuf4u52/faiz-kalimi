@@ -194,7 +194,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     <?php
     date_default_timezone_set('Asia/Kolkata');
     $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-        SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `stop_date` > '" . date('Y-m-d') . "' AND `Thali` = '" . $values['Thali'] . "'
+        SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `stop_date` >= '" . date('Y-m-d') . "' AND `Thali` = '" . $values['Thali'] . "'
     ),
     grouped_dates AS (
         SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
