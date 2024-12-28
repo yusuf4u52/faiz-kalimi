@@ -23,8 +23,12 @@ include('navbar.php');
                 </div>
               </div>
               
-              <div class="alert alert-info" role="alert">Please click <a href="/fmb/users/thali_details.php">here</a> to check your thali status.</div>
-
+              <?php if ($values['Active'] == '1') { ?>
+                <div class="alert alert-success" role="alert">Current thali status is  <strong>Start</strong>.</div>
+              <?php } else { ?>
+                <div class="alert alert-danger" role="alert">Current thali status is  <strong>Stop</strong>.</div>
+              <?php } ?>
+              
               <?php 
               if (isset($_GET['action']) && $_GET['action'] == 'srange') { ?>
                 <div class="alert alert-success" role="alert">Your thali is stopped from <strong>
