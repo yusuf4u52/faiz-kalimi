@@ -23,6 +23,12 @@ include('navbar.php');
                 </div>
               </div>
 
+              <?php if ($values['Active'] == 1) { ?>
+                  <div class="alert alert-success" role="alert">Your thali status is <strong>Start</strong>.</div>
+                <?php } else { ?>
+                  <div class="alert alert-danger" role="alert">Your thali status is <strong>Stop</strong>.</div>
+                <?php } ?>
+
               <?php if (isset($_GET['action']) && $_GET['action'] == 'srange') { ?>
                 <div class="alert alert-success" role="alert">Your thali is stopped from <strong>
                     <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
