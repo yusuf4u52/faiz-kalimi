@@ -56,8 +56,9 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 										<?php
 										while ($values = mysqli_fetch_assoc($result)) {
 											?>
-											<form action='savetransporter.php' method='post'>
-												<tr>
+
+											<tr>
+												<form action='savetransporter.php' method='post'>
 													<td>
 														<?php echo $values['Thali']; ?>
 														<input type="hidden" name="Thali"
@@ -67,13 +68,15 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 														<?php
 														if ($values['yearly_hub'] != "0") {
 															?>
-															<select class='transporter' name='transporter' required>
+															<select class='transporter form-select form-select-sm'
+																name='transporter' required>
 																<option value=''>Select</option>
 																<?php
 																foreach ($transporter_list as $tname) {
 																	?>
 																	<option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>>
-																		<?php echo $tname; ?></option>
+																		<?php echo $tname; ?>
+																	</option>
 																	<?php
 																}
 																?>
@@ -81,20 +84,23 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 														<?php } ?>
 													</td>
 													<td>
-														<select class='sector' name='sector' required>
+														<select class='sector form-select form-select-sm' name='sector'
+															required>
 															<option value=''>Select</option>
 															<?php
 															foreach ($sector_list as $sector_name) {
 																?>
 																<option value='<?php echo $sector_name; ?>' <?php echo ($sector_name == $values['sector']) ? 'selected' : ''; ?>>
-																	<?php echo $sector_name; ?></option>
+																	<?php echo $sector_name; ?>
+																</option>
 																<?php
 															}
 															?>
 														</select>
 													</td>
 													<td>
-														<select class='subsector' name='subsector' required>
+														<select class='subsector form-select form-select-sm'
+															name='subsector' required>
 															<option value=''>Select</option>
 															<?php
 															foreach ($subsector_list as $subsector_name) {
@@ -109,9 +115,10 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 													<td><?php echo $values['society']; ?></td>
 													<td><?php echo $values['NAME']; ?></td>
 													<td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
-													<td><button type="submit" class="btn btn-light btn-sm">Submit</button></td>
-												</tr>
-											</form>
+													<td><button type="submit" class="btn btn-light btn-sm">Submit</button>
+													</td>
+												</form>
+											</tr>
 										<?php } ?>
 									</tbody>
 								</table>
@@ -157,11 +164,12 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 													<input type='hidden' value='<?php echo $values['Transporter']; ?>'
 														name='trasnporter'>
 													<td>
-														<input type='text' size=8 name='thalino' class=''
-															required='required'>
+														<input class="form-control form-control-sm" type='text' size=8
+															name='thalino' class='' required='required'>
 													</td>
 													<td>
-														<select name="transporter" required='required'>
+														<select class="form-select form-select-sm" name="transporter"
+															required='required'>
 															<option value=''>Select</option>
 															<?php
 															foreach ($transporter_list as $tname) {
@@ -174,27 +182,33 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 														</select>
 													</td>
 													<td>
-														<select name="musaid" required='required'>
+														<select class="form-select form-select-sm" name="musaid"
+															required='required'>
 															<option value=''>Select</option>
 															<?php
 															$musaid_list = mysqli_query($link, "SELECT username, email FROM users");
 															while ($musaid = mysqli_fetch_assoc($musaid_list)) {
 																?>
 																<option value='<?php echo $musaid['email']; ?>'>
-																	<?php echo $musaid['username']; ?></option>
+																	<?php echo $musaid['username']; ?>
+																</option>
 																<?php
 															}
 															?>
 														</select>
 													</td>
-													<td><input type='text' name="hub" size=8 required='required'
+													<td><input class="form-control form-control-sm" type='text' name="hub"
+															size=8 required='required'
 															value="<?php echo $values['yearly_hub']; ?>"></td>
 													</td>
 													<td><?php echo $values['Full_Address']; ?></td>
 													<td><?php echo $values['NAME']; ?></td>
 													<td><?php echo $values['CONTACT']; ?></td>
-													<td><button type="submit" class="btn btn-light btn-sm me-2 mb-2">Activate</button>
-													<button class="btn btn-light btn-sm mb-2" type="submit" formaction="/fmb/users/reject.php">Reject</button></td>
+													<td><button type="submit"
+															class="btn btn-light btn-sm me-2 mb-2">Activate</button>
+														<button class="btn btn-light btn-sm mb-2" type="submit"
+															formaction="/fmb/users/reject.php">Reject</button>
+													</td>
 												</form>
 											</tr>
 										<?php } ?>
