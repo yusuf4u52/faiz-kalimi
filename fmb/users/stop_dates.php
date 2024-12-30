@@ -77,12 +77,12 @@ include('navbar.php');
                             <?php
                             date_default_timezone_set('Asia/Kolkata');
                             $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-                                SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `stop_date` > '" . date('Y-m-d') . "' AND `Thali` = '" . $_SESSION['thali'] . "'
+                                SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `Thali` = '" . $_SESSION['thali'] . "'
                             ),
                             grouped_dates AS (
                                 SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
                             )
-                            SELECT `id`, `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date;") or die(mysqli_error($link));
+                            SELECT `id`, `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date DESC;") or die(mysqli_error($link));
                             if (isset($stop_dates) && $stop_dates->num_rows > 0) { ?>
                                 <div class="table-responsive">
                                     <table class="table table-striped display" width="100%">
@@ -129,12 +129,12 @@ include('navbar.php');
 
 <?php
 $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `stop_date` > '" . date('Y-m-d') . "' AND `Thali` = '" . $_SESSION['thali'] . "'
+    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `Thali` = '" . $_SESSION['thali'] . "'
 ),
 grouped_dates AS (
     SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
 )
-SELECT `id`, `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date;") or die(mysqli_error($link));
+SELECT `id`, `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date DESC;") or die(mysqli_error($link));
 if (isset($stop_dates) && $stop_dates->num_rows > 0) {
     while ($values = mysqli_fetch_assoc($stop_dates)) { ?>
         <div class="modal fade" id="startthali-<?php echo $values['id']; ?>">
