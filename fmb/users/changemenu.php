@@ -108,11 +108,12 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
         $action = 'rsvp';
         $date = $menu_date;
     }
+
     if (isset($_POST['action']) && $_POST['action'] == 'change_menu') {
         header("Location: /fmb/users/index.php?action=" . $action . "&date=" . $menu_date);
     }
     if (isset($_POST['action']) && $_POST['action'] == 'admin_change_menu') {
-        header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thalino'] . "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=" . $action . "&date=" . $menu_date);
+        header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thali'] . "&tiffinno=" . $_POST['tiffinno'] .  "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=" . $action . "&date=" . $menu_date);
     }
 }
 ?>

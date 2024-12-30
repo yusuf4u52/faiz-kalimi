@@ -31,7 +31,7 @@ include('navbar.php');
                                         <?php echo date('d M Y', strtotime($_GET['edate'])); ?>
                                     </strong>. Click <a href="/fmb/users/stop_dates.php">here</a> to view stopped dates.</div>
                             <?php }
-                            if (isset($_GET['action']) && $_GET['action'] == 'sedit') { ?>
+                            if (isset($_GET['action']) && $_GET['action'] == 'srsvp') { ?>
                                 <div class="alert alert-warning" role="alert">RSVP ended to stop thali of <strong>
                                         <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
                                     </strong>.</div>

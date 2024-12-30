@@ -14,7 +14,7 @@ if (isset($_POST)) {
     $action = 'comment';
   }
 
-  if (isset($_POST['musaid'])) {
+  if (isset($_POST['action']) && $_POST['action'] == 'change_musaid' && isset($_POST['musaid'])) {
     $clean_musaid = htmlentities(strip_tags($_POST['musaid']), ENT_QUOTES, 'UTF-8');
     $change_musaid_query = "UPDATE `thalilist` SET `musaid` = '$clean_musaid' WHERE Thali = '" . $_GET['thalino'] . "'";
     mysqli_query($link, $change_musaid_query);
@@ -22,7 +22,7 @@ if (isset($_POST)) {
     $cmusaid = $clean_musaid;
   }
 
-  if (isset($_POST['thalisize'])) {
+  if (isset($_POST['action']) && $_POST['action'] == 'change_size' && isset($_POST['thalisize'])) {
     mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_POST['id'] . "' and `Operation` in ('Change Size') and processed = 0") or die(mysqli_error($link));
     mysqli_query($link, "UPDATE thalilist set thalisize='" . $_POST['thalisize'] . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
     mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`,`processed`) VALUES ('" . $_POST['Thali'] . "','" . $_POST['id'] . "', 'Change Size','" . $today . "',0)") or die(mysqli_error($link));
@@ -76,7 +76,8 @@ if (isset($_GET['year'])) {
             <?php }
             if (isset($action) && $action == 'comment') { ?>
               <div class="alert alert-success" role="alert">A new comment is added for sabeel no
-              <strong><?php echo $_GET['thalino']; ?></strong>.</div>
+                <strong><?php echo $_GET['thalino']; ?></strong>.
+              </div>
             <?php }
             if (isset($action) && $action == 'csize') { ?>
               <div class="alert alert-success" role="alert">Thali size is changes to
@@ -101,16 +102,16 @@ if (isset($_GET['year'])) {
                 <strong><?php echo $_GET['thalino']; ?></strong> is deleted successfully.
               </div>
             <?php }
+            if (isset($_GET['action']) && $_GET['action'] == 'srsvp') { ?>
+              <div class="alert alert-warning" role="alert">RSVP ended to stop thali of <strong>
+                  <?php echo date('d M Y', strtotime($_GET['date'])); ?> for sabeel no
+                  <strong><?php echo $_GET['thalino']; ?></strong>
+                </strong>.</div>
+            <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'spermanant') { ?>
               <div class="alert alert-danger" role="alert">Thali is stopped permanently for sabeel no
                 <strong><?php echo $_GET['thalino']; ?></strong>
               </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'sedit') { ?>
-              <div class="alert alert-warning" role="alert">RSVP ended to stop thali of <strong>
-                  <?php echo date('d M Y', strtotime($_GET['sdate'])); ?> for sabeel no
-                  <strong><?php echo $_GET['thalino']; ?></strong>
-                </strong>.</div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
               <div class="alert alert-success" role="alert">Thali of
@@ -166,20 +167,20 @@ if (isset($_GET['year'])) {
               <div class="mb-3 row">
                 <label for="inputThalino" class="col-3 control-label">Sabeel No</label>
                 <div class="col-9">
-                  <input type="text" class="form-control" id="inputThalino" placeholder="Sabeel No" name="thalino" value="<?php echo (!empty($_GET['thalino']) ? $_GET['thalino'] : ''); ?>">
+                  <input type="text" class="form-control" id="inputThalino" placeholder="Sabeel No" name="thalino">
                 </div>
               </div>
               <div class="mb-3 row">
                 <label for="inputThalino" class="col-3 control-label">Tiffin No</label>
                 <div class="col-9">
-                  <input type="text" class="form-control" id="inputTiffinno" placeholder="Tiffin No" name="tiffinno" value="<?php echo (!empty($_GET['tiffinno']) ? $_GET['tiffinno'] : ''); ?>">
+                  <input type="text" class="form-control" id="inputTiffinno" placeholder="Tiffin No" name="tiffinno">
                 </div>
               </div>
               <div class="mb-3 row">
                 <label for="inputGeneral" class="col-3 control-label">Other</label>
                 <div class="col-9">
                   <input type="text" class="form-control" id="inputGeneral" placeholder="Contact/ ITS no / Email / Name"
-                    name="general" value="<?php echo (!empty($_GET['general']) ? $_GET['general'] : ''); ?>">
+                    name="general">
                 </div>
               </div>
               <div class="mb-3 row">
@@ -253,6 +254,8 @@ if (isset($_GET['year'])) {
       <form id="admin_stop" class="form-horizontal" method="post" action="stopthali.php" autocomplete="off">
         <input type="hidden" name="action" value="admin_stop_thali" />
         <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
         <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
         <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
         <div class="modal-header">
@@ -283,6 +286,7 @@ if (isset($_GET['year'])) {
         <input type="hidden" name="action" value="stop_permanant" />
         <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
         <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
         <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
         <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
         <div class="modal-header">
@@ -308,6 +312,12 @@ if (isset($_GET['year'])) {
   <div class="modal-dialog">
     <div class="modal-content">
       <form method="POST" autocomplete="off">
+        <input type="hidden" name="action" value="change_musaid" />
+        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
+        <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
+        <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
         <div class="modal-header">
           <h4 class="modal-title fs-5">Change Musaid</h4>
           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
@@ -338,15 +348,20 @@ if (isset($_GET['year'])) {
   <div class="modal-dialog">
     <div class="modal-content">
       <form method="POST" autocomplete="off">
+        <input type="hidden" name="action" value="change_size" />
+        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
+        <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
+        <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
+        <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
+        <input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
+        <input type="hidden" name="Active" value="<?php echo $values['Active']; ?>">
         <div class="modal-header">
           <h4 class="modal-title fs-5">Change Thali Size</h4>
           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
               class="bi bi-x-lg"></i></button>
         </div>
         <div class="modal-body">
-          <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
-          <input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
-          <input type="hidden" name="Active" value="<?php echo $values['Active']; ?>">
           <select name="thalisize" required='required' class="form-select">
             <option value=''>Select</option>
             <option value='Mini'>Mini</option>
@@ -408,6 +423,7 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
           <input type="hidden" name="menu_id" value="<?php echo $menu_id; ?>" />
           <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
           <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
+          <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
           <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
           <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
           <div class="modal-header">
@@ -530,6 +546,10 @@ if (isset($stop_dates) && $stop_dates->num_rows > 0) {
             autocomplete="off">
             <input type="hidden" name="action" value="admin_start_thali" />
             <input type="hidden" name="thali" value="<?php echo $values['thali']; ?>" />
+            <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
+            <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
+            <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
+            <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
             <input type="hidden" name="start_date" value="<?php echo $values['start_date']; ?>" />
             <input type="hidden" name="end_date" value="<?php echo $values['end_date']; ?>" />
             <div class="modal-header">
