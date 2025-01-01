@@ -41,7 +41,7 @@
         {
             "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-screenshot.png",
             "type": "image\/png",
-            "sizes": "472x649",
+            "sizes": "500x728",
             "form_factor": "narrow"
         }
     ],
@@ -52,8 +52,8 @@
             "description":"A FMB App for Kalimi Mohalla (Poona) Mumineen",
             "icons": [
                 {
-                    "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-192x192.png",
-                    "sizes": "192x192"
+                    "src": "https:\/\/kalimijamaatpoona.org\/fmb\/styles\/img\/fmb-logo-512x512.png",
+                    "sizes": "512x512"
                 }
             ]
         }
