@@ -44,8 +44,8 @@ if($chk_stop_thali->num_rows > 0) {
 	}
 }
 
-$menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` != 'thaali' LIMIT 1");
-if ($menu_item->num_rows > 0) {
+$menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` = 'thaali' LIMIT 1");
+if ($menu_item->num_rows == 0) {
 	echo "Skipping email as no thali on Miqaat or any other reason.";
 	exit;
 }
