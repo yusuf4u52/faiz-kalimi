@@ -47,7 +47,7 @@ if (isset($_GET['menu_date'])) {
                                 <?php if (isset($menu_list) && $menu_list->num_rows > 0) {
                                     $row_menu = $menu_list->fetch_assoc();
                                     $menu_item = unserialize($row_menu['menu_item']); ?>
-                                    <div class="table-responsive">
+                                    <div class="table-responsive mb-3">
                                         <table class="table table-striped table-hover display">
                                             <thead>
                                                 <tr>
@@ -56,19 +56,16 @@ if (isset($_GET['menu_date'])) {
                                                     <th>Tiffin Size</th>
                                                     <th>Transporter</th>
                                                     <?php if (!empty($menu_item['sabji']['item'])) {
+                                                        $sabjiqty = $menu_item['sabji']['qty'];
                                                         echo '<th>' . $menu_item['sabji']['item'] . '</th>';
                                                     }
                                                     if (!empty($menu_item['tarkari']['item'])) {
+                                                        $tarkariqty = $menu_item['tarkari']['qty'];
                                                         echo '<th>' . $menu_item['tarkari']['item'] . '</th>';
                                                     }
                                                     if (!empty($menu_item['rice']['item'])) {
+                                                        $riceqty = $menu_item['rice']['qty'];
                                                         echo '<th>' . $menu_item['rice']['item'] . '</th>';
-                                                    }
-                                                    if (!empty($menu_item['roti']['item'])) {
-                                                        echo '<th>' . $menu_item['roti']['item'] . '</th>';
-                                                    }
-                                                    if (!empty($menu_item['extra']['item'])) {
-                                                        echo '<th>' . $menu_item['extra']['item'] . '</th>';
                                                     }
                                                     ?>
                                                 </tr>
@@ -76,12 +73,14 @@ if (isset($_GET['menu_date'])) {
                                             <tbody>
                                                 <?php $thali = mysqli_query($link, "SELECT `thali` FROM user_menu WHERE `menu_date` = '" . $_GET['menu_date'] . "'");
                                                 if ($thali->num_rows > 0) {
+                                                    $totaledited = $thali->num_rows;
                                                     $thalino = array();
                                                     while ($row_thali = mysqli_fetch_assoc($thali)) {
                                                         $thalino[] = $row_thali['thali'];
                                                     }
                                                     $sabeelno = "'" . implode("', '", $thalino) . "'";
                                                     $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE Thali IN (" . $sabeelno . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
+                                                    $sabji = 0; $tarkari = 0; $rice = 0;
                                                     while ($row = mysqli_fetch_assoc($thali)) {
                                                         $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
                                                         if ($user_menu->num_rows > 0) {
@@ -93,19 +92,16 @@ if (isset($_GET['menu_date'])) {
                                                                 <td><?php echo $row['thalisize']; ?></td>
                                                                 <td><?php echo $row['Transporter']; ?></td>
                                                                 <?php if (!empty($user_menu_item['sabji']['item'])) {
+                                                                    $sabji = $sabji + $user_menu_item['sabji']['qty'];
                                                                     echo '<td>' . $user_menu_item['sabji']['qty'] . '</td>';
                                                                 }
                                                                 if (!empty($user_menu_item['tarkari']['item'])) {
+                                                                    $tarkari = $tarkari + $user_menu_item['tarkari']['qty'];
                                                                     echo '<td>' . $user_menu_item['tarkari']['qty'] . '</td>';
                                                                 }
                                                                 if (!empty($user_menu_item['rice']['item'])) {
+                                                                    $rice = $rice + $user_menu_item['rice']['qty'];
                                                                     echo '<td>' . $user_menu_item['rice']['qty'] . '</td>';
-                                                                }
-                                                                if (!empty($user_menu_item['roti']['item'])) {
-                                                                    echo '<td>' . $user_menu_item['roti']['qty'] . '</td>';
-                                                                }
-                                                                if (!empty($user_menu_item['extra']['item'])) {
-                                                                    echo '<td>' . $user_menu_item['extra']['qty'] . '</td>';
                                                                 } ?>
                                                             </tr>
                                                         <?php }
@@ -114,7 +110,26 @@ if (isset($_GET['menu_date'])) {
                                             </tbody>
                                         </table>
                                     </div>
-                                <?php } ?>
+                                    <?php 
+                                    $totalthali = mysqli_query($link, "SELECT count(*) as tcount FROM `thalilist` WHERE Active = 1");
+                                    $result = mysqli_fetch_row($totalthali);
+                                    $total = $result[0];
+                                    if(!empty($total)) {
+                                        if(!empty($totaledited)) {
+                                            echo '<h3 class="mb-3">Total Thali - '. $total .'</h3>';
+                                            echo '<h4 class="mb-2">Total Edited Thali - '. $totaledited .'</h4>';
+                                            if (!empty($menu_item['sabji']['item'])) {
+                                                echo '<h5 class="mb-1">' . $menu_item['sabji']['item'] .' - '. $total - ($totaledited - $sabji / $sabjiqty ). '</h5>';
+                                            }
+                                            if (!empty($menu_item['tarkari']['item'])) {
+                                                echo '<h5 class="mb-1">' . $menu_item['tarkari']['item'] .' - '. $total - ($totaledited - $tarkari / $tarkariqty). '</h5>';
+                                            }
+                                            if (!empty($menu_item['rice']['item'])) {
+                                                echo '<h5 class="mb-1">' . $menu_item['rice']['item'] .' - '. $total - ($totaledited - $rice / $riceqty). '</h5>';
+                                            }
+                                        }
+                                    }
+                                } ?>
                             </div>
                         </div>
                     </div>
