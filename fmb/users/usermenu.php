@@ -119,13 +119,13 @@ if (isset($_GET['menu_date'])) {
                                             echo '<h3 class="mb-3">Total Thali - '. $total .'</h3>';
                                             echo '<h4 class="mb-2">Total Edited Thali - '. $totaledited .'</h4>';
                                             if (!empty($menu_item['sabji']['item'])) {
-                                                echo '<h5 class="mb-1"> Total ' . $menu_item['sabji']['item'] .' - '. $total - ($totaledited - $sabji / $sabjiqty ). '</h5>';
+                                                echo '<h5 class="mb-1">' . $menu_item['sabji']['item'] .' - '. $total - ($totaledited - $sabji / $sabjiqty ). '</h5>';
                                             }
                                             if (!empty($menu_item['tarkari']['item'])) {
-                                                echo '<h5 class="mb-1"> Total ' . $menu_item['tarkari']['item'] .' - '. $total - ($totaledited - $tarkari / $tarkariqty). '</h5>';
+                                                echo '<h5 class="mb-1">' . $menu_item['tarkari']['item'] .' - '. $total - ($totaledited - $tarkari / $tarkariqty). '</h5>';
                                             }
                                             if (!empty($menu_item['rice']['item'])) {
-                                                echo '<h5 class="mb-1"> Total ' . $menu_item['rice']['item'] .' - '. $total - ($totaledited - $rice / $riceqty). '</h5>';
+                                                echo '<h5 class="mb-1">' . $menu_item['rice']['item'] .' - '. $total - ($totaledited - $rice / $riceqty). '</h5>';
                                             }
                                         }
                                     }
