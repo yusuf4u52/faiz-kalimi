@@ -5,10 +5,6 @@ session_start();
 include('users/connection.php');
 require_once('users/libraries/Google/autoload.php');
 
-$_SESSION['fromLogin'] = "true";
-$_SESSION['email'] = 'moizlife@gmail.com';
-//header('Location: users/index.php');
-
 /************************************************
   Make an API request on behalf of a user. In
   this case we need to have a valid OAuth 2.0
