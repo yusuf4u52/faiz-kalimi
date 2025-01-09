@@ -2,7 +2,15 @@
 
 $result = get_current_miqaat();
 if (!is_record_found($result)) {
-  do_redirect_with_message('/error', 'No active miqaat. Please visit later.');
+  $result = get_last_miqaat();
+  if (!is_record_found($result)) {
+    do_redirect_with_message('/error', 'No active miqaat. Please visit later.');
+  } else {
+    $miqaat = $result['name'];
+    $end_datetime = $result['end_datetime']; 
+    $msg = "Registration for '$miqaat' is finished on $end_datetime. Please visit us later.";
+    do_redirect_with_message('/error', $msg);
+  }
 }
 $miqaat_id = $result->data[0]['id'];
 setAppData('miqaat_id', $miqaat_id);
