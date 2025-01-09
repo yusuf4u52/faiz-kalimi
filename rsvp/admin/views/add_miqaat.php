@@ -31,7 +31,8 @@ if( is_post() ) {
 }
 
 if( $id > 0 && !$edit_failed ) {
-    $miqaat = get_miqaat_by_id($id);
+    $result = get_miqaat_by_id($id);
+    $miqaat = $result->data[0];
     $name = $miqaat['name'];
     $details = $miqaat['details'];
     $starttime = $miqaat['start_datetime'];
@@ -69,14 +70,14 @@ function content_display()
             <div class="mb-3 row">
                 <label for="starttime" class="col-sm-3 col-form-label">Start Time</label>
                 <div class="col-sm-9">
-                    <input type="datetime" required class="form-control" 
+                    <input type="datetime-local" required class="form-control" 
                     id="starttime" name="starttime" value="<?=$form_data['starttime']?>">
                 </div>
             </div>
             <div class="mb-3 row">
                 <label for="endtime" class="col-sm-3 col-form-label">End Time</label>
                 <div class="col-sm-9">
-                    <input type="datetime" required class="form-control" 
+                    <input type="datetime-local" required class="form-control" 
                     id="endtime" name="endtime" value="<?=$form_data['endtime']?>">
                 </div>
             </div>
