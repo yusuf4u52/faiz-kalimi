@@ -11,5 +11,5 @@ DEFINE('THE_SESSION_ID', 'ABCD_5645645646');
 
 require_once './../../fmb/users/connection.php';
 
-//include_once 'rsvp_admin_dto.php';
+include_once './../rsvp_dto.php';
 require_once './../framework.php';
