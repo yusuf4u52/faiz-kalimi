@@ -7,6 +7,7 @@ $starttime = '';
 $endtime = '';
 $survey_for = 'All';
 
+$edit_failed = false;
 if( is_post() ) {
     $id = $_POST['id'];
     $name = $_POST['name'];
@@ -24,8 +25,18 @@ if( is_post() ) {
     if( $result->count > 0 ) {
         do_redirect_with_message('/miqaats', 'Miqaat added successfully.');
     } else {
-        setSessionData('transit_data', 'Failed to add miqaat.');        
+        $edit_failed = true;
+        setSessionData('transit_data', 'Failed to save miqaat details.');        
     }
+}
+
+if( $id > 0 && !$edit_failed ) {
+    $miqaat = get_miqaat_by_id($id);
+    $name = $miqaat['name'];
+    $details = $miqaat['details'];
+    $starttime = $miqaat['start_datetime'];
+    $endtime = $miqaat['end_datetime'];
+    $survey_for = $miqaat['survey_for'];
 }
 
 setAppData('FORM_DATA', ['id' => $id,'name' => $name, 'details' => $details, 'starttime' => $starttime, 'endtime' => $endtime, 'survey_for' => $survey_for]);
@@ -44,7 +55,7 @@ function content_display()
             <div class="mb-3 row">
                 <label for="name" class="col-sm-3 col-form-label">Name</label>
                 <div class="col-sm-9">
-                <input type="text" required class="form-control-plaintext" 
+                <input type="text" required class="form-control" 
                 id="name" name="name" value="<?=$form_data['name']?>">                
                 </div>
             </div>
