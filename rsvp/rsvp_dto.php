@@ -57,14 +57,14 @@ function get_miqaat_list()
 function add_miqaat($name, $details, $start_datetime, $end_datetime, $survey_for)
 {
     $query = "INSERT INTO rsvp_miqaat (name, details, start_datetime, end_datetime, survey_for) 
-    VALUES ('$name', '$details', '$start_datetime', '$end_datetime', '$survey_for');";
+    VALUES ('$name', '$details', CONVERT_TZ('$start_datetime', '+00:00','-05:30'), CONVERT_TZ('$end_datetime', '+00:00','-05:30'), '$survey_for');";
     return change_data($query);
 }
 
 function edit_miqaat($id, $name, $details, $start_datetime, $end_datetime, $survey_for)
 {
-    $query = "UPDATE rsvp_miqaat SET name='$name', details='$details', start_datetime='$start_datetime', 
-    end_datetime='$end_datetime', survey_for='$survey_for' WHERE id='$id';";
+    $query = "UPDATE rsvp_miqaat SET name='$name', details='$details', start_datetime=CONVERT_TZ('$start_datetime', '+00:00','-05:30'), 
+    end_datetime=CONVERT_TZ('$end_datetime', '+00:00','-05:30'), survey_for='$survey_for' WHERE id='$id';";
 
     return change_data($query);
 }
