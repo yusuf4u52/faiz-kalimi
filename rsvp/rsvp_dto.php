@@ -45,6 +45,30 @@ function get_last_miqaat()
     return fetch_data($query);
 }
 
+
+function get_miqaat_list()
+{
+    $query = select_query_for_miqaat() . ' WHERE TIMESTAMPDIFF(DAY, end_datetime, now()) <= 10 and id > 0
+    order by start_datetime';
+
+    return fetch_data($query);
+}
+
+function add_miqaat($name, $details, $start_datetime, $end_datetime, $survey_for)
+{
+    $query = "INSERT INTO rsvp_miqaat (name, details, start_datetime, end_datetime, survey_for) 
+    VALUES ('$name', '$details', '$start_datetime', '$end_datetime', '$survey_for');";
+    return change_data($query);
+}
+
+function edit_miqaat($id, $name, $details, $start_datetime, $end_datetime, $survey_for)
+{
+    $query = "UPDATE rsvp_miqaat SET name='$name', details='$details', start_datetime='$start_datetime', 
+    end_datetime='$end_datetime', survey_for='$survey_for' WHERE id='$id';";
+
+    return change_data($query);
+}
+
 /**
  * Get current or last expired miqaat details.
  * @return mixed
