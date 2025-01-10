@@ -69,6 +69,7 @@ function edit_miqaat($id, $name, $details, $start_datetime, $end_datetime, $surv
     return change_data($query);
 }
 
+
 /**
  * Get current or last expired miqaat details.
  * @return mixed
@@ -80,6 +81,43 @@ function get_current_or_last_miqaat()
         $result = get_last_miqaat();
     }
     return $result;
+}
+
+
+function get_roti_miqaat_by_id($miqaat_id)
+{
+    $query = "SELECT id,name,details,
+    CONVERT_TZ(start_datetime, '+00:00','+05:30') as start_datetime,
+    CONVERT_TZ(end_datetime, '+00:00','+05:30') as end_datetime,
+    roti_target FROM miqaat WHERE id = '$miqaat_id';";
+
+    return fetch_data($query);
+}
+
+function get_roti_miqaat_list()
+{
+    $query = 'SELECT id,name,details,
+    CONVERT_TZ(start_datetime, "+00:00","+05:30") as start_datetime,
+    CONVERT_TZ(end_datetime, "+00:00","+05:30") as end_datetime,
+    roti_target FROM miqaat WHERE TIMESTAMPDIFF(DAY, end_datetime, now()) <= 10 and id > 0
+    order by start_datetime';
+
+    return fetch_data($query);
+}
+
+function add_roti_miqaat($name, $details, $start_datetime, $end_datetime, $roti_target)
+{
+    $query = "INSERT INTO miqaat (name, details, start_datetime, end_datetime, roti_target) 
+    VALUES ('$name', '$details', CONVERT_TZ('$start_datetime', '+00:00','-05:30'), CONVERT_TZ('$end_datetime', '+00:00','-05:30'), '$roti_target');";
+    return change_data($query);
+}
+
+function edit_roti_miqaat($id, $name, $details, $start_datetime, $end_datetime, $roti_target)
+{
+    $query = "UPDATE miqaat SET name='$name', details='$details', start_datetime=CONVERT_TZ('$start_datetime', '+00:00','-05:30'), 
+    end_datetime=CONVERT_TZ('$end_datetime', '+00:00','-05:30'), roti_target='$roti_target' WHERE id='$id';";
+
+    return change_data($query);
 }
 
 function get_family_details($hof_id, $miqaat_id)

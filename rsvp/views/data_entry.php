@@ -6,8 +6,9 @@ if (!is_record_found($result)) {
   if (!is_record_found($result)) {
     do_redirect_with_message('/error', 'No active miqaat. Please visit later.');
   } else {
-    $miqaat = $result['name'];
-    $end_datetime = $result['end_datetime']; 
+    $prevmiqaat = $result->data[0];
+    $miqaat = $prevmiqaat['name'];
+    $end_datetime = $prevmiqaat['end_datetime'];  
     $msg = "Registration for '$miqaat' is finished on $end_datetime. Please visit us later.";
     do_redirect_with_message('/error', $msg);
   }
