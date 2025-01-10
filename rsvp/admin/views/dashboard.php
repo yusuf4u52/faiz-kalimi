@@ -14,8 +14,6 @@ function content_display()
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
         <div class="col-md-3 col-sm-6 col-12">
             <div class="card">
                 <div class="card-body">
