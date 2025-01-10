@@ -45,7 +45,7 @@ setAppData('FORM_DATA', ['id' => $id,'name' => $name, 'details' => $details, 'st
 function content_display()
 {
     $form_data = getAppData('FORM_DATA');
-    $title = $form_data['id'] > 0 ? 'Edit Miqaat' : 'Add Miqaat';
+    $title = $form_data['id'] > 0 ? 'Edit ROTI Miqaat' : 'Add ROTI Miqaat';
     ?>    
     <div class="row">
         <div class="col"><h6><?=$title?></h6></div>
