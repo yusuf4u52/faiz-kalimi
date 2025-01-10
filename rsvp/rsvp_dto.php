@@ -40,7 +40,7 @@ function get_miqaat_by_id($miqaat_id)
 function get_last_miqaat()
 {
     $query = select_query_for_miqaat() . ' WHERE TIMESTAMPDIFF(SECOND, end_datetime, now()) >= 0 and id > 0
-    order by id desc limit 1';
+    order by end_datetime desc limit 1';
 
     return fetch_data($query);
 }
