@@ -12,10 +12,10 @@ function content_display()
             <p class="card-description"> Enter sabeel number and enter </p>
             <form method="post" action="" class="forms-sample">
                 <div class="form-group">
-                    <label class="col-sm-3 col-form-label">Sabeel ID / HOF ID</label>
+                    <label class="col-sm-3 col-form-label">Sabeel ID / HOF ID (Numbers only)</label>
                     <div class="input-group col-xs-12">
                         <input type="text" class="form-control file-upload-info" pattern="^[0-9]{1,5}$" id="sabeel"
-                            name="sabeel" placeholder="Upload Image">
+                            name="sabeel" placeholder="Sabeel ID or HOF ID">
                         <span class="input-group-append">
                             <button class="btn btn-gradient-primary" type="submit">Search</button>
                         </span>
