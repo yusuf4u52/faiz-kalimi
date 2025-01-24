@@ -1,5 +1,20 @@
 (function($) {
   'use strict';
+  function escapeHtml(text) {
+    return text.replace(/[&<>"'`=\/]/g, function (s) {
+      return {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '`': '&#x60;',
+        '=': '&#x3D;',
+        '/': '&#x2F;'
+      }[s];
+    });
+  }
+
   $(function() {
     var todoListItem = $('.todo-list');
     var todoListInput = $('.todo-list-input');
@@ -9,7 +24,7 @@
       var item = $(this).prevAll('.todo-list-input').val();
 
       if (item) {
-        todoListItem.append("<li><div class='form-check'><label class='form-check-label'><input class='checkbox' type='checkbox'/>" + item + "<i class='input-helper'></i></label></div><i class='remove mdi mdi-close-circle-outline'></i></li>");
+        todoListItem.append("<li><div class='form-check'><label class='form-check-label'><input class='checkbox' type='checkbox'/>" + escapeHtml(item) + "<i class='input-helper'></i></label></div><i class='remove mdi mdi-close-circle-outline'></i></li>");
         todoListInput.val("");
       }
 
