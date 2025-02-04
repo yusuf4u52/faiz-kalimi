@@ -1,2 +1,3 @@
 <?php
-include_once './../_template.php';
+//include_once './../_template.php';
+echo 'Noooo';

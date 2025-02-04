@@ -1,5 +1,5 @@
 <?php
-if( !is_user_a(ROLE->SA) ) {
+if( !is_user_a(SUPER_ADMIN) ) {
     do_redirect_with_message('/home' , 'Redirected as tried to access unauthorized area.');
 }
 
@@ -59,91 +59,91 @@ function show_input_year()
                 <div class="form-group row">
                     <label for="start_eng_date" class="col-sm-2 col-form-label">Hijri English Start Date</label>
                     <div class="col-sm-10">
-                        <input type='date' class='form-control' name='start_eng_date'  value="<?=$hijri_data->start_eng_date?>" required />
+                        <input type='date' class='form-control' name='start_eng_date'  value="<?=$hijri_data->start_eng_date??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Full Niyaz Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='full_niyaz' value="<?=$hijri_data->full_niyaz?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='full_niyaz' value="<?=$hijri_data->full_niyaz??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Half Niyaz Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='half_niyaz' value="<?=$hijri_data->half_niyaz?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='half_niyaz' value="<?=$hijri_data->half_niyaz??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Per Head Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='per_person_niyaz' value="<?=$hijri_data->family_niyaz?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='per_person_niyaz' value="<?=$hijri_data->family_niyaz??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="per_kid_niyaz" class="col-sm-2 col-form-label">Kids Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='per_kid_niyaz' value="<?=$hijri_data->per_kid_niyaz?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='per_kid_niyaz' value="<?=$hijri_data->per_kid_niyaz??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="half_hub_age" class="col-sm-2 col-form-label">Kids Hub Max Age</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,2}$" class='form-control' name='half_hub_age' value="<?=$hijri_data->half_hub_age?>" required />
+                        <input type='text' pattern="^[0-9]{1,2}$" class='form-control' name='half_hub_age' value="<?=$hijri_data->half_hub_age??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="zero_hub_age" class="col-sm-2 col-form-label">Zero Hub Age</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,2}$" class='form-control' name='zero_hub_age' value="<?=$hijri_data->zero_hub_age?>" required />
+                        <input type='text' pattern="^[0-9]{1,2}$" class='form-control' name='zero_hub_age' value="<?=$hijri_data->zero_hub_age??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Sehori Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='sehori' value="<?=$hijri_data->sehori?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='sehori' value="<?=$hijri_data->sehori??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Iftari Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='iftar' value="<?=$hijri_data->iftar?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='iftar' value="<?=$hijri_data->iftar??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Zabihat Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='zabihat' value="<?=$hijri_data->zabihat?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='zabihat' value="<?=$hijri_data->zabihat??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Fateha Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='fateha' value="<?=$hijri_data->fateha?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='fateha' value="<?=$hijri_data->fateha??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Khajoor Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='khajoor' value="<?=$hijri_data->khajoor?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='khajoor' value="<?=$hijri_data->khajoor??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Chair Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='chair' value="<?=$hijri_data->chair?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='chair' value="<?=$hijri_data->chair??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Parking Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='parking' value="<?=$hijri_data->parking?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='parking' value="<?=$hijri_data->parking??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="full_niyaz" class="col-sm-2 col-form-label">Pirsu Hub</label>
                     <div class="col-sm-10">
-                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='pirsa' value="<?=$hijri_data->pirsu?>" required />
+                        <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='pirsa' value="<?=$hijri_data->pirsu??''?>" required />
                     </div>
                 </div>
                 <div class="form-group row">

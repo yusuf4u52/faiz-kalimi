@@ -6,6 +6,8 @@
 /**
  * Configuration
  */
+
+DEFINED('VIEW_FUNC') or DEFINE('VIEW_FUNC', 'content_display');
 DEFINED('VIEW_DIR') or DEFINE('VIEW_DIR', 'views');
 DEFINED('VIEW_TEMPLATE') or DEFINE('VIEW_TEMPLATE', '_template.php');
 
@@ -267,15 +269,26 @@ function is_record_found($result)
  * Request handle
  */
 
+function get_base_uri($current_directory) {
+    //Form the website URL. Ex: https://khatmalquran.com
+    $siteURL = getSiteURL();
+    //Parse the request URI ( separate out the URI and Query params )
+    $urls = parse_url($_SERVER['REQUEST_URI']);
+    $path = $urls['path'] ?? '';
+    //Calculate the position for substring
+    $pos = stripos($path, $current_directory) + strlen($current_directory);
+    $base_location = substr($path, 0, $pos);
+    return $siteURL . $base_location;
+} 
 
 function process_the_request($current_directory)
 {
 
-    setAppData('current_dir', $current_directory);
+    // setAppData('current_dir', $current_directory);
 
-    //Form the website URL. Ex: https://khatmalquran.com
-    $siteURL = getSiteURL();
-    setAppData('site_url', $siteURL);
+    // //Form the website URL. Ex: https://khatmalquran.com
+    // $siteURL = getSiteURL();
+    // setAppData('site_url', $siteURL);
 
     //Parse the request URI ( separate out the URI and Query params )
     $urls = parse_url($_SERVER['REQUEST_URI']);
@@ -286,12 +299,18 @@ function process_the_request($current_directory)
     //Calculate the position for substring
     $pos = stripos($path, $current_directory) + strlen($current_directory);
 
-    $base_location = substr($path, 0, $pos);
-    setAppData('base_location', $base_location);
+    // $base_location = substr($path, 0, $pos);
+    // setAppData('base_location', $base_location);
 
 
-    $base_uri = $siteURL . $base_location;
+    // $base_uri = $siteURL . $base_location;
+    $base_uri = get_base_uri($current_directory);
     setAppData('BASE_URI', $base_uri);
+
+    $_directory = basename(__DIR__);
+    $app_base_uri = get_base_uri($_directory);
+    setAppData('APP_BASE_URI', $app_base_uri);
+
 
     $uri_segments = substr($path, $pos);
 

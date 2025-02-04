@@ -1,7 +1,10 @@
 <?php
+DEFINE('SUPER_ADMIN', 'super_admin');
+DEFINE('DATA_ENTRY', 'data_entry');
+DEFINE('TAKHMEENER', 'takhmeen');
+DEFINE('RECEPTION', 'reception');
 
-DEFINE('ROLE', (object) 
-    ['SA' => 'super_admin', 'DE' => 'data_entry', 'TK' => 'takhmeen', 'RC'=>'reception']);
+DEFINE('ROLE', [SUPER_ADMIN, DATA_ENTRY, TAKHMEENER, RECEPTION]);
 
 function is_user_role($role)
 {
@@ -136,7 +139,7 @@ function get_attendees_data_for($hof_id, $hijri_year, $attends = false)
     m.its_id,m.full_name,m.age,m.gender
     FROM its_data m
     LEFT JOIN  kl_shehrullah_attendees sa ON m.its_id = sa.its_id and sa.year = ?
-    WHERE m.hof_id = ?';
+    WHERE m.hof_id = ? and m.mohallah = "Kalimi" ';
 
     $params = [];
     if ($attends) {

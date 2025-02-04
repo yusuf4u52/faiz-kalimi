@@ -1,5 +1,5 @@
 <?php
-if( !is_user_a(ROLE->SA, ROLE->RC, ROLE->DE) ) {
+if( !is_user_a(SUPER_ADMIN, RECEPTION, DATA_ENTRY) ) {
     do_redirect_with_message('/home' , 'Redirected as tried to access unauthorized area.');
 }
 

@@ -8,11 +8,11 @@ DEFINE('AUTH_REDIRECT', '/login');
 DEFINE('SECURE_LANDING_PAGE', 'home');
 DEFINE('OPEN_PAGE_LIST', ['login']);
 DEFINE('THE_SESSION_ID', 'ABCD_5645645646');
-
+DEFINE('VIEW_TEMPLATE', '../_template.php');
 
 require_once './../../fmb/users/connection.php';
 
 
 include_once './../_gui.php';
 include_once './../_dto.php';
-require_once './../_framework.php';
+include_once './../_framework.php';
