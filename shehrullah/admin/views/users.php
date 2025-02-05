@@ -1,5 +1,5 @@
 <?php
-if( !is_user_a(ROLE->SA) ) {
+if( !is_user_a(SUPER_ADMIN) ) {
     do_redirect_with_message('/home' , 'Redirected as tried to access unauthorized area.');
 }
 
@@ -79,9 +79,12 @@ function show_input_user()
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="roles" class="col-sm-2 col-form-label">Roles</label>
+                    <label for="roles" class="col-sm-12 col-form-label">Suggested Roles: <?= implode(' , ' , ROLE) ?></label>                    
+                </div>
+                <div class="form-group row">
+                    <label for="roles" class="col-sm-2 col-form-label">Roles (Comma separated)</label>
                     <div class="col-sm-10">
-                        <input type='text' class='form-control' name='roles' value="<?= $user_data->roles ?>" required />
+                        <input type='text' class='form-control' name='roles' value="<?= $user_data->roles ??'' ?>" required />
                     </div>
                 </div>
                 <div class="form-group row">

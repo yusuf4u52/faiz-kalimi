@@ -11,7 +11,7 @@ function content_display()
     <div class="row">
         <?php
         //superadmin, reception and data entry 
-        if (is_user_a(ROLE->SA, ROLE->RC, ROLE->DE)) { ?>
+        if (is_user_a(SUPER_ADMIN, RECEPTION, DATA_ENTRY)) { ?>
             <div class="col-md-4 col-sm-6 col-12">
                 <div class="card">
                     <div class="card-body">
@@ -30,7 +30,7 @@ function content_display()
             </div>
         <?php }
         //super admin and takhmeen
-        if (is_user_a(ROLE->SA, ROLE->TK)) { ?>
+        if (is_user_a(SUPER_ADMIN, TAKHMEENER)) { ?>
             <div class="col-md-4 col-sm-6 col-12">
                 <div class="card">
                     <div class="card-body">
@@ -49,7 +49,7 @@ function content_display()
             </div>
         <?php }
         //superadmin
-        if (is_user_a(ROLE->SA)) { ?>
+        if (is_user_a(SUPER_ADMIN)) { ?>
             <div class="col-md-4 col-sm-6 col-12">
                 <div class="card">
                     <div class="card-body">

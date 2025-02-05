@@ -1,5 +1,5 @@
 <?php
-if( !is_user_a(ROLE->SA, ROLE->RC, ROLE->DE) ) {
+if( !is_user_a(SUPER_ADMIN, RECEPTION, DATA_ENTRY) ) {
     do_redirect_with_message('/home' , 'Redirected as tried to access unauthorized area.');
 }
 
@@ -11,4 +11,5 @@ if( is_null($en_sabeel) ) {
 }
 
 setAppData('arg1' , do_encrypt($en_sabeel));
+setAppData('print' , true);
 include_once __DIR__ . '/../../views/print-form.php';
