@@ -11,4 +11,5 @@ if( is_null($en_sabeel) ) {
 }
 
 setAppData('arg1' , do_encrypt($en_sabeel));
+setAppData('print' , true);
 include_once __DIR__ . '/../../views/print-form.php';
