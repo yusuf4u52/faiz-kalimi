@@ -109,7 +109,11 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Thali Delivered</div>
-        <?php echo round($values['thalicount'] * 100 / $max_days[0]); ?>%
+        <?php if( $values['thalicount'] != 0 ) {
+          echo round($values['thalicount'] * 100 / $max_days[0]) . '%';
+        } else {
+          echo '0%';        
+        } ?>
         of days
       </li>
     </ul>

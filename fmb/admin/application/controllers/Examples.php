@@ -42,7 +42,7 @@ class Examples extends CI_Controller
 	function transporter_count()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('tzabuawala@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('tzabuawala@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com'))) {
 		} else
 			header("Location: http://kalimijamaatpoona.org/fmb/users/login.php");
 
