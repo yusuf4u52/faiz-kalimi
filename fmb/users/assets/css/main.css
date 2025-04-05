@@ -183,3 +183,9 @@ table.table.dataTable thead > tr > th, table.table.table-striped thead > tr > th
     background-color: #b18e3d;
     color: #FFFFFF;
 }
+
+.input-group-text {
+    background-color: #b18e3d;
+    color: #FFFFFF;
+    border-color: #b18e3d;
+}

@@ -2,6 +2,7 @@
 include('_authCheck.php'); 
 include('_common.php');
 
+$curr_page = basename($_SERVER['PHP_SELF']);
 $query = "SELECT * FROM thalilist LEFT JOIN transporters on thalilist.Transporter = transporters.Name where Email_id = '" . $_SESSION['email'] . "'";
 $values = mysqli_fetch_assoc(mysqli_query($link, $query));
 
@@ -22,34 +23,38 @@ if (is_null($values['Active']) || $values['Active'] == 2) {
 }
 
 // Redirect users to update details page if any details are missing
-if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['wingflat']) || empty($values['society']) || empty($values['Full_Address']))) {
-  header("Location: update_details.php?update_pending_info");
-  exit;
+if($curr_page != 'update_details.php') {
+	if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['wingflat']) || empty($values['society']) || empty($values['Full_Address']))) {
+	  header("Location: update_details.php?update_pending_info");
+	  exit;
+	}
 }
 
 // Check if there is any enabled event that needs users response
-$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_id = '" . $_SESSION['email'] . "'";
-$takesFmb = mysqli_num_rows(mysqli_query($link, $query));
-$result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
-while ($values1 = mysqli_fetch_assoc($result)) {
-  $showToNonFmbOnly = $values1['showtononfmb'];
-  // skip redirects to events for fmb holder if the database flag is set to do so
-  if ($showToNonFmbOnly == 1) {
-    if ($takesFmb == 0 && !isResponseReceived($values1['id'])) {
-      header("Location: events.php");
-      exit;
-    }
-  } else if (!isResponseReceived($values['id'])) {
-    header("Location: events.php");
-    exit;
-  }
+if($curr_page != 'events.php') {
+	$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_id = '" . $_SESSION['email'] . "'";
+	$takesFmb = mysqli_num_rows(mysqli_query($link, $query));
+	$result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
+	while ($values1 = mysqli_fetch_assoc($result)) {
+	  $showToNonFmbOnly = $values1['showtononfmb'];
+	  // skip redirects to events for fmb holder if the database flag is set to do so
+	  if ($showToNonFmbOnly == 1) {
+		if ($takesFmb == 0 && !isResponseReceived($values1['id'])) {
+		  header("Location: events.php");
+		  exit;
+		}
+	  } else if (!isResponseReceived($values['id'])) {
+		header("Location: events.php");
+		exit;
+	  }
+	}
 }
 ?>
 <header class="fmb-header">
     <a href="/fmb/users/index.php"><img class="img-fluid mx-auto d-block my-3" src="assets/img/logo.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="390" height="157" /></a>
-    <nav class="navbar navbar-expand-xl">
+    <nav class="navbar navbar-expand-xxl">
         <div class="container-fluid">
-            <a class="navbar-brand d-xl-none" href="/fmb/users/index.php">FMB (Kalimi Mohalla)</a>
+            <a class="navbar-brand d-xxl-none" href="/fmb/users/index.php">FMB (Kalimi Mohalla)</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headernavbar"
                 aria-controls="headernavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="bi bi-list"></i>
@@ -70,7 +75,7 @@ while ($values1 = mysqli_fetch_assoc($result)) {
                         ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">Start/Stop Backend</a>
+                                aria-expanded="false">Start/Stop Management</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/fmb/users/userstart.php">User Start</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/userstop.php">User Stop</a></li>
@@ -84,11 +89,27 @@ while ($values1 = mysqli_fetch_assoc($result)) {
                         ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">Menu Backend</a>
+                                aria-expanded="false">Menu Management</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/fmb/users/foodlist.php">Food Items</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/menulist.php">Menu List</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/usermenu.php">User Menu</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/userfeedmenu.php">User Feedback</a></li>
+                            </ul>
+                        </li>
+                        <?php
+                    }
+                    ?>
+                    <?php
+                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) {
+                        ?>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">Roti Management</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/fmb/users/rotimaker.php">Roti Maker</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/rotidistribute.php">Distribution</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/rotirecieved.php">Recieved</a></li>
                             </ul>
                         </li>
                         <?php
