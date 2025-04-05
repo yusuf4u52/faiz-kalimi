@@ -118,7 +118,6 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
     }
 
     if (isset($_POST['action']) && $_POST['action'] == 'feedback_menu') {
-        print_r($_POST);
         $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
         if ($user_feedmenu->num_rows > 0) {
             $row = $user_feedmenu->fetch_assoc();
