@@ -22,19 +22,19 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                             <div class="col-12">
                                 <?php if (isset($_GET['action']) && $_GET['action'] == 'add') { ?>
                                     <div class="alert alert-success" role="alert">
-                                        <strong>Roti recieved of <?php echo $_GET['recieved_date']; ?></strong> is added
+                                        <strong>Roti recieved on <?php echo $_GET['recieved_date']; ?></strong> is added
                                         successfully.
                                     </div>
                                 <?php } ?>
                                 <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
                                     <div class="alert alert-success" role="alert">
-                                        <strong>Roti recieved of <?php echo $_GET['recieved_date']; ?></strong> is edited
+                                        <strong>Roti recieved on <?php echo $_GET['recieved_date']; ?></strong> is edited
                                         successfully.
                                     </div>
                                 <?php } ?>
                                 <?php if (isset($_GET['action']) && $_GET['action'] == 'delete') { ?>
                                     <div class="alert alert-success" role="alert">
-                                        <strong>Roti recieved of <?php echo $_GET['recieved_date']; ?></strong> is deleted
+                                        <strong>Roti recieved on <?php echo $_GET['recieved_date']; ?></strong> is deleted
                                         successfully.
                                     </div>
                                 <?php } ?>
@@ -75,8 +75,8 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                             </div>
 
                             <?php $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieved_date` DESC") or die(mysqli_error($link));
-                            $fmb_roti_maker = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name` ASC") or die(mysqli_error($link));
-                            while ($values = mysqli_fetch_assoc($result)) { ?>
+                            while ($values = mysqli_fetch_assoc($result)) {
+                                $fmb_roti_maker = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name` ASC") or die(mysqli_error($link)); ?>
                                 <div class="modal fade" id="editrrecieved-<?php echo $values['id']; ?>" tabindex="-1"
                                     aria-labelledby="editrrecieved-<?php echo $values['id']; ?>-Label" aria-hidden="true">
                                     <div class="modal-dialog">

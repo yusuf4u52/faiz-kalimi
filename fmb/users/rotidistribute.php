@@ -22,19 +22,19 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                             <div class="col-12">
                                 <?php if (isset($_GET['action']) && $_GET['action'] == 'add') { ?>
                                     <div class="alert alert-success" role="alert">
-                                        <strong>Flour & Oil distributed of <?php echo $_GET['distribution_date']; ?></strong> is added
+                                        <strong>Flour & Oil distributed on <?php echo $_GET['distribution_date']; ?></strong> is added
                                         successfully.
                                     </div>
                                 <?php } ?>
                                 <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
                                     <div class="alert alert-success" role="alert">
-                                        <strong>Flour & Oil distributed of <?php echo $_GET['distribution_date']; ?></strong> is edited
+                                        <strong>Flour & Oil distributed on <?php echo $_GET['distribution_date']; ?></strong> is edited
                                         successfully.
                                     </div>
                                 <?php } ?>
                                 <?php if (isset($_GET['action']) && $_GET['action'] == 'delete') { ?>
                                     <div class="alert alert-success" role="alert">
-                                        <strong>Flour & Oil distributed of <?php echo $_GET['distribution_date']; ?></strong> is deleted
+                                        <strong>Flour & Oil distributed on <?php echo $_GET['distribution_date']; ?></strong> is deleted
                                         successfully.
                                     </div>
                                 <?php } ?>
@@ -81,8 +81,8 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                             </div>
 
                             <?php $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `distribution_date` DESC") or die(mysqli_error($link));
-                            $fmb_roti_maker = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name` ASC") or die(mysqli_error($link));
-                            while ($values = mysqli_fetch_assoc($result)) { ?>
+                            while ($values = mysqli_fetch_assoc($result)) { 
+                                $fmb_roti_maker = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name` ASC") or die(mysqli_error($link)); ?>
                                 <div class="modal fade" id="editrdistribute-<?php echo $values['id']; ?>" tabindex="-1"
                                     aria-labelledby="editrdistribute-<?php echo $values['id']; ?>-Label" aria-hidden="true">
                                     <div class="modal-dialog">
