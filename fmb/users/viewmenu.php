@@ -42,14 +42,14 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
     </div>
   <?php } 
   if (isset($_GET['action']) && $_GET['action'] == 'addfeed') { ?>
-    <div class="alert alert-success" role="alert">Thank you for your valuable feedback on thali of
+    <div class="alert alert-success" role="alert">Thank you for your valuable feedback of thali on
       <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong>.
     </div>
   <?php } 
   if (isset($_GET['action']) && $_GET['action'] == 'editfeed') { ?>
-    <div class="alert alert-success" role="alert">Thank you for your valuable feedback on thali of
+    <div class="alert alert-success" role="alert">Thank you for your valuable feedback of thali on
       <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong>.
@@ -198,23 +198,23 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               <div class="col-8">
                 <input type="hidden" class="form-control" name="menu_item[sabji][item]" id="sabji" value="">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[sabji][rating]" id="sabjirating1" value="1" >
+                  <input class="form-check-input sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating1" value="1" >
                   <label class="form-check-label" for="sabjirating1">1</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[sabji][rating]" id="sabjirating2" value="2" >
+                  <input class="form-check-input sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating2" value="2" >
                   <label class="form-check-label" for="sabjirating2">2</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[sabji][rating]" id="sabjirating3" value="3" >
+                  <input class="form-check-input sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating3" value="3" >
                   <label class="form-check-label" for="sabjirating3">3</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[sabji][rating]" id="sabjirating4" value="4" >
+                  <input class="form-check-input sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating4" value="4" >
                   <label class="form-check-label" for="sabjirating4">4</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[sabji][rating]" id="sabjirating5" value="5" >
+                  <input class="form-check-input sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating5" value="5" >
                   <label class="form-check-label" for="sabjirating5">5</label>
                 </div>
               </div>
@@ -224,23 +224,23 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               <div class="col-8">
                 <input type="hidden" class="form-control" name="menu_item[tarkari][item]" id="tarkari" value="">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating1" value="1" >
+                  <input class="form-check-input tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating1" value="1" >
                   <label class="form-check-label" for="tarkarirating1">1</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating2" value="2" >
+                  <input class="form-check-input tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating2" value="2" >
                   <label class="form-check-label" for="tarkarirating2">2</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating3" value="3" >
+                  <input class="form-check-input tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating3" value="3" >
                   <label class="form-check-label" for="tarkarirating3">3</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating4" value="4" >
+                  <input class="form-check-input tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating4" value="4" >
                   <label class="form-check-label" for="tarkarirating4">4</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating5" value="5" >
+                  <input class="form-check-input tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating5" value="5" >
                   <label class="form-check-label" for="tarkarirating5">5</label>
                 </div>
               </div>
@@ -250,23 +250,23 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               <div class="col-8">
                 <input type="hidden" class="form-control" name="menu_item[rice][item]" id="rice" value="">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[rice][rating]" id="ricerating1" value="1" required >
+                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating1" value="1" required >
                   <label class="form-check-label" for="ricerating1">1</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[rice][rating]" id="ricerating2" value="2" required >
+                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating2" value="2" required >
                   <label class="form-check-label" for="ricerating2">2</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[rice][rating]" id="ricerating3" value="3" required >
+                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating3" value="3" required >
                   <label class="form-check-label" for="ricerating3">3</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[rice][rating]" id="ricerating4" value="4" required >
+                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating4" value="4" required >
                   <label class="form-check-label" for="ricerating4">4</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[rice][rating]" id="ricerating5" value="5" required >
+                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating5" value="5" required >
                   <label class="form-check-label" for="ricerating5">5</label>
                 </div>
               </div>
@@ -276,23 +276,23 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               <div class="col-8">
                 <input type="hidden" class="form-control" name="menu_item[roti][item]" id="roti" value="">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[roti][rating]" id="rotirating1" value="1" >
+                  <input class="form-check-input rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating1" value="1" >
                   <label class="form-check-label" for="rotirating1">1</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[roti][rating]" id="rotirating2" value="2" >
+                  <input class="form-check-input rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating2" value="2" >
                   <label class="form-check-label" for="rotirating2">2</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[roti][rating]" id="rotirating3" value="3" >
+                  <input class="form-check-input rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating3" value="3" >
                   <label class="form-check-label" for="rotirating3">3</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[roti][rating]" id="rotirating4" value="4" >
+                  <input class="form-check-input rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating4" value="4" >
                   <label class="form-check-label" for="rotirating4">4</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[roti][rating]" id="rotirating5" value="5" >
+                  <input class="form-check-input rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating5" value="5" >
                   <label class="form-check-label" for="rotirating5">5</label>
                 </div>
               </div>
@@ -302,23 +302,23 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               <div class="col-8">
                 <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[extra][rating]" id="extrarating1" value="1" >
+                  <input class="form-check-input extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating1" value="1" >
                   <label class="form-check-label" for="extrarating1">1</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[extra][rating]" id="extrarating2" value="2" >
+                  <input class="form-check-input extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating2" value="2" >
                   <label class="form-check-label" for="extrarating2">2</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[extra][rating]" id="extrarating3" value="3" >
+                  <input class="form-check-input extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating3" value="3" >
                   <label class="form-check-label" for="extrarating3">3</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[extra][rating]" id="extrarating4" value="4" >
+                  <input class="form-check-input extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating4" value="4" >
                   <label class="form-check-label" for="extrarating4">4</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="menu_item[extra][rating]" id="extrarating5" value="5" >
+                  <input class="form-check-input extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating5" value="5" >
                   <label class="form-check-label" for="extrarating5">5</label>
                 </div>
               </div>

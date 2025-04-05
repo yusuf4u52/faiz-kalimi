@@ -241,6 +241,8 @@
                 feedmenu.find("label#sabji").html(scheds[id].menu_item.sabji.item);
                 if(scheds[id]?.menu_feed?.sabji?.rating !== undefined) {
                   feedmenu.find("input#sabjirating"+scheds[id].menu_feed.sabji.rating).attr('checked','checked');
+                } else {
+                  feedmenu.find("input.sabjirating").removeAttr('checked','checked');
                 }
               }
             } else {
@@ -255,6 +257,7 @@
               editmenu.find('input#sabjiqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
               feedmenu.find("div#sabji").addClass('d-none');
               feedmenu.find("input#sabji").val('');
+              feedmenu.find("label#sabji").html('');
               feedmenu.find("label#sabji").html('');
             }
             if (scheds[id]?.menu_item?.tarkari?.item !== undefined) {
@@ -286,6 +289,8 @@
                 feedmenu.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
                 if(scheds[id]?.menu_feed?.tarkari?.rating !== undefined) {
                   feedmenu.find("input#tarkarirating"+scheds[id].menu_feed.tarkari.rating).attr('checked','checked');
+                } else {
+                  feedmenu.find("input.tarkarirating").removeAttr('checked','checked');
                 }
               }
             } else {
@@ -331,6 +336,8 @@
                 feedmenu.find("label#rice").html(scheds[id].menu_item.rice.item);
                 if(scheds[id]?.menu_feed?.rice?.rating !== undefined) {
                   feedmenu.find("input#ricerating"+scheds[id].menu_feed.rice.rating).attr('checked','checked');
+                } else {
+                  feedmenu.find("input.ricerating").removeAttr('checked','checked');
                 }
               }
             } else {
@@ -378,6 +385,8 @@
                 feedmenu.find("label#roti").html(scheds[id].menu_item.roti.item);
                 if(scheds[id]?.menu_feed?.roti?.rating !== undefined) {
                   feedmenu.find("input#rotirating"+scheds[id].menu_feed.roti.rating).attr('checked','checked');
+                } else {
+                  feedmenu.find("input.rotirating").removeAttr('checked','checked');
                 }
               }
             } else {
@@ -407,6 +416,8 @@
                 feedmenu.find("label#extra").html(scheds[id].menu_item.extra.item);
                 if(scheds[id]?.menu_feed?.extra?.rating !== undefined) {
                   feedmenu.find("input#extrarating"+scheds[id].menu_feed.extra.rating).attr('checked','checked');
+                } else {
+                  feedmenu.find("input.extrarating").removeAttr('checked','checked');
                 }
               }
             } else {
@@ -422,6 +433,8 @@
             }
             if (scheds[id]?.feedback !== undefined) {
               feedmenu.find("textarea#feedback").val(scheds[id].feedback);
+            } else {
+              feedmenu.find("textarea#feedback").val('');
             }
             if (CurrentDate > GivenDate && CurrentDate < MenuDate) {
               editmenu.find("button.edit-menu").addClass('d-none');
