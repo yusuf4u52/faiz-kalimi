@@ -23,7 +23,7 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
         $CurrentDate = date('Y-m-d H:i:s');
     }
 
-    if ($CurrentDate < $GivenDate) {
+    if (!empty($CurrentDate) && !empty($GivenDate) && $CurrentDate < $GivenDate) {
         if(isset($_POST['status'])) {
             $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $menu_date . "'") or die(mysqli_error($link));
             if ($menu_item->num_rows > 0) {
@@ -112,8 +112,25 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
     if (isset($_POST['action']) && $_POST['action'] == 'change_menu') {
         header("Location: /fmb/users/index.php?action=" . $action . "&date=" . $menu_date);
     }
+
     if (isset($_POST['action']) && $_POST['action'] == 'admin_change_menu') {
         header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thali'] . "&tiffinno=" . $_POST['tiffinno'] .  "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=" . $action . "&date=" . $menu_date);
+    }
+
+    if (isset($_POST['action']) && $_POST['action'] == 'feedback_menu') {
+        print_r($_POST);
+        $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
+        if ($user_feedmenu->num_rows > 0) {
+            $row = $user_feedmenu->fetch_assoc();
+            $sql = "UPDATE `user_feedmenu` SET `menu_feed` = '" . serialize($_POST['menu_item']) . "', `feedback` = '" . $_POST['feedback'] . "' WHERE `id` = '" . $row['id'] . "'";
+            $action = 'editfeed';
+        } else {
+            $sql = "INSERT INTO `user_feedmenu` (`thali`,`menu_date`,`menu_feed`,`feedback`) VALUES ('" . $_POST['thali'] . "', '" . $menu_date . "', '" . serialize($_POST['menu_item']) . "', '" . $_POST['feedback'] . "')";
+            $action = 'addfeed';
+        }
+        mysqli_query($link, $sql) or die(mysqli_error($link));
+        $date = $menu_date;
+        header("Location: /fmb/users/index.php?action=" . $action . "&date=" . $menu_date);
     }
 }
 ?>
