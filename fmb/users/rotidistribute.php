@@ -141,9 +141,8 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                         </div>
                                     </div>
                                 </div>
-                            <?php }
-                            mysqli_free_result($result);
-                            mysqli_free_result($fmb_roti_maker); ?>
+                            <?php mysqli_free_result($fmb_roti_maker); }
+                            mysqli_free_result($result); ?>
 
                             <?php $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `distribution_date` DESC") or die(mysqli_error($link));
                             while ($values = mysqli_fetch_assoc($result)) { ?>
