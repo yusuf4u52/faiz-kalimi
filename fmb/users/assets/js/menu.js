@@ -161,203 +161,294 @@
       events: events,
       eventClick: function (info) {
         $("#changemenu")[0].reset();
-        var details = $("#editmenu");
+        var editmenu = $("#editmenu");
+        var feedmenu = $("#feedbackmenu");
         var id = info.event.id;
         if (!!scheds[id]) {
-          console.log(scheds[id]?.status);
-          details.find("input#menu_id").val(id);
-          details.find('.modal-body #validate').remove();
+          editmenu.find("input#menu_id").val(id);
+          editmenu.find('.modal-body #validate').remove();
+          feedmenu.find("input#menu_id").val(id);
+          feedmenu.find('.modal-body #validate').remove();
           var GivenDate = new Date(scheds[id].menu_date).toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
           GivenDate = new Date(GivenDate);
           GivenDate.setDate(GivenDate.getDate() - 1);
           GivenDate.setHours(20, 0, 0, 0);
+          var MenuDate = new Date(scheds[id].menu_date).toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+          MenuDate = new Date(MenuDate);
+          MenuDate.setHours(13, 0, 0, 0);
+          var Sunday = new Date(scheds[id].menu_date).toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+          Sunday = new Date(Sunday);
+          Sunday.setDate(Sunday.getDate() + (7 - Sunday.getDay()) % 7);
+          Sunday.setHours(20, 0, 0, 0);
           var CurrentDate = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
           CurrentDate = new Date(CurrentDate);
           const menu_date = new Date(scheds[id].menu_date);
           if (scheds[id]?.menu_type == 'miqaat') {
-            details.find(".modal-title").html('Miqaat on <strong>' + menu_date.toDateString() + '</strong>');
-            details.find("div#status").addClass('d-none');
-            details.find("div#thali").addClass('d-none');
-            details.find("button.edit-menu").addClass('d-none');
-            details.find("button.rsvp-end").addClass('d-none');
+            editmenu.find(".modal-title").html('Miqaat on <strong>' + menu_date.toDateString() + '</strong>');
+            editmenu.find("div#status").addClass('d-none');
+            editmenu.find("div#thali").addClass('d-none');
+            editmenu.find("button.edit-menu").addClass('d-none');
+            editmenu.find("button.rsvp-end").addClass('d-none');
             if (scheds[id]?.menu_item?.miqaat !== undefined) {
-              details.find("div#miqaat").removeClass('d-none');
-              details.find("div#miqaat").html('<h3>' + scheds[id].menu_item.miqaat + '</h3>');
+              editmenu.find("div#miqaat").removeClass('d-none');
+              editmenu.find("div#miqaat").html('<h3>' + scheds[id].menu_item.miqaat + '</h3>');
             }
           }
           if (scheds[id]?.menu_type == 'thaali') {
-            details.find(".modal-title").html('View/Edit Menu of <strong>' +   menu_date.toDateString() + '</strong>');
-            details.find("div#miqaat").addClass('d-none');
-            details.find("div#status").removeClass('d-none');
-            details.find("div#thali").removeClass('d-none');
+            editmenu.find(".modal-title").html('View/Edit Menu of <strong>' +   menu_date.toDateString() + '</strong>');
+            editmenu.find("div#miqaat").addClass('d-none');
+            editmenu.find("div#status").removeClass('d-none');
+            editmenu.find("div#thali").removeClass('d-none');
+            feedmenu.find(".modal-title").html('Feedback Menu of <strong>' +   menu_date.toDateString() + '</strong>');
             if(scheds[id]?.status == 'stop') {
-              details.find("input#status").removeAttr('checked', 'checked');
-              details.find("label#status").html('Stop');
-              details.find("label#status").attr('style','color:#ff0000');
-              details.find("div#thali").addClass('d-none');
+              editmenu.find("input#status").removeAttr('checked', 'checked');
+              editmenu.find("label#status").html('Stop');
+              editmenu.find("label#status").attr('style','color:#ff0000');
+              editmenu.find("div#thali").addClass('d-none');
             } else {
-              details.find("input#status").attr('checked', 'checked');
-              details.find("label#status").html('Start');
-              details.find("label#status").attr('style','color:#3C5A05');
-              details.find("div#thali").removeClass('d-none');
+              editmenu.find("input#status").attr('checked', 'checked');
+              editmenu.find("label#status").html('Start');
+              editmenu.find("label#status").attr('style','color:#3C5A05');
+              editmenu.find("div#thali").removeClass('d-none');
+              editmenu.find("button.feedback").removeClass('d-none');
             }
             if (scheds[id]?.menu_item?.sabji?.item !== undefined) {
-              details.find("div#sabji").removeClass('d-none');
-              details.find("input#sabji").removeAttr('disabled', 'disabled');
-              details.find("input#sabjiqty").removeAttr('disabled', 'disabled');
-              details.find("label#sabji").html(scheds[id].menu_item.sabji.item);
-              details.find("input#sabji").val(scheds[id].menu_item.sabji.item);
-              details.find("input#sabjiqty").val(scheds[id].menu_item.sabji.qty);
+              editmenu.find("div#sabji").removeClass('d-none');
+              editmenu.find("input#sabji").removeAttr('disabled', 'disabled');
+              editmenu.find("input#sabjiqty").removeAttr('disabled', 'disabled');
+              editmenu.find("label#sabji").html(scheds[id].menu_item.sabji.item);
+              editmenu.find("input#sabji").val(scheds[id].menu_item.sabji.item);
+              editmenu.find("input#sabjiqty").val(scheds[id].menu_item.sabji.qty);
               if (scheds[id]?.max_item?.sabji?.item !== undefined) {
                 if(scheds[id]?.menu_item?.sabji?.qty < scheds[id]?.max_item?.sabji?.qty) {
-                  details.find('input#sabjiqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
+                  editmenu.find('input#sabjiqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
                 } else {
-                  details.find('input#sabjiqty').parent().find(".btn-plus").attr('disabled','disabled');
+                  editmenu.find('input#sabjiqty').parent().find(".btn-plus").attr('disabled','disabled');
                 }
                 if(scheds[id]?.menu_item?.sabji?.qty > 0 ) {
-                  details.find('input#sabjiqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
+                  editmenu.find('input#sabjiqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
                 } else {
-                  details.find('input#sabjiqty').parent().find(".btn-minus").attr('disabled','disabled');
+                  editmenu.find('input#sabjiqty').parent().find(".btn-minus").attr('disabled','disabled');
                 }
-                details.find("input#sabjiqty").attr('max', scheds[id].max_item.sabji.qty);
+                editmenu.find("input#sabjiqty").attr('max', scheds[id].max_item.sabji.qty);
               } else {
-                details.find('input#sabjiqty').parent().find(".btn-plus").attr('disabled','disabled');
-                details.find("input#sabjiqty").attr('max', scheds[id].menu_item.sabji.qty);
+                editmenu.find('input#sabjiqty').parent().find(".btn-plus").attr('disabled','disabled');
+                editmenu.find("input#sabjiqty").attr('max', scheds[id].menu_item.sabji.qty);
+              }
+              if(scheds[id]?.menu_item?.sabji?.qty != 0) {
+                feedmenu.find("div#sabji").removeClass('d-none');
+                feedmenu.find("input#sabji").val(scheds[id].menu_item.sabji.item);
+                feedmenu.find("label#sabji").html(scheds[id].menu_item.sabji.item);
+                if(scheds[id]?.menu_feed?.sabji?.rating !== undefined) {
+                  feedmenu.find("input#sabjirating"+scheds[id].menu_feed.sabji.rating).attr('checked','checked');
+                }
               }
             } else {
-              details.find("div#sabji").addClass('d-none');
-              details.find("input#sabji").attr('disabled', 'disabled');
-              details.find("input#sabjiqty").attr('disabled', 'disabled');
-              details.find("label#sabji").html('');
-              details.find("input#sabji").val('');
-              details.find("input#sabjiqty").val('');
-              details.find("input#sabjiqty").removeAttr('max');
-              details.find('input#sabjiqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
-              details.find('input#sabjiqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
+              editmenu.find("div#sabji").addClass('d-none');
+              editmenu.find("input#sabji").attr('disabled', 'disabled');
+              editmenu.find("input#sabjiqty").attr('disabled', 'disabled');
+              editmenu.find("label#sabji").html('');
+              editmenu.find("input#sabji").val('');
+              editmenu.find("input#sabjiqty").val('');
+              editmenu.find("input#sabjiqty").removeAttr('max');
+              editmenu.find('input#sabjiqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
+              editmenu.find('input#sabjiqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
+              feedmenu.find("div#sabji").addClass('d-none');
+              feedmenu.find("input#sabji").val('');
+              feedmenu.find("label#sabji").html('');
             }
             if (scheds[id]?.menu_item?.tarkari?.item !== undefined) {
-              details.find("div#tarkari").removeClass('d-none');
-              details.find("input#tarkari").removeAttr('disabled', 'disabled');
-              details.find("input#tarkariqty").removeAttr('disabled', 'disabled');
-              details.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
-              details.find("input#tarkari").val(scheds[id].menu_item.tarkari.item);
-              details.find("input#tarkariqty").val(scheds[id].menu_item.tarkari.qty);
+              editmenu.find("div#tarkari").removeClass('d-none');
+              editmenu.find("input#tarkari").removeAttr('disabled', 'disabled');
+              editmenu.find("input#tarkariqty").removeAttr('disabled', 'disabled');
+              editmenu.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
+              editmenu.find("input#tarkari").val(scheds[id].menu_item.tarkari.item);
+              editmenu.find("input#tarkariqty").val(scheds[id].menu_item.tarkari.qty);
               if (scheds[id]?.max_item?.tarkari?.item !== undefined) {
                 if(scheds[id]?.menu_item?.tarkari?.qty < scheds[id]?.max_item?.tarkari?.qty) {
-                  details.find('input#tarkariqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
+                  editmenu.find('input#tarkariqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
                 } else {
-                  details.find('input#tarkariqty').parent().find(".btn-plus").attr('disabled','disabled');
+                  editmenu.find('input#tarkariqty').parent().find(".btn-plus").attr('disabled','disabled');
                 }
                 if(scheds[id]?.menu_item?.tarkari?.qty > 0 ) {
-                  details.find('input#tarkariqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
+                  editmenu.find('input#tarkariqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
                 } else {
-                  details.find('input#tarkariqty').parent().find(".btn-minus").attr('disabled','disabled');
+                  editmenu.find('input#tarkariqty').parent().find(".btn-minus").attr('disabled','disabled');
                 }
-                details.find("input#tarkariqty").attr('max', scheds[id].max_item.tarkari.qty);
+                editmenu.find("input#tarkariqty").attr('max', scheds[id].max_item.tarkari.qty);
               } else {
-                details.find('input#tarkariqty').parent().find(".btn-plus").attr('disabled','disabled');
-                details.find("input#tarkariqty").attr('max', scheds[id].menu_item.tarkari.qty);
+                editmenu.find('input#tarkariqty').parent().find(".btn-plus").attr('disabled','disabled');
+                editmenu.find("input#tarkariqty").attr('max', scheds[id].menu_item.tarkari.qty);
+              }
+              if(scheds[id]?.menu_item?.tarkari?.qty != 0) {
+                feedmenu.find("div#tarkari").removeClass('d-none');
+                feedmenu.find("input#tarkari").val(scheds[id].menu_item.tarkari.item);
+                feedmenu.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
+                if(scheds[id]?.menu_feed?.tarkari?.rating !== undefined) {
+                  feedmenu.find("input#tarkarirating"+scheds[id].menu_feed.tarkari.rating).attr('checked','checked');
+                }
               }
             } else {
-              details.find("div#tarkari").addClass('d-none');
-              details.find("input#tarkari").attr('disabled', 'disabled');
-              details.find("input#tarkariqty").attr('disabled', 'disabled');
-              details.find("label#tarkari").html('');
-              details.find("input#tarkari").val('');
-              details.find("input#tarkariqty").val('');
-              details.find("input#tarkari").removeAttr('max');
-              details.find('input#tarkariqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
-              details.find('input#tarkariqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
+              editmenu.find("div#tarkari").addClass('d-none');
+              editmenu.find("input#tarkari").attr('disabled', 'disabled');
+              editmenu.find("input#tarkariqty").attr('disabled', 'disabled');
+              editmenu.find("label#tarkari").html('');
+              editmenu.find("input#tarkari").val('');
+              editmenu.find("input#tarkariqty").val('');
+              editmenu.find("input#tarkari").removeAttr('max');
+              editmenu.find('input#tarkariqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
+              editmenu.find('input#tarkariqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
+              feedmenu.find("div#tarkari").addClass('d-none');
+              feedmenu.find("input#tarkari").val('');
+              feedmenu.find("label#tarkari").html('');
             }
             if (scheds[id]?.menu_item?.rice?.item !== undefined) {
-              details.find("div#rice").removeClass('d-none');
-              details.find("input#rice").removeAttr('disabled', 'disabled');
-              details.find("input#riceqty").removeAttr('disabled', 'disabled');
-              details.find("label#rice").html(scheds[id].menu_item.rice.item);
-              details.find("input#rice").val(scheds[id].menu_item.rice.item);
-              details.find("input#riceqty").val(scheds[id].menu_item.rice.qty);
+              editmenu.find("div#rice").removeClass('d-none');
+              editmenu.find("input#rice").removeAttr('disabled', 'disabled');
+              editmenu.find("input#riceqty").removeAttr('disabled', 'disabled');
+              editmenu.find("label#rice").html(scheds[id].menu_item.rice.item);
+              editmenu.find("input#rice").val(scheds[id].menu_item.rice.item);
+              editmenu.find("input#riceqty").val(scheds[id].menu_item.rice.qty);
               if (scheds[id]?.max_item?.rice?.item !== undefined) {
                 if(scheds[id]?.menu_item?.rice?.qty < scheds[id]?.max_item?.rice?.qty) {
-                  details.find('input#riceqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
+                  editmenu.find('input#riceqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
                 } else {
-                  details.find('input#riceqty').parent().find(".btn-plus").attr('disabled','disabled');
+                  editmenu.find('input#riceqty').parent().find(".btn-plus").attr('disabled','disabled');
                 } 
                 if(scheds[id]?.menu_item?.rice?.qty > 0) {
-                  details.find('input#riceqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
+                  editmenu.find('input#riceqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
                 } else {
-                  details.find('input#riceqty').parent().find(".btn-minus").attr('disabled','disabled');
+                  editmenu.find('input#riceqty').parent().find(".btn-minus").attr('disabled','disabled');
                 }
-                details.find("input#riceqty").attr('max', scheds[id].max_item.rice.qty);
+                editmenu.find("input#riceqty").attr('max', scheds[id].max_item.rice.qty);
               } else {
-                details.find('input#riceqty').parent().find(".btn-plus").attr('disabled','disabled');
-                details.find("input#riceqty").attr('max', scheds[id].menu_item.rice.qty);
+                editmenu.find('input#riceqty').parent().find(".btn-plus").attr('disabled','disabled');
+                editmenu.find("input#riceqty").attr('max', scheds[id].menu_item.rice.qty);
+              }
+              if(scheds[id]?.menu_item?.rice?.qty != 0) {
+                feedmenu.find("div#rice").removeClass('d-none');
+                feedmenu.find("input#rice").val(scheds[id].menu_item.rice.item);
+                feedmenu.find("label#rice").html(scheds[id].menu_item.rice.item);
+                if(scheds[id]?.menu_feed?.rice?.rating !== undefined) {
+                  feedmenu.find("input#ricerating"+scheds[id].menu_feed.rice.rating).attr('checked','checked');
+                }
               }
             } else {
-              details.find("div#rice").addClass('d-none');
-              details.find("input#rice").attr('disabled', 'disabled');
-              details.find("input#riceqty").attr('disabled', 'disabled');
-              details.find("label#rice").html('');
-              details.find("input#rice").val('');
-              details.find("input#riceqty").val('');
-              details.find("input#riceqty").removeAttr('max');
-              details.find('input#riceqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
-              details.find('input#riceqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
+              editmenu.find("div#rice").addClass('d-none');
+              editmenu.find("input#rice").attr('disabled', 'disabled');
+              editmenu.find("input#riceqty").attr('disabled', 'disabled');
+              editmenu.find("label#rice").html('');
+              editmenu.find("input#rice").val('');
+              editmenu.find("input#riceqty").val('');
+              editmenu.find("input#riceqty").removeAttr('max');
+              editmenu.find('input#riceqty').parent().find(".btn-minus").removeAttr('disabled','disabled');
+              editmenu.find('input#riceqty').parent().find(".btn-plus").removeAttr('disabled','disabled');
+              feedmenu.find("div#rice").addClass('d-none');
+              feedmenu.find("input#rice").val('');
+              feedmenu.find("label#rice").html('');
             }
             if (scheds[id]?.menu_item?.roti?.item !== undefined) {
-              details.find("div#roti").removeClass('d-none');
-              details.find("input#roti").removeAttr('disabled', 'disabled');
-              details.find("input#rotiqty").removeAttr('disabled', 'disabled');
-              details.find("label#roti").html(scheds[id].menu_item.roti.item);
-              details.find("input#roti").val(scheds[id].menu_item.roti.item);
+              editmenu.find("div#roti").removeClass('d-none');
+              editmenu.find("input#roti").removeAttr('disabled', 'disabled');
+              editmenu.find("input#rotiqty").removeAttr('disabled', 'disabled');
+              editmenu.find("label#roti").html(scheds[id].menu_item.roti.item);
+              editmenu.find("input#roti").val(scheds[id].menu_item.roti.item);
+              feedmenu.find("div#roti").removeClass('d-none');
+              feedmenu.find("input#roti").val(scheds[id].menu_item.roti.item);
+              feedmenu.find("label#roti").html(scheds[id].menu_item.roti.item);
               if (scheds[id]?.menu_item?.roti?.qty !== undefined) {
-                details.find("input#rotiqty").val(scheds[id].menu_item.roti.qty);
+                editmenu.find("input#rotiqty").val(scheds[id].menu_item.roti.qty);
               } else {
                 if (scheds[id].thalisize == 'Mini') {
-                  details.find("input#rotiqty").val(scheds[id].menu_item.roti.tqty);
+                  editmenu.find("input#rotiqty").val(scheds[id].menu_item.roti.tqty);
                 }
                 if (scheds[id].thalisize == 'Small') {
-                  details.find("input#rotiqty").val(scheds[id].menu_item.roti.sqty);
+                  editmenu.find("input#rotiqty").val(scheds[id].menu_item.roti.sqty);
                 }
                 if (scheds[id].thalisize == 'Medium') {
-                  details.find("input#rotiqty").val(scheds[id].menu_item.roti.mqty);
+                  editmenu.find("input#rotiqty").val(scheds[id].menu_item.roti.mqty);
                 }
                 if (scheds[id].thalisize == 'Large') {
-                  details.find("input#rotiqty").val(scheds[id].menu_item.roti.lqty);
+                  editmenu.find("input#rotiqty").val(scheds[id].menu_item.roti.lqty);
+                }
+              }
+              if(scheds[id]?.menu_item?.roti?.qty != 0) {
+                feedmenu.find("div#roti").removeClass('d-none');
+                feedmenu.find("input#roti").val(scheds[id].menu_item.roti.item);
+                feedmenu.find("label#roti").html(scheds[id].menu_item.roti.item);
+                if(scheds[id]?.menu_feed?.roti?.rating !== undefined) {
+                  feedmenu.find("input#rotirating"+scheds[id].menu_feed.roti.rating).attr('checked','checked');
                 }
               }
             } else {
-              details.find("div#roti").addClass('d-none');
-              details.find("input#roti").attr('disabled', 'disabled');
-              details.find("input#rotiqty").attr('disabled', 'disabled');
-              details.find("label#roti").html('');
-              details.find("input#roti").val('');
-              details.find("input#rotiqty").val('');
+              editmenu.find("div#roti").addClass('d-none');
+              editmenu.find("input#roti").attr('disabled', 'disabled');
+              editmenu.find("input#rotiqty").attr('disabled', 'disabled');
+              editmenu.find("label#roti").html('');
+              editmenu.find("input#roti").val('');
+              editmenu.find("input#rotiqty").val('');
+              feedmenu.find("div#roti").addClass('d-none');
+              feedmenu.find("input#roti").val('');
+              feedmenu.find("label#roti").html('');
             }
             if (scheds[id]?.menu_item?.extra?.item !== undefined) {
-              details.find("div#extra").removeClass('d-none');
-              details.find("input#extra").removeAttr('disabled', 'disabled');
-              details.find("input#extraqty").removeAttr('disabled', 'disabled');
-              details.find("label#extra").html(scheds[id].menu_item.extra.item);
-              details.find("input#extra").val(scheds[id].menu_item.extra.item);
-              details.find("input#extraqty").val(scheds[id].menu_item.extra.qty);
+              editmenu.find("div#extra").removeClass('d-none');
+              editmenu.find("input#extra").removeAttr('disabled', 'disabled');
+              editmenu.find("input#extraqty").removeAttr('disabled', 'disabled');
+              editmenu.find("label#extra").html(scheds[id].menu_item.extra.item);
+              editmenu.find("input#extra").val(scheds[id].menu_item.extra.item);
+              editmenu.find("input#extraqty").val(scheds[id].menu_item.extra.qty);
+              feedmenu.find("div#extra").removeClass('d-none');
+              feedmenu.find("input#extra").val(scheds[id].menu_item.extra.item);
+              feedmenu.find("label#extra").html(scheds[id].menu_item.extra.item);
+              if(scheds[id]?.menu_item?.extra?.qty != 0) {
+                feedmenu.find("div#extra").removeClass('d-none');
+                feedmenu.find("input#extra").val(scheds[id].menu_item.extra.item);
+                feedmenu.find("label#extra").html(scheds[id].menu_item.extra.item);
+                if(scheds[id]?.menu_feed?.extra?.rating !== undefined) {
+                  feedmenu.find("input#extrarating"+scheds[id].menu_feed.extra.rating).attr('checked','checked');
+                }
+              }
             } else {
-              details.find("div#extra").addClass('d-none');
-              details.find("input#extra").attr('disabled', 'disabled');
-              details.find("input#extraqty").attr('disabled', 'disabled');
-              details.find("label#extra").html('');
-              details.find("input#extra").val('');
-              details.find("input#extraqty").val('');
+              editmenu.find("div#extra").addClass('d-none');
+              editmenu.find("input#extra").attr('disabled', 'disabled');
+              editmenu.find("input#extraqty").attr('disabled', 'disabled');
+              editmenu.find("label#extra").html('');
+              editmenu.find("input#extra").val('');
+              editmenu.find("input#extraqty").val('');
+              feedmenu.find("div#extra").addClass('d-none');
+              feedmenu.find("input#extra").val('');
+              feedmenu.find("label#extra").html('');
             }
-            if (CurrentDate > GivenDate) {
-              details.find("button.edit-menu").addClass('d-none');
-              details.find("button.rsvp-end").removeClass('d-none');
+            if (scheds[id]?.feedback !== undefined) {
+              feedmenu.find("textarea#feedback").val(scheds[id].feedback);
+            }
+            if (CurrentDate > GivenDate && CurrentDate < MenuDate) {
+              editmenu.find("button.edit-menu").addClass('d-none');
+              editmenu.find("button.feedback").addClass('d-none');
+              editmenu.find("button.rsvp-end").removeClass('d-none');
+            } else if(CurrentDate > MenuDate) {
+              editmenu.find("button.edit-menu").addClass('d-none');
+              if(scheds[id]?.status == 'stop') {
+                editmenu.find("button.feedback").addClass('d-none');
+                editmenu.find("button.rsvp-end").removeClass('d-none');
+              } else {
+                editmenu.find("button.feedback").removeClass('d-none');
+                editmenu.find("button.rsvp-end").addClass('d-none');
+              }
             } else {
-              details.find("button.edit-menu").removeClass('d-none');
-              details.find("button.rsvp-end").addClass('d-none');
+              editmenu.find("button.edit-menu").removeClass('d-none');
+              editmenu.find("button.rsvp-end").addClass('d-none');
+              editmenu.find("button.feedback").addClass('d-none');
+            }
+            if (CurrentDate > Sunday) {
+              feedmenu.find("button.submit-feedback").addClass('d-none');
+            } else {
+              feedmenu.find("button.submit-feedback").removeClass('d-none');
             }
           }
-          details.find("#edit").attr("data-id", id);
-          details.modal("show");
+          editmenu.find("#edit").attr("data-id", id);
+          editmenu.modal("show");
         } else {
           alert("Event is undefined");
         }

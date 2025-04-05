@@ -29,6 +29,13 @@ $rights = array(
 		"/fmb/users/menulist.php",
 		"/fmb/users/savemenu.php",
 		"/fmb/users/usermenu.php",
+		"/fmb/users/userfeedmenu.php",
+		"/fmb/users/rotimaker.php",
+		"/fmb/users/savermaker.php",
+		"/fmb/users/rotidistribute.php",
+		"/fmb/users/saverdistribute.php",
+		"/fmb/users/rotirecieved.php",
+		"/fmb/users/saverrecieved.php",
 		"/fmb/users/pendingactions.php",
 		"/fmb/users/_stop_thali_admin.php",
 		"/fmb/sms/index.php"
@@ -62,10 +69,12 @@ if ($row = mysqli_fetch_assoc($sql)) {
 	if ($row['role'] !== 'superadmin') {
 		if (!in_array($requet_path, $rights[$row['role']]) && !in_array($requet_path, $rights['all'])) {
 			header("Location: /fmb/users/index.php");
+			//exit;
 		}
 	}
 } else if (!in_array($requet_path, $rights['all'])) {
 	echo "You are not an authorized user.";
 	header("Location: /fmb/users/index.php");
+	//exit;
 }
 ?>
