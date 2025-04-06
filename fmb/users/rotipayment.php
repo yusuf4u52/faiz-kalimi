@@ -11,7 +11,11 @@ include('navbar.php');
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12">
-                                <h2 class="mb-3">Payment</h2>
+                                <?php if (isset($_GET['start_date']) && isset($_GET['end_date'])) { ?>
+                                    <h2 class="mb-3">Payment from <?php echo date('d-m-Y', strtotime($_GET['start_date'])); ?> to <?php echo date('d-m-Y', strtotime($_GET['end_date'])); ?></h2>
+                                <?php } else { ?>   
+                                    <h2 class="mb-3">Payment Module</h2>
+                                <?php } ?>
                             </div>
                         </div>
                         <div class="row">
