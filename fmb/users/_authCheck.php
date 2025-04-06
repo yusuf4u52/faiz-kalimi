@@ -36,13 +36,15 @@ $rights = array(
 		"/fmb/users/saverdistribute.php",
 		"/fmb/users/rotirecieved.php",
 		"/fmb/users/saverrecieved.php",
+		"/fmb/users/rotipayment.php",
 		"/fmb/users/pendingactions.php",
 		"/fmb/users/_stop_thali_admin.php",
 		"/fmb/sms/index.php"
 	),
 	"staff" => array(
 		"/fmb/users/thalisearch.php",
-		"/fmb/users/_payhoob.php"
+		"/fmb/users/_payhoob.php",
+		"/fmb/users/rotipayment.php",
 	),
 	"all" => array(
 		"/fmb/users/index.php",

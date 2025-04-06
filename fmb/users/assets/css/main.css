@@ -122,6 +122,10 @@ body {
     background-color: rgba(177, 142, 61, 0.9);
 }
 
+.fc .fc-toolbar-title {
+    text-align: center;
+}
+
 .fc .fc-daygrid-day.fc-day-today {
     background-color: rgba(177, 142, 61, 0.9);
     color: #FFFFFF;

@@ -80,6 +80,11 @@
         }
     });
 
+    $('#rotipayment .input-daterange').datepicker ({
+        autoclose: true,
+        daysOfWeekDisabled: 0
+    });
+
     $('[data-key="LazyLoad" ]').removeClass("hidden");
     var els = $(".gregdate");
     for (var i = 0; i < els.length; i++) {
