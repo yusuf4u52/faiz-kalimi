@@ -83,20 +83,45 @@ if (isset($_GET['menu_date'])) {
                                                             <tr>
                                                                 <td style="text-align:left"><?php echo $row['Thali']; ?></td>
                                                                 <td style="text-align:left"><?php echo $row['tiffinno']; ?></td>
-                                                                <?php if (!empty($user_menu_item['sabji']['item'])) {
-                                                                    echo '<td style="text-align:left">' . $user_menu_item['sabji']['rating'] . '</td>';
+                                                                <?php if (!empty($menu_item['sabji']['item'])) {
+                                                                    if(!empty($user_menu_item['sabji']['rating'])) {
+                                                                        $sabjirating = $user_menu_item['sabji']['rating'];
+                                                                    } else {
+                                                                        $sabjirating = 'NA';
+                                                                    }
+                                                                    echo '<td style="text-align:left">' . $sabjirating . '</td>';
                                                                 }
-                                                                if (!empty($user_menu_item['tarkari']['item'])) {
-                                                                    echo '<td style="text-align:left">' . $user_menu_item['tarkari']['rating'] . '</td>';
+                                                                if (!empty($menu_item['tarkari']['item'])) {
+                                                                    if(!empty($user_menu_item['tarkari']['rating'])) {
+                                                                        $tarkarirating = $user_menu_item['tarkari']['rating'];
+                                                                    } else {
+                                                                        $tarkarirating = 'NA';
+                                                                    }
+                                                                    echo '<td style="text-align:left">' . $tarkarirating . '</td>';
                                                                 }
-                                                                if (!empty($user_menu_item['rice']['item'])) {
-                                                                    echo '<td style="text-align:left">' . $user_menu_item['rice']['rating'] . '</td>';
+                                                                if (!empty($menu_item['rice']['item'])) {
+                                                                    if(!empty($user_menu_item['rice']['rating'])) {
+                                                                        $ricerating = $user_menu_item['rice']['rating'];
+                                                                    } else {
+                                                                        $ricerating = 'NA';
+                                                                    }
+                                                                    echo '<td style="text-align:left">' . $ricerating . '</td>';
                                                                 } 
-                                                                if (!empty($user_menu_item['roti']['item'])) {
-                                                                    echo '<td style="text-align:left">' . $user_menu_item['roti']['rating'] . '</td>';
+                                                                if (!empty($menu_item['roti']['item'])) {
+                                                                    if(!empty($user_menu_item['roti']['rating'])) {
+                                                                        $rotirating = $user_menu_item['roti']['rating'];
+                                                                    } else {
+                                                                        $rotirating = 'NA';
+                                                                    }
+                                                                    echo '<td style="text-align:left">' . $rotirating . '</td>';
                                                                 }
-                                                                if (!empty($user_menu_item['extra']['item'])) {
-                                                                    echo '<td style="text-align:left">' . $user_menu_item['extra']['rating'] . '</td>';
+                                                                if (!empty($menu_item['extra']['item'])) {
+                                                                    if(!empty($user_menu_item['extra']['rating'])) {
+                                                                        $extrarating = $user_menu_item['extra']['rating'];
+                                                                    } else {
+                                                                        $extrarating = 'NA';
+                                                                    }
+                                                                    echo '<td style="text-align:left">' . $extrarating . '</td>';
                                                                 } ?>
                                                                 <td><?php echo $row_user['feedback']; ?></td>
                                                             </tr>
