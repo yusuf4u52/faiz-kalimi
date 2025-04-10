@@ -9,13 +9,16 @@ function initial_processing()
     $en_sabeel = getAppData('arg1');
     $sabeel = do_decrypt($en_sabeel);
 
+    //echo $sabeel;
+
     $sabeel_data = get_thaalilist_data($sabeel);
     if (is_null($sabeel_data)) {
         do_redirect('\input-sabeel');
     }
+        
     setAppData('sabeel_data', $sabeel_data);
 
-    $hof_id = $sabeel_data->ITS_No;
+    $hof_id = $sabeel_data->ITS_No;    
     setAppData('hof_id', $hof_id);
 
     $hijri_year = get_current_hijri_year();
@@ -23,7 +26,7 @@ function initial_processing()
 
     $attendees_data = get_attendees_data_for($hof_id, $hijri_year, false);
     if (is_null($attendees_data)) {
-        do_redirect_with_message('/input-sabeel', 'Error: No records found for your input :' . $sabeel . '. Contact Jamaat Office!');
+        do_redirect_with_message('/input-sabeel', 'Error: Seems your ITS (' . $hof_id . ') belong to other mohalla. Please contact jamaat office.');
     }
 
     setAppData('attendees_data', $attendees_data);
@@ -100,7 +103,8 @@ function _handle_form_submit()
             $chair_count,
             $parking_count,
             $venue,
-            $whatsapp
+            $whatsapp,
+            $sabeel
         );
 
         if (!$update_input_change_result) {
@@ -108,7 +112,7 @@ function _handle_form_submit()
         }
 
         $arg1 = getAppData('arg1');
-        do_redirect("\print-form\\$arg1");
+        do_redirect("/print-form/$arg1");
     }
 
 }

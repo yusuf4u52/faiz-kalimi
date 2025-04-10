@@ -1,6 +1,6 @@
 <?php
-if( !is_user_a(SUPER_ADMIN) ) {
-    do_redirect_with_message('/home' , 'Redirected as tried to access unauthorized area.');
+if (!is_user_a(SUPER_ADMIN)) {
+    do_redirect_with_message('/home', 'Redirected as tried to access unauthorized area.');
 }
 
 
@@ -79,12 +79,14 @@ function show_input_user()
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="roles" class="col-sm-12 col-form-label">Suggested Roles: <?= implode(' , ' , ROLE) ?></label>                    
+                    <label for="roles" class="col-sm-12 col-form-label">Suggested Roles:
+                        <?= implode(' , ', ROLE) ?></label>
                 </div>
                 <div class="form-group row">
                     <label for="roles" class="col-sm-2 col-form-label">Roles (Comma separated)</label>
                     <div class="col-sm-10">
-                        <input type='text' class='form-control' name='roles' value="<?= $user_data->roles ??'' ?>" required />
+                        <input type='text' class='form-control' name='roles' value="<?= $user_data->roles ?? '' ?>"
+                            required />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -106,11 +108,12 @@ function show_user_list()
     <div class="card">
         <div class="card-header row">
             <div class="col-6">User Data</div>
-            <div class="col-6"><a href="<?= $url ?>/users/0" class="btn btn-gradient-success btn-rounded btn-fw">Add New</a></div>
-            </di>
-            <div class="card-body">
-                <?= __display_user_list([$user_data]) ?>
+            <div class="col-6"><a href="<?= $url ?>/users/0" class="btn btn-gradient-success btn-rounded btn-fw">Add New</a>
             </div>
+        </div>
+
+        <div class="card-body">
+            <?= __display_user_list([$user_data]) ?>
         </div>
     </div>
     <?php

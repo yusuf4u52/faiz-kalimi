@@ -58,6 +58,9 @@ function get_set_and_go()
         }
     }
 
+    //Special code to manage get to post request.
+    get2post_handle($page);
+
     $dir = VIEW_DIR;
     $filePath = "./$dir/$page.php";
     if (file_exists($filePath)) {
@@ -103,6 +106,26 @@ function getPageName()
     return $page;
 }
 
+
+function get2post_handle($page)
+{
+    //Special code to manage get to post request.
+    if ($page === 'get2post' && 'get' === strtolower($_SERVER['REQUEST_METHOD'])) {
+        $url = getAppData('BASE_URI') . ($_GET['url'] ?? '');
+        $hiddenParams = '';
+        foreach ($_GET as $key => $value) {
+            $hiddenParams .= "<input type='hidden' name='$key' value='$value'/>";
+        }
+        ?>
+        <form id="get2post" action="<?= $url ?>" method="post">
+            <?= $hiddenParams ?>
+            <input type="submit" value="If not auto redirect, click this.">
+        </form>
+        <script>document.forms["get2post"].submit();</script>
+        <?php
+        exit();
+    }
+}
 
 /**
  * Database Function
@@ -386,6 +409,12 @@ function is_post()
     return 'post' === $method ? true : false;
 }
 
+function is_get()
+{
+    $method = strtolower($_SERVER['REQUEST_METHOD']);
+    return 'get' === $method ? true : false;
+}
+
 function do_redirect($page, $relativePath = true)
 {
     if ($relativePath) {
@@ -543,58 +572,77 @@ function _gc($max)
 // Encryption and Decryption
 //-------------------
 
-function do_encrypt($data)
-{
-
-    $serialized = serialize($data);
-
-    // Store the cipher method
-    $ciphering = "AES-128-CTR";
-
-    // Use OpenSSl Encryption method
-    //$iv_length = openssl_cipher_iv_length($ciphering);
-    $options = 0;
-
-    // Non-NULL Initialization Vector for encryption
-    $encryption_iv = '1234567891011121';
-
-    // Store the encryption key
-    $encryption_key = "GeeksforGeeks";
-
-    // Use openssl_encrypt() function to encrypt the data
-    $encryption = openssl_encrypt(
-        $serialized,
-        $ciphering,
-        $encryption_key,
-        $options,
-        $encryption_iv
-    );
-
-    return $encryption;
+function do_encrypt($data) {
+    return is_null($data) ? null : base64_encode($data);
 }
 
-function do_decrypt($encrypted_data)
-{
-    // Non-NULL Initialization Vector for decryption
-    $decryption_iv = '1234567891011121';
-    // Store the cipher method
-    $ciphering = "AES-128-CTR";
-
-    // Use OpenSSl Encryption method
-    //$iv_length = openssl_cipher_iv_length($ciphering);
-    $options = 0;
-
-    // Store the decryption key
-    $decryption_key = "GeeksforGeeks";
-
-    // Use openssl_decrypt() function to decrypt the data
-    $decryption = openssl_decrypt(
-        $encrypted_data,
-        $ciphering,
-        $decryption_key,
-        $options,
-        $decryption_iv
-    );
-
-    return unserialize($decryption);
+function do_decrypt($encrypted_data) {
+    return is_null($encrypted_data) ? null : base64_decode($encrypted_data);
 }
+
+
+// function do_encrypt($data)
+// {
+//     if( is_null($data) ) {
+//         return null;
+//     }
+
+//     $serialized = serialize($data);
+//     // Store the cipher method
+//     $ciphering = "AES-128-CTR";
+
+//     // Use OpenSSl Encryption method
+//     //$iv_length = openssl_cipher_iv_length($ciphering);
+//     $options = 0;
+
+//     // Non-NULL Initialization Vector for encryption
+//     $encryption_iv = '1234567891011121';
+
+//     // Store the encryption key
+//     $encryption_key = "GeeksforGeeks";
+
+//     // Use openssl_encrypt() function to encrypt the data
+//     $encryption = openssl_encrypt(
+//         $serialized,
+//         $ciphering,
+//         $encryption_key,
+//         $options,
+//         $encryption_iv
+//     );
+
+//     return base64_encode($encryption);
+
+//     //return $encryption;
+// }
+
+// function do_decrypt($encrypted_data)
+// {
+//     if( is_null($encrypted_data) ) {
+//         return null;
+//     }
+
+//     // Non-NULL Initialization Vector for decryption
+//     $decryption_iv = '1234567891011121';
+//     // Store the cipher method
+//     $ciphering = "AES-128-CTR";
+
+//     // Use OpenSSl Encryption method
+//     //$iv_length = openssl_cipher_iv_length($ciphering);
+//     $options = 0;
+
+//     // Store the decryption key
+//     $decryption_key = "GeeksforGeeks";
+
+//     $encrypted_data2 = base64_decode($encrypted_data);
+
+//     // Use openssl_decrypt() function to decrypt the data
+//     $decryption = openssl_decrypt(
+//         $encrypted_data2,
+//         $ciphering,
+//         $decryption_key,
+//         $options,
+//         $decryption_iv
+//     );
+
+//     return unserialize($decryption);
+// }
