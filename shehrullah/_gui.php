@@ -18,7 +18,7 @@ function main_menu_items($menus)
 
 function set_error_message($message)
 {
-    setSessionData(ERROR_TRANSITION, $message);
+    setSessionData(TRANSIT_DATA, $message);
 }
 
 function print_table_row($row, $index, $keyArray)
@@ -169,4 +169,18 @@ function getCountDropdown($from = 0, $to = 10, $value = 0)
 function get_tabel_row_for_array(...$data)
 {
     return '<tr><td>' . implode('</td><td>', $data) . '</td></tr>';
+}
+
+function get_text_field($name, $title, $value, $type='text', $is_required = true)
+{
+    $required = $is_required ? 'required' : '';
+    ?>
+    <div class='form-group row'>
+        <label for='full_niyaz' class='col-sm-2 col-form-label'><?=$title?></label>
+        <div class='col-sm-10'>
+            <input type='<?=$type?>' class='form-control' name='<?=$name?>' 
+            id='<?=$name?>' value='<?=$value?>' <?=$required?> />
+        </div>
+    </div>
+    <?php    
 }

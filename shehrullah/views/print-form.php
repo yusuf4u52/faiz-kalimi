@@ -5,15 +5,37 @@ $sabeel = do_decrypt($en_sabeel);
 
 $sabeel_data = get_thaalilist_data($sabeel);
 if (is_null($sabeel_data)) {
-    //do_redirect('\input-sabeel');
-    do_redirect_with_message('/', 'Sabeel or HOF ID not found.');
-}
-setAppData('sabeel_data', $sabeel_data);
+    //do_redirect_with_message('\home', 'Sabeel not found. Please enter correct Sabeel.');
+    $hof_id = $sabeel;
+    $hof_data = get_hof_data($hof_id);
+    if( is_null($hof_data) ) {
+        do_redirect_with_message('\home', "HOF ID ($hof_id) not found");
+    } else {
+        $sabeel_data = $hof_data;
+    }
 
-$hof_id = $sabeel_data->ITS_No;
+} else {
+    $hof_id = $sabeel_data->ITS_No;       
+}
+
+
+setAppData('sabeel_data', $sabeel_data);
+setAppData('hof_id', $hof_id);
+
+// $sabeel_data = get_thaalilist_data($sabeel);
+// if (is_null($sabeel_data)) {
+//     do_redirect_with_message('/', 'Sabeel or HOF ID not found.');
+// }
+//setAppData('sabeel_data', $sabeel_data);
+
+
+// $hof_id = $sabeel_data->ITS_No;
 $hijri_year = get_current_hijri_year();
 
+$last_year_takhmeen = get_last_year_takhmeen($hof_id);
+setAppData('last_year_takhmeen' , $last_year_takhmeen);
 
+// $attendees_data = get_attendees_data_for_nonsab($hof_id, $hijri_year, false);
 $takhmeen_data = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
 if (is_null($takhmeen_data)) {
     do_redirect_with_message('/', 'Oops! Seems form is not filled.');
@@ -25,9 +47,18 @@ function content_display()
     $hijri_year = get_current_hijri_year();
     $takhmeen_data = getAppData('takhmeen_data');
     $thalidata = getAppData('sabeel_data');
+    $last_year_takhmeen = getAppData('last_year_takhmeen');
+    $hof_id = getAppData('hof_id');
+
+    $name = $thalidata->NAME ?? $thalidata->full_name;
+    $sabeel = $thalidata->Thali ?? 'NONE';
+    $email = $thalidata->Email_ID ?? '';
+    $address = $thalidata->Full_Address ?? '';
 
     $get_only_attends = true;
-    $attendees_records = get_attendees_data_for($thalidata->ITS_No, $hijri_year, $get_only_attends);
+    $attendees_records = get_attendees_data_for_nonsab($hof_id, $hijri_year, true);
+
+    //$attendees_records = get_attendees_data_for($thalidata->ITS_No, $hijri_year, $get_only_attends);
     $shehrullah_data = get_shehrullah_data_for($hijri_year);
 
     $date = date("d/m/Y");
@@ -41,6 +72,9 @@ function content_display()
             font-size: 11px;
         }
     </style>
+    <?php if(!$print) { ?>
+        <h2>Shukran, Your data is submitted, collect printout visiting jamaat office.</h2>
+    <?php } ?>
     <div class="card" id="printableArea">
         <div class="card-body">
             <table class='table table-bordered'>
@@ -62,19 +96,19 @@ function content_display()
             <table class='table table-bordered'>
                 <tr>
                     <th style='font-size: 12px'>HOF</th>
-                    <td style='font-size: 12px' colspan="4">[<?= $thalidata->ITS_No ?>] <?= $thalidata->NAME ?></td>
+                    <td style='font-size: 12px' colspan="5">[<?= $hof_id ?>] <?= $name ?></td>                                        
                 </tr>
                 <tr>
                     <th style='font-size: 12px'>Sabil</th>
-                    <td style='font-size: 12px'>KL-<?= $thalidata->Thali ?></td>
+                    <td style='font-size: 12px'><?= $sabeel ?></td>
                     <th style='font-size: 12px'>WApp</th>
                     <td style='font-size: 12px'><?= $takhmeen_data->whatsapp ?></td>
-                    <th style='font-size: 12px'>Email</th>
-                    <td style='font-size: 12px' colspan="2"><?= $thalidata->Email_ID ?></td>
+                    <th style='font-size: 12px'>Prev. Takhmeen</th>
+                    <td style='font-size: 12px'><?=$last_year_takhmeen?></td>
                 </tr>
                 <tr>
                     <th style='font-size: 12px'>Addr:</th>
-                    <td style='font-size: 12px' colspan="5"><?= $thalidata->Full_Address ?></td>
+                    <td style='font-size: 12px' colspan="5"><?= $address ?></td>
                 </tr>
             </table>
 
@@ -84,6 +118,7 @@ function content_display()
                     <th style='font-size: 12px'>ITS - NAME</th>
                     <th style='font-size: 12px'>Gender/Age</th>
                     <th style='font-size: 12px'>Chair</th>
+                    <th style='font-size: 12px'>Mohallah</th>
                 </tr>
                 <?php
                 $index = 0;
@@ -99,14 +134,21 @@ function content_display()
                     $gender = substr($gender, 0, 1);
 
                     $chair_preference = $attendees->chair_preference;
+                    $mohalla = substr($attendees->mohallah ?? "Other", 0, 1);
                     // return "$gender/$age";
-            
 
+                    $photo_pending = '';
+                    if( $attendees->photo_pending == 'Y' ) {
+                        $photo_pending = 'PP -';
+                    }
+                
+                    
                     echo "<tr>
                         <td style='font-size: 12px'>$index</td>
-                        <td style='font-size: 12px'>$its - $name</td>
+                        <td style='font-size: 12px'>$photo_pending $its - $name</td>
                         <td style='font-size: 12px'>$gender/$age</td>
                         <td style='font-size: 12px'>$chair_preference</td>
+                        <td style='font-size: 12px'><b>$mohalla</b></td>                        
                         </tr>";
                 }
                 ?>
@@ -147,13 +189,36 @@ function content_display()
                 var printContents = document.getElementById('printableArea').innerHTML;
                 var originalContents = document.body.innerHTML;
 
-                document.body.innerHTML = printContents;
+                var htmlToPrint = '' +
+        '<style type="text/css">' +
+        'table th, table tr, table td {' +
+        'border:1px solid #000;' +
+        'padding:0.5em;' +
+        '}' +
+        '</style>';
+    htmlToPrint += printContents;
+
+
+                document.body.innerHTML = htmlToPrint;
                 window.print();
                 document.body.innerHTML = originalContents;
             });
         }
     </script>    
     <?php
+    } else {
+        ?>
+        <style type="text/css" media="print">
+            * { display: none; }
+        </style>
+        <script>
+            document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'p') {
+            event.preventDefault(); 
+            }
+            });
+        </script>
+        <?php
     }
 }
 
@@ -169,9 +234,9 @@ function __display_niyaz_section(...$data)
     $niyaz_hub = get_niyaz_amount_for($niyaz_type, $family_hub, $markaz_data);
     $total_niyaz = $niyaz_hub * $niyaz_count;
 
-    $full_niyaz_count = $niyaz_type == 'full' ? $niyaz_count : 0;
-    $half_niyaz_count = $niyaz_type == 'half' ? $niyaz_count : 0;
-    $family_niyaz_count = $niyaz_type == 'family' ? $niyaz_count : 0;
+    $full_niyaz_count = $niyaz_type == 'full' ? 1 : 0;
+    $half_niyaz_count = $niyaz_type == 'half' ? 1 : 0;
+    $family_niyaz_count = $niyaz_type == 'family' ? 1 : 0;
 
     $full_niyaz_total = $markaz_data->full_niyaz * $full_niyaz_count;
     $half_niyaz_total = $markaz_data->half_niyaz * $half_niyaz_count;
@@ -230,7 +295,7 @@ function __display_niyaz_section(...$data)
             <th style='font-size: 12px'>Zabihat</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$zabihat_hub</td><td>&nbsp;</td>
         </tr>
         <tr>            
-            <th style='font-size: 12px'>Family Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$family_hub</td><td>&nbsp;</td>
+            <th style='font-size: 12px'>Family Niyaz</th><td style='font-size: 12px'>&nbsp;</td><td>&nbsp;</td>
             <th style='font-size: 12px'>Fateha</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$fateha_hub</td><td>&nbsp;</td>
         </tr>
         <tr>            

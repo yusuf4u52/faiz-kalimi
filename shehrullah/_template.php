@@ -13,6 +13,8 @@ $homepage = getAppData('BASE_URI');
 
 $is_auth = is_authenticated();
 $udata = getSessionData(THE_SESSION_ID);
+
+$hijri = get_current_hijri_year() ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,7 +78,7 @@ $udata = getSessionData(THE_SESSION_ID);
             <div class="content-wrapper">
                 <?php if ($heading) { ?>
                     <div class="page-header">
-                        <h3 class="page-title">Shehrullah</h3>
+                        <h3 class="page-title">Shehrullah <?=$hijri?>H</h3>
                     </div>
                 <?php } ?>
 
