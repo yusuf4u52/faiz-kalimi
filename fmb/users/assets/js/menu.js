@@ -165,6 +165,7 @@
         var feedmenu = $("#feedbackmenu");
         var id = info.event.id;
         if (!!scheds[id]) {
+          console.log(scheds[id]);
           editmenu.find("input#menu_id").val(id);
           editmenu.find('.modal-body #validate').remove();
           feedmenu.find("input#menu_id").val(id);
@@ -239,6 +240,7 @@
                 feedmenu.find("div#sabji").removeClass('d-none');
                 feedmenu.find("input#sabji").val(scheds[id].menu_item.sabji.item);
                 feedmenu.find("label#sabji").html(scheds[id].menu_item.sabji.item);
+                feedmenu.find("input.sabjirating").attr('required','required');
                 if(scheds[id]?.menu_feed?.sabji?.rating !== undefined) {
                   feedmenu.find("input#sabjirating"+scheds[id].menu_feed.sabji.rating).attr('checked','checked');
                 } else {
@@ -259,6 +261,7 @@
               feedmenu.find("input#sabji").val('');
               feedmenu.find("label#sabji").html('');
               feedmenu.find("label#sabji").html('');
+              feedmenu.find("input.sabjirating").removeAttr('required','required');
             }
             if (scheds[id]?.menu_item?.tarkari?.item !== undefined) {
               editmenu.find("div#tarkari").removeClass('d-none');
@@ -287,6 +290,7 @@
                 feedmenu.find("div#tarkari").removeClass('d-none');
                 feedmenu.find("input#tarkari").val(scheds[id].menu_item.tarkari.item);
                 feedmenu.find("label#tarkari").html(scheds[id].menu_item.tarkari.item);
+                feedmenu.find("input.tarkarirating").attr('required','required');
                 if(scheds[id]?.menu_feed?.tarkari?.rating !== undefined) {
                   feedmenu.find("input#tarkarirating"+scheds[id].menu_feed.tarkari.rating).attr('checked','checked');
                 } else {
@@ -306,6 +310,7 @@
               feedmenu.find("div#tarkari").addClass('d-none');
               feedmenu.find("input#tarkari").val('');
               feedmenu.find("label#tarkari").html('');
+              feedmenu.find("input.tarkarirating").removeAttr('required','required');
             }
             if (scheds[id]?.menu_item?.rice?.item !== undefined) {
               editmenu.find("div#rice").removeClass('d-none');
@@ -334,6 +339,7 @@
                 feedmenu.find("div#rice").removeClass('d-none');
                 feedmenu.find("input#rice").val(scheds[id].menu_item.rice.item);
                 feedmenu.find("label#rice").html(scheds[id].menu_item.rice.item);
+                feedmenu.find("input.ricerating").attr('required','required');
                 if(scheds[id]?.menu_feed?.rice?.rating !== undefined) {
                   feedmenu.find("input#ricerating"+scheds[id].menu_feed.rice.rating).attr('checked','checked');
                 } else {
@@ -353,6 +359,7 @@
               feedmenu.find("div#rice").addClass('d-none');
               feedmenu.find("input#rice").val('');
               feedmenu.find("label#rice").html('');
+              feedmenu.find("input.ricerating").removeAttr('required','required');
             }
             if (scheds[id]?.menu_item?.roti?.item !== undefined) {
               editmenu.find("div#roti").removeClass('d-none');
@@ -383,6 +390,7 @@
                 feedmenu.find("div#roti").removeClass('d-none');
                 feedmenu.find("input#roti").val(scheds[id].menu_item.roti.item);
                 feedmenu.find("label#roti").html(scheds[id].menu_item.roti.item);
+                feedmenu.find("input.rotirating").attr('required','required');
                 if(scheds[id]?.menu_feed?.roti?.rating !== undefined) {
                   feedmenu.find("input#rotirating"+scheds[id].menu_feed.roti.rating).attr('checked','checked');
                 } else {
@@ -399,6 +407,7 @@
               feedmenu.find("div#roti").addClass('d-none');
               feedmenu.find("input#roti").val('');
               feedmenu.find("label#roti").html('');
+              feedmenu.find("input.rotirating").removeAttr('required','required');
             }
             if (scheds[id]?.menu_item?.extra?.item !== undefined) {
               editmenu.find("div#extra").removeClass('d-none');
@@ -414,6 +423,7 @@
                 feedmenu.find("div#extra").removeClass('d-none');
                 feedmenu.find("input#extra").val(scheds[id].menu_item.extra.item);
                 feedmenu.find("label#extra").html(scheds[id].menu_item.extra.item);
+                feedmenu.find("input.extrarating").attr('required','required');
                 if(scheds[id]?.menu_feed?.extra?.rating !== undefined) {
                   feedmenu.find("input#extrarating"+scheds[id].menu_feed.extra.rating).attr('checked','checked');
                 } else {
@@ -430,6 +440,7 @@
               feedmenu.find("div#extra").addClass('d-none');
               feedmenu.find("input#extra").val('');
               feedmenu.find("label#extra").html('');
+              feedmenu.find("input.extrarating").removeAttr('required','required');
             }
             if (scheds[id]?.feedback !== undefined) {
               feedmenu.find("textarea#feedback").val(scheds[id].feedback);
