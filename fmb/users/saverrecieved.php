@@ -26,9 +26,9 @@ if( isset($_POST['action']) && $_POST['action'] == 'add_rrecieved' ) {
             $oil_left = $row_distribution['oil_distributed'] + $row_distribution['oil_left'] - $oil_required;
         }
     }
-    $sql = "INSERT INTO  fmb_roti_recieved (`maker_id`, `recieved_date`, `roti_recieved`, `flour_left`, `oil_left`) VALUES ('" . $_POST['maker_id'] . "', '" . $_POST['recieved_date'] . "', '" . $_POST['roti_recieved'] . "', '" . $flour_left . "', '" . $oil_left . "')"; 
+    $sql = "INSERT INTO  fmb_roti_recieved (`maker_id`, `recieved_date`, `roti_recieved`, `flour_left`, `oil_left`, `recieved_by`) VALUES ('" . $_POST['maker_id'] . "', '" . $_POST['recieved_date'] . "', '" . $_POST['roti_recieved'] . "', '" . $flour_left . "', '" . $oil_left . "', '" . $_POST['recieved_by'] . "')"; 
     mysqli_query($link, $sql) or die(mysqli_error($link));
-    header("Location: /fmb/users/rotirecieved.php?action=add&recieved_date=".$_POST['recieved_date']);
+    header("Location: /fmb/users/rotirecieved.php?action=add&maker=".$_POST['maker_id']."&recieved_date=".$_POST['recieved_date']);
 }
 
 if( isset($_POST['action']) && $_POST['action'] == 'edit_rrecieved' ) {
@@ -55,14 +55,14 @@ if( isset($_POST['action']) && $_POST['action'] == 'edit_rrecieved' ) {
             $oil_left = $row_distribution['oil_distributed'] + $row_distribution['oil_left'] - $oil_required;
         }
     }
-    $sql = "UPDATE  fmb_roti_recieved SET `maker_id` = '".$_POST['maker_id']."', `recieved_date` = '".$_POST['recieved_date']."', `roti_recieved` = '".$_POST['roti_recieved']."', `flour_left` = '".$flour_left."', `oil_left` = '".$oil_left."' WHERE `id` = '".$_POST['rrecieved_id']."'";
+    $sql = "UPDATE  fmb_roti_recieved SET `maker_id` = '".$_POST['maker_id']."', `recieved_date` = '".$_POST['recieved_date']."', `roti_recieved` = '".$_POST['roti_recieved']."', `flour_left` = '".$flour_left."', `oil_left` = '".$oil_left."', `recieved_by` = '" . $_POST['recieved_by'] . "' WHERE `id` = '".$_POST['rrecieved_id']."'";
     mysqli_query($link,$sql) or die(mysqli_error($link));
-    header("Location: /fmb/users/rotirecieved.php?action=edit&recieved_date=".$_POST['recieved_date']);
+    header("Location: /fmb/users/rotirecieved.php?action=edit&maker=".$_POST['maker_id']."&recieved_date=".$_POST['recieved_date']);
 }
 
 if( isset($_POST['action']) && $_POST['action'] == 'delete_rrecieved' ) {
     $sql = "DELETE FROM  fmb_roti_recieved WHERE `id` = '".$_POST['rrecieved_id']."'";
     mysqli_query($link,$sql) or die(mysqli_error($link));
-    header("Location: /fmb/users/rotirecieved.php?action=delete&recieved_date=".$_POST['recieved_date']);
+    header("Location: /fmb/users/rotirecieved.php?action=delete&maker=".$_POST['maker_id']."&recieved_date=".$_POST['recieved_date']);
 }
 ?>
