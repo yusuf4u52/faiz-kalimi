@@ -15,7 +15,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
       </strong> is started & edited successfully.</div>
   <?php } 
   if (isset($_GET['action']) && $_GET['action'] == 'nochange') { ?>
-    <div class="alert alert-warning" role="alert">You have't change anything on Thali of <strong>
+    <div class="alert alert-warning" role="alert">You have't change anything on thali of <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong>.</div>
   <?php } 
@@ -35,21 +35,21 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
       </strong> is stopped successfully.</div>
   <?php } 
   if (isset($_GET['action']) && $_GET['action'] == 'rsvp') { ?>
-    <div class="alert alert-danger" role="alert">You can't edit the thali now because RSVP time for editing Thali of
+    <div class="alert alert-danger" role="alert">You can't edit the thali now because RSVP time for editing thali of
       <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong> is finished.
     </div>
   <?php } 
   if (isset($_GET['action']) && $_GET['action'] == 'addfeed') { ?>
-    <div class="alert alert-success" role="alert">Thank you for your valuable feedback of thali on
+    <div class="alert alert-success" role="alert">Thank you for your valuable feedback for thali on
       <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong>.
     </div>
   <?php } 
   if (isset($_GET['action']) && $_GET['action'] == 'editfeed') { ?>
-    <div class="alert alert-success" role="alert">Thank you for your valuable feedback of thali on
+    <div class="alert alert-success" role="alert">Thank you for your valuable feedback for thali on
       <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong>.
@@ -250,23 +250,23 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               <div class="col-8">
                 <input type="hidden" class="form-control" name="menu_item[rice][item]" id="rice" value="">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating1" value="1" required >
+                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating1" value="1">
                   <label class="form-check-label" for="ricerating1">1</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating2" value="2" required >
+                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating2" value="2">
                   <label class="form-check-label" for="ricerating2">2</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating3" value="3" required >
+                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating3" value="3">
                   <label class="form-check-label" for="ricerating3">3</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating4" value="4" required >
+                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating4" value="4">
                   <label class="form-check-label" for="ricerating4">4</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating5" value="5" required >
+                  <input class="form-check-input ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating5" value="5" >
                   <label class="form-check-label" for="ricerating5">5</label>
                 </div>
               </div>
