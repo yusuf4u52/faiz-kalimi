@@ -20,21 +20,27 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <?php if (isset($_GET['action']) && $_GET['action'] == 'add') { ?>
+                            <?php if (isset($_GET['action']) && $_GET['action'] == 'add') {
+                                    $add_roti_maker = mysqli_query($link, "SELECT `code` FROM fmb_roti_maker WHERE `id` = '".$_GET['maker']."'") or die(mysqli_error($link));
+                                    $add_maker = $add_roti_maker->fetch_assoc(); ?>
                                     <div class="alert alert-success" role="alert">
-                                        <strong>Roti recieved on <?php echo $_GET['recieved_date']; ?></strong> is added
+                                        Roti Recieved from <strong><?php echo $add_maker['code']; ?></strong> on <strong><?php echo $_GET['recieved_date']; ?></strong> is added
                                         successfully.
                                     </div>
                                 <?php } ?>
-                                <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
-                                    <div class="alert alert-success" role="alert">
-                                        <strong>Roti recieved on <?php echo $_GET['recieved_date']; ?></strong> is edited
+                                <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') {
+                                     $edit_roti_maker = mysqli_query($link, "SELECT `code` FROM fmb_roti_maker WHERE `id` = '".$_GET['maker']."'") or die(mysqli_error($link));
+                                     $edit_maker = $edit_roti_maker->fetch_assoc(); ?>
+                                    <div class="alert alert-info" role="alert">
+                                    Roti Recieved from <strong><?php echo $edit_maker['code']; ?></strong> on <strong><?php echo $_GET['recieved_date']; ?></strong> is edited
                                         successfully.
                                     </div>
                                 <?php } ?>
-                                <?php if (isset($_GET['action']) && $_GET['action'] == 'delete') { ?>
-                                    <div class="alert alert-success" role="alert">
-                                        <strong>Roti recieved on <?php echo $_GET['recieved_date']; ?></strong> is deleted
+                                <?php if (isset($_GET['action']) && $_GET['action'] == 'delete') {
+                                    $delete_roti_maker = mysqli_query($link, "SELECT `code` FROM fmb_roti_maker WHERE `id` = '".$_GET['maker']."'") or die(mysqli_error($link));
+                                    $delete_maker = $delete_roti_maker->fetch_assoc(); ?>
+                                    <div class="alert alert-danger" role="alert">
+                                    Roti Recieved from <strong><?php echo $delete_maker['code']; ?></strong> on <strong><?php echo $_GET['recieved_date']; ?></strong> is deleted
                                         successfully.
                                     </div>
                                 <?php } ?>
@@ -44,22 +50,26 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                             <tr>
                                                 <th>Date</th>
                                                 <th>Full Name</th>
+                                                <th>Code</th>
                                                 <th>Roti Recieved</th>
-                                                <th>Flour Left</th>
-                                                <th>Oil Left</th>
+                                                <th>Stock Left</th>
+                                                <th>Recieved By</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php while ($values = mysqli_fetch_assoc($result)) {
-                                                $fmb_roti_maker = mysqli_query($link, "SELECT `full_name` FROM fmb_roti_maker WHERE `id` = '".$values['maker_id']."'") or die(mysqli_error($link));
-                                                $roti_maker = $fmb_roti_maker->fetch_assoc(); ?>
+                                                $fmb_roti_maker = mysqli_query($link, "SELECT `full_name`, `code` FROM fmb_roti_maker WHERE `id` = '".$values['maker_id']."'") or die(mysqli_error($link));
+                                                $roti_maker = $fmb_roti_maker->fetch_assoc();
+                                                $user_row = mysqli_query($link, "SELECT `username` FROM users WHERE `email` = '".$values['recieved_by']."'") or die(mysqli_error($link));
+                                                $user = $user_row->fetch_assoc(); ?>
                                                 <tr>
                                                 <td><?php echo date('d M Y', strtotime($values['recieved_date'])); ?></td>
                                                     <td><?php echo $roti_maker['full_name']; ?></td>
+                                                    <td><?php echo $roti_maker['code']; ?></td>
                                                     <td><?php echo $values['roti_recieved']; ?> Rotis</td>
-                                                    <td><?php echo $values['flour_left']; ?> KG</td>
-                                                    <td><?php echo $values['oil_left']; ?> Ltr</td>
+                                                    <td><strong>FLour: </strong><?php echo $values['flour_left']; ?> KG <br/> <strong>Oil: </strong><?php echo $values['oil_left']; ?> Ltr</td>
+                                                    <td><?php echo $user['username']; ?></td>
                                                     <td><button type="button" class="btn btn-light"
                                                             data-bs-target="#editrrecieved-<?php echo $values['id']; ?>"
                                                             data-bs-toggle="modal" style="margin-bottom:5px"><i class="bi bi-pencil-square"></i></button> <button type="button"
@@ -85,6 +95,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                 method="post" action="saverrecieved.php" autocomplete="off">
                                                 <input type="hidden" name="action" value="edit_rrecieved" />
                                                 <input type="hidden" name="rrecieved_id" value="<?php echo $values['id']; ?>" />
+                                                <input type="hidden" name="recieved_by" value="<?php echo $_SESSION['email']; ?>" />
                                                 <div class="modal-header">
                                                     <h4 class="modal-title fs-5">Update Roti Recieved</h4>
                                                     <button type="button" class="btn ms-auto" data-bs-dismiss="modal"
@@ -104,7 +115,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                             <select type="text" class="form-select" name="maker_id" required>
                                                                 <option value="">Select Roti Maker</option>
                                                                 <?php while ($roti_maker = mysqli_fetch_assoc($fmb_roti_maker)) { ?>
-                                                                    <option value="<?php echo $roti_maker['id']; ?>" <?php echo ($roti_maker['id'] == $values['maker_id'] ? 'selected' : ''); ?> ><?php echo $roti_maker['full_name']; ?></option>
+                                                                    <option value="<?php echo $roti_maker['id']; ?>" <?php echo ($roti_maker['id'] == $values['maker_id'] ? 'selected' : ''); ?> ><?php echo $roti_maker['code']; ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -136,6 +147,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                 <input type="hidden" name="action" value="delete_rrecieved" />
                                                 <input type="hidden" name="rrecieved_id" value="<?php echo $values['id']; ?>" />
                                                 <input type="hidden" name="recieved_date" value="<?php echo $values['recieved_date']; ?>" />
+                                                <input type="hidden" name="maker_id" value="<?php echo $values['maker_id']; ?>" />
                                                 <div class="modal-header">
                                                     <h4 class="modal-title fs-5">Delete Roti Recieved</h4>
                                                     <button type="button" class="btn ms-auto" data-bs-dismiss="modal"
@@ -163,6 +175,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                     <div class="modal-content">
                                         <form id="addrrecieved" class="form-horizontal" method="post" action="saverrecieved.php" autocomplete="off">
                                             <input type="hidden" name="action" value="add_rrecieved" />
+                                            <input type="hidden" name="recieved_by" value="<?php echo $_SESSION['email']; ?>" />
                                             <div class="modal-header">
                                                 <h4 class="modal-title fs-5">Add Roti Recieved</h4>
                                                 <button type="button" class="btn ms-auto" data-bs-dismiss="modal"
@@ -172,8 +185,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                 <div class="mb-3 row">
                                                 <label for="its_no" class="col-4 control-label">Date</label>
                                                     <div class="col-8">
-                                                        <input type="date" class="form-control" name="recieved_date"
-                                                                required>
+                                                        <input type="date" class="form-control" name="recieved_date" max="<?php echo date('Y-m-d'); ?>" value="<?php echo date('Y-m-d'); ?>" required>
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 row">
@@ -182,7 +194,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                         <select type="text" class="form-select" name="maker_id" required>
                                                             <option value="">Select Roti Maker</option>
                                                             <?php while ($roti_maker = mysqli_fetch_assoc($fmb_roti_maker)) { 
-                                                                echo '<option value="'.$roti_maker['id'].'">'.$roti_maker['full_name'].'</option>';
+                                                                echo '<option value="'.$roti_maker['id'].'">'.$roti_maker['code'].'</option>';
                                                             } mysqli_free_result($fmb_roti_maker); ?>
                                                         </select>
                                                     </div>
