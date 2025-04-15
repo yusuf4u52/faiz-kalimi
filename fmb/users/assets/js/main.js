@@ -35,6 +35,35 @@
         }
     });
 
+    $('table#roti').DataTable({
+        columnDefs: [{ visible: false, targets: 0 }],
+        order: [[0, 'desc']],
+        displayLength: 25,
+        responsive: true,
+        ordering: false,
+        drawCallback: function (settings) {
+            var api = this.api();
+            var rows = api.rows({ page: 'current' }).nodes();
+            var last = null;
+     
+            api.column(0, { page: 'current' })
+                .data()
+                .each(function (group, i) {
+                    if (last !== group) {
+                        $(rows)
+                            .eq(i)
+                            .before(
+                                '<tr class="group"><td colspan="6"><strong>' +
+                                    group +
+                                    '</strong></td></tr>'
+                            );
+     
+                        last = group;
+                    }
+                });
+        }
+    });
+
     $(document).ready(function() {
         var now = new Date();
         

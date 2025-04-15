@@ -3,7 +3,7 @@ include('connection.php');
 include('_authCheck.php');
 
 if( isset($_POST['action']) && $_POST['action'] == 'add_rrecieved' ) {
-    $distribution = mysqli_query($link, "SELECT * FROM fmb_roti_distribution WHERE `distribution_date` <= '".$_POST['recieved_date']."' order by `distribution_date` DESC LIMIT 1") or die(mysqli_error($link));
+    $distribution = mysqli_query($link, "SELECT * FROM fmb_roti_distribution WHERE `distribution_date` <= '".$_POST['recieved_date']."' AND `maker_id` = '" . $_POST['maker_id'] . "' order by `distribution_date` DESC LIMIT 1") or die(mysqli_error($link));
     if ($distribution->num_rows > 0) {
         $flour_per_roti = 0.025;
         $oil_per_roti = 0.0025;
@@ -11,7 +11,7 @@ if( isset($_POST['action']) && $_POST['action'] == 'add_rrecieved' ) {
         $oil_required = $_POST['roti_recieved'] * $oil_per_roti;
 
         $row_distribution = $distribution->fetch_assoc();
-        $recieved = mysqli_query($link, "SELECT * FROM fmb_roti_recieved WHERE `recieved_date` <= '".$_POST['recieved_date']."' order by `recieved_date` DESC LIMIT 1") or die(mysqli_error($link));
+        $recieved = mysqli_query($link, "SELECT * FROM fmb_roti_recieved WHERE `recieved_date` <= '".$_POST['recieved_date']."' AND `maker_id` = '" . $_POST['maker_id'] . "' order by `recieved_date` DESC LIMIT 1") or die(mysqli_error($link));
         if ($recieved->num_rows > 0) {
             $row_recieved = $recieved->fetch_assoc();
             if($row_distribution['distribution_date'] > $row_recieved['recieved_date']) {
@@ -32,7 +32,7 @@ if( isset($_POST['action']) && $_POST['action'] == 'add_rrecieved' ) {
 }
 
 if( isset($_POST['action']) && $_POST['action'] == 'edit_rrecieved' ) {
-    $distribution = mysqli_query($link, "SELECT * FROM fmb_roti_distribution WHERE `distribution_date` <= '".$_POST['recieved_date']."' order by `distribution_date` DESC LIMIT 1") or die(mysqli_error($link));
+    $distribution = mysqli_query($link, "SELECT * FROM fmb_roti_distribution WHERE `distribution_date` <= '".$_POST['recieved_date']."' AND `maker_id` = '" . $_POST['maker_id'] . "' order by `distribution_date` DESC LIMIT 1") or die(mysqli_error($link));
     if ($distribution->num_rows > 0) {
         $flour_per_roti = 0.025;
         $oil_per_roti = 0.0025;
@@ -40,7 +40,7 @@ if( isset($_POST['action']) && $_POST['action'] == 'edit_rrecieved' ) {
         $oil_required = $_POST['roti_recieved'] * $oil_per_roti;
 
         $row_distribution = $distribution->fetch_assoc();
-        $recieved = mysqli_query($link, "SELECT * FROM fmb_roti_recieved WHERE `recieved_date` <= '".$_POST['recieved_date']."' order by `recieved_date` DESC LIMIT 1") or die(mysqli_error($link));
+        $recieved = mysqli_query($link, "SELECT * FROM fmb_roti_recieved WHERE `recieved_date` <= '".$_POST['recieved_date']."' AND `maker_id` = '" . $_POST['maker_id'] . "' order by `recieved_date` DESC LIMIT 1") or die(mysqli_error($link));
         if ($recieved->num_rows > 0) {
             $row_recieved = $recieved->fetch_assoc();
             if($row_distribution['distribution_date'] > $row_recieved['recieved_date']) {

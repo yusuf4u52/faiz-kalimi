@@ -1,6 +1,8 @@
 <?php
 include('header.php');
 include('navbar.php');
+include('getHijriDate.php');
+
 $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `distribution_date` DESC") or die(mysqli_error($link));
 ?>
 <div class="content mt-5">
@@ -45,7 +47,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                     </div>
                                 <?php } ?>
                                 <div class="table-responsive">
-                                    <table class="table table-striped display" width="100%">
+                                    <table id="roti" class="table table-striped" width="100%">
                                         <thead>
                                             <tr>
                                                 <th>Date</th>
@@ -62,9 +64,11 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                 $fmb_roti_maker = mysqli_query($link, "SELECT `full_name`, `code` FROM fmb_roti_maker WHERE `id` = '".$values['maker_id']."'") or die(mysqli_error($link));
                                                 $roti_maker = $fmb_roti_maker->fetch_assoc();
                                                 $user_row = mysqli_query($link, "SELECT `username` FROM users WHERE `email` = '".$values['distributed_by']."'") or die(mysqli_error($link));
-                                                $user = $user_row->fetch_assoc(); ?>
+                                                $user = $user_row->fetch_assoc();
+                                                $hijridate = getHijriDate($values['distribution_date']);
+                                                $day = date('l', strtotime($values['distribution_date'])); ?>
                                                 <tr>
-                                                <td><?php echo date('d M Y', strtotime($values['distribution_date'])); ?></td>
+                                                <td><?php echo date('d M Y', strtotime($values['distribution_date'])).' - '.$hijridate . ' (' . $day . ')'; ?></td>
                                                     <td><?php echo $roti_maker['full_name']; ?></td>
                                                     <td><?php echo $roti_maker['code']; ?></td>
                                                     <td><strong>Distributed:</strong> <?php echo $values['flour_distributed']; ?> KG <br/><strong>Left:</strong> <?php echo $values['flour_left']; ?> KG<br/><strong>Total :</strong> <?php echo $values['flour_distributed'] + $values['flour_left']; ?> KG</td>
