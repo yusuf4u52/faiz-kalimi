@@ -46,16 +46,22 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name`
                                                 <th>Full Name</th>
                                                 <th>Code</th>
                                                 <th>Mobile No</th>
+                                                <th>Bank Details</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php while ($values = mysqli_fetch_assoc($result)) { ?>
+                                            <?php while ($values = mysqli_fetch_assoc($result)) {
+                                                $bank_details = htmlspecialchars( $values['bank_details'] );
+                                                $paragraphs = explode( "\n", $bank_details ); ?>
                                                 <tr>
                                                     <td><?php echo $values['its_no']; ?></td>
                                                     <td><?php echo $values['full_name']; ?></td>
                                                     <td><?php echo $values['code']; ?></td>
                                                     <td><?php echo $values['mobile_no']; ?></td>
+                                                    <td><?php foreach( $paragraphs as $para ) {
+                                                        echo '<p class="mb-1">'.$para.'</p>';
+                                                    } ?></td>
                                                     <td><button type="button" class="btn btn-light"
                                                             data-bs-target="#editrmaker-<?php echo $values['id']; ?>"
                                                             data-bs-toggle="modal" style="margin-bottom:5px"><i class="bi bi-pencil-square"></i></button> <button type="button"
@@ -112,6 +118,13 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name`
                                                         <div class="col-8">
                                                             <input type="number" class="form-control" name="mobile_no"
                                                             value="<?php echo $values['mobile_no']; ?>" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="mobile_no" class="col-4 control-label">Bank Details</label>
+                                                        <div class="col-8">
+                                                            <textarea class="form-control" name="bank_details"  rows="3"
+                                                                required><?php echo $values['bank_details']; ?></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -190,6 +203,13 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name`
                                                     <label for="mobile_no" class="col-4 control-label">Mobile No</label>
                                                     <div class="col-8">
                                                         <input type="number" class="form-control" name="mobile_no" required>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 row">
+                                                    <label for="mobile_no" class="col-4 control-label">Bank Details</label>
+                                                    <div class="col-8">
+                                                        <textarea class="form-control" name="bank_details"  rows="3"
+                                                            required><?php echo $values['bank_details']; ?></textarea>
                                                     </div>
                                                 </div>
                                             </div>
