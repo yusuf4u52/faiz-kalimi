@@ -196,7 +196,7 @@ function get_miqaat_stats_report()
     sum((case when ((Type = "Infant") and ((gender = "Male") or (gender = "Female"))) then 1 else 0 end)) AS infant,
     sum((case when (((gender = "Male") or (gender = "Female")) and ((Type = "Child") or (Type = "Adult"))) then 1 else 0 end)) AS total 
     from ('.$inner_query.') x 
-    GROUP BY name,start_datetime,end_datetime';
+    GROUP BY name,start_datetime,end_datetime  ORDER BY end_datetime desc;';
 
     return fetch_data($query);
 }
