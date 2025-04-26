@@ -9,6 +9,7 @@ require_once '_sendMail.php';
 error_reporting(0);
 $today_date = date("Y-m-d");
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
+$day = date("l", strtotime($tomorrow_date));
 $hijridate = getHijriDate($tomorrow_date);
 
 $stop_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` = '" . $tomorrow_date . "'");
@@ -81,6 +82,7 @@ $sql = mysqli_query($link, "SELECT
 					sum(case when thalisize = 'Medium' then 1 else 0 end) AS mediumcount,
 					sum(case when thalisize = 'Small' then 1 else 0 end) AS smallcount,
 					sum(case when thalisize = 'Mini' then 1 else 0 end) AS minicount,
+					sum(case when thalisize = 'Friday' then 1 else 0 end) AS fridaycount,
 					sum(case when thalisize IS NULL then 1 else 0 end) AS nullcount
 					FROM `thalilist` WHERE Active = 1 group by Transporter");
 $pivot = array();
@@ -91,9 +93,15 @@ while ($row = mysqli_fetch_assoc($sql)) {
 	$pivot["medium"][$row['Transporter']] = $row['mediumcount'];
 	$pivot["small"][$row['Transporter']] = $row['smallcount'];
 	$pivot["mini"][$row['Transporter']] = $row['minicount'];
+	if($day === 'Friday') {
+		$row['fridaycount'] = $row['fridaycount'];
+	} else {
+		$row['fridaycount'] = 0;
+	}
+	$pivot["friday"][$row['Transporter']] = $row['fridaycount'];
 	$pivot["no size"][$row['Transporter']] = $row['nullcount'];
-	$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'];
-	$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`,`count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['tcount'] . "')";
+	$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['fridaycount'];
+	$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`, `friday`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['fridaycount'] . "' '" . $row['tcount'] . "')";
 	mysqli_query($link, $insert_sql) or die(mysqli_error($link));
 }
 $transporters["total"] = 1;
@@ -105,6 +113,7 @@ $totalcountonsize = mysqli_query($link, "SELECT
 					sum(case when thalisize = 'Medium' then 1 else 0 end) AS medium,
 					sum(case when thalisize = 'Small' then 1 else 0 end) AS small,
 					sum(case when thalisize = 'Mini' then 1 else 0 end) AS mini,
+					sum(case when thalisize = 'Friday' then 1 else 0 end) AS friday,
 					sum(case when thalisize IS NULL then 1 else 0 end) AS none
 					FROM `thalilist` WHERE Active = 1");
 
@@ -113,10 +122,16 @@ $pivot["large"]["total"] = $result[1];
 $pivot["medium"]["total"] = $result[2];
 $pivot["small"]["total"] = $result[3];
 $pivot["mini"]["total"] = $result[4];
-$pivot["no size"]["total"] = $result[5];
+if($day === 'Friday') {
+	$result[5] = $result[5];
+} else {
+	$result[5] = 0;
+}
+$pivot["friday"]["total"] = $result[5];
+$pivot["no size"]["total"] = $result[6];
 $pivot["total"]["total"] = $result[0];
 
-mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "'," . $result[0] . ")") or die(mysqli_error($link));
+mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[5] . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "'," . $result[0] . ")") or die(mysqli_error($link));
 
 mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
 $msg = str_replace("\n", "<br>", $msg);

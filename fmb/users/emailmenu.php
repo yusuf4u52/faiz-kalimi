@@ -10,6 +10,7 @@ if(isset($_GET['menu_date'])) {
 	$tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 }
 
+$day = date("l", strtotime($tomorrow_date));
 $hijridate = getHijriDate($tomorrow_date);
 
 $msgmenu = '';
@@ -90,8 +91,6 @@ if ($menu_item->num_rows > 0) {
 			}
 		$msgmenu .= '</td>
 	<table>';
-
-	$msgmenu;
 
 	// send email
 	sendEmail('kalimimohallapoona@gmail.com', 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
