@@ -121,7 +121,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name`
                                                         </div>
                                                     </div>
                                                     <div class="mb-3 row">
-                                                        <label for="mobile_no" class="col-4 control-label">Bank Details</label>
+                                                        <label for="bank_details" class="col-4 control-label">Bank Details</label>
                                                         <div class="col-8">
                                                             <textarea class="form-control" name="bank_details"  rows="3"
                                                                 required><?php echo $values['bank_details']; ?></textarea>
@@ -206,7 +206,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name`
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 row">
-                                                    <label for="mobile_no" class="col-4 control-label">Bank Details</label>
+                                                    <label for="bank_details" class="col-4 control-label">Bank Details</label>
                                                     <div class="col-8">
                                                         <textarea class="form-control" name="bank_details"  rows="3"
                                                             required><?php echo $values['bank_details']; ?></textarea>
