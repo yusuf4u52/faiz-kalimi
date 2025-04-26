@@ -29,21 +29,36 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
             if ($menu_item->num_rows > 0) {
                 $menu_item = $menu_item->fetch_assoc();
                 $menu_item = unserialize($menu_item['menu_item']);
-                $change = 'no';
+                $change = 'no'; $sstop = 'no'; $tstop = 'no'; $rstop = 'no';
                 if (!empty($menu_item['sabji']['item'])) {
-                    if ($menu_item['sabji']['qty'] !== $_POST['menu_item']['sabji']['qty']) {
+                    if( $_POST['menu_item']['sabji']['qty'] == 0 ) {
+                        $sstop = 'yes';
+                        $change = 'yes';
+                    } elseif ($menu_item['sabji']['qty'] !== $_POST['menu_item']['sabji']['qty']) {
                         $change = 'yes';
                     }
+                } else {
+                    $sstop = 'yes';
                 } 
                 if (!empty($menu_item['tarkari']['item'])) {
-                    if ($menu_item['tarkari']['qty'] !== $_POST['menu_item']['tarkari']['qty']) {
+                    if( $_POST['menu_item']['tarkari']['qty'] == 0 ) {
+                        $tstop = 'yes';
+                        $change = 'yes';
+                    } elseif ($menu_item['tarkari']['qty'] !== $_POST['menu_item']['tarkari']['qty']) {
                         $change = 'yes';
                     }
+                } else {
+                    $tstop = 'yes';
                 } 
                 if (!empty($menu_item['rice']['item'])) {
-                    if ($menu_item['rice']['qty'] !== $_POST['menu_item']['rice']['qty']) {
+                    if( $_POST['menu_item']['rice']['qty'] == 0 ) {
+                        $rstop = 'yes';
+                        $change = 'yes';
+                    } elseif ($menu_item['rice']['qty'] !== $_POST['menu_item']['rice']['qty']) {
                         $change = 'yes';
                     }
+                } else {
+                    $rstop = 'yes';
                 }
             }
 
@@ -54,7 +69,28 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
                 $msg = 'start';
             }
 
-            if(isset($change) && $change == 'yes') {
+            if ($sstop == 'yes' &&  $tstop == 'yes' && $rstop == 'yes') {
+                $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
+                if ($stop_thali->num_rows > 0) {
+                    $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
+                    if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
+                        $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
+                        mysqli_query($link,$user_del) or die(mysqli_error($link));
+                    }
+                    $action = 'astop';
+                    $date = $menu_date;
+                } else {
+                    $insert_stop = "INSERT INTO `stop_thali` (`thali`,`stop_date`) VALUES ('" . $_POST['thali'] . "', '" . $menu_date . "')";
+                    mysqli_query($link, $insert_stop) or die(mysqli_error($link));
+                    $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
+                    if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
+                        $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
+                        mysqli_query($link,$user_del) or die(mysqli_error($link));
+                    }
+                    $action = 'stop';
+                    $date = $menu_date;
+                }
+            } elseif(isset($change) && $change == 'yes') {
                 $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
                 if ($user_menu->num_rows > 0) {
                     $row = $user_menu->fetch_assoc();

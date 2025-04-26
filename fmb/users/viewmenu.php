@@ -30,7 +30,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
       </strong> is already stopped.</div>
   <?php } 
   if (isset($_GET['action']) && $_GET['action'] == 'stop') { ?>
-    <div class="alert alert-success" role="alert">Thali of <strong>
+    <div class="alert alert-danger" role="alert">Thali of <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong> is stopped successfully.</div>
   <?php } 
