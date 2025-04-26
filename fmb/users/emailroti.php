@@ -5,6 +5,8 @@ if(isset($_GET['menu_date'])) {
 	$tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 }
 
+$day = date("l", strtotime($tomorrow_date));
+
 $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` = 'thaali' LIMIT 1");
 if ($menu_item->num_rows > 0) {
 	$row_menu = $menu_item->fetch_assoc();
@@ -55,6 +57,7 @@ if ($menu_item->num_rows > 0) {
 			sum(case when thalisize = 'Small' then 1 else 0 end) AS smallcount,
 			sum(case when thalisize = 'Medium' then 1 else 0 end) AS mediumcount,
 			sum(case when thalisize = 'Large' then 1 else 0 end) AS largecount,
+			sum(case when thalisize = 'Friday' then 1 else 0 end) AS fridaycount,
 			sum(case when thalisize IS NULL then 1 else 0 end) AS nullcount,
 			SUM(extraRoti) AS extracount
 			FROM `thalilist` WHERE Active = 1 AND `Transporter` LIKE '".$transporter."'");
@@ -63,12 +66,17 @@ if ($menu_item->num_rows > 0) {
 			$thaliSize["small"][$transporter] = $result[1]*$small;
 			$thaliSize["medium"][$transporter] = $result[2]*$medium;
 			$thaliSize["large"][$transporter] = $result[3]*$large;
-			$thaliSize["no size"][$transporter] = $result[4];
-			if($roti === 'Roti') {
-				$thaliSize["extra"][$transporter] = $result[5];
-				$thaliSize["Total"][$transporter] = (int) $result[0]*$mini + (int) $result['1']*$small + (int) $result['2']*$medium + (int) $result['3']*$large + (int) $result['4'] + (int) $result['5'];
+			if($day === 'Friday') {
+				$thaliSize["friday"][$transporter] = $result[4]*$small;
 			} else {
-				$thaliSize["Total"][$transporter] = (int) $result[0]*$mini + (int) $result['1']*$small + (int) $result['2']*$medium + (int) $result['3']*$large + (int) $result['4'];
+				$thaliSize["friday"][$transporter] = 0;
+			}
+			$thaliSize["no size"][$transporter] = $result[5];
+			if($roti === 'Roti') {
+				$thaliSize["extra"][$transporter] = $result[6];
+				$thaliSize["Total"][$transporter] = (int) $result[0]*$mini + (int) $result['1']*$small + (int) $result['2']*$medium + (int) $result['3']*$large + (int) $result['4'] + (int) $result['5'] + (int) $result['6'];
+			} else {
+				$thaliSize["Total"][$transporter] = (int) $result[0]*$mini + (int) $result['1']*$small + (int) $result['2']*$medium + (int) $result['3']*$large + (int) $result['4'] + (int) $result['5'];
 			}
 		}
 		$rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>Total</td></tr>";
