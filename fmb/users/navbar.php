@@ -51,10 +51,22 @@ if($curr_page != 'events.php') {
 }
 ?>
 <header class="fmb-header">
-    <a href="/fmb/users/index.php"><img class="img-fluid mx-auto d-block my-3" src="assets/img/logo.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="390" height="157" /></a>
-    <nav class="navbar navbar-expand-xxl">
+    <!--<a href="/fmb/users/index.php"><img class="img-fluid mx-auto d-block my-3" src="assets/img/logo.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="390" height="157" /></a>-->
+    <div class="container-fluid py-2 text-center">
+        <div class="row">
+            <div class="col-12">
+                <p class="text-capitalize m-0 fw-bold fst-italic">Salaam, <?php echo strtolower($values['NAME']); ?></p>
+                <?php if (!empty($values['yearly_hub'])) {
+                    echo '<p class="m-0">Sabeel No : <strong>' . $values['Thali'] . '</strong> | Thali No : <strong>' . $values['tiffinno'] . '</strong></p> ';
+                } else {
+                    echo '<p class="m-0">Sabeel No : <strong>' . $values['Thali'] . '</strong></p>';
+                } ?>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar">
         <div class="container-fluid">
-            <a class="navbar-brand d-xxl-none" href="/fmb/users/index.php">FMB (Kalimi Mohalla)</a>
+            <a class="navbar-brand" href="/fmb/users/index.php">FMB (Kalimi Mohalla)</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headernavbar"
                 aria-controls="headernavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="bi bi-list"></i>
@@ -101,7 +113,7 @@ if($curr_page != 'events.php') {
                     }
                     ?>
                     <?php
-                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'hussainbarnagarwala14@gmail.com'))) {
+                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'hussainbarnagarwala14@gmail.com', 'saminabarnagarwala2812@gmail.com'))) {
                         ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
@@ -117,13 +129,28 @@ if($curr_page != 'events.php') {
                     }
                     ?>
                     <?php
+                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) {
+                        ?>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">Transporter Management</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/fmb/users/transporter.php">Transporter</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporterthalicount.php">Thali Count</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporterpayment.php">Payment</a></li>
+                            </ul>
+                        </li>
+                        <?php
+                    }
+                    ?>
+                    <?php
                     if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com', 'tinwalaabizer@gmail.com'))) {
                         ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/pendingactions.php">Pending Actions</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/fmb/users/_daily_hisab_entry.php">Daily Hisab</a></li>
+                        <!--<li class="nav-item"><a class="nav-link" href="/fmb/users/_daily_hisab_entry.php">Daily Hisab</a></li>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/requestarchive.txt">CR NR</a></li>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/stopMultipleThaalis.php">Stop Thali</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/fmb/users/expenses_new.php">Expenses</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/fmb/users/expenses_new.php">Expenses</a></li>-->
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">Backend</a>
@@ -148,7 +175,7 @@ if($curr_page != 'events.php') {
                                 <li><a class="dropdown-item" href="/fmb/users/admin_scripts.php">Scripts</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="/fmb/users/notpickedup.php">NotPickedUp</a></li>
+                        <!--<li class="nav-item"><a class="nav-link" href="/fmb/users/notpickedup.php">NotPickedUp</a></li>-->
                         <li class="nav-item"><a class="nav-link" target="_blank" href="/fmb/sms/index.php">SMS</a></li>
                         <?php
                     }
