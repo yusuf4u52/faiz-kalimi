@@ -37,6 +37,11 @@ $rights = array(
 		"/fmb/users/rotirecieved.php",
 		"/fmb/users/saverrecieved.php",
 		"/fmb/users/rotipayment.php",
+		"/fmb/users/transporter.php",
+		"/fmb/users/savertransporters.php",
+		"/fmb/users/transporterthalicount.php",
+		"/fmb/users/savethalicount.php",
+		"/fmb/users/transporterpayment.php",
 		"/fmb/users/pendingactions.php",
 		"/fmb/users/_stop_thali_admin.php",
 		"/fmb/sms/index.php"
