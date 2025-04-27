@@ -101,7 +101,7 @@ while ($row = mysqli_fetch_assoc($sql)) {
 	$pivot["friday"][$row['Transporter']] = $row['fridaycount'];
 	$pivot["no size"][$row['Transporter']] = $row['nullcount'];
 	$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['fridaycount'];
-	$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`, `friday`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['fridaycount'] . "' '" . $row['tcount'] . "')";
+	$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`, `friday`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['fridaycount'] . "', '" . $row['tcount'] . "')";
 	mysqli_query($link, $insert_sql) or die(mysqli_error($link));
 }
 $transporters["total"] = 1;
@@ -131,7 +131,7 @@ $pivot["friday"]["total"] = $result[5];
 $pivot["no size"]["total"] = $result[6];
 $pivot["total"]["total"] = $result[0];
 
-mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[5] . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "'," . $result[0] . ")") or die(mysqli_error($link));
+mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[5] . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "','" . $result[0] . "')") or die(mysqli_error($link));
 
 mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
 $msg = str_replace("\n", "<br>", $msg);
