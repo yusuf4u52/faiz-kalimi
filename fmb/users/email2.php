@@ -93,11 +93,6 @@ while ($row = mysqli_fetch_assoc($sql)) {
 	$pivot["medium"][$row['Transporter']] = $row['mediumcount'];
 	$pivot["small"][$row['Transporter']] = $row['smallcount'];
 	$pivot["mini"][$row['Transporter']] = $row['minicount'];
-	if($day === 'Friday') {
-		$row['fridaycount'] = $row['fridaycount'];
-	} else {
-		$row['fridaycount'] = 0;
-	}
 	$pivot["friday"][$row['Transporter']] = $row['fridaycount'];
 	$pivot["no size"][$row['Transporter']] = $row['nullcount'];
 	$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['fridaycount'];
@@ -122,11 +117,6 @@ $pivot["large"]["total"] = $result[1];
 $pivot["medium"]["total"] = $result[2];
 $pivot["small"]["total"] = $result[3];
 $pivot["mini"]["total"] = $result[4];
-if($day === 'Friday') {
-	$result[5] = $result[5];
-} else {
-	$result[5] = 0;
-}
 $pivot["friday"]["total"] = $result[5];
 $pivot["no size"]["total"] = $result[6];
 $pivot["total"]["total"] = $result[0];
