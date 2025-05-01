@@ -66,11 +66,7 @@ if ($menu_item->num_rows > 0) {
 			$thaliSize["small"][$transporter] = $result[1]*$small;
 			$thaliSize["medium"][$transporter] = $result[2]*$medium;
 			$thaliSize["large"][$transporter] = $result[3]*$large;
-			if($day === 'Friday') {
-				$thaliSize["friday"][$transporter] = $result[4]*$small;
-			} else {
-				$thaliSize["friday"][$transporter] = 0;
-			}
+			$thaliSize["friday"][$transporter] = $result[4]*$small;
 			$thaliSize["no size"][$transporter] = $result[5];
 			if($roti === 'Roti') {
 				$thaliSize["extra"][$transporter] = $result[6];
@@ -117,4 +113,3 @@ if ($menu_item->num_rows > 0) {
 	echo "Skipping email as no thali on Miqaat or any other reason.";
 	exit;
 }
-

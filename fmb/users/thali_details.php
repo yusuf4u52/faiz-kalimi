@@ -38,26 +38,8 @@ include('navbar.php');
                 </li>
               <?php } ?>
               <li class="list-group-item">
-                <div class="fw-bold">Pending Hoob</div>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="fw-bold">Previous Year Pending</div>
-                    <span class="badge rounded-pill"><?php echo $values['Previous_Due']; ?></span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="fw-bold">Current Year Takhmeen</div>
-                    <span class="badge rounded-pill">+ <?php echo $values['yearly_hub']; ?></span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="fw-bold">Paid</div>
-                    <span class="badge rounded-pill"><a href="hoobHistory.php">-
-                        <?php echo $values['Paid']; ?></a></span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="fw-bold">Total Pending</div>
-                    <span class="badge rounded-pill"><?php echo $values['Total_Pending']; ?></span>
-                  </li>
-                </ul>
+                <div class="fw-bold">Current Year Takhmeen</div>
+                <?php echo '₹ '. $values['yearly_hub']; ?>
               </li>
               <li class="list-group-item">
                 <div class="fw-bold">Is Active?</div>
