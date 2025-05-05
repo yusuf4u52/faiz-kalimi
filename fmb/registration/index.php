@@ -1,4 +1,5 @@
 <?php
+include('../users/connection.php');
 include('../users/header.php');
 require '../sms/_credentials.php';
 include('call_api.php');
