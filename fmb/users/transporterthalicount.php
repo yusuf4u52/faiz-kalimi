@@ -53,6 +53,7 @@ $result = mysqli_query($link, "SELECT * FROM transporter_thali_count order by `c
                                                 <th>Date</th>
                                                 <th>Full Name</th>
                                                 <th>Thali Count</th>
+                                                <th>Comment</th>
                                                 <th>Counted By</th>
                                                 <th>Action</th>
                                             </tr>
@@ -69,6 +70,7 @@ $result = mysqli_query($link, "SELECT * FROM transporter_thali_count order by `c
                                                     <td><?php echo date('d M Y', strtotime($values['count_date'])) .' - '.$hijridate . ' (' . $day . ')'; ?></td>
                                                     <td><?php echo $transporter['Name']; ?></td>
                                                     <td><?php echo $values['thali_count']; ?> Thali</td>
+                                                    <td><?php echo $values['comment']; ?></td>
                                                     <td><?php echo $user['username']; ?></td>
                                                     <td><button type="button" class="btn btn-light"
                                                             data-bs-target="#edittcount-<?php echo $values['id']; ?>"
@@ -124,6 +126,13 @@ $result = mysqli_query($link, "SELECT * FROM transporter_thali_count order by `c
                                                         <label for="thali_count" class="col-4 control-label">Thali Count</label>
                                                         <div class="col-8">
                                                             <input type="number" class="form-control" name="thali_count" value="<?php echo $values['thali_count']; ?>" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="comment" class="col-4 control-label">Comment</label>
+                                                        <div class="col-8">
+                                                            <textarea class="form-control" name="comment" rows="3"
+                                                                required><?php echo $values['comment']; ?></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -203,6 +212,13 @@ $result = mysqli_query($link, "SELECT * FROM transporter_thali_count order by `c
                                                     <label for="thali_count" class="col-4 control-label">Thali Count</label>
                                                     <div class="col-8">
                                                         <input type="number" class="form-control" name="thali_count" required>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 row">
+                                                    <label for="comment" class="col-4 control-label">Comment</label>
+                                                    <div class="col-8">
+                                                        <textarea class="form-control" name="comment" rows="3"
+                                                            required></textarea>
                                                     </div>
                                                 </div>
                                             </div>
