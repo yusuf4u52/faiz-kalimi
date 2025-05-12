@@ -3,10 +3,10 @@ include('_authCheck.php');
 include('_common.php');
 
 $curr_page = basename($_SERVER['PHP_SELF']);
-$query = "SELECT * FROM thalilist LEFT JOIN transporters on thalilist.Transporter = transporters.Name where Email_id = '" . $_SESSION['email'] . "'";
-$values = mysqli_fetch_assoc(mysqli_query($link, $query));
+$query = mysqli_query($link , "SELECT * FROM thalilist as th LEFT JOIN transporters as tr  on th.Transporter = tr.Name where th.Email_ID = '" . $_SESSION['email'] . "' OR th.SEmail_ID = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+$values = $query->fetch_assoc();
 
-$musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT FROM thalilist where Email_id = '" . $values['musaid'] . "'"));
+$musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT FROM thalilist where Email_ID = '" . $values['musaid'] . "'"));
 
 $_SESSION['thaliid'] = $values['id'];
 $_SESSION['thali'] = $values['Thali'];
@@ -16,7 +16,6 @@ if (is_null($values['Active']) || $values['Active'] == 2) {
   $some_email = $_SESSION['email'];
   session_unset();
   session_destroy();
-
   $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send an email to kalimimohallapoona@gmail.com";
   header("Location: /fmb/index.php?status=$status");
   exit;
@@ -32,7 +31,7 @@ if($curr_page != 'update_details.php') {
 
 // Check if there is any enabled event that needs users response
 if($curr_page != 'events.php') {
-	$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_id = '" . $_SESSION['email'] . "'";
+	$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_ID = '" . $_SESSION['email'] . "'";
 	$takesFmb = mysqli_num_rows(mysqli_query($link, $query));
 	$result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
 	while ($values1 = mysqli_fetch_assoc($result)) {
@@ -73,7 +72,7 @@ if($curr_page != 'events.php') {
             </button>
             <div class="collapse navbar-collapse" id="headernavbar">
                 <ul class="navbar-nav me-auto mx-xl-auto">
-                    <?php if ($_SESSION['role']) { ?>
+                    <?php if (isset($_SESSION['role'])) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="/fmb/users/musaid.php">Musaid</a>
                         </li>
