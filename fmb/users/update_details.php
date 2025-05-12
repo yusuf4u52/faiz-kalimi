@@ -35,7 +35,7 @@ if ($_POST) {
           session_destroy();
           $status = "Great! $second_email is registered successfully with us and $first_email is unregistered. Please login again.";
           echo '<script type="text/javascript">
-            window.location = "http://localhost/fmb/index.php?status=' . $status . '";
+            window.location = "https://kalimijamaatpoona.org/fmb/index.php?status=' . $status . '";
           </script>';
           exit; 
         }
