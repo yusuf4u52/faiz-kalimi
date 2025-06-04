@@ -3,7 +3,9 @@ include('_authCheck.php');
 include('_common.php');
 
 $curr_page = basename($_SERVER['PHP_SELF']);
-$query = mysqli_query($link , "SELECT * FROM thalilist as th LEFT JOIN transporters as tr  on th.Transporter = tr.Name where th.Email_ID = '" . $_SESSION['email'] . "' OR th.SEmail_ID = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+//$query = mysqli_query($link , "SELECT * FROM thalilist as th LEFT JOIN transporters as tr  on th.Transporter = tr.Name where th.Email_ID = '" . $_SESSION['email'] . "' OR th.SEmail_ID = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+
+$query = mysqli_query($link , "SELECT * FROM thalilist  where Email_ID = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
 $values = $query->fetch_assoc();
 
 $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT FROM thalilist where Email_ID = '" . $values['musaid'] . "'"));
