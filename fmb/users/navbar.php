@@ -30,7 +30,7 @@ if($curr_page != 'update_details.php') {
 }
 
 // Check if there is any enabled event that needs users response
-// if($curr_page != 'events.php') {
+if($curr_page != 'events.php') {
 	$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_ID = '" . $_SESSION['email'] . "'";
 	$takesFmb = mysqli_num_rows(mysqli_query($link, $query));
 	$result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
@@ -47,7 +47,7 @@ if($curr_page != 'update_details.php') {
 		// exit;
 	//   }
 	}
-// }
+}
 ?>
 <header class="fmb-header">
     <!--<a href="/fmb/users/index.php"><img class="img-fluid mx-auto d-block my-3" src="assets/img/logo.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="390" height="157" /></a>-->
