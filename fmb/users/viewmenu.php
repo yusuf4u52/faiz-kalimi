@@ -340,7 +340,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
     </div>
   </div>
   <script>
-    var scheds = JSON.parse('<?php echo $sched_res; ?>');
+    var scheds = '<?php echo $sched_res; ?>';
   </script>
 <?php } else {
   echo '<h3>You are not allowed to view menu as your thali is stopped.</h3>';
