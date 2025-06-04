@@ -35,17 +35,17 @@ if($curr_page != 'events.php') {
 	$takesFmb = mysqli_num_rows(mysqli_query($link, $query));
 	$result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
 	while ($values1 = mysqli_fetch_assoc($result)) {
-	  $showToNonFmbOnly = $values1['showtononfmb'];
+	  // $showToNonFmbOnly = $values1['showtononfmb'];
 	  // skip redirects to events for fmb holder if the database flag is set to do so
-	  if ($showToNonFmbOnly == 1) {
+	  // if ($showToNonFmbOnly == 1) {
 		if ($takesFmb == 0 && !isResponseReceived($values1['id'])) {
 		  header("Location: events.php");
 		  exit;
 		}
-	  } else if (!isResponseReceived($values['id'])) {
-		header("Location: events.php");
-		exit;
-	  }
+	 //  } else if (!isResponseReceived($values['id'])) {
+		// header("Location: events.php");
+		// exit;
+	//   }
 	}
 }
 ?>
