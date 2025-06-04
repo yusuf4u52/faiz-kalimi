@@ -67,7 +67,7 @@ include('navbar.php');
 							</thead>
 							<tbody>
 								<?php
-								$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_id = '" . $_SESSION['email'] . "'";
+								$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_id = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "'";
 								$takesFmb = mysqli_num_rows(mysqli_query($link, $query));
 								$result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
 								while ($values = mysqli_fetch_assoc($result)) {
@@ -81,7 +81,7 @@ include('navbar.php');
 									<tr>
 										<th scope="row"><?php echo $values['name']; ?></th>
 										<td><?php echo $values['venue']; ?></td>
-										<?php echo isResponseReceived($values['id']) ? '<td>You Said ["' . $response['response'] . '"]</td>' : '<td>No Response Yet</td>'; ?>
+										<?php echo isResponseReceived($values['id']) ? '<td>You Said ["' . $response['response'] . '"]</td>' : 'No Response'; ?>
 										<td>
 											<button type="button" <?php echo $values['enabled'] == 0 ? 'disabled' : ''; ?>
 												data-eventid="<?php echo $values['id']; ?>"
