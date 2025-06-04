@@ -38,10 +38,10 @@ if($curr_page != 'update_details.php') {
 	  // $showToNonFmbOnly = $values1['showtononfmb'];
 	  // skip redirects to events for fmb holder if the database flag is set to do so
 	  // if ($showToNonFmbOnly == 1) {
-		if ($takesFmb == 0 && !isResponseReceived($values1['id'])) {
+		// if ($takesFmb == 0 && !isResponseReceived($values1['id'])) {
 		  header("Location: events.php");
 		  exit;
-		}
+		// }
 	 //  } else if (!isResponseReceived($values['id'])) {
 		// header("Location: events.php");
 		// exit;
