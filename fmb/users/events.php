@@ -56,7 +56,7 @@ include('navbar.php');
 									<th>Details</th>
 									<!-- <th>Comments</th> -->
 									<!-- <th>Thalisize</th> -->
-									<?php echo isResponseReceived($values['id']) ? '<th>Response</th>' : ''; ?>
+									<th>Response</th>
 									<th>Action</th>
 									<!-- <th>Actions</th> -->
 									<?php if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com'))) {
@@ -81,7 +81,7 @@ include('navbar.php');
 									<tr>
 										<th scope="row"><?php echo $values['name']; ?></th>
 										<td><?php echo $values['venue']; ?></td>
-										<?php echo isResponseReceived($values['id']) ? '<td>You Said ["' . $response['response'] . '"]</td>' : ''; ?>
+										<?php echo isResponseReceived($values['id']) ? '<td>You Said ["' . $response['response'] . '"]</td>' : '<td>No Response Yet</td>'; ?>
 										<td>
 											<button type="button" <?php echo $values['enabled'] == 0 ? 'disabled' : ''; ?>
 												data-eventid="<?php echo $values['id']; ?>"
