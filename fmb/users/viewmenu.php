@@ -88,8 +88,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
     }
     $menu['thalisize'] = $thalisize;
     $sched_res[$menu['id']] = $menu;
-  }
-  $sched_res = json_encode($sched_res); ?>
+  } ?>
 
   <div id="calendar"></div>
 
@@ -340,7 +339,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
     </div>
   </div>
   <script>
-    var scheds = '<?php echo $sched_res; ?>';
+    var scheds = <?php echo json_encode($sched_res); ?>;
   </script>
 <?php } else {
   echo '<h3>You are not allowed to view menu as your thali is stopped.</h3>';
