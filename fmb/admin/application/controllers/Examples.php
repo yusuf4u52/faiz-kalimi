@@ -177,7 +177,7 @@ class Examples extends CI_Controller
 		$crud = new grocery_CRUD();
 		$crud->set_model('Event_join');
 		$crud->set_table('event_response');
-		$crud->columns('thalino', 'eventid', 'response', 'name', 'CONTACT', 'thalisize', 'wingflat', 'society', 'Full_Address', 'sector', 'subsector', 'Transporter', 'tiffinno', 'thali_size', 'ITS_No');
+		$crud->columns('thalino', 'eventid', 'response', 'name', 'CONTACT', 'thalisize', 'wingflat', 'society', 'sabeelType', 'sector', 'subsector', 'Transporter', 'tiffinno', 'ITS_No');
 		$crud->where('eventid in (select id from events where showInAdmin=1)');
 		$crud->unset_read();
 		$crud->unset_edit();
