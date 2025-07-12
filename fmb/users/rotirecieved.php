@@ -130,6 +130,24 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                             <input type="number" class="form-control" name="roti_recieved" value="<?php echo $values['roti_recieved']; ?>" required>
                                                         </div>
                                                     </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="flour_left" class="col-4 control-label">Flour Left</label>
+                                                        <div class="col-8">
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" name="flour_left" min="0" value="<?php echo $values['flour_left']; ?>" step="0.01" required>
+                                                                <span class="input-group-text">KG</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="oil_left" class="col-4 control-label">Oil Left</label>
+                                                        <div class="col-8">
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" name="oil_left" value="<?php echo $values['oil_left']; ?>" step="0.01" required>
+                                                                <span class="input-group-text">Ltr</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="submit" class="btn btn-light">Update</button>
@@ -206,7 +224,25 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                 <div class="mb-3 row">
                                                     <label for="roti_recieved" class="col-4 control-label">Roti Recieved</label>
                                                     <div class="col-8">
-                                                        <input type="number" class="form-control" name="roti_recieved" required>
+                                                        <input type="number" class="form-control" name="roti_recieved" min="0" required>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 row">
+                                                    <label for="flour_left" class="col-4 control-label">Flour Left</label>
+                                                    <div class="col-8">
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" name="flour_left" step="0.01" required>
+                                                            <span class="input-group-text">KG</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 row">
+                                                    <label for="oil_left" class="col-4 control-label">Oil Left</label>
+                                                    <div class="col-8">
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" name="oil_left" step="0.01" required>
+                                                            <span class="input-group-text">Ltr</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

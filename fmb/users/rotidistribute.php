@@ -128,7 +128,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                         <label for="flour_distributed" class="col-4 control-label">Flour Distribution</label>
                                                         <div class="col-8">
                                                             <div class="input-group">
-                                                                <input type="number" class="form-control" name="flour_distributed" value="<?php echo $values['flour_distributed']; ?>" required>
+                                                                <input type="number" class="form-control" name="flour_distributed" value="<?php echo $values['flour_distributed']; ?>" step="0.01" min="0" required>
                                                                 <span class="input-group-text">KG</span>
                                                             </div>
                                                         </div>
@@ -137,7 +137,25 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                         <label for="oil_distributed" class="col-4 control-label">Oil Distribution</label>
                                                         <div class="col-8">
                                                             <div class="input-group">
-                                                                <input type="number" class="form-control" name="oil_distributed" value="<?php echo $values['oil_distributed']; ?>" required>
+                                                                <input type="number" class="form-control" name="oil_distributed" value="<?php echo $values['oil_distributed']; ?>" step="0.01" min="0" required>
+                                                                <span class="input-group-text">Ltr</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="flour_left" class="col-4 control-label">Flour Left</label>
+                                                        <div class="col-8">
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" name="flour_left" value="<?php echo $values['flour_left']; ?>" step="0.01" required>
+                                                                <span class="input-group-text">KG</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="oil_left" class="col-4 control-label">Oil Left</label>
+                                                        <div class="col-8">
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" name="oil_left" value="<?php echo $values['oil_left']; ?>" step="0.01" required>
                                                                 <span class="input-group-text">Ltr</span>
                                                             </div>
                                                         </div>
@@ -219,7 +237,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                     <label for="flour_distributed" class="col-4 control-label">Flour Distribute</label>
                                                     <div class="col-8">
                                                         <div class="input-group">
-                                                            <input type="number" class="form-control" name="flour_distributed" required>
+                                                            <input type="number" class="form-control" name="flour_distributed" step="0.01" min="0" required>
                                                             <span class="input-group-text">KG</span>
                                                         </div>
                                                     </div>
@@ -228,11 +246,29 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                     <label for="oil_distributed" class="col-4 control-label">Oil Distribute</label>
                                                     <div class="col-8">
                                                         <div class="input-group">
-                                                            <input type="number" class="form-control" name="oil_distributed" required>
+                                                            <input type="number" class="form-control" name="oil_distributed" step="0.01" min="0" required>
                                                             <span class="input-group-text">Ltr</span>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="mb-3 row">
+                                                        <label for="flour_left" class="col-4 control-label">Flour Left</label>
+                                                        <div class="col-8">
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" name="flour_left" step="0.01" required>
+                                                                <span class="input-group-text">KG</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="oil_left" class="col-4 control-label">Oil Left</label>
+                                                        <div class="col-8">
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" name="oil_left" step="0.01" required>
+                                                                <span class="input-group-text">Ltr</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-light">Add</button>

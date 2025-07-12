@@ -37,6 +37,14 @@ if( isset($_POST['action']) && $_POST['action'] == 'add_rrecieved' ) {
         }
     }
 
+    if( $_POST['flour_left'] !== 0 ) {
+        $flour_left = $_POST['flour_left'];
+    } 
+
+    if( $_POST['oil_left'] !== 0 ) {
+        $oil_left = $_POST['oil_left'];
+    } 
+
     $arecieved = mysqli_query($link, "SELECT * FROM fmb_roti_recieved WHERE `recieved_date` = '".$_POST['recieved_date']."' AND `maker_id` = '" . $_POST['maker_id'] . "' order by `recieved_date` DESC LIMIT 1") or die(mysqli_error($link));
     if ($arecieved->num_rows > 0) {
         $row_arecieved = $arecieved->fetch_assoc();
@@ -84,6 +92,14 @@ if( isset($_POST['action']) && $_POST['action'] == 'edit_rrecieved' ) {
             $oil_left = 0 - $oil_required;
         }
     }
+
+    if( $_POST['flour_left'] !== 0 ) {
+        $flour_left = $_POST['flour_left'];
+    } 
+
+    if( $_POST['oil_left'] !== 0 ) {
+        $oil_left = $_POST['oil_left'];
+    } 
 
     $sql = "UPDATE  fmb_roti_recieved SET `maker_id` = '".$_POST['maker_id']."', `recieved_date` = '".$_POST['recieved_date']."', `roti_recieved` = '".$_POST['roti_recieved']."', `flour_left` = '".$flour_left."', `oil_left` = '".$oil_left."', `recieved_by` = '" . $_POST['recieved_by'] . "' WHERE `id` = '".$_POST['rrecieved_id']."'";
     mysqli_query($link,$sql) or die(mysqli_error($link));
