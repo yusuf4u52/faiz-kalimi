@@ -114,7 +114,7 @@ if($curr_page != 'events.php') {
                     }
                     ?>
                     <?php
-                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'hussainbarnagarwala14@gmail.com', 'saminabarnagarwala2812@gmail.com'))) {
+                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'hussainbarnagarwala14@gmail.com', 'abbas.saifee5@gmail.com', 'saminabarnagarwala2812@gmail.com', 'gheewalamf@gmail.com', 'zahradhorajiwala0@gmail.com'))) {
                         ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
@@ -130,7 +130,7 @@ if($curr_page != 'events.php') {
                     }
                     ?>
                     <?php
-                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'taherhafiji@gmail.com'))) {
+                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'taherhafiji@gmail.com', 'saminabarnagarwala2812@gmail.com'))) {
                         ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
