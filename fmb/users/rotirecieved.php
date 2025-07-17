@@ -51,10 +51,10 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                         <thead>
                                             <tr>
                                                 <th>Date</th>
-                                                <th>Full Name</th>
                                                 <th>Code</th>
-                                                <th>Roti Recieved</th>
-                                                <th>Stock Left</th>
+                                                <th>Full Name</th>
+                                                <th>Recieved</th>
+                                                <th>Status</th>
                                                 <th>Recieved By</th>
                                                 <th>Action</th>
                                             </tr>
@@ -69,17 +69,19 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                 $day = date('l', strtotime($values['recieved_date'])); ?>
                                                 <tr>
                                                 <td><?php echo date('d M Y', strtotime($values['recieved_date'])) .' - '.$hijridate . ' (' . $day . ')'; ?></td>
+                                                    <td><?php echo $roti_maker['code']; ?></td>    
                                                     <td><?php echo $roti_maker['full_name']; ?></td>
-                                                    <td><?php echo $roti_maker['code']; ?></td>
-                                                    <td><?php echo $values['roti_recieved']; ?> Rotis</td>
-                                                    <td><strong>FLour: </strong><?php echo $values['flour_left']; ?> KG <br/> <strong>Oil: </strong><?php echo $values['oil_left']; ?> Ltr</td>
+                                                    <td><strong>Packet: </strong> <?php echo $values['roti_recieved']/4; ?> <br/> 
+                                                    <strong>Total Roti: </strong><?php echo $values['roti_recieved']; ?></td>
+                                                    <td class="<?php echo ( ($values['roti_status'] === 'pending') ? 'text-danger': 'text-success'); ?>"><?php echo ucfirst($values['roti_status']); ?></td>
                                                     <td><?php echo $user['username']; ?></td>
                                                     <td><button type="button" class="btn btn-light"
-                                                            data-bs-target="#editrrecieved-<?php echo $values['id']; ?>"
-                                                            data-bs-toggle="modal" style="margin-bottom:5px"><i class="bi bi-pencil-square"></i></button> <button type="button"
-                                                            class="btn btn-light"
-                                                            data-bs-target="#deleterrecieved-<?php echo $values['id']; ?>"
-                                                            data-bs-toggle="modal" style="margin-bottom:5px"><i class="bi bi-trash"></i></button></td>
+                                                        data-bs-target="#editrrecieved-<?php echo $values['id']; ?>"
+                                                        data-bs-toggle="modal" style="margin-bottom:5px"><i class="bi bi-pencil-square"></i></button> <button type="button"
+                                                        class="btn btn-light"
+                                                        data-bs-target="#deleterrecieved-<?php echo $values['id']; ?>"
+                                                        data-bs-toggle="modal" style="margin-bottom:5px"><i class="bi bi-trash"></i></button>
+                                                    </td>
                                                 </tr>
                                             <?php }
                                             mysqli_free_result($result); ?>
@@ -116,7 +118,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                     <div class="mb-3 row">
                                                         <label for="maker_id" class="col-4 control-label">Roti Maker</label>
                                                         <div class="col-8">
-                                                            <select type="text" class="form-select" name="maker_id" required>
+                                                            <select type="text" class="form-select" name="maker_id" readonly required>
                                                                 <option value="">Select Roti Maker</option>
                                                                 <?php while ($roti_maker = mysqli_fetch_assoc($fmb_roti_maker)) { ?>
                                                                     <option value="<?php echo $roti_maker['id']; ?>" <?php echo ($roti_maker['id'] == $values['maker_id'] ? 'selected' : ''); ?> ><?php echo $roti_maker['code']; ?></option>
@@ -131,20 +133,23 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                         </div>
                                                     </div>
                                                     <div class="mb-3 row">
-                                                        <label for="flour_left" class="col-4 control-label">Flour Left</label>
+                                                        <label for="roti_status" class="col-4 control-label">Roti Status</label>
                                                         <div class="col-8">
-                                                            <div class="input-group">
-                                                                <input type="number" class="form-control" name="flour_left" min="0" value="<?php echo $values['flour_left']; ?>" step="0.01" required>
-                                                                <span class="input-group-text">KG</span>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input roti_status" type="radio"
+                                                                    name="roti_status" id="roti_status1" value="Pending" <?php echo (!empty($values['roti_status']) && $values['roti_status'] == 'pending' ? 'Checked' : ''); ?>
+                                                                    required>
+                                                                <label class="form-check-label" for="roti_status1">
+                                                                    Pending
+                                                                </label>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-3 row">
-                                                        <label for="oil_left" class="col-4 control-label">Oil Left</label>
-                                                        <div class="col-8">
-                                                            <div class="input-group">
-                                                                <input type="number" class="form-control" name="oil_left" value="<?php echo $values['oil_left']; ?>" step="0.01" required>
-                                                                <span class="input-group-text">Ltr</span>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input roti_status" type="radio"
+                                                                    name="roti_status" id="roti_status2" value="recieved" <?php echo (!empty($values['roti_status']) && $values['roti_status'] == 'recieved' ? 'Checked' : ''); ?>
+                                                                    required>
+                                                                <label class="form-check-label" for="roti_status2">
+                                                                    Recieved
+                                                                </label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -228,23 +233,26 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 row">
-                                                    <label for="flour_left" class="col-4 control-label">Flour Left</label>
-                                                    <div class="col-8">
-                                                        <div class="input-group">
-                                                            <input type="number" class="form-control" name="flour_left" step="0.01" required>
-                                                            <span class="input-group-text">KG</span>
+                                                        <label for="roti_status" class="col-4 control-label">Roti Status</label>
+                                                        <div class="col-8">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input roti_status" type="radio"
+                                                                    name="roti_status" id="roti_status1" value="pending" checked
+                                                                    required>
+                                                                <label class="form-check-label" for="roti_status1">
+                                                                    Pending
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input roti_status" type="radio"
+                                                                    name="roti_status" id="roti_status2" value="recieved"
+                                                                    required>
+                                                                <label class="form-check-label" for="roti_status2">
+                                                                    Recieved
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="mb-3 row">
-                                                    <label for="oil_left" class="col-4 control-label">Oil Left</label>
-                                                    <div class="col-8">
-                                                        <div class="input-group">
-                                                            <input type="number" class="form-control" name="oil_left" step="0.01" required>
-                                                            <span class="input-group-text">Ltr</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-light">Add</button>

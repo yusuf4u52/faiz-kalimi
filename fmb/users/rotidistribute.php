@@ -51,8 +51,8 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                         <thead>
                                             <tr>
                                                 <th>Date</th>
-                                                <th>Full Name</th>
                                                 <th>Code</th>
+                                                <th>Full Name</th>
                                                 <th>Flour Stock</th>
                                                 <th>Oil Stock</th>
                                                 <th>Distributed By</th>
@@ -69,8 +69,8 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                 $day = date('l', strtotime($values['distribution_date'])); ?>
                                                 <tr>
                                                 <td><?php echo date('d M Y', strtotime($values['distribution_date'])).' - '.$hijridate . ' (' . $day . ')'; ?></td>
-                                                    <td><?php echo $roti_maker['full_name']; ?></td>
                                                     <td><?php echo $roti_maker['code']; ?></td>
+                                                    <td><?php echo $roti_maker['full_name']; ?></td>
                                                     <td><strong>Distributed:</strong> <?php echo $values['flour_distributed']; ?> KG <br/><strong>Left:</strong> <?php echo $values['flour_left']; ?> KG<br/><strong>Total :</strong> <?php echo $values['flour_distributed'] + $values['flour_left']; ?> KG</td>
                                                     <td><strong>Distributed:</strong> <?php echo $values['oil_distributed']; ?> Ltr<br/><strong>Left:</strong> <?php echo $values['oil_left']; ?> Ltr<br/><strong>Total:</strong> <?php echo $values['oil_distributed'] + $values['oil_left']; ?> Ltr</td>
                                                     <td><?php echo $user['username']; ?></td>
@@ -138,24 +138,6 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                         <div class="col-8">
                                                             <div class="input-group">
                                                                 <input type="number" class="form-control" name="oil_distributed" value="<?php echo $values['oil_distributed']; ?>" step="0.01" min="0" required>
-                                                                <span class="input-group-text">Ltr</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-3 row">
-                                                        <label for="flour_left" class="col-4 control-label">Flour Left</label>
-                                                        <div class="col-8">
-                                                            <div class="input-group">
-                                                                <input type="number" class="form-control" name="flour_left" value="<?php echo $values['flour_left']; ?>" step="0.01" required>
-                                                                <span class="input-group-text">KG</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-3 row">
-                                                        <label for="oil_left" class="col-4 control-label">Oil Left</label>
-                                                        <div class="col-8">
-                                                            <div class="input-group">
-                                                                <input type="number" class="form-control" name="oil_left" value="<?php echo $values['oil_left']; ?>" step="0.01" required>
                                                                 <span class="input-group-text">Ltr</span>
                                                             </div>
                                                         </div>
@@ -255,7 +237,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                         <label for="flour_left" class="col-4 control-label">Flour Left</label>
                                                         <div class="col-8">
                                                             <div class="input-group">
-                                                                <input type="number" class="form-control" name="flour_left" step="0.01" required>
+                                                                <input type="number" class="form-control" name="flour_left" step="0.01" value="0" required>
                                                                 <span class="input-group-text">KG</span>
                                                             </div>
                                                         </div>
@@ -264,7 +246,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                         <label for="oil_left" class="col-4 control-label">Oil Left</label>
                                                         <div class="col-8">
                                                             <div class="input-group">
-                                                                <input type="number" class="form-control" name="oil_left" step="0.01" required>
+                                                                <input type="number" class="form-control" name="oil_left" step="0.01" value="0" required>
                                                                 <span class="input-group-text">Ltr</span>
                                                             </div>
                                                         </div>
