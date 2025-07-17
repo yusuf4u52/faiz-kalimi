@@ -123,7 +123,7 @@ if($curr_page != 'events.php') {
                                 <li><a class="dropdown-item" href="/fmb/users/rotimaker.php">Roti Maker</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/rotidistribute.php">Distribution</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/rotirecieved.php">Recieved</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/rotipayment.php">Payment</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/rotireport.php">Report</a></li>
                             </ul>
                         </li>
                         <?php

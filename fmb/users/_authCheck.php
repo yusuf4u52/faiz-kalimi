@@ -36,7 +36,7 @@ $rights = array(
 		"/fmb/users/saverdistribute.php",
 		"/fmb/users/rotirecieved.php",
 		"/fmb/users/saverrecieved.php",
-		"/fmb/users/rotipayment.php",
+		"/fmb/users/rotireport.php",
 		"/fmb/users/transporter.php",
 		"/fmb/users/savertransporters.php",
 		"/fmb/users/transporterthalicount.php",
