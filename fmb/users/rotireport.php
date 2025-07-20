@@ -15,7 +15,7 @@ include('navbar.php');
                                     list($year, $week) = explode('-W', $_GET['payment_week']);
                                     $start_date = date('Y-m-d', strtotime($year . 'W' . $week));
                                     $end_date = date('Y-m-d', strtotime($year . 'W' . $week . '+6 days')); ?>
-                                    <h2 class="mb-3">Roti Report from <?php echo $start_date; ?> to <?php echo $end_date; ?></h2>
+                                    <h2 class="mb-3">Roti Report from <strong><?php echo date('d M Y', strtotime($start_date) ); ?></strong> to <strong><?php echo date('d M Y', strtotime($end_date) ); ?></strong></h2>
                                 <?php } else { ?>   
                                     <h2 class="mb-3">Roti Report</h2>
                                 <?php } ?>
@@ -23,7 +23,7 @@ include('navbar.php');
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <form id="rotipayment" class="form-horizontal" method="GET"
+                                <form id="rotipayment" class="form-horizontal my-3" method="GET"
                                     action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
                                     <div class="mb-3 row">
                                         <label for="payment_week" class="col-3 control-label">Payment Week</label>
@@ -39,15 +39,17 @@ include('navbar.php');
                                     list($year, $week) = explode('-W', $_GET['payment_week']);
                                     $start_date = date('Y-m-d', strtotime($year . 'W' . $week));
                                     $end_date = date('Y-m-d', strtotime($year . 'W' . $week . '+5 days'));
-                                    $roti_recieved = mysqli_query($link, "SELECT `maker_id`, SUM(`roti_recieved`) as total_roti_recieved FROM fmb_roti_recieved WHERE `recieved_date` BETWEEN '" . $start_date . "' AND '" . $end_date . "' GROUP BY `maker_id`");
+                                    $roti_recieved = mysqli_query($link, "SELECT `maker_id`, SUM(`roti_recieved`) as total_roti_recieved FROM fmb_roti_recieved WHERE `recieved_date` BETWEEN '" . $start_date . "' AND '" . $end_date . "' AND `roti_status` = 'recieved' GROUP BY `maker_id`");
                                     if ($roti_recieved->num_rows > 0) { ?>
                                         <div class="table-responsive mb-3">
-                                            <table class="table table-striped table-hover display">
+                                            <table id="rotireport" class="table table-striped table-hover">
                                                 <thead>
                                                     <tr>
                                                         <th>Code</th>
                                                         <th>Full Name</th>
+                                                        <th>Stock Distributed</th>
                                                         <th>Roti Recieved</th>
+                                                        <th>Stock Left</th>
                                                         <th>Payment</th>
                                                         <th>Bank Details</th>
                                                     </tr>
@@ -64,11 +66,25 @@ include('navbar.php');
                                                             $paragraphs = explode( "\n", $bank_details );
                                                         } else {
                                                             $maker = "Unknown Maker";
+                                                        } 
+                                                        $adistribution = mysqli_query($link, "SELECT * FROM fmb_roti_distribution WHERE `distribution_date` < '".$end_date."' AND `maker_id` = '" . $maker_id . "' order by `distribution_date` DESC LIMIT 1") or die(mysqli_error($link));
+                                                        if ($adistribution->num_rows > 0) {
+                                                            $row_adistribution = $adistribution->fetch_assoc();
+                                                            $flour_per_roti = 0.025;
+                                                            $oil_per_roti = 0.0025;
+                                                            $flour_required = $total_roti_recieved * $flour_per_roti;
+                                                            $oil_required = $total_roti_recieved * $oil_per_roti;
+                                                            $flour_distributed = $row_adistribution['flour_distributed'] + $row_adistribution['flour_left'];
+                                                            $oil_distributed = $row_adistribution['oil_distributed'] + $row_adistribution['oil_left'];
+                                                            $flour_left = $flour_distributed - $flour_required;
+                                                            $oil_left = $oil_distributed - $oil_required;
                                                         } ?>
                                                         <tr>
                                                             <td><?php echo $maker['code']; ?></td>
                                                             <td><?php echo $maker['full_name']; ?></td>
+                                                            <td><strong>Flour:</strong> <?php echo $flour_distributed; ?> KG <br/> <strong>Oil:</strong> <?php echo $oil_distributed; ?> Ltr</td>
                                                             <td><?php echo $total_roti_recieved; ?> Roti</td>
+                                                            <td><strong>Flour:</strong> <?php echo $flour_left; ?> KG <br/> <strong>Oil:</strong> <?php echo $oil_left; ?> Ltr</td>
                                                             <td>₹ <?php echo $total_payment; ?></td>
                                                             <td><?php foreach( $paragraphs as $para ) {
                                                                 echo '<p class="mb-1">'.$para.'</p>';

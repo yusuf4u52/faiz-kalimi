@@ -3,7 +3,13 @@ include('header.php');
 include('navbar.php');
 include('getHijriDate.php');
 
-$result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieved_date` DESC") or die(mysqli_error($link));
+if ( isset($_GET['recieved_date']) && !empty($_GET['recieved_date']) ) {
+    $recieved_date = $_GET['recieved_date'];
+    $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved WHERE recieved_date = '".$recieved_date."' order by `maker_id` DESC") or die(mysqli_error($link));
+} else {
+    $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieved_date` DESC") or die(mysqli_error($link));
+}
+
 ?>
 <div class="content mt-5">
     <div class="container">
@@ -13,7 +19,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h2 class="mb-3">FMB Roti Recieved</h2>
+                                <h2 class="mb-3">FMB Roti Recieved <?php echo ( !empty($_GET['recieved_date']) ? 'on <strong>'. date('d F Y', strtotime($_GET['recieved_date'])) . '</strong>' : '' ); ?></h2>
                             </div>
                             <div class="col-6 text-end">
                                 <button type="button" class="btn btn-light mb-3" data-bs-target="#addrrecieved"
@@ -22,6 +28,19 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                         </div>
                         <div class="row">
                             <div class="col-12">
+                                <form id="rotipayment" class="form-horizontal my-3" method="GET"
+                                    action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
+                                    <div class="mb-3 row">
+                                        <label for="recieved_date" class="col-3 control-label">Search By Recieved Date</label>
+                                        <div class="col-6">
+                                            <input type="date" class="form-control" name="recieved_date" id="recieved_date">
+                                        </div>
+                                        <div class="col-3 col-md-3">
+                                            <button class="btn btn-light" type="submit" name="search">Search</button>
+                                            <button class="btn btn-light" type="reset" name="reset">Reset</button>
+                                        </div>
+                                    </div>
+                                </form>
                             <?php if (isset($_GET['action']) && $_GET['action'] == 'add') {
                                     $add_roti_maker = mysqli_query($link, "SELECT `code` FROM fmb_roti_maker WHERE `id` = '".$_GET['maker']."'") or die(mysqli_error($link));
                                     $add_maker = $add_roti_maker->fetch_assoc(); ?>
@@ -73,7 +92,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                     <td><?php echo $roti_maker['full_name']; ?></td>
                                                     <td><strong>Packet: </strong> <?php echo $values['roti_recieved']/4; ?> <br/> 
                                                     <strong>Total Roti: </strong><?php echo $values['roti_recieved']; ?></td>
-                                                    <td class="<?php echo ( ($values['roti_status'] === 'pending') ? 'text-danger': 'text-success'); ?>"><?php echo ucfirst($values['roti_status']); ?></td>
+                                                    <td class="<?php echo ( $values['roti_status'] == 'pending' ? 'text-danger': 'text-success'); ?>"><?php echo ucfirst($values['roti_status']); ?></td>
                                                     <td><?php echo $user['username']; ?></td>
                                                     <td><button type="button" class="btn btn-light"
                                                         data-bs-target="#editrrecieved-<?php echo $values['id']; ?>"
@@ -137,7 +156,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                         <div class="col-8">
                                                             <div class="form-check">
                                                                 <input class="form-check-input roti_status" type="radio"
-                                                                    name="roti_status" id="roti_status1" value="Pending" <?php echo (!empty($values['roti_status']) && $values['roti_status'] == 'pending' ? 'Checked' : ''); ?>
+                                                                    name="roti_status" id="roti_status1" value="pending" <?php echo (!empty($values['roti_status']) && $values['roti_status'] == 'pending' ? 'Checked' : ''); ?>
                                                                     required>
                                                                 <label class="form-check-label" for="roti_status1">
                                                                     Pending
@@ -212,7 +231,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                 <div class="mb-3 row">
                                                 <label for="its_no" class="col-4 control-label">Date</label>
                                                     <div class="col-8">
-                                                        <input type="date" class="form-control" name="recieved_date" max="<?php echo date('Y-m-d'); ?>" value="<?php echo date('Y-m-d'); ?>" required>
+                                                        <input type="date" class="form-control" name="recieved_date" max="<?php echo date('Y-m-d'); ?>" value="<?php echo ( !empty($_GET['recieved_date']) ?  $_GET['recieved_date'] : date('Y-m-d') ); ?>" required>
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 row">
@@ -237,7 +256,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                         <div class="col-8">
                                                             <div class="form-check">
                                                                 <input class="form-check-input roti_status" type="radio"
-                                                                    name="roti_status" id="roti_status1" value="pending" checked
+                                                                    name="roti_status" id="roti_status1" value="pending"
                                                                     required>
                                                                 <label class="form-check-label" for="roti_status1">
                                                                     Pending
@@ -245,7 +264,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieve
                                                             </div>
                                                             <div class="form-check">
                                                                 <input class="form-check-input roti_status" type="radio"
-                                                                    name="roti_status" id="roti_status2" value="recieved"
+                                                                    name="roti_status" id="roti_status2" value="recieved" checked
                                                                     required>
                                                                 <label class="form-check-label" for="roti_status2">
                                                                     Recieved
