@@ -2,8 +2,12 @@
 include('header.php');
 include('navbar.php');
 include('getHijriDate.php');
-
-$result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `distribution_date` DESC") or die(mysqli_error($link));
+if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
+    $distribution_date = $_GET['distribution_date'];
+    $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution WHERE distribution_date = '".$distribution_date."' order by `distribution_date` DESC") or die(mysqli_error($link));
+} else {
+    $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `distribution_date` DESC") or die(mysqli_error($link));
+}
 ?>
 <div class="content mt-5">
     <div class="container">
@@ -13,7 +17,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h2 class="mb-3">FMB Roti Distribution</h2>
+                                <h2 class="mb-3">FMB Roti Distribution <?php echo ( !empty($_GET['distribution_date']) ? 'on <strong>'. date('d F Y', strtotime($_GET['distribution_date'])) . '</strong>' : '' ); ?></h2>
                             </div>
                             <div class="col-6 text-end">
                                 <button type="button" class="btn btn-light mb-3" data-bs-target="#addrdistribute"
@@ -22,6 +26,19 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                         </div>
                         <div class="row">
                             <div class="col-12">
+                                <form id="rotipayment" class="form-horizontal my-3" method="GET"
+                                    action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
+                                    <div class="mb-3 row">
+                                        <label for="distribution_date" class="col-3 control-label">Search By Distribution Date</label>
+                                        <div class="col-6">
+                                            <input type="date" class="form-control" name="distribution_date" id="distribution_date">
+                                        </div>
+                                        <div class="col-3 col-md-3">
+                                            <button class="btn btn-light" type="submit" name="search">Search</button>
+                                            <button class="btn btn-light" type="reset" name="reset">Reset</button>
+                                        </div>
+                                    </div>
+                                </form>
                                 <?php if (isset($_GET['action']) && $_GET['action'] == 'add') {
                                     $add_roti_maker = mysqli_query($link, "SELECT `code` FROM fmb_roti_maker WHERE `id` = '".$_GET['maker']."'") or die(mysqli_error($link));
                                     $add_maker = $add_roti_maker->fetch_assoc(); ?>
@@ -201,7 +218,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                 <div class="mb-3 row">
                                                 <label for="its_no" class="col-4 control-label">Date</label>
                                                     <div class="col-8">
-                                                        <input type="date" class="form-control" name="distribution_date" max="<?php echo date('Y-m-d'); ?>" value="<?php echo date('Y-m-d'); ?>" required>
+                                                        <input type="date" class="form-control" name="distribution_date" max="<?php echo date('Y-m-d'); ?>" value="<?php echo ( !empty($_GET['distribution_date']) ?  $_GET['distribution_date'] : date('Y-m-d') ); ?>" required>
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 row">
@@ -233,6 +250,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) { ?>
                                                 <div class="mb-3 row">
                                                         <label for="flour_left" class="col-4 control-label">Flour Left</label>
                                                         <div class="col-8">
@@ -251,6 +269,7 @@ $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `dis
                                                             </div>
                                                         </div>
                                                     </div>
+                                                <?php } ?>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-light">Add</button>

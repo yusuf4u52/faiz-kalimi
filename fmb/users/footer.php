@@ -2,8 +2,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <p class="m-2"><strong>Helpline:</strong> <a href="https://wa.me/+919826932974">+91 98269 32974</a> | <a href="https://wa.me/+919820518835">+91 98205 18835</a></p>
-                    <p class="m-2"><small>&copy; Copyright <?php echo date('Y'); ?> FMB (Kalimi Mohallah - Poona). All Rights Reserved.</small></p>
+                    <p class="m-1"><small><strong>Complaint:</strong> <a href="https://wa.me/+918999023962">+91 89990 23962</a></small></p>
+                    <p class="m-1"><small><strong>Helpline:</strong> <a href="https://wa.me/+919826932974">+91 98269 32974</a> | <a href="https://wa.me/+919820518835">+91 98205 18835</a></small></p>
+                    <p><small>&copy; Copyright <?php echo date('Y'); ?> FMB (Kalimi Mohallah - Poona). All Rights Reserved.</small></p>
                 </div>
             </div>
         </div>
@@ -17,10 +18,16 @@
     <script src="/fmb/users/assets/js/hijri_date.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.bootstrap5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
 		var kalimi_sw = {"url":"\/fmb\/sw.js","disable_addtohome":"0","enableOnDesktop":"","offline_message":"1","offline_message_txt":"You are currently offline."};
 		var kalimi_ptr_obj = {"instrPullToRefresh":"Pull down to refresh","instrReleaseToRefresh":"Release to refresh","instrRefreshing":"Refreshing","instrptr_font_size":"0.85em","instrptr_font_color":"#333"};

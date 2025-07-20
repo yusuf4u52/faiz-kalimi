@@ -3,7 +3,7 @@ include('header.php');
 include('navbar.php');
 
 if (!empty($values['yearly_hub'])) {
-  $sql = mysqli_query($link, "select miqat_date,miqat_description from sms_date");
+  $sql = mysqli_query($link, "select miqat_date, miqat_description from sms_date");
   $miqaatslist = mysqli_fetch_all($sql);
 }
 ?>
@@ -24,7 +24,7 @@ if (!empty($values['yearly_hub'])) {
               do contribute the whole amount in Lailatul Qadr</h6>
             <ol>
               <?php foreach ($miqaatslist as $miqaat) { ?>
-                <li><?php echo $miqaat['1']; ?></li>
+                <li><?php echo $miqaat['1']; ?> on <strong><?php echo date('d F Y', strtotime($miqaat['0'])); ?></strong></li>
               <?php } ?>
             </ol>
           </div>
