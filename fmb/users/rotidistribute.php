@@ -29,13 +29,13 @@ if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
                                 <form id="rotipayment" class="form-horizontal my-3" method="GET"
                                     action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
                                     <div class="mb-3 row">
-                                        <label for="distribution_date" class="col-3 control-label">Search By Distribution Date</label>
-                                        <div class="col-6">
+                                        <label for="distribution_date" class="col-4 control-label">Search By Distribution Date</label>
+                                        <div class="col-4">
                                             <input type="date" class="form-control" name="distribution_date" id="distribution_date">
                                         </div>
-                                        <div class="col-3 col-md-3">
-                                            <button class="btn btn-light" type="submit" name="search">Search</button>
-                                            <button class="btn btn-light" type="reset" name="reset">Reset</button>
+                                        <div class="col-4">
+                                            <button class="btn btn-light mb-2 me-2" type="submit" name="search">Search</button>
+                                            <button class="btn btn-light mb-2" type="reset" name="reset">Reset</button>
                                         </div>
                                     </div>
                                 </form>
