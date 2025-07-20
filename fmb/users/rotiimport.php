@@ -1,6 +1,7 @@
 <?php
 include('connection.php');
-require '../vendor/autoload.php'; // PhpSpreadsheet autoloader
+include('_authCheck.php');
+require '../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
