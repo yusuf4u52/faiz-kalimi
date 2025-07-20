@@ -28,20 +28,33 @@ if ( isset($_GET['recieved_date']) && !empty($_GET['recieved_date']) ) {
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <form id="rotipayment" class="form-horizontal my-3" method="GET"
-                                    action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
+                                <form id="rotiimport" class="form-horizontal my-3" method="POST"
+                                    action="rotiimport.php" enctype="multipart/form-data" autocomplete="off">
                                     <div class="mb-3 row">
-                                        <label for="recieved_date" class="col-3 control-label">Search By Recieved Date</label>
-                                        <div class="col-6">
-                                            <input type="date" class="form-control" name="recieved_date" id="recieved_date">
+                                        <label for="recieved_date" class="col-4 control-label">Import Roti Sheet</label>
+                                        <div class="col-4">
+                                            <input type="hidden" name="recieved_by" value="<?php echo $_SESSION['email']; ?>" />
+                                            <input type="file" class="form-control" name="roti_import" accept=".xlsx" id="roti_import">
                                         </div>
-                                        <div class="col-3 col-md-3">
-                                            <button class="btn btn-light" type="submit" name="search">Search</button>
-                                            <button class="btn btn-light" type="reset" name="reset">Reset</button>
+                                        <div class="col-4">
+                                            <button class="btn btn-light" type="submit" name="import">Import</button>
                                         </div>
                                     </div>
                                 </form>
-                            <?php if (isset($_GET['action']) && $_GET['action'] == 'add') {
+                                <form id="rotipayment" class="form-horizontal my-3" method="GET"
+                                    action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
+                                    <div class="mb-3 row">
+                                        <label for="recieved_date" class="col-4 control-label">Search By Recieved Date</label>
+                                        <div class="col-4">
+                                            <input type="date" class="form-control" name="recieved_date" id="recieved_date">
+                                        </div>
+                                        <div class="col-4">
+                                            <button class="btn btn-light mb-2 me-2" type="submit" name="search">Search</button>
+                                            <button class="btn btn-light mb-2" type="reset" name="reset">Reset</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <?php if (isset($_GET['action']) && $_GET['action'] == 'add') {
                                     $add_roti_maker = mysqli_query($link, "SELECT `code` FROM fmb_roti_maker WHERE `id` = '".$_GET['maker']."'") or die(mysqli_error($link));
                                     $add_maker = $add_roti_maker->fetch_assoc(); ?>
                                     <div class="alert alert-success" role="alert">
@@ -62,6 +75,12 @@ if ( isset($_GET['recieved_date']) && !empty($_GET['recieved_date']) ) {
                                     $delete_maker = $delete_roti_maker->fetch_assoc(); ?>
                                     <div class="alert alert-danger" role="alert">
                                     Roti Recieved from <strong><?php echo $delete_maker['code']; ?></strong> on <strong><?php echo $_GET['recieved_date']; ?></strong> is deleted
+                                        successfully.
+                                    </div>
+                                <?php } ?>
+                                <?php if (isset($_GET['action']) && $_GET['action'] == 'upload') { ?>   
+                                    <div class="alert alert-success" role="alert">
+                                        Roti Recieved for whole week is uploaded
                                         successfully.
                                     </div>
                                 <?php } ?>

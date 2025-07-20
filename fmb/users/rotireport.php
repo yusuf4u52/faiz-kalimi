@@ -30,7 +30,7 @@ include('navbar.php');
                                         <div class="col-6">
                                             <input type="week" class="form-control" name="payment_week" id="payment_week" placeholder="Payment Week" value="<?php echo (!empty($_GET['payment_week']) ? $_GET['payment_week'] : ''); ?>">
                                         </div>
-                                        <div class="col-3 col-md-3">
+                                        <div class="col-3">
                                             <button class="btn btn-light" type="submit" name="search">Search</button>
                                         </div>
                                     </div>
