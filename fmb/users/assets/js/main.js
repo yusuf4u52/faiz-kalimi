@@ -4,14 +4,50 @@
         e.preventDefault();
     });
 
+    $('#selectpicker').selectpicker({
+        container: '.modal'
+    });
+
     new DataTable('table.display', {
         responsive: true,
         ordering: false,
     });
 
+    new DataTable('table#rotireport', {
+        responsive: true,
+        layout: {
+            topStart: {
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        className: 'btn-light'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn-light'
+                    }
+                ]
+            }
+        }
+    });
+
     new DataTable('table#userfeedmenu', {
         responsive: true,
         ordering: false,
+        layout: {
+            topStart: {
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        className: 'btn-light'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn-light'
+                    }
+                ]
+            }
+        },
         initComplete: function () {
             this.api()
                 .columns()
@@ -40,7 +76,20 @@
         order: [[0, 'desc']],
         displayLength: 25,
         responsive: true,
-        ordering: false,
+        layout: {
+            topStart: {
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        className: 'btn-light'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn-light'
+                    }
+                ]
+            }
+        },
         drawCallback: function (settings) {
             var api = this.api();
             var rows = api.rows({ page: 'current' }).nodes();
@@ -65,6 +114,7 @@
     });
 
     $(document).ready(function() {
+    
         var now = new Date();
         
         // Define tomorrow's date
