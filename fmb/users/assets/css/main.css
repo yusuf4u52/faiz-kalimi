@@ -131,10 +131,6 @@ body {
     color: #FFFFFF;
 }
 
-.fc .fc-daygrid-event {
-    white-space: normal;
-}
-
 .fc-theme-bootstrap5 .fc-list, .fc-theme-bootstrap5 .fc-scrollgrid, .fc-theme-bootstrap5 td, .fc-theme-bootstrap5 th {
     border-color: #778b2a;
 }
