@@ -48,4 +48,16 @@ function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = null, $add
 	} catch (Exception $e) {
 		echo 'Caught exception: ' . $e->getMessage() . "\n";
 	}
+
+	function sendPhpMail($subject, $message)
+	{
+		$from = "no-reply@kalimijamaatpoona.org";
+		$to = "kalimimohallapoona@gmail.com, yusuf4u52@gmail.com, mulla.moiz@gmail.com, moizlife@gmail.com";
+		$headers = "From:" . $from;
+		if (mail($to, $subject, $message, $headers)) {
+			echo "The email message was sent.";
+		} else {
+			echo "The email message was not sent.";
+		}
+	}
 }
