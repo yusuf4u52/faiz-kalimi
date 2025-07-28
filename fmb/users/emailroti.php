@@ -104,8 +104,11 @@ if ($menu_item->num_rows > 0) {
 		$subject = $roti .' update ' . $tomorrow_date;
 
 		$emails = [
-			'kalimimohallapoona@gmail.com'
-		];
+	'kalimimohallapoona@gmail.com',
+	'yusuf4u52@gmail.com',
+	'mulla.moiz@gmail.com',
+	'moizlife@gmail.com'
+];
 		// send email
 		sendEmail($emails, $subject, $msgroti, null, null, true);
 	} else {
