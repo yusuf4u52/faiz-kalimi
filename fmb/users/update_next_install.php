@@ -1,6 +1,6 @@
 <?php
 
-include('connection.php');
+require_once 'connection.php';
 
 $query = "SELECT * FROM thalilist";
 $result = mysqli_query($link, $query) or die(mysqli_error($link));
