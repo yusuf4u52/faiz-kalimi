@@ -93,7 +93,13 @@ if ($menu_item->num_rows > 0) {
 	<table>';
 
 	// send email
-	sendEmail('kalimimohallapoona@gmail.com', 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
+	$emails = [
+	'kalimimohallapoona@gmail.com',
+	'yusuf4u52@gmail.com',
+	'mulla.moiz@gmail.com',
+	'moizlife@gmail.com'
+];
+sendEmail($emails,'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
 
 	if(isset($_GET['menu_date'])) {
 		header("Location: /fmb/users/usermenu.php?action=send&date=" . $_GET['menu_date']);	
