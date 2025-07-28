@@ -3,7 +3,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 require 'connection.php';
 
 function sendEmail($to, $subject, $bodyHtml, $bodyText = '')
@@ -15,8 +15,8 @@ function sendEmail($to, $subject, $bodyHtml, $bodyText = '')
 		$mail->isSMTP();
 		$mail->Host       = 'smtp.hostinger.com';
 		$mail->SMTPAuth   = true;
-		$mail->Username   = $smtp_email;
-		$mail->Password   = $smtp_password;
+		$mail->Username   = SMTP_USER;
+		$mail->Password   = SMTP_PASS;
 		$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
 		$mail->Port       = 465;
 

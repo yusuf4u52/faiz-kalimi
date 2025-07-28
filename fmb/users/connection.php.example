@@ -5,7 +5,13 @@
     //You can get it from : https://console.developers.google.com/
     $client_id = ''; 
     $client_secret = '';
-    $redirect_uri = 'https://faizstudents.com/users/login.php';
-    $smtp_email = '';
-    $smtp_password = '';
+    $redirect_uri = '';
+    
+    DEFINE('DB_HOST', '');
+    DEFINE('DB_PORT', '');
+    DEFINE('DB_NAME', '');
+    DEFINE('DB_USER', '');
+    DEFINE('DB_PASS', '');
+    DEFINE('SMTP_USER', '');
+    DEFINE('SMTP_PASS', '');
 ?>
