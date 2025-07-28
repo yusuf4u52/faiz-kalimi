@@ -18,8 +18,8 @@ if ($stop_thali->num_rows > 0) {
 		$start_list = mysqli_query($link, "SELECT `id`, `Thali` FROM thalilist WHERE `Thali` = '" . $stop['thali'] . "' AND `Active` = '1' LIMIT 1");
 		if ($start_list->num_rows > 0) {
 			$list = $start_list->fetch_assoc();
-			$update_stop = "UPDATE thalilist SET `Active` = '0', `Thali_stop_date` = '" . $hijridate . "' WHERE `Thali` = '".$list['Thali']."'";
-    		mysqli_query($link,$update_stop) or die(mysqli_error($link));
+			$update_stop = "UPDATE thalilist SET `Active` = '0', `Thali_stop_date` = '" . $hijridate . "' WHERE `Thali` = '" . $list['Thali'] . "'";
+			mysqli_query($link, $update_stop) or die(mysqli_error($link));
 
 			mysqli_query($link, "update change_table set processed = 1 where userid = '" . $list['id'] . "' and `Operation` in ('Start Thali','Stop Thali','Start Transport','Stop Transport') and processed = 0") or die(mysqli_error($link));
 			mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`,`Operation`, `Date`) VALUES ('" . $list['Thali'] . "','" . $list['id'] . "', 'Stop Thali','" . $hijridate . "')") or die(mysqli_error($link));
@@ -28,15 +28,15 @@ if ($stop_thali->num_rows > 0) {
 }
 
 $chk_stop_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` = '" . $today_date . "'");
-if($chk_stop_thali->num_rows > 0) {
+if ($chk_stop_thali->num_rows > 0) {
 	while ($chk_stop_list = mysqli_fetch_assoc($chk_stop_thali)) {
 		$start_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` = '" . $tomorrow_date . "' AND `thali` = '" . $chk_stop_list['thali'] . "'");
 		if ($start_thali->num_rows <= 0) {
 			$stop_list = mysqli_query($link, "SELECT `id`, `Thali` FROM thalilist WHERE `Thali` = '" . $chk_stop_list['thali'] . "' AND `Active` = '0' LIMIT 1");
 			if ($stop_list->num_rows > 0) {
 				$list = $stop_list->fetch_assoc();
-				$update_start = "UPDATE thalilist SET `Active` = '1', `Thali_start_date` = '" . $hijridate . "' WHERE `Thali` = '".$list['Thali']."'";
-				mysqli_query($link,$update_start) or die(mysqli_error($link));
+				$update_start = "UPDATE thalilist SET `Active` = '1', `Thali_start_date` = '" . $hijridate . "' WHERE `Thali` = '" . $list['Thali'] . "'";
+				mysqli_query($link, $update_start) or die(mysqli_error($link));
 
 				mysqli_query($link, "update change_table set processed = 1 where userid = '" . $list['id'] . "' and `Operation` in ('Start Thali','Stop Thali','Update Address', 'Change Size') and processed = 0") or die(mysqli_error($link));
 				mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('" . $list['Thali'] . "','" . $list['id'] . "', 'Start Thali','" . $hijridate . "')") or die(mysqli_error($link));
@@ -121,7 +121,7 @@ $pivot["friday"]["total"] = $result[5];
 $pivot["no size"]["total"] = $result[6];
 $pivot["total"]["total"] = $result[0];
 
-// mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[5] . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "','" . $result[0] . "')") or die(mysqli_error($link));
+mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[5] . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "','" . $result[0] . "')") or die(mysqli_error($link));
 
 mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
 $msg = str_replace("\n", "<br>", $msg);
@@ -148,7 +148,13 @@ $registered_but_not_active = mysqli_query($link, "SELECT * FROM thalilist WHERE 
 $total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered_but_not_active);
 $msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
 
+$emails = [
+	'kalimimohallapoona@gmail.com',
+	'yusuf4u52@gmail.com',
+	'mulla.moiz@gmail.com',
+	'moizlife@gmail.com'
+];
 // send email
-sendEmail('yusuf4u52@gmail.com','Start Stop update ' . $tomorrow_date, $msg);
+sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg);
 
-// mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
+mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
