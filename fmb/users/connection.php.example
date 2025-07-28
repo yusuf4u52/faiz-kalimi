@@ -6,4 +6,6 @@
     $client_id = ''; 
     $client_secret = '';
     $redirect_uri = 'https://faizstudents.com/users/login.php';
+    $smtp_email = '';
+    $smtp_password = '';
 ?>

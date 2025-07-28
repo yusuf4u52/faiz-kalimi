@@ -1,63 +1,39 @@
 <?php
-function sendEmail($to, $subject, $msg, $attachment, $attachmentObj = null, $addTransporter = false)
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
+require 'connection.php';
+
+function sendEmail($to, $subject, $bodyHtml, $bodyText = '')
 {
-	require '../vendor/autoload.php';
-	require '../sms/_credentials.php';
+	$mail = new PHPMailer(true);
 
-	$email = new \SendGrid\Mail\Mail();
-	$email->setFrom("no-reply@kalimijamaatpoona.org", "Faizul Mawaidil Burhaniya (Kalimi Mohalla)");
-	$email->setSubject($subject);
-	$email->addTo($to);
-
-	if ($addTransporter) {
-		$email->addTo("yusuf4u52@gmail.com");
-		$email->addTo("moula1981sk@gmail.com");
-		$email->addTo("khanbilalkbr@gmail.com");
-		$email->addTo("mulla.moiz@gmail.com");
-		$email->addTo("abbas.saifee5@gmail.com");
-		$email->addTo("moizlife@gmail.com");
-		$email->addTo("tinwalaabizer@gmail.com");
-		$email->addTo("hussainbarnagarwala14@gmail.com");
-		$email->addTo("kanchwalaabizer@gmail.com");
-	}
-
-	$email->addContent(
-		"text/html",
-		$msg
-	);
-
-	if ($attachmentObj) {
-		foreach ($attachmentObj as $value) {
-			$email->addAttachment($value);
-		}
-	}
-
-	if ($attachment != null) {
-		$attach = new \SendGrid\Mail\Attachment();
-		$attach->setContent(base64_encode($attachment));
-		$attach->setType("application/text");
-		$attach->setFilename("backup.sql");
-		$attach->setDisposition("attachment");
-		$attach->setContentId("Database Backup");
-		$email->addAttachment($attach);
-	}
-
-	$sendgrid = new \SendGrid($SENDGRID_API_KEY);
 	try {
-		$sendgrid->send($email);
-	} catch (Exception $e) {
-		echo 'Caught exception: ' . $e->getMessage() . "\n";
-	}
+		// SMTP configuration for Hostinger
+		$mail->isSMTP();
+		$mail->Host       = 'smtp.hostinger.com';
+		$mail->SMTPAuth   = true;
+		$mail->Username   = $smtp_email;
+		$mail->Password   = $smtp_password;
+		$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+		$mail->Port       = 465;
 
-	function sendPhpMail($subject, $message)
-	{
-		$from = "no-reply@kalimijamaatpoona.org";
-		$to = "kalimimohallapoona@gmail.com, yusuf4u52@gmail.com, mulla.moiz@gmail.com, moizlife@gmail.com";
-		$headers = "From:" . $from;
-		if (mail($to, $subject, $message, $headers)) {
-			echo "The email message was sent.";
-		} else {
-			echo "The email message was not sent.";
-		}
+		// From and To
+		$mail->setFrom('no-reply@kalimijamaatpoona.org');
+		$mail->addAddress($to);
+
+		// Content
+		$mail->isHTML(true);
+		$mail->Subject = $subject;
+		$mail->Body    = $bodyHtml;
+		$mail->AltBody = $bodyText ?: strip_tags($bodyHtml);
+
+		$mail->send();
+		return true;
+	} catch (Exception $e) {
+		error_log("Email could not be sent. PHPMailer Error: {$mail->ErrorInfo}");
+		return false;
 	}
 }

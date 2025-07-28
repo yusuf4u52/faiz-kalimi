@@ -149,6 +149,6 @@ $total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered
 $msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
 
 // send email
-sendPhpMail('Start Stop update ' . $tomorrow_date, $msg);
+sendEmail('yusuf4u52@gmail.com','Start Stop update ' . $tomorrow_date, $msg);
 
 mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
