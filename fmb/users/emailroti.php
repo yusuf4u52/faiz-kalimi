@@ -103,8 +103,11 @@ if ($menu_item->num_rows > 0) {
 
 		$subject = $roti .' update ' . $tomorrow_date;
 
+		$emails = [
+			'kalimimohallapoona@gmail.com'
+		];
 		// send email
-		sendEmail('kalimimohallapoona@gmail.com', $subject, $msgroti, null, null, true);
+		sendEmail($emails, $subject, $msgroti, null, null, true);
 	} else {
 		echo "Tomorrow no roti.";
 	}

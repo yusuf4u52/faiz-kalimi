@@ -151,13 +151,13 @@ $registered_but_not_active = mysqli_query($link, "SELECT * FROM thalilist WHERE 
 $total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered_but_not_active);
 $msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
 
+echo "now sending transporter email";
 $emails = [
 	'kalimimohallapoona@gmail.com',
 	'yusuf4u52@gmail.com',
 	'mulla.moiz@gmail.com',
 	'moizlife@gmail.com'
 ];
-// send email
 sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg);
 
 mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
