@@ -1,8 +1,7 @@
 _credentials.php
-users/connection.php
-users/*.txt
+connection.php
+*.txt
 .idea
-sms/_credentials.php
 .htaccess
 vendor
-users/*.csv
+*.csv
