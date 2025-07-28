@@ -1,12 +1,12 @@
 <?php
-include('connection.php');
+require_once 'connection.php';
 include('getHijriDate.php');
 include '../backup/_email_backup.php';
 include '../sms/_sms_automation.php';
 require_once '_sendMail.php';
 //include('emailmenu.php');
 
-error_reporting(0);
+
 $today_date = date("Y-m-d");
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $day = date("l", strtotime($tomorrow_date));
@@ -121,7 +121,7 @@ $pivot["friday"]["total"] = $result[5];
 $pivot["no size"]["total"] = $result[6];
 $pivot["total"]["total"] = $result[0];
 
-mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[5] . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "','" . $result[0] . "')") or die(mysqli_error($link));
+// mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[5] . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "','" . $result[0] . "')") or die(mysqli_error($link));
 
 mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
 $msg = str_replace("\n", "<br>", $msg);
@@ -151,4 +151,4 @@ $msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</st
 // send email
 sendEmail('yusuf4u52@gmail.com','Start Stop update ' . $tomorrow_date, $msg);
 
-mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
+// mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");

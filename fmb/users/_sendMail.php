@@ -4,7 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require '../vendor/autoload.php';
-require 'connection.php';
+require_once 'connection.php';
 
 function sendEmail($to, $subject, $bodyHtml, $bodyText = '')
 {
