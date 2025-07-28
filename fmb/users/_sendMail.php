@@ -22,7 +22,9 @@ function sendEmail($to, $subject, $bodyHtml, $bodyText = '')
 
 		// From and To
 		$mail->setFrom(SMTP_USER);
-		$mail->addAddress($to);
+		foreach ($to as $email) {
+			$mail->addAddress($email);
+		}
 
 		// Content
 		$mail->isHTML(true);
