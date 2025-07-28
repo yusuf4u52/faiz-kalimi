@@ -9,7 +9,8 @@
         "geniusts/hijri-dates": "^1.1",
         "sendgrid/sendgrid": "^7.9",
         "google/apiclient": "2.12.1",
-        "phpoffice/phpspreadsheet": "^1.19"
+        "phpoffice/phpspreadsheet": "^1.19",
+        "phpmailer/phpmailer": "^6.10"
     },
     "scripts": {
         "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
