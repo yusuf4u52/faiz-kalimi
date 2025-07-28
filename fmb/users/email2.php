@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 require_once 'connection.php';
 include('getHijriDate.php');
 include '../backup/_email_backup.php';
