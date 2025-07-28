@@ -33,7 +33,7 @@ function sendEmail($to, $subject, $bodyHtml, $bodyText = '')
 		$mail->send();
 		return true;
 	} catch (Exception $e) {
-		error_log("Email could not be sent. PHPMailer Error: {$mail->ErrorInfo}");
+		echo("Email could not be sent. PHPMailer Error: {$mail->ErrorInfo}");
 		return false;
 	}
 }
