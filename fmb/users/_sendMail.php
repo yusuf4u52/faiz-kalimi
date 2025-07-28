@@ -21,7 +21,7 @@ function sendEmail($to, $subject, $bodyHtml, $bodyText = '')
 		$mail->Port       = 465;
 
 		// From and To
-		$mail->setFrom('no-reply@kalimijamaatpoona.org');
+		$mail->setFrom(SMTP_USER);
 		$mail->addAddress($to);
 
 		// Content
