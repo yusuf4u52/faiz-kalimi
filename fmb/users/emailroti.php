@@ -103,13 +103,17 @@ if ($menu_item->num_rows > 0) {
 
 		$subject = $roti .' update ' . $tomorrow_date;
 
-		$emails = [
-	'kalimimohallapoona@gmail.com',
-	'yusuf4u52@gmail.com',
-	'mulla.moiz@gmail.com',
-	'moizlife@gmail.com'
-];
 		// send email
+		$emails = [
+			'kalimimohallapoona@gmail.com',
+			'yusuf4u52@gmail.com',
+			'mulla.moiz@gmail.com',
+			'moizlife@gmail.com',
+			"abbas.saifee5@gmail.com",
+			"tinwalaabizer@gmail.com",
+			"hussainbarnagarwala14@gmail.com",
+			"kanchwalaabizer@gmail.com"
+		];
 		sendEmail($emails, $subject, $msgroti, null, null, true);
 	} else {
 		echo "Tomorrow no roti.";

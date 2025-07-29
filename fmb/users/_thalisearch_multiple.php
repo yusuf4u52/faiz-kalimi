@@ -4,6 +4,7 @@
       <tr>
         <th>Sabeel No</th>
         <th>Tiffin No</th>
+        <th>Thali Size</th>
         <th>Name</th>
         <th>Mobile No</th>
         <th>Active</th>
@@ -23,6 +24,7 @@
       <tr>
         <td><?php echo $values['Thali']; ?></td>
         <td><?php echo $values['tiffinno']; ?></td>
+        <td><?php echo $values['thalisize']; ?></td>
         <td><?php echo $values['NAME']; ?></td>
         <td><a href="tel:<?php echo $values['CONTACT']; ?>"><?php echo $values['CONTACT']; ?></a></td>
         <td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>

@@ -7,48 +7,39 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
 <ul class="nav nav-tabs mb-4" id="thaaliTab" role="thalilist">
   <li class="nav-item" role="presentation">
     <button class="nav-link active" id="thaali-tab" data-bs-toggle="tab" data-bs-target="#thaali" type="button"
-      role="tab" aria-controls="thaali" aria-selected="true">Thaali</button>
+      role="tab" aria-controls="thaali" aria-selected="true">Thaali Details</button>
   </li>
   <li class="nav-item" role="presentation">
     <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab"
-      aria-controls="menu" aria-selected="false">Menu</button>
+      aria-controls="menu" aria-selected="false">Menu Details</button>
   </li>
   <li class="nav-item" role="presentation">
     <button class="nav-link" id="stop-tab" data-bs-toggle="tab" data-bs-target="#stop" type="button" role="tab"
-      aria-controls="menu" aria-selected="false">Stop Dates</button>
+      aria-controls="menu" aria-selected="false">Stop Thaali</button>
   </li>
-  <li class="nav-item" role="presentation">
+  <!--<li class="nav-item" role="presentation">
     <button class="nav-link" id="receipt-tab" data-bs-toggle="tab" data-bs-target="#receipt" type="button" role="tab"
       aria-controls="receipt" aria-selected="false">Receipt</button>
   </li>
   <li class="nav-item" role="presentation">
     <button class="nav-link" id="comment-tab" data-bs-toggle="tab" data-bs-target="#comment" type="button" role="tab"
       aria-controls="comment" aria-selected="false">Comments</button>
-  </li>
+  </li>-->
 </ul>
 <div class="tab-content" id="thaaliTabContent">
   <div class="tab-pane fade show active" id="thaali" role="tabpanel" aria-labelledby="thaali-tab">
-    <h4 class="mb-3">Thaali Details</h4>
     <ul class="list-group list-group-flush">
       <li class="list-group-item">
+        <h4 class="mb-3">Thaali Details</h4>
+      </li>
+      <li class="list-group-item">
         <ul class="nav nav-underline">
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-key="payhoob" data-thali="<?php echo $values['Thali']; ?>">Pay Hoob</a>
-          </li>
-          <li class="nav-item"><?php
-            if ($values['Active'] == '1') { ?>
-              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a>
-            <?php } else { ?>
-              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a>
-            <?php } ?>
-          </li>
-          <?php if ($values['Active'] != '2') { ?>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="modal" href="#stop_permanent">Stop Permanent</a>
-            </li>
-          <?php } ?>
+          <!--<li class="nav-item"><a class="nav-link" href="#" data-key="payhoob" data-thali="<?php echo $values['Thali']; ?>">Pay Hoob</a></li>-->
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeMusaid">Change Musaid</a>
           </li>
+          <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#extraRoti">Extra Roti</a>
+          </li>
+          <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeEmail">Change Email</a></li>
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeThalisize">Change Thali
               Size</a></li>
         </ul>
@@ -62,6 +53,18 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
         <?php echo $values['tiffinno']; ?>
       </li>
       <li class="list-group-item">
+        <div class="fw-bold">Thali Size</div>
+        <?php echo $values['thalisize']; ?>
+      </li>
+      <li class="list-group-item">
+        <div class="fw-bold">Extra Roti</div>
+        <?php echo $values['extraRoti']; ?>
+      </li>
+      <li class="list-group-item">
+        <div class="fw-bold">HOF ITS No</div>
+        <?php echo $values['ITS_No']; ?>
+      </li>
+      <li class="list-group-item">
         <div class="fw-bold">Name</div>
         <?php echo $values['NAME']; ?>
       </li>
@@ -70,8 +73,9 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
         <a href="tel:<?php echo $values['CONTACT']; ?>"><?php echo $values['CONTACT']; ?></a>
       </li>
       <li class="list-group-item">
-        <div class="fw-bold">Thali Type</div>
-        <?php echo $values['thalisize']; ?>
+        <div class="fw-bold">Email Address</div>
+        <a href="mailto:<?php echo $values['Email_ID']; ?>"><?php echo $values['Email_ID']; ?></a> <?php if(!empty($values['SEmail_ID'])) : ?>| <a
+          href="mailto:<?php echo $values['SEmail_ID']; ?>"><?php echo $values['SEmail_ID']; ?></a> <?php endif; ?>
       </li>
       <?php if ($musaid_details) { ?>
         <li class="list-group-item">
@@ -103,9 +107,13 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
         <span class="hijridate"><?php echo $values['Thali_stop_date']; ?></span>
       </li>
       <li class="list-group-item">
+        <div class="fw-bold">Current Year Hub</div>
+        ₹<?php echo $values['yearly_hub']; ?>
+      </li>
+      <li class="list-group-item">
         <div class="fw-bold">Hub Pending</div>
-        <?php echo $values['Total_Pending'] + $values['Paid']; ?> -
-        <?php echo $values['Paid']; ?> = <?php echo $values['Total_Pending']; ?>
+        ₹<?php echo $values['Total_Pending'] + $values['Paid']; ?> -
+        ₹<?php echo $values['Paid']; ?> = ₹<?php echo $values['Total_Pending']; ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Thali Delivered</div>
@@ -115,7 +123,11 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     </ul>
   </div>
   <div class="tab-pane fade" id="menu" role="tabpanel" aria-labelledby="menu-tab">
-    <h4 class="mb-3">Menu Details</h4>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <h4 class="mb-3">Menu Details</h4>
+      </li>
+    </ul>
     <?php $menu_list = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` >= '" . date('Y-m-d') . "' AND `menu_type` = 'thaali' order by `menu_date` DESC") or die(mysqli_error($link)); ?>
     <div class="table-responsive">
       <table class="table table-striped display" width="100%">
@@ -181,16 +193,30 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     </div>
   </div>
   <div class="tab-pane fade" id="stop" role="tabpanel" aria-labelledby="menu-tab">
-    <div class="row">
-      <div class="col-6">
-          <h4 class="mb-5">Stop Dates</h4>
-      </div>
-      <div class="col-6 text-end">
-        <button type="button" class="btn btn-light" data-bs-target="#stop_thali"
-            data-bs-toggle="modal">Stop
-            Thali</button>
-      </div>
-    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <h4 class="mb-3">Stop Dates</h4>
+      </li>
+      <li class="list-group-item">
+        <ul class="nav nav-underline">
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="modal" href="#stop_thali">Stop By Dates</a>
+          </li>
+          <li class="nav-item"><?php
+            if ($values['Active'] == '1') { ?>
+              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a>
+            <?php } else { ?>
+              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a>
+            <?php } ?>
+          </li>
+          <?php if ($values['Active'] != '2') { ?>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="modal" href="#stop_permanent">Stop Permanent</a>
+            </li>
+          <?php } ?>
+        </ul>
+      </li>
+    </ul>
     <?php
     date_default_timezone_set('Asia/Kolkata');
     $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
@@ -232,7 +258,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
         echo '<h5 class="text-center mb-3">Currently you has no stop dates.</h5>';
     } mysqli_free_result($stop_dates); ?>
   </div>
-  <div class="tab-pane fade" id="receipt" role="tabpanel" aria-labelledby="receipt-tab">
+  <!--<div class="tab-pane fade" id="receipt" role="tabpanel" aria-labelledby="receipt-tab">
     <h4 class="mb-3">Receipt Details</h4>
     <div class="table-responsive">
       <table class="table table-striped display" width="100%">
@@ -287,4 +313,4 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
       ?>
     </ul>
   </div>
-</div>
+</div>-->
