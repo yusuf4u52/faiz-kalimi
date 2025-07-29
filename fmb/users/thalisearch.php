@@ -16,22 +16,38 @@ if (isset($_POST)) {
 
   if (isset($_POST['action']) && $_POST['action'] == 'change_musaid' && isset($_POST['musaid'])) {
     $clean_musaid = htmlentities(strip_tags($_POST['musaid']), ENT_QUOTES, 'UTF-8');
-    $change_musaid_query = "UPDATE `thalilist` SET `musaid` = '$clean_musaid' WHERE Thali = '" . $_GET['thalino'] . "'";
+    $change_musaid_query = "UPDATE `thalilist` SET `musaid` = '$clean_musaid' WHERE id = '" . $_POST['id'] . "'";
     mysqli_query($link, $change_musaid_query);
     $action = 'cmusaid';
     $cmusaid = $clean_musaid;
   }
 
+  if (isset($_POST['action']) && $_POST['action'] == 'extra_roti' && isset($_POST['extraRoti'])) {
+    mysqli_query($link, "UPDATE thalilist set extraRoti='" . $_POST['extraRoti'] . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
+    $action = 'eroti';
+    $eroti = $_POST['extraRoti'];
+  }
+
+  if (isset($_POST['action']) && $_POST['action'] == 'change_email' && isset($_POST['Email_ID'])) {
+    $checkemail = mysqli_query($link , "SELECT * FROM thalilist where Email_ID = '" . $_POST['Email_ID'] . "' OR `SEmail_ID` = '" . $_POST['Email_ID'] . "'") or die(mysqli_error($link));
+    if ($checkemail->num_rows > 0) {
+      $action = 'remail';
+      $remail = $_POST['Email_ID'];
+    } else {
+      mysqli_query($link, "UPDATE thalilist set Email_ID='" . $_POST['Email_ID'] . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
+      $action = 'cemail';
+      $cemail = $_POST['Email_ID'];
+    }
+  }
+
   if (isset($_POST['action']) && $_POST['action'] == 'change_size' && isset($_POST['thalisize'])) {
     mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_POST['id'] . "' and `Operation` in ('Change Size') and processed = 0") or die(mysqli_error($link));
     mysqli_query($link, "UPDATE thalilist set thalisize='" . $_POST['thalisize'] . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
-    mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`,`processed`) VALUES ('" . $_POST['Thali'] . "','" . $_POST['id'] . "', 'Change Size','" . $today . "',0)") or die(mysqli_error($link));
+    mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`,`processed`) VALUES ('" . $_POST['thali'] . "','" . $_POST['id'] . "', 'Change Size','" . $today . "',0)") or die(mysqli_error($link));
     $action = 'csize';
     $csize = $_POST['thalisize'];
   }
-
   unset($_POST);
-
 }
 
 $current_year = mysqli_fetch_assoc(mysqli_query($link, "SELECT value FROM settings where `key`='current_year'"));
@@ -46,11 +62,11 @@ if (isset($_GET['year'])) {
     $receipts_tablename = "receipts_" . $_GET['year'];
   }
 
-  $query = "SELECT id, Thali, tiffinno, NAME, CONTACT,musaid, thalisize, Active, Transporter, thalicount, Full_Address, Thali_start_date, Thali_stop_date, Paid, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist";
+  $query = "SELECT id, Thali, tiffinno, NAME, CONTACT, Active, Transporter, thalisize, extraRoti, yearly_hub, ITS_No, Email_ID, SEmail_ID, thalicount, Thali_start_date, Thali_stop_date, Full_Address, musaid, Paid, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist";
   if (!empty($_GET['thalino'])) {
-    $query .= " WHERE Thali LIKE '%" . addslashes($_GET['thalino']) . "%'";
+    $query .= " WHERE Thali LIKE '" . addslashes($_GET['thalino']) . "'";
   } else if (!empty($_GET['tiffinno'])) {
-    $query .= " WHERE tiffinno LIKE '%" . addslashes($_GET['tiffinno']) . "%'";
+    $query .= " WHERE tiffinno LIKE '" . addslashes($_GET['tiffinno']) . "'";
   } else if (!empty($_GET['general'])) {
     $query .= " WHERE 
                 Email_ID LIKE '%" . addslashes($_GET['general']) . "%'
@@ -83,6 +99,23 @@ if (isset($_GET['year'])) {
               <div class="alert alert-success" role="alert">Thali size is changes to
                 <strong><?php echo $csize; ?></strong> for sabeel no
                 <strong><?php echo $_GET['thalino']; ?></strong>.
+              </div>
+            <?php }
+            if (isset($action) && $action == 'eroti') { ?>
+              <div class="alert alert-success" role="alert">Extra Roti
+                <strong><?php echo $eroti; ?></strong> is added for sabeel no
+                <strong><?php echo $_GET['thalino']; ?></strong>.
+              </div>
+            <?php }
+            if (isset($action) && $action == 'cemail') { ?>
+              <div class="alert alert-success" role="alert">Email Id change to
+                <strong><?php echo $cemail; ?></strong> for sabeel no
+                <strong><?php echo $_GET['thalino']; ?></strong>.
+              </div>
+            <?php }
+            if (isset($action) && $action == 'remail') { ?>
+              <div class="alert alert-success" role="alert">Email Id 
+                <strong><?php echo $remail; ?></strong> is already registered in our system.
               </div>
             <?php }
             if (isset($_GET['action']) && $_GET['action'] == 'srange') { ?>
@@ -209,7 +242,7 @@ if (isset($_GET['year'])) {
           <div class="card">
             <div class="card-body">
               <h2 class="mb-3">Thali Info</h2>
-              <form id="receiptForm" action="post" autocomplete="off">
+              <!--<form id="receiptForm" action="post" autocomplete="off">
                 <div class="mb-3 row">
                   <div class="col-5 col-md-6">
                     <input class="form-control" type="number" name="receipt_amount" placeholder="Receipt Amount"
@@ -231,14 +264,15 @@ if (isset($_GET['year'])) {
                     <input class="btn btn-light" type="button" name="save" value="Save" />
                   </div>
                 </div>
-              </form>
+              </form> -->
               <?php
-              if (mysqli_num_rows($result) > 1)
+              if (mysqli_num_rows($result) > 1):
                 include('_thalisearch_multiple.php');
-              else if (mysqli_num_rows($result) == 1)
+              elseif (mysqli_num_rows($result) == 1):
                 include('_thalisearch_single.php');
-              else
+              else:
                 echo "No records found";
+              endif;
               ?>
             </div>
           </div>
@@ -248,76 +282,14 @@ if (isset($_GET['year'])) {
   </div>
 </div>
 
-<div class="modal fade" id="stop_thali">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="admin_stop" class="form-horizontal" method="post" action="stopthali.php" autocomplete="off">
-        <input type="hidden" name="action" value="admin_stop_thali" />
-        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
-        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
-        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
-        <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
-        <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
-        <div class="modal-header">
-          <h4 class="modal-title fs-5">Stop Thali of sabeel no <?php echo $values['Thali']; ?></h4>
-          <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
-              class="bi bi-x-lg"></i></button>
-        </div>
-        <div class="modal-body">
-          <div class="input-group input-daterange mb-3">
-            <input type="text" class="form-control" name="start_date" id="start_date" placeholder="Start Date">
-            <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-            <input type="text" class="form-control" name="end_date" id="end_date" placeholder="End Date">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-light">Submit</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="stop_permanent">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="stop_permanent" class="form-horizontal" method="post" action="stop_permanant.php" autocomplete="off">
-        <input type="hidden" name="action" value="stop_permanant" />
-        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
-        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
-        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
-        <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
-        <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
-        <div class="modal-header">
-          <h4 class="modal-title fs-5">Stop Permanent Thali of sabeel no <?php echo $values['Thali']; ?></h4>
-          <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
-              class="bi bi-x-lg"></i></button>
-        </div>
-        <div class="modal-body">
-          <p> Are you sure you want to permanently stop thali of sabeel no
-            <strong><?php echo $values['Thali']; ?></strong>?
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal">No</button>
-          <button type="submit" class="btn btn-light">Yes</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 <div class="modal fade" id="changeMusaid">
   <div class="modal-dialog">
     <div class="modal-content">
       <form method="POST" autocomplete="off">
         <input type="hidden" name="action" value="change_musaid" />
+        <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
         <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
-        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
-        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
-        <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
-        <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
         <div class="modal-header">
           <h4 class="modal-title fs-5">Change Musaid</h4>
           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
@@ -349,13 +321,9 @@ if (isset($_GET['year'])) {
     <div class="modal-content">
       <form method="POST" autocomplete="off">
         <input type="hidden" name="action" value="change_size" />
-        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
-        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
-        <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
-        <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
         <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
-        <input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
-        <input type="hidden" name="Active" value="<?php echo $values['Active']; ?>">
+        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
         <div class="modal-header">
           <h4 class="modal-title fs-5">Change Thali Size</h4>
           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
@@ -373,6 +341,120 @@ if (isset($_GET['year'])) {
         <div class="modal-footer">
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
           <button type="submit" class="btn btn-light">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="extraRoti">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" autocomplete="off">
+        <input type="hidden" name="action" value="extra_roti" />
+        <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
+        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
+        <div class="modal-header">
+          <h4 class="modal-title fs-5">Extra Roti</h4>
+          <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
+              class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <input type="number" class="form-control" name="extraRoti" placeholder="Extra Roti Quantity"
+            value="<?php echo $values['extraRoti']; ?>" required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-light">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="changeEmail">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" autocomplete="off">
+        <input type="hidden" name="action" value="change_email" />
+        <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
+        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
+        <div class="modal-header">
+          <h4 class="modal-title fs-5">Change Email Address</h4>
+          <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
+              class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <input type="email" class="form-control" id="Email_ID" placeholder="Email" name="Email_ID" value='<?php echo $values['Email_ID'] ?>' pattern="[a-z0-9._%+\-]+@gmail.com$" required>
+          <p class="help-block mb-0 text-danger text-end"><small>(Only Gmail)</small></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-light">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="stop_thali">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="admin_stop" class="form-horizontal" method="POST" action="stopthali.php" autocomplete="off">
+        <input type="hidden" name="action" value="admin_stop_thali" />
+        <input type="hidden" name="id" value="<?php echo $values['id']; ?>" />
+        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
+        <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
+        <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
+        <div class="modal-header">
+          <h4 class="modal-title fs-5">Stop Thali of sabeel no <?php echo $values['Thali']; ?></h4>
+          <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
+              class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group input-daterange mb-3">
+            <input type="text" class="form-control" name="start_date" id="start_date" placeholder="Start Date">
+            <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+            <input type="text" class="form-control" name="end_date" id="end_date" placeholder="End Date">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-light">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="stop_permanent">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="stop_permanent" class="form-horizontal" method="POST" action="stop_permanant.php" autocomplete="off">
+        <input type="hidden" name="action" value="stop_permanant" />
+        <input type="hidden" name="id" value="<?php echo $values['id']; ?>" />
+        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
+        <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
+        <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
+        <div class="modal-header">
+          <h4 class="modal-title fs-5">Stop Permanent Thali of sabeel no <?php echo $values['Thali']; ?></h4>
+          <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
+              class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <p> Are you sure you want to permanently stop thali of sabeel no
+            <strong><?php echo $values['Thali']; ?></strong>?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-light">Yes</button>
         </div>
       </form>
     </div>
@@ -421,6 +503,7 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
           autocomplete="off">
           <input type="hidden" name="action" value="admin_change_menu" />
           <input type="hidden" name="menu_id" value="<?php echo $menu_id; ?>" />
+          <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
           <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
           <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
           <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />

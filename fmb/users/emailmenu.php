@@ -94,12 +94,16 @@ if ($menu_item->num_rows > 0) {
 
 	// send email
 	$emails = [
-	'kalimimohallapoona@gmail.com',
-	'yusuf4u52@gmail.com',
-	'mulla.moiz@gmail.com',
-	'moizlife@gmail.com'
-];
-sendEmail($emails,'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
+		'kalimimohallapoona@gmail.com',
+		'yusuf4u52@gmail.com',
+		'mulla.moiz@gmail.com',
+		'moizlife@gmail.com',
+		"abbas.saifee5@gmail.com",
+		"tinwalaabizer@gmail.com",
+		"hussainbarnagarwala14@gmail.com",
+		"kanchwalaabizer@gmail.com"
+	];
+	sendEmail($emails, 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
 
 	if(isset($_GET['menu_date'])) {
 		header("Location: /fmb/users/usermenu.php?action=send&date=" . $_GET['menu_date']);	
