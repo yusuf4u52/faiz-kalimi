@@ -2,7 +2,7 @@
 include ('connection.php');
 include('getHijriDate.php');
 require_once '_sendMail.php';
-include('emailroti.php');
+//include('emailroti.php');
 
 if(isset($_GET['menu_date'])) {
 	$tomorrow_date = $_GET['menu_date'];		
