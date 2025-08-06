@@ -42,6 +42,8 @@ $rights = array(
 		"/fmb/users/transporteractive.php",
 		"/fmb/users/transporterinactive.php",
 		"/fmb/users/savertransporters.php",
+		"/fmb/users/transporteractive.php",
+		"/fmb/users/transporterinactive.php",
 		"/fmb/users/transporterthalicount.php",
 		"/fmb/users/savethalicount.php",
 		"/fmb/users/transporterpayment.php",

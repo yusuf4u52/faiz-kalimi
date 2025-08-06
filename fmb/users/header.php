@@ -13,14 +13,7 @@
     <link rel="manifest" href="/fmb/manifest.json">
     <link rel="prefetch" href="/fmb/manifest.json">
     <meta name="theme-color" content="#b18e3d">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla - Poona)">
-    <meta name="application-name" content="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla - Poona)">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="/fmb/users/assets/img/logo-192x192.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="/fmb/users/assets/img/logo-192x192.png">
     <!-- / PWA -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.14.1/themes/base/jquery-ui.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
