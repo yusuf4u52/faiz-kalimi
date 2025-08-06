@@ -50,12 +50,7 @@ if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
 } else {
 	$authUrl = $client->createAuthUrl();
 }
-if (isset($authUrl) || isset($_GET['status'])) {
-	
-	$_SESSION['fromLogin'] = "true";
-	$_SESSION['email'] = 'moizlife@gmail.com';
-	header('Location: home.php'); ?>
-
+if (isset($authUrl) || isset($_GET['status'])) { ?>
 	<div class="fmb-content mt-5 text-center">
 		<div class="container">
 			<div class="row">
@@ -78,9 +73,7 @@ if (isset($authUrl) || isset($_GET['status'])) {
 		</div>
 	</div>
 <?php } else {
-
 	$user = $service->userinfo->get();
-
 	$_SESSION['fromLogin'] = "true";
 	$_SESSION['email'] = $user->email;
 	header('Location: home.php');
