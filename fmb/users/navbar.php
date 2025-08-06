@@ -16,10 +16,8 @@ $_SESSION['thali'] = $values['Thali'];
 // Check if users gmail id is registered with us and he is a transporter against it
 $transporter = mysqli_query($link , "SELECT * FROM transporters  where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
 if ($transporter->num_rows > 0 ) {
-    $values = $transporter->fetch_assoc();
-    $_SESSION['transporterid'] = $values['id'];
-    $_SESSION['transporter'] = $values['Name'];
     header("Location: /fmb/transporter/home.php");
+    exit;
 }
 
 // Check if users gmail id is registered with us and has got a thali number against it 
