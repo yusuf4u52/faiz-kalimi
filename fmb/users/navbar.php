@@ -95,20 +95,6 @@ if($curr_page != 'events.php') {
                         ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">Start/Stop Management</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/fmb/users/userstart.php">User Start</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/userstop.php">User Stop</a></li>
-                            </ul>
-                        </li>
-                        <?php
-                    }
-                    ?>
-                    <?php
-                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) {
-                        ?>
-                        <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">Menu Management</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/fmb/users/foodlist.php">Food Items</a></li>
@@ -144,6 +130,8 @@ if($curr_page != 'events.php') {
                                 aria-expanded="false">Transporter Management</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/fmb/users/transporter.php">Transporter</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporteractive.php">Active Thali</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporterinactive.php">Inactive Thali</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/transporterthalicount.php">Thali Count</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/transporterpayment.php">Payment</a></li>
                             </ul>

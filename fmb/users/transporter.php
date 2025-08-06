@@ -44,6 +44,7 @@ $result = mysqli_query($link, "SELECT * FROM transporters order by `Name` ASC") 
                                             <tr>
                                                 <th>Name</th>
                                                 <th>Mobile No</th>
+                                                <th>Email Address</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -52,6 +53,7 @@ $result = mysqli_query($link, "SELECT * FROM transporters order by `Name` ASC") 
                                                 <tr>
                                                     <td><?php echo $values['Name']; ?></td>
                                                     <td><?php echo $values['Mobile']; ?></td>
+                                                    <td><?php echo $values['Email']; ?></td>
                                                     <td><button type="button" class="btn btn-light"
                                                         data-bs-target="#edittransporter-<?php echo $values['id']; ?>"
                                                         data-bs-toggle="modal" style="margin-bottom:5px"><i class="bi bi-pencil-square"></i></button> <button type="button"
@@ -95,6 +97,14 @@ $result = mysqli_query($link, "SELECT * FROM transporters order by `Name` ASC") 
                                                         <div class="col-8">
                                                             <input type="number" class="form-control" name="Mobile"
                                                             value="<?php echo $values['Mobile']; ?>" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="Email" class="col-4 control-label">Email Address</label>
+                                                        <div class="col-8">
+                                                            <input type="email" class="form-control" name="Email"
+                                                            value="<?php echo $values['Email']; ?>" pattern="[a-z0-9._%+\-]+@gmail.com$" required>
+                                                             <p class="help-block mb-0 text-danger text-end"><small>(Only Gmail)</small></p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -162,6 +172,14 @@ $result = mysqli_query($link, "SELECT * FROM transporters order by `Name` ASC") 
                                                         <input type="number" class="form-control" name="Mobile" required>
                                                     </div>
                                                 </div>
+                                                <div class="mb-3 row">
+                                                        <label for="Email" class="col-4 control-label">Email Address</label>
+                                                        <div class="col-8">
+                                                            <input type="email" class="form-control" name="Email"
+                                                            pattern="[a-z0-9._%+\-]+@gmail.com$" required>
+                                                            <p class="help-block mb-0 text-danger text-end"><small>(Only Gmail)</small></p>
+                                                        </div>
+                                                    </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-light">Add</button>
