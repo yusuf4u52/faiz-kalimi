@@ -12,7 +12,6 @@ require_once('../users/libraries/Google/autoload.php');
   through a login flow. To do this we need some
   information from our API console project.
  ************************************************/
-$redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/fmb/transporter/index.php';
 $client = new Google_Client();
 $client->setClientId($client_id);
 $client->setClientSecret($client_secret);
