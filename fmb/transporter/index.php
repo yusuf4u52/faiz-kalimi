@@ -48,7 +48,7 @@ requests, else we generate an authentication URL.
 if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
 	$client->setAccessToken($_SESSION['access_token']);
 } else {
-	$authUrl = $client->createAuthUrl();
+	$authUrl = $client->createAuthUrl(); 
 }
 if (isset($authUrl) || isset($_GET['status'])) { ?>
 
