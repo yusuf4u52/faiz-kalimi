@@ -13,6 +13,15 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
 $_SESSION['thaliid'] = $values['id'];
 $_SESSION['thali'] = $values['Thali'];
 
+// Check if users gmail id is registered with us and he is a transporter against it
+$transporter = mysqli_query($link , "SELECT * FROM transporters  where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+if ($transporter->num_rows > 0 ) {
+    $values = $transporter->fetch_assoc();
+    $_SESSION['transporterid'] = $values['id'];
+    $_SESSION['transporter'] = $values['Name'];
+    header("Location: /fmb/transporter/home.php");
+}
+
 // Check if users gmail id is registered with us and has got a thali number against it 
 if (is_null($values['Active']) || $values['Active'] == 2) {
   $some_email = $_SESSION['email'];
