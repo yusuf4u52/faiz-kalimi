@@ -57,73 +57,73 @@ if ($_POST) {
     </SCRIPT>");
 }
 ?>
-<div class="fmb-content">
+<div class="fmb-content mt-5">
 	<div class="container">
 		<div class="row">
 			<div class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
-	<a href="/fmb/index.php"><img class="img-fluid mx-auto d-block my-3" src="../users/assets/img/logo.png"
-		alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="390" height="157" /></a>
-	  <h2 class="mb-3 text-center">Thaali Registration</h2>
 				<div class="card">
 					<div class="card-body">
-		  <form class="form-horizontal" method="post" autocomplete="off">
-			<div class="mb-3 row">
-			  <label for="its" class="col-3 control-label">ITS No</label>
-			  <div class="col-9">
-				<input type="number" class="form-control" id="its" name="its" pattern="[0-9]{8}" required='required'>
-			  </div>
-			</div>
-			<div class="mb-3 row">
-			  <label for="firstname" class="col-3 control-label">First Name</label>
-			  <div class="col-9">
-				<input type="text" class="form-control" id="firstname" name="firstname" required='required'>
-			  </div>
-			</div>
-			<div class="mb-3 row">
-			  <label for="fathername" class="col-3 control-label">Father's Name</label>
-			  <div class="col-9">
-				<input type="text" class="form-control" id="fathername" name="fathername" required='required'>
-			  </div>
-			</div>
-			<div class="mb-3 row">
-			  <label for="lastname" class="col-3 control-label">Last Name</label>
-			  <div class="col-9">
-				<input type="text" class="form-control" id="lastname" name="lastname" required='required'>
-			  </div>
-			</div>
-			<div class="mb-3 row">
-			  <label for="address" class="col-3 control-label">Current Address</label>
-			  <div class="col-9">
-				<textarea class="form-control" rows="3" id="address" name="address" required></textarea>
-				<p class="help-block "><small>(Please enter in this order- Flat No, Floor No, Bldg No, Society Name, Road, Nearest Landmark)</small></p>
-			  </div>
-			</div>
-			<div class="mb-3 row">
-			  <label for="mobile" class="col-3 control-label">Mobile Number</label>
-			  <div class="col-9">
-				<input type="number" class="form-control" id="mobile" name="mobile" pattern="[0-9]{10}" required='required'>
-			  </div>
-			</div>
-			<div class="mb-3 row">
-			  <label for="whatsapp" class="col-3 control-label">WhatsApp Number</label>
-			  <div class="col-9">
-				<input type="number" class="form-control" id="whatsapp" name="whatsapp" pattern="[0-9]{10}" required='required'>
-			  </div>
-			</div>
-			<div class="mb-3 row">
-			  <label for="email" class="col-3 control-label">Email Address</label>
-			  <div class="col-9">
-				<input type="email" class="form-control" id="email" name="email" pattern="^[_a-z0-9-]+(\.[_a-z0-9-]+)*@gmail.com$" required='required'>
-				<p class="help-block "><small>(Only Gmail)</small></p>
-			  </div>
-			</div>
-			<div class="mb-3 row">
-			  <div class="col-9 offset-3">
-				<button type="submit" class="btn btn-light" name='submit'>Submit</button>
-			  </div>
-			</div>
-		  </form>
-		</div> <!-- /container -->
+						<a href="/fmb/index.php"><img class="img-fluid mx-auto d-block my-3" src="../users/assets/img/logo.png" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="390" height="157" /></a>
+						<hr>
+	  					<h3 class="mb-4 text-center">Thaali Registration</h3>
+						<form class="form-horizontal" method="post" autocomplete="off">
+							<div class="mb-3 row">
+							<label for="its" class="col-3 control-label">ITS No</label>
+							<div class="col-9">
+								<input type="number" class="form-control" id="its" name="its" pattern="[0-9]{8}" required='required'>
+							</div>
+							</div>
+							<div class="mb-3 row">
+							<label for="firstname" class="col-3 control-label">First Name</label>
+							<div class="col-9">
+								<input type="text" class="form-control" id="firstname" name="firstname" pattern="[A-Za-z ]+" required='required'>
+							</div>
+							</div>
+							<div class="mb-3 row">
+							<label for="fathername" class="col-3 control-label">Father's Name</label>
+							<div class="col-9">
+								<input type="text" class="form-control" id="fathername" name="fathername" pattern="[A-Za-z ]+" required='required'>
+							</div>
+							</div>
+							<div class="mb-3 row">
+							<label for="lastname" class="col-3 control-label">Last Name</label>
+							<div class="col-9">
+								<input type="text" class="form-control" id="lastname" name="lastname" pattern="[A-Za-z ]+" required='required'>
+							</div>
+							</div>
+							<div class="mb-3 row">
+							<label for="address" class="col-3 control-label">Current Address</label>
+							<div class="col-9">
+								<textarea class="form-control" rows="3" id="address" name="address" required></textarea>
+								<p class="help-block mb-0 text-success text-end"><small>(Please enter in this order- Flat No, Floor No, Bldg No, Society Name, Road, Nearest Landmark)</small></p>
+							</div>
+							</div>
+							<div class="mb-3 row">
+							<label for="mobile" class="col-3 control-label">Mobile Number</label>
+							<div class="col-9">
+								<input type="number" class="form-control" id="mobile" name="mobile" pattern="[0-9]{10}" required='required'>
+							</div>
+							</div>
+							<div class="mb-3 row">
+							<label for="whatsapp" class="col-3 control-label">WhatsApp Number</label>
+							<div class="col-9">
+								<input type="number" class="form-control" id="whatsapp" name="whatsapp" pattern="[0-9]{10}" required='required'>
+							</div>
+							</div>
+							<div class="mb-3 row">
+							<label for="email" class="col-3 control-label">Email Address</label>
+							<div class="col-9">
+								<input type="email" class="form-control" id="email" name="email" pattern="[a-z0-9._%+\-]+@gmail.com$" required='required'>
+								<p class="help-block mb-0 text-danger text-end"><small>(Only Gmail)</small></p>
+							</div>
+							</div>
+							<div class="mb-3 row">
+							<div class="col-9 offset-3">
+								<button type="submit" class="btn btn-light" name='submit'>Submit</button>
+							</div>
+							</div>
+						</form>
+					</div> <!-- /container -->
 				</div>
 			</div>
 		</div>
