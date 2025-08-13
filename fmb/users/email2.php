@@ -6,7 +6,7 @@ include '../sms/_sms_automation.php';
 require_once '_sendMail.php';
 //include('emailmenu.php');
 
-error_reporting(0);
+error_reporting(1);
 $today_date = date("Y-m-d");
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $day = date("l", strtotime($tomorrow_date));
@@ -150,7 +150,7 @@ $msg .= $pivotTable;
 // add total registered count
 $registered_but_not_active = mysqli_query($link, "SELECT * FROM thalilist WHERE Active='0' and (Transporter <> '' or Transporter is not null)");
 $total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered_but_not_active);
-$msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
+echo $msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
 
 // send email
 $emails = [
@@ -166,4 +166,4 @@ $emails = [
 ];
 sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
 
-mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
+//mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
