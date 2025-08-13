@@ -61,7 +61,7 @@
 		<tfoot>
 			<tr>
 				<?php if(!$unset_delete || !$unset_edit || !$unset_read || !empty($actions)){?>
-					<th>
+					<th class='actions'>
 						<a href="javascript:void(0)" class="refresh-data ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary btn" role="button" data-url="<?php echo $ajax_list_url; ?>">
 							<i class="bi bi-arrow-repeat"></i>
 						</a>
