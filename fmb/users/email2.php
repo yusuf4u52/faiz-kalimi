@@ -150,7 +150,7 @@ $msg .= $pivotTable;
 // add total registered count
 $registered_but_not_active = mysqli_query($link, "SELECT * FROM thalilist WHERE Active='0' and (Transporter <> '' or Transporter is not null)");
 $total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered_but_not_active);
-echo $msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
+$msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
 
 // send email
 $emails = [
