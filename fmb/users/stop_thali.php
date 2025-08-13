@@ -13,7 +13,7 @@ if ($_POST['fromLogin']) {
 if (is_null($_SESSION['fromLogin'])) {
 
   //send them back
-  header("Location: login.php");
+  header("Location: /fmb/index.php");
 }
 
 // check if request is in cut off time

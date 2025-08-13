@@ -8,7 +8,7 @@ session_start();
 if (is_null($_SESSION['fromLogin'])) {
 
  //send them back
-   header("Location: login.php");
+   header("Location: /fmb/index.php");
 }
 
 $update = mysqli_query($link,"UPDATE thalilist set Transporter='Transporter' WHERE id = '".$_SESSION['thaliid']."'");

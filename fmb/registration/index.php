@@ -39,7 +39,7 @@ if ($_POST) {
     if (substr_count(mysqli_error($link), "Duplicate") > 0) {
       echo ("<SCRIPT LANGUAGE='JavaScript'>
     window.alert('Your data already exist in the system and so you can login directly. You will now be redirected to the login page.')
-    window.location.href='../users/login.php';
+    window.location.href='../index.php';
     </SCRIPT>");
     } else {
       echo mysqli_error($link);

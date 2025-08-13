@@ -1,27 +1,17 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<?php
-	foreach ($css_files as $file) : ?>
-		<link type="text/css" rel="stylesheet" href="<?php echo $file; ?>" />
-	<?php endforeach; ?>
-	<?php include('../users/_head.php'); ?>
-</head>
-
-<body>
-	<?php include('../users/_nav.php'); ?>
-	<div style='height:20px;'></div>
-	<div style="padding: 10px">
-		<?php echo $output; ?>
+<?php include('header.php'); ?>
+<?php include('navbar.php'); ?>
+<div class="fmb-content mt-5">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-body">
+						<?php echo $output; ?>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-	<?php foreach ($js_files as $file) : ?>
-		<script src="<?php echo $file; ?>"></script>
-	<?php endforeach; ?>
-	<script src="/fmb/users/javascript/bootstrap-3.3.6.min.js"></script>
-
-</body>
-
-</html>
+</div>
+<?php include('footer.php'); ?>
+	
