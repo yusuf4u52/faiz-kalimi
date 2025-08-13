@@ -21,7 +21,7 @@ if ($menu_item->num_rows > 0) {
 		if($roti === 'Roti') {
 			$extramsg = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND extraRoti != 0 ORDER BY Transporter");
 			while ($row_extra = mysqli_fetch_assoc($extramsg)) {
-				$sql = mysqli_query($link, "SELECT * from thalilist WHERE extraRoti != 0 AND `Transporter` LIKE '".$row_extra['Transporter']."'");
+				$sql = mysqli_query($link, "SELECT * from thalilist WHERE extraRoti != 0 AND Active = 1 AND `Transporter` LIKE '".$row_extra['Transporter']."'");
 				$msgroti .= "<b>" . $row_extra['Transporter'] . "</b><br/>";
 				while ($row = mysqli_fetch_assoc($sql)) {
 					if($row['thalisize'] == 'Mini' || $row['thalisize'] == 'Small') {
@@ -58,6 +58,7 @@ if ($menu_item->num_rows > 0) {
 			sum(case when thalisize = 'Medium' then 1 else 0 end) AS mediumcount,
 			sum(case when thalisize = 'Large' then 1 else 0 end) AS largecount,
 			sum(case when thalisize = 'Friday' then 1 else 0 end) AS fridaycount,
+			sum(case when thalisize = 'Barnamaj' then 1 else 0 end) AS barnamajcount,
 			sum(case when thalisize IS NULL then 1 else 0 end) AS nullcount,
 			SUM(extraRoti) AS extracount
 			FROM `thalilist` WHERE Active = 1 AND `Transporter` LIKE '".$transporter."'");
@@ -67,12 +68,13 @@ if ($menu_item->num_rows > 0) {
 			$thaliSize["medium"][$transporter] = $result[2]*$medium;
 			$thaliSize["large"][$transporter] = $result[3]*$large;
 			$thaliSize["friday"][$transporter] = $result[4]*$small;
-			$thaliSize["no size"][$transporter] = $result[5];
+			$thaliSize["barnamaj"][$transporter] = $result[5]*$small;
+			$thaliSize["no size"][$transporter] = $result[6];
 			if($roti === 'Roti') {
-				$thaliSize["extra"][$transporter] = $result[6];
-				$thaliSize["Total"][$transporter] = (int) $result[0]*$mini + (int) $result['1']*$small + (int) $result['2']*$medium + (int) $result['3']*$large + (int) $result['4'] + (int) $result['5'] + (int) $result['6'];
+				$thaliSize["extra"][$transporter] = $result[7];
+				$thaliSize["Total"][$transporter] = (int) $result[0]*$mini + (int) $result['1']*$small + (int) $result['2']*$medium + (int) $result['3']*$large + (int) $result['4']*$small + (int) $result['5']*$small + (int) $result['6'] + (int) $result['7'];
 			} else {
-				$thaliSize["Total"][$transporter] = (int) $result[0]*$mini + (int) $result['1']*$small + (int) $result['2']*$medium + (int) $result['3']*$large + (int) $result['4'] + (int) $result['5'];
+				$thaliSize["Total"][$transporter] = (int) $result[0]*$mini + (int) $result['1']*$small + (int) $result['2']*$medium + (int) $result['3']*$large + (int) $result['4']*$small + (int) $result['5']*$small + (int) $result['6'];
 			}
 		}
 		$rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>Total</td></tr>";
@@ -105,10 +107,10 @@ if ($menu_item->num_rows > 0) {
 
 		// send email
 		$emails = [
-			'kalimimohallapoona@gmail.com',
-			'yusuf4u52@gmail.com',
-			'mulla.moiz@gmail.com',
-			'moizlife@gmail.com',
+			"kalimimohallapoona@gmail.com",
+			"yusuf4u52@gmail.com",
+			"mulla.moiz@gmail.com",
+			"moizlife@gmail.com",
 			"abbas.saifee5@gmail.com",
 			"tinwalaabizer@gmail.com",
 			"hussainbarnagarwala14@gmail.com",

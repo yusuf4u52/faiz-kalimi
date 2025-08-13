@@ -170,9 +170,13 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-light rsvp-end d-none" disabled>RSVP Ended</button>
+            <?php if( !empty($thalisize) && $thalisize != 'Barnamaj' ) { ?>
+              <button type="button" class="btn btn-light rsvp-end d-none" disabled>RSVP Ended</button>
+            <?php } ?>
             <button type="button" class="btn btn-light feedback d-none" data-bs-target="#feedbackmenu" data-bs-toggle="modal" data-bs-dismiss="modal">Feedback</button>
-            <button type="submit" class="btn btn-light edit-menu d-none">Save Changes</button>
+            <?php if( !empty($thalisize) && $thalisize != 'Barnamaj' ) { ?>
+              <button type="submit" class="btn btn-light edit-menu d-none">Save Changes</button>
+            <?php } ?>
           </div>
         </form>
       </div>

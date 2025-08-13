@@ -83,6 +83,7 @@ $sql = mysqli_query($link, "SELECT
 					sum(case when thalisize = 'Small' then 1 else 0 end) AS smallcount,
 					sum(case when thalisize = 'Mini' then 1 else 0 end) AS minicount,
 					sum(case when thalisize = 'Friday' then 1 else 0 end) AS fridaycount,
+					sum(case when thalisize = 'Barnamaj' then 1 else 0 end) AS barnamajcount,
 					sum(case when thalisize IS NULL then 1 else 0 end) AS nullcount
 					FROM `thalilist` WHERE Active = 1 group by Transporter");
 $pivot = array();
@@ -94,9 +95,10 @@ while ($row = mysqli_fetch_assoc($sql)) {
 	$pivot["small"][$row['Transporter']] = $row['smallcount'];
 	$pivot["mini"][$row['Transporter']] = $row['minicount'];
 	$pivot["friday"][$row['Transporter']] = $row['fridaycount'];
+	$pivot["barnamaj"][$row['Transporter']] = $row['barnamajcount'];
 	$pivot["no size"][$row['Transporter']] = $row['nullcount'];
-	$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['fridaycount'];
-	$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`, `friday`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['fridaycount'] . "', '" . $row['tcount'] . "')";
+	$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['fridaycount'] + (int) $row['barnamajcount'];
+	$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`, `friday`, `barnamaj`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['fridaycount'] . "', '" . $row['barnamajcount'] . "', '" . $row['tcount'] . "')";
 	mysqli_query($link, $insert_sql) or die(mysqli_error($link));
 }
 $transporters["total"] = 1;
@@ -109,6 +111,7 @@ $totalcountonsize = mysqli_query($link, "SELECT
 					sum(case when thalisize = 'Small' then 1 else 0 end) AS small,
 					sum(case when thalisize = 'Mini' then 1 else 0 end) AS mini,
 					sum(case when thalisize = 'Friday' then 1 else 0 end) AS friday,
+					sum(case when thalisize = 'Barnamaj' then 1 else 0 end) AS barnamaj,
 					sum(case when thalisize IS NULL then 1 else 0 end) AS none
 					FROM `thalilist` WHERE Active = 1");
 
@@ -118,10 +121,11 @@ $pivot["medium"]["total"] = $result[2];
 $pivot["small"]["total"] = $result[3];
 $pivot["mini"]["total"] = $result[4];
 $pivot["friday"]["total"] = $result[5];
-$pivot["no size"]["total"] = $result[6];
+$pivot["barnamaj"]["total"] = $result[6];
+$pivot["no size"]["total"] = $result[7];
 $pivot["total"]["total"] = $result[0];
 
-mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[5] . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "','" . $result[0] . "')") or die(mysqli_error($link));
+mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `barnamaj`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[6] . "','" . $result[5] . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "','" . $result[0] . "')") or die(mysqli_error($link));
 
 mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
 $msg = str_replace("\n", "<br>", $msg);
@@ -150,14 +154,15 @@ $msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</st
 
 // send email
 $emails = [
-	'kalimimohallapoona@gmail.com',
-	'yusuf4u52@gmail.com',
-	'mulla.moiz@gmail.com',
-	'moizlife@gmail.com',
+	"kalimimohallapoona@gmail.com",
+	"yusuf4u52@gmail.com",
+	"mulla.moiz@gmail.com",
+	"moizlife@gmail.com",
 	"abbas.saifee5@gmail.com",
 	"tinwalaabizer@gmail.com",
 	"hussainbarnagarwala14@gmail.com",
-	"kanchwalaabizer@gmail.com"
+	"kanchwalaabizer@gmail.com",
+	"moula1981sk@gmail.com"
 ];
 sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
 
