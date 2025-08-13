@@ -166,4 +166,4 @@ $emails = [
 ];
 sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
 
-//mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
+mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
