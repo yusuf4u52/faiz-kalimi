@@ -108,7 +108,7 @@ if ( isset($_GET['recieved_date']) && !empty($_GET['recieved_date']) ) {
                                                 $hijridate = getHijriDate($values['recieved_date']);
                                                 $day = date('l', strtotime($values['recieved_date'])); ?>
                                                 <tr>
-                                                <td><?php echo date('d M Y', strtotime($values['recieved_date'])) .' - '.$hijridate . ' (' . $day . ')'; ?></td>
+                                                    <td data-sort="<?php echo strtotime($values['recieved_date']); ?>"><?php echo date('d M Y', strtotime($values['recieved_date'])) .' - '.$hijridate . ' (' . $day . ')'; ?></td>
                                                     <td><?php echo $roti_maker['code']; ?></td>    
                                                     <td><?php echo $roti_maker['full_name']; ?></td>
                                                     <td><strong>Packet: </strong> <?php echo $values['roti_recieved']/4; ?> <br/> 

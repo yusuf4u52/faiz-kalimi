@@ -58,7 +58,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                         <?php while ($values = mysqli_fetch_assoc($result)) {
                                             $menu_item = unserialize($values['menu_item']); ?>
                                             <tr>
-                                                <td><?php echo date('d M Y', strtotime($values['menu_date'])); ?></td>
+                                                <td data-sort="<?php echo strtotime($values['menu_date']); ?>"><?php echo date('d M Y', strtotime($values['menu_date'])); ?></td>
                                                 <td><?php echo ucfirst($values['menu_type']); ?></td>
                                                 <td>
                                                     <?php if ($values['menu_type'] == 'miqaat') { ?>

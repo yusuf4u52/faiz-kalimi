@@ -9,7 +9,7 @@
 
   new DataTable("table.display", {
     responsive: true,
-    ordering: false,
+    order: [[0, "desc"]],
   });
 
   new DataTable("table#rotireport", {

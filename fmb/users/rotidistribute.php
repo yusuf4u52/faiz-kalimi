@@ -85,7 +85,7 @@ if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
                                                 $hijridate = getHijriDate($values['distribution_date']);
                                                 $day = date('l', strtotime($values['distribution_date'])); ?>
                                                 <tr>
-                                                <td><?php echo date('d M Y', strtotime($values['distribution_date'])).' - '.$hijridate . ' (' . $day . ')'; ?></td>
+                                                    <td data-sort="<?php echo strtotime($values['distribution_date']); ?>"><?php echo date('d M Y', strtotime($values['distribution_date'])).' - '.$hijridate . ' (' . $day . ')'; ?></td>
                                                     <td><?php echo $roti_maker['code']; ?></td>
                                                     <td><?php echo $roti_maker['full_name']; ?></td>
                                                     <td><strong>Distributed:</strong> <?php echo $values['flour_distributed']; ?> KG <br/><strong>Left:</strong> <?php echo $values['flour_left']; ?> KG<br/><strong>Total :</strong> <?php echo $values['flour_distributed'] + $values['flour_left']; ?> KG</td>
