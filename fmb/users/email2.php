@@ -2,11 +2,11 @@
 include('connection.php');
 include('getHijriDate.php');
 include '../backup/_email_backup.php';
-include '../sms/_sms_automation.php';
+//include '../sms/_sms_automation.php';
 require_once '_sendMail.php';
 //include('emailmenu.php');
 
-error_reporting(0);
+error_reporting(1);
 $today_date = date("Y-m-d");
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $day = date("l", strtotime($tomorrow_date));
