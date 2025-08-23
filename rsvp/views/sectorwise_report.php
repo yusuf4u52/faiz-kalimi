@@ -4,10 +4,14 @@ function content_display()
 {
     $id = getAppData('arg1');
     ?>
-    <div class="row">
-        <div class="col-8"><h5>Sector/Subsector Report</h5></div>
-        <div class="col-4" style="text-align: right;"><a href="<?=getAppData('BASE_URI')?>/report" class="btn btn-warning">Back</a></div>
-    </div>        
+    <div class="row align-items-center">
+        <div class="col-7">
+            <h4 class="mb-3">Sector/Subsector Report</h4>
+        </div>
+        <div class="col-5 text-end">
+            <a href="<?=getAppData('BASE_URI')?>/report" class="btn btn-light">Back</a>
+        </div>
+    </div>       
     <?php
     $result = get_miqaat_sector_count($id);
     if( is_record_found($result) ) {
@@ -15,11 +19,11 @@ function content_display()
         $hdr = ['Sector', 'Subsector', 'Count'];
         $cols = ['sector', 'subsector', 'count'];
         ?>
-        <div class='col-xs-12'>
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <?php
-                    echo '<tr><th>' . implode('</th><th>', $hdr) . '</th></tr>';
+        <div class="table-responsive mt-4">
+            <table class="table table-striped display" width="100%">
+                <?php
+                echo '<thead><tr><th>' . implode('</th><th>', $hdr) . '</th></tr></thead>';
+                echo '<tbody>';
                     foreach ($data as $row) {
                         echo '<tr>';
                         foreach ($cols as $col) {
@@ -27,12 +31,12 @@ function content_display()
                         }
                         echo '</tr>';
                     }
-                    ?>
-                </table>
-            </div>
+                echo '</tbody>';
+                ?>
+            </table>
         </div>
         <?php
     } else {
-        echo 'Ops! no record found.';
+        echo '<h5 class="mt-4">Ops! no record found.</h5>';
     }    
 } ?>

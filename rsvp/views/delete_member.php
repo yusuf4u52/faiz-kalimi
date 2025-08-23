@@ -27,30 +27,25 @@ function content_display()
     $its_id = $_POST['its_id'];
     $hof_id = $_POST['hof_id'];
     ?>
-    <div class='col-xs-12'>
-        <h5>Are you sure to delete mehman with ITS ID [<?= $its_id ?>]</h5>
-        <div class="row">
-            <div class="col-6">
-                <form method="post" action="delete_member">
-                    <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
-                    <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
-                    <input type="hidden" value="<?= $its_id ?>" name="its_id" id="its_id">
-                    <input type="hidden" value="delete" name="action" id="action">
-
-                    <button type="submit" class="btn btn-warning">Delete</button>
-                </form>
-
-            </div>
-            <div class="col-6">
-                <form method="post" action="delete_member">
-                    <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
-                    <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
-                    <input type="hidden" value="<?= $its_id ?>" name="its_id" id="its_id">
-                    <input type="hidden" value="cancel" name="action" id="action">
-
-                    <button type="submit" class="btn btn-warning">Cancel</button>
-                </form>
-            </div>
+    <h4 class="mb-3">Are you sure to delete mehman with ITS ID [<?= $its_id ?>]</h4>
+    <div class="row">
+        <div class="col-6">
+            <form method="post" action="delete_member">
+                <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
+                <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
+                <input type="hidden" value="<?= $its_id ?>" name="its_id" id="its_id">
+                <input type="hidden" value="delete" name="action" id="action">
+                <button type="submit" class="btn btn-light">Delete</button>
+            </form>
+        </div>
+        <div class="col-6">
+            <form method="post" action="delete_member">
+                <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
+                <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
+                <input type="hidden" value="<?= $its_id ?>" name="its_id" id="its_id">
+                <input type="hidden" value="cancel" name="action" id="action">
+                <button type="submit" class="btn btn-light">Cancel</button>
+            </form>
         </div>
     </div>
     <?php

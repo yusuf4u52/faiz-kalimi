@@ -38,57 +38,52 @@ function content_display()
     $hdr = ['Select', 'Name'];
     $cols = ['full_name'];
     ?>
-    <h5>Family Records</h5>
-    <div class='col-xs-12'>
-        <form action="member_entry" method="post">
-            <input type="hidden" name="sabeel" id="sabeel" value="<?= $sabeel ?>">
-            <input type="hidden" name="miqaat_id" id="miqaat_id" value="<?= $miqaat_id ?>">
-            <input type="hidden" name="hof_id" id="hof_id" value="<?= $hof_id ?>">
-            <input type="hidden" name="action" id="action" value="show">
-            <div class="form-group">
-                <button type="submit" class="btn btn-warning">Add mehman</button>
-            </div>
-        </form>
-        <br />
-        <form action="mark_attendance" method="post">
+    <div class="row align-items-center">
+        <div class="col-7">
+            <h4 class="mb-3">Family Records</h4>
+        </div>
+        <div class="col-5 text-end">
+            <form action="member_entry" method="post">
+                <input type="hidden" name="sabeel" id="sabeel" value="<?= $sabeel ?>">
+                <input type="hidden" name="miqaat_id" id="miqaat_id" value="<?= $miqaat_id ?>">
+                <input type="hidden" name="hof_id" id="hof_id" value="<?= $hof_id ?>">
+                <input type="hidden" name="action" id="action" value="show">
+                <button type="submit" class="btn btn-light mb-3">Add Mehman</button>
+            </form>
+        </div>
+    </div>
+    <form action="mark_attendance" method="post">
         <input type="hidden" name="sabeel" id="sabeel" value="<?= $sabeel ?>">
         <input type="hidden" name="miqaat_id" id="miqaat_id" value="<?= $miqaat_id ?>">
-            <input type="hidden" name="hof_id" id="hof_id" value="<?= $hof_id ?>">
-
-            <div class="table-responsive">
-                <table class="table">
-                    <?php
-                    echo '<tr><th>' . implode('</th><th>', $hdr) . '</th></tr>';
+        <input type="hidden" name="hof_id" id="hof_id" value="<?= $hof_id ?>">
+        <div class="table-responsive mt-4">
+            <table class="table table-striped display" width="100%">
+                <?php echo '<thead><tr><th>' . implode('</th><th>', $hdr) . '</th></tr></thead>';
+                echo '<tbody>';
                     foreach ($records as $row) {
-                        $selected = $row['its_id'] === $row['attendee'] ? ' checked' : ''; 
-                        echo "<tr><td><input type='checkbox' $selected value='{$row['its_id']}'
-                name='family_its_list[]' id='family_its_list[]'></td>";
-                        foreach ($cols as $col) {
-                            echo "<td>{$row["$col"]}</td>";
-                        }
-                        if( $row['mohallah'] === 'Other' && $row['hof_id'] != $row['its_id']) {
-                            ?>
-                            <!-- <td>
-                            <form method="post" action="delete_member">
-                                <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
-                                <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
-                                <input type="hidden" value="<?= $row['its_id'] ?>" name="its_id" id="its_id">
-                                <input type="hidden" value="show" name="action" id="action">
-
-                                <button type="submit" class="btn btn-warning">Delete</button>
-                            </form>
-                            </td> -->
-                            <?php
-                        }                       
-                        echo '</tr>';
-                    }
-                    ?>
-                </table>
-            </div>
-            <div class="form-group" style="text-align: right; vertical-align: middle; font-weight:20px;margin-top: 25px;">
-                <button type="submit" class="btn btn-success">Save</button>
-            </div>
-        </form>        
-    </div>
+                        echo "<tr><td><div class='form-check mb-3'>";
+                            $selected = $row['its_id'] === $row['attendee'] ? ' checked' : ''; 
+                            echo "<input class='form-check-input mt-2' type='checkbox' $selected value='{$row['its_id']}' name='family_its_list[]' id='family_its_list[]'></td>";
+                            foreach ($cols as $col) {
+                                echo "<td><label class='form-check-label'>{$row["$col"]}</label></td>";
+                            }
+                            if( $row['mohallah'] === 'Other' && $row['hof_id'] != $row['its_id']) { ?>
+                                    <!--<td><form method="post" action="delete_member">
+                                        <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
+                                        <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
+                                        <input type="hidden" value="<?= $row['its_id'] ?>" name="its_id" id="its_id">
+                                        <input type="hidden" value="show" name="action" id="action">
+                                        <button type="submit" class="btn btn-light"><i class="bi bi-trash"></i></button>
+                                    </form></td-->
+                            <?php }    
+                        echo "</div>";
+                    } 
+                echo '</tbody>'; ?>
+            </table>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-light">Save</button>
+        </div>
+    </form> 
     <?php
 } ?>

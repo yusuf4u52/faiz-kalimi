@@ -20,20 +20,18 @@ function content_display()
 {
   $miqaat_id = getAppData('miqaat_id');
   ?>
-  <h6>Search Page</h6>
+  <h4 class="mb-3">Search Page</h4>
   <form action="search_sabeel" method="post">
     <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
     <div class="mb-3 row">
-      <label for="staticEmail" class="col-sm-3 col-form-label">HOF ID</label>
-      <div class="col-sm-9">
-        <div class="input-group mb-3">
-          <input type="text" title="Please enter at 8 digits" required class="form-control" name="hof_id" id="hof_id"
-            placeholder="HOF ID" pattern="^[0-9]{8}$" aria-label="Sabeel number" aria-describedby="button-addon2">
-          <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+      <label for="hof_id" class="col-3 control-label">HOF ID</label>
+      <div class="col-9">
+        <div class="input-group">
+          <input type="number" title="Please enter at 8 digits" required class="form-control" name="hof_id" id="hof_id"
+            placeholder="HOF ID" pattern="^[0-9]{8}$" aria-label="Sabeel number" aria-describedby="button-hof">
+          <button class="btn btn-light" type="submit" id="button-hof">Search</button>
         </div>
       </div>
     </div>
-
-
   </form>
 <?php } ?>

@@ -6,12 +6,12 @@ function content_display()
     $hdr = ['', 'Total', 'Mardo', 'Bairao', 'Kids', 'Miqaat', 'Start', 'End'];
     $cols = ['total', 'mardo', 'bairo', 'infant', 'name', 'start_datetime', 'end_datetime'];
     ?>
-    <h5>Report</h5>
-    <div class='col-xs-12'>
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <?php
-                echo '<tr><th>' . implode('</th><th>', $hdr) . '</th></tr>';
+    <h4 class="mb-3">Report</h5>
+    <div class="table-responsive">
+        <table class="table table-striped display" width="100%">
+            <?php
+            echo '<thead><tr><th>' . implode('</th><th>', $hdr) . '</th></tr></thead>';
+            echo '<tbody>';
                 foreach ($data as $row) {
                     echo "<tr><td><a href='sectorwise_report/{$row['id']}'>Sectorwise</a></td>";
                     foreach ($cols as $col) {
@@ -19,9 +19,9 @@ function content_display()
                     }
                     echo '</tr>';
                 }
-                ?>
-            </table>
-        </div>
+            echo '</tbody>';
+            ?>
+        </table>
     </div>
     <?php
 } ?>

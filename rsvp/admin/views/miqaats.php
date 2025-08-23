@@ -4,9 +4,13 @@ function content_display()
 {
     $uri = getAppData('BASE_URI');
     ?>
-    <div class="row">
-        <div class="col-8"><h5>Miqaats Report</h5></div>
-        <div class="col-4" style="text-align: right;"><a href="<?=$uri?>/add_miqaat" class="btn btn-warning">Add</a></div>
+    <div class="row align-items-center">
+        <div class="col-7">
+            <h4 class="mb-3">Miqaats Report</h4>
+        </div>
+        <div class="col-5 text-end">
+            <a href="<?=$uri?>/add_miqaat" class="btn btn-light mb-3">Add Miqaat</a>
+        </div>
     </div>        
     <?php
     // id,name,details,
@@ -19,26 +23,26 @@ function content_display()
         $hdr = ['ID', 'Name', 'Details', 'Start', 'End', 'Action'];
         $cols = ['id', 'name', 'details', 'start_datetime', 'end_datetime'];
         ?>
-        <div class='col-xs-12'>
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <?php
-                    echo '<tr><th>' . implode('</th><th>', $hdr) . '</th></tr>';
-                    foreach ($data as $row) {
-                        $id = $row['id'];
-                        echo '<tr>';
+        <div class="table-responsive mt-4">
+            <table class="table table-striped display" width="100%">
+                <?php
+                echo '<thead><tr><th>' . implode('</th><th>', $hdr) . '</th></tr></thead>';
+                echo '<tbody>';
+                foreach ($data as $row) {
+                    $id = $row['id'];
+                    echo '<tr>';
                         foreach ($cols as $col) {
                             echo "<td>{$row["$col"]}</td>";
                         }                        
-                        echo "<td><a href='$uri/add_miqaat/$id'>Edit</a></td>";
-                        echo '</tr>';
-                    }
-                    ?>
-                </table>
-            </div>
+                        echo "<td><a class='btn btn-light' href='$uri/add_miqaat/$id'><i class='bi bi-pencil-square'></i></a></td>";
+                    echo '</tr>';
+                }
+                echo '</tbody>';
+                ?>
+            </table>
         </div>
         <?php
     } else {
-        echo 'Ops! no record found.';
+        echo '<h5 class="mt-4">Ops! no record found.</h5>';
     }    
 } ?>

@@ -18,22 +18,22 @@ function content_display()
 {
 ?>
 <form method="post">
-    <div class='col-xs-12'>
+    <div class='col-12'>
         <div class="mb-3 row">
-            <label for="its_id" class="col-sm-3 col-form-label">ITS ID</label>
-            <div class="col-sm-9">
+            <label for="its_id" class="col-3 col-form-label">ITS ID</label>
+            <div class="col-9">
                 <input type="text" pattern="^[0-9]{8}$" required class="form-control" id="its_id" name="its_id">
             </div>
         </div>
         <div class="mb-3 row">
-            <label for="full_name" class="col-sm-3 col-form-label">Password</label>
-            <div class="col-sm-9">
+            <label for="full_name" class="col-3 col-form-label">Password</label>
+            <div class="col-9">
                 <input type="text" required class="form-control" id="password" name="password">
             </div>
         </div>
 
-        <div class="form-group" style="font-weight:20px;margin-top: 25px;">
-            <button type="submit" class="btn btn-success">Save</button>
+        <div class="mb-3 offset-3 col-9">
+            <button type="submit" class="btn btn-light">Save</button>
         </div>
     </div>
 </form>
