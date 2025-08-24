@@ -2,6 +2,16 @@
 $message = getSessionData('transit_data');
 removeSessionData('transit_data');
 
+
+$miqaat_name = 'No Miqaat';
+$end_datetime = null;
+$result = get_current_miqaat();
+if (is_record_found($result)) {
+    $miqaat = $result->data[0];
+    $miqaat_name = $miqaat['name'];
+    $end_datetime = date_create($miqaat['end_datetime']);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,19 +21,18 @@ removeSessionData('transit_data');
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="<?= getAppData('BASE_URI') ?>/assets/imgs/Logo.png" />
+    <link rel="shortcut icon" href="/rsvp/assets/imgs/Logo.png" />
     <link href="https://fonts.googleapis.com/css?family=Lato:200,300,400,500,500i,600,700,800,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="/fmb/users/assets/css/main.css" />
 </head>
 <body>
     <header class="rsvp-header">
-        <a href="<?= getAppData('BASE_URI') ?>"><img class="img-fluid img-fluid img-fluid mx-auto d-block my-3" src="/rsvp/assets/imgs/Logo.png" alt="Miqaat RSVP (Kalimi Mohalla - Poona)" width="153" height="153" /></a>
         <nav class="navbar">
             <div class="container-fluid">
-                <div class="navbar-brand">
-                    <a class="navbar-brand" href="<?= getAppData('BASE_URI') ?>">Miqaat RSVP (Kalimi Mohalla - Poona)</a>
-                </div>
+                <a class="navbar-brand" href="<?= getAppData('BASE_URI') ?>"><img class="img-fluid" src="/rsvp/assets/imgs/Logo.png" alt="Miqaat RSVP (Kalimi Mohalla - Poona)" width="72" height="72" /></a>
+                <a class="navbar-brand text-end" href="<?= getAppData('BASE_URI') ?>">Miqaat RSVP <br/> (Kalimi Mohalla - Poona)</a>
             </div>
         </nav>
     </header>
@@ -33,15 +42,25 @@ removeSessionData('transit_data');
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
+                             <h2 clas="mb-3">Miqaat : <?= $miqaat_name ?></h2>
+                            <?php
+                            if (isset($end_datetime)) {
+                                $miqaat_ends = date_format($end_datetime, 'd/m/Y H:i:s');
+                                echo "<h6>Fill Survey before : $miqaat_ends</h6>";
+                            }
+                            ?>
+                            <hr />
                             <?php if (isset($message)) { ?>                
                                 <div class="alert alert-info alert-dismissible fade show" role="alert">
                                     <strong><?= $message ?></strong>
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
-                            <?php }
+                            <?php } 
+                            
                             if (function_exists('content_display')) {
                                 content_display();
                             }
+
                             ?>
                         </div>
                     </div>

@@ -35,7 +35,7 @@ include('navbar.php');
                                 </form>
                                 <?php if (isset($_GET['start_date'])) {
                                     $stop_date = date('Y-m-d', strtotime($_GET['start_date'] . "- 1 day"));
-                                    $stop_thali = mysqli_query($link, "SELECT DISTINCT s.thali, t.tiffinno, t.thalisize, t.Transporter FROM stop_thali as s left join thalilist as t on (s.thali = t.Thali) WHERE s.stop_date = '" . $stop_date . "' AND t.hardstop != 1 ORDER BY t.Transporter");
+                                    $stop_thali = mysqli_query($link, "SELECT DISTINCT s.thali, t.tiffinno, t.thalisize, t.Transporter FROM stop_thali as s left join thalilist as t on (s.thali = t.id) WHERE s.stop_date = '" . $stop_date . "' AND t.hardstop != 1 ORDER BY t.Transporter");
                                     if($stop_thali->num_rows > 0) { ?>
                                         <div class="table-responsive">
                                             <table class="table table-striped table-hover display">

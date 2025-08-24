@@ -31,8 +31,8 @@ if (is_record_found($result)) {
     <header class="rsvp-header">
         <nav class="navbar">
             <div class="container-fluid">
-                <a class="navbar-brand" href="<?= getAppData('BASE_URI') ?>">Miqaat RSVP <br/> (Kalimi Mohalla - Poona)</a>
-                <a  href="<?= getAppData('BASE_URI') ?>"><img class="img-fluid" src="/rsvp/assets/imgs/Logo.png" alt="Miqaat RSVP (Kalimi Mohalla - Poona)" width="72" height="72" /></a>
+                <a class="navbar-brand" href="<?= getAppData('BASE_URI') ?>"><img class="img-fluid" src="/rsvp/assets/imgs/Logo.png" alt="Miqaat RSVP (Kalimi Mohalla - Poona)" width="72" height="72" /></a>
+                <a class="navbar-brand text-end" href="<?= getAppData('BASE_URI') ?>">Miqaat RSVP <br/> (Kalimi Mohalla - Poona)</a>
             </div>
         </nav>
     </header>
@@ -72,7 +72,6 @@ if (is_record_found($result)) {
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <p class="mb-1"><small><strong>Helpline:</strong> <a href="https://wa.me/+917767825353">+91 77678 25353</a></small></p>
                     <p><small>&copy; Copyright <?php echo date('Y'); ?> Kalimi Mohallah - Poona. All Rights Reserved.</small></p>
                 </div>
             </div>

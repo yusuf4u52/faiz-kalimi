@@ -60,7 +60,7 @@ if( isset($_POST['menu_type']) && isset($_POST['menu_item']) ) {
         if( !empty($_POST['menu_item']['extra']['item'])) {
             $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_name` = '".$_POST['menu_item']['extra']['item']."' AND `dish_type` = '1'") or die(mysqli_error($link));
             if($result->num_rows == 0) {
-                $sql = "INSERT INTO food_list (`dish_name`, `dish_type`) VALUES ('" . $_POST['menu_item']['extra']['item'] . "', '1')"; 
+                $sql = "INSERT INTO food_list (`dish_name`, `dish_type`) VALUES ('" . $_POST['menu_item']['extra']['item'] . "', '5')"; 
                 mysqli_query($link, $sql) or die(mysqli_error($link));
             } mysqli_free_result($result);
             $menu_item['extra']['item'] = $_POST['menu_item']['extra']['item'];

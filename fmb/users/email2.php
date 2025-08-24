@@ -15,10 +15,10 @@ $hijridate = getHijriDate($tomorrow_date);
 $stop_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` = '" . $tomorrow_date . "'");
 if ($stop_thali->num_rows > 0) {
 	while ($stop = mysqli_fetch_assoc($stop_thali)) {
-		$start_list = mysqli_query($link, "SELECT `id`, `Thali` FROM thalilist WHERE `Thali` = '" . $stop['thali'] . "' AND `Active` = '1' LIMIT 1");
+		$start_list = mysqli_query($link, "SELECT `id`, `Thali` FROM thalilist WHERE `id` = '" . $stop['thali'] . "' AND `Active` = '1' LIMIT 1");
 		if ($start_list->num_rows > 0) {
 			$list = $start_list->fetch_assoc();
-			$update_stop = "UPDATE thalilist SET `Active` = '0', `Thali_stop_date` = '" . $hijridate . "' WHERE `Thali` = '".$list['Thali']."'";
+			$update_stop = "UPDATE thalilist SET `Active` = '0', `Thali_stop_date` = '" . $hijridate . "' WHERE `id` = '".$list['id']."'";
     		mysqli_query($link,$update_stop) or die(mysqli_error($link));
 
 			mysqli_query($link, "update change_table set processed = 1 where userid = '" . $list['id'] . "' and `Operation` in ('Start Thali','Stop Thali','Start Transport','Stop Transport') and processed = 0") or die(mysqli_error($link));
@@ -32,10 +32,10 @@ if($chk_stop_thali->num_rows > 0) {
 	while ($chk_stop_list = mysqli_fetch_assoc($chk_stop_thali)) {
 		$start_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` = '" . $tomorrow_date . "' AND `thali` = '" . $chk_stop_list['thali'] . "'");
 		if ($start_thali->num_rows <= 0) {
-			$stop_list = mysqli_query($link, "SELECT `id`, `Thali` FROM thalilist WHERE `Thali` = '" . $chk_stop_list['thali'] . "' AND `Active` = '0' LIMIT 1");
+			$stop_list = mysqli_query($link, "SELECT `id`, `Thali` FROM thalilist WHERE `id` = '" . $chk_stop_list['thali'] . "' AND `Active` = '0' LIMIT 1");
 			if ($stop_list->num_rows > 0) {
 				$list = $stop_list->fetch_assoc();
-				$update_start = "UPDATE thalilist SET `Active` = '1', `Thali_start_date` = '" . $hijridate . "' WHERE `Thali` = '".$list['Thali']."'";
+				$update_start = "UPDATE thalilist SET `Active` = '1', `Thali_start_date` = '" . $hijridate . "' WHERE `id` = '".$list['id']."'";
 				mysqli_query($link,$update_start) or die(mysqli_error($link));
 
 				mysqli_query($link, "update change_table set processed = 1 where userid = '" . $list['id'] . "' and `Operation` in ('Start Thali','Stop Thali','Update Address', 'Change Size') and processed = 0") or die(mysqli_error($link));

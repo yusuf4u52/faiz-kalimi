@@ -33,8 +33,8 @@ if ($menu_item->num_rows > 0) {
 				while ($row_thali = mysqli_fetch_assoc($thali)) {
 					$thalino[] = $row_thali['thali']; 
 				}
-				$sabeelno = "'" . implode ( "', '", $thalino ) . "'";
-				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND Thali IN (".$sabeelno.") ORDER BY Transporter");
+				$thaliid = "'" . implode ( "', '", $thalino ) . "'";
+				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND id IN (".$thaliid.") ORDER BY Transporter");
 				while ($row_trans = mysqli_fetch_assoc($transporter)) {
 					$msgmenu .= '<table border="0" width="1140" cellpadding="3" cellspacing="3" bgcolor="#778b2a" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
 						<tr>
@@ -56,14 +56,13 @@ if ($menu_item->num_rows > 0) {
 									$msgmenu .= '<th width="7%">' . $menu_item['rice']['item'] . '</th>';
 								}
 							$msgmenu .= '<th>Name</th>
-								<th>Contact</th>
-								<th>Flat / Society</th>
+								<th>Flat/Society</th>
 							<tr>
 						</thead>
 						<tbody>';
-							$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, `NAME`, CONTACT, thalisize, wingflat, society from thalilist WHERE `Transporter` LIKE '".$row_trans['Transporter']."' AND Thali IN (".$sabeelno.") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
+							$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, `NAME`, CONTACT, thalisize, wingflat, society from thalilist WHERE `Transporter` LIKE '".$row_trans['Transporter']."' AND id IN (".$thaliid.") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
 							while ($row = mysqli_fetch_assoc($thali)) {
-								$user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $tomorrow_date . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
+								$user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $tomorrow_date . "' AND `thali` = '" . $row['id'] . "' ORDER BY thali");
 								if ($user_menu->num_rows > 0) {
 									$row_user = $user_menu->fetch_assoc();
 									$user_menu_item = unserialize($row_user['menu_item']);
@@ -80,7 +79,6 @@ if ($menu_item->num_rows > 0) {
 											$msgmenu .= '<td align="center">' . $user_menu_item['rice']['qty'] . '</td>';
 										}
 									$msgmenu .= '<td align="center">'.$row['NAME'].'</td>
-										<td align="center">'.$row['CONTACT'].'</td>
 										<td align="center">'.$row['wingflat'].' '.$row['society'].'</td>
 									<tr>';
 								}
