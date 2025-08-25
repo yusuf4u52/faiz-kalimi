@@ -48,7 +48,7 @@ include('navbar.php');
                     <div class="modal-content">
                       <form id="user_stop" class="form-horizontal" method="post" action="stopthali.php" autocomplete="off">
                         <input type="hidden" name="action" value="stop_thali" />
-                        <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thaliid']; ?>" />
+                        <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thali']; ?>" />
                         <div class="modal-header">
                           <h4 class="modal-title fs-5">Stop Thali</h4>
                           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i

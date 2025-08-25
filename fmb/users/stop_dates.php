@@ -9,7 +9,7 @@ include('navbar.php');
                 <div class="card">
                     <div class="card-body">
                         <?php if (!empty($values['yearly_hub'])) { 
-                            if (!empty($_SESSION['thaliid'])) { ?>
+                            if (!empty($_SESSION['thali'])) { ?>
                                 <div class="row">
                                     <div class="col-6">
                                         <h2 class="mb-5">Stop Dates</h2>
@@ -30,7 +30,7 @@ include('navbar.php');
                                             <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
                                         </strong> to <strong>
                                             <?php echo date('d M Y', strtotime($_GET['edate'])); ?>
-                                        </strong>.</div>
+                                        </strong>. Click <a href="/fmb/users/stop_dates.php">here</a> to view stopped dates.</div>
                                 <?php }
                                 if (isset($_GET['action']) && $_GET['action'] == 'srsvp') { ?>
                                     <div class="alert alert-warning" role="alert">RSVP ended to stop thali of <strong>
@@ -51,7 +51,7 @@ include('navbar.php');
                                             <form id="user_stop" class="form-horizontal" method="post" action="stopthali.php" autocomplete="off">
                                                 <input type="hidden" name="action" value="stop_date_thali" />
                                                 <input type="hidden" id="thali" name="thali"
-                                                    value="<?php echo $_SESSION['thaliid']; ?>" />
+                                                    value="<?php echo $_SESSION['thali']; ?>" />
                                                 <div class="modal-header">
                                                     <h4 class="modal-title fs-5">Stop Thali</h4>
                                                     <button type="button" class="btn ms-auto" data-bs-dismiss="modal"
@@ -78,7 +78,7 @@ include('navbar.php');
                                 <?php
                                 date_default_timezone_set('Asia/Kolkata');
                                 $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-                                    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `thali` = '" . $_SESSION['thaliid'] . "'
+                                    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `Thali` = '" . $_SESSION['thali'] . "'
                                 ),
                                 grouped_dates AS (
                                     SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
@@ -133,7 +133,7 @@ include('navbar.php');
 
 <?php
 $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `thali` = '" . $_SESSION['thaliid'] . "'
+    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `Thali` = '" . $_SESSION['thali'] . "'
 ),
 grouped_dates AS (
     SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates

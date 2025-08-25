@@ -405,8 +405,8 @@ if (isset($_GET['year'])) {
       <form id="admin_stop" class="form-horizontal" method="POST" action="stopthali.php" autocomplete="off">
         <input type="hidden" name="action" value="admin_stop_thali" />
         <input type="hidden" name="id" value="<?php echo $values['id']; ?>" />
-        <input type="hidden" name="thali" value="<?php echo $values['id']; ?>" />
-        <input type="hidden" name="thalino" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
         <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
         <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
         <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
@@ -438,7 +438,7 @@ if (isset($_GET['year'])) {
         <input type="hidden" name="action" value="stop_permanant" />
         <input type="hidden" name="id" value="<?php echo $values['id']; ?>" />
         <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
-        <input type="hidden" name="thalino" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
         <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
         <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
         <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
@@ -465,8 +465,8 @@ if (isset($_GET['year'])) {
 while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
   $menu_id = $amenu_values['id'];
   $menu_date = $amenu_values['menu_date'];
-  if (!empty($values['id'])) {
-    $adminumenu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $amenu_values['menu_date'] . "' AND `thali` = '" . $values['id'] . "'") or die(mysqli_error($link));
+  if (!empty($values['Thali'])) {
+    $adminumenu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $amenu_values['menu_date'] . "' AND `thali` = '" . $values['Thali'] . "'") or die(mysqli_error($link));
     if (isset($adminumenu) && $adminumenu->num_rows > 0) {
       $rowaumenu = $adminumenu->fetch_assoc();
       $menu_item = unserialize($rowaumenu['menu_item']);
@@ -489,7 +489,7 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
       }
       $target = 'adminmenu-' . $menu_id;
     }
-    $adminstopthali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $amenu_values['menu_date'] . "' AND `thali` = '" . $values['id'] . "'") or die(mysqli_error($link));
+    $adminstopthali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $amenu_values['menu_date'] . "' AND `thali` = '" . $values['Thali'] . "'") or die(mysqli_error($link));
     if ($adminstopthali->num_rows > 0) {
       $status = 'stop';
     } else {
@@ -503,9 +503,9 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
           autocomplete="off">
           <input type="hidden" name="action" value="admin_change_menu" />
           <input type="hidden" name="menu_id" value="<?php echo $menu_id; ?>" />
-          <input type="hidden" name="id" value="<?php echo $values['id']; ?>" />
-          <input type="hidden" name="thali" value="<?php echo $values['id']; ?>" />
-          <input type="hidden" name="thalino" value="<?php echo $values['Thali']; ?>" />
+          <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
+          <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+          <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
           <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
           <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
           <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
@@ -614,7 +614,7 @@ mysqli_free_result($adminmenu); ?>
 
 <?php
 $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `thali` = '" . $values['id'] . "'
+    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `Thali` = '" . $values['Thali'] . "'
 ),
 grouped_dates AS (
     SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates

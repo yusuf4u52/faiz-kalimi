@@ -65,18 +65,18 @@ if (isset($_GET['menu_date'])) {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php $thali = mysqli_query($link, "SELECT `id`, `thali` FROM user_feedmenu WHERE `menu_date` = '" . $_GET['menu_date'] . "'");
+                                                <?php $thali = mysqli_query($link, "SELECT `thali` FROM user_feedmenu WHERE `menu_date` = '" . $_GET['menu_date'] . "'");
                                                 if ($thali->num_rows > 0) {
                                                     $totaledited = $thali->num_rows;
                                                     $thalino = array();
                                                     while ($row_thali = mysqli_fetch_assoc($thali)) {
                                                         $thalino[] = $row_thali['thali'];
                                                     }
-                                                    $thaliid = "'" . implode("', '", $thalino) . "'";
-                                                    $thali = mysqli_query($link, "SELECT id, Thali, tiffinno, thalisize, Transporter from thalilist WHERE id IN (" . $thaliid . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
+                                                    $sabeelno = "'" . implode("', '", $thalino) . "'";
+                                                    $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE Thali IN (" . $sabeelno . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
                                                     $sabji = 0; $tarkari = 0; $rice = 0;
                                                     while ($row = mysqli_fetch_assoc($thali)) {
-                                                        $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['id'] . "' ORDER BY thali");
+                                                        $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
                                                         if ($user_feedmenu->num_rows > 0) {
                                                             $row_user = $user_feedmenu->fetch_assoc();
                                                             $user_menu_item = unserialize($row_user['menu_feed']); ?>

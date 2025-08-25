@@ -143,7 +143,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
           <?php while ($menu_values = mysqli_fetch_assoc($menu_list)) {
             $menu_id = $menu_values['id'];
             $menu_date = $menu_values['menu_date'];
-            $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_values['menu_date'] . "' AND `thali` = '" . $values['id'] . "'") or die(mysqli_error($link));
+            $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_values['menu_date'] . "' AND `thali` = '" . $values['Thali'] . "'") or die(mysqli_error($link));
             if ($user_menu->num_rows > 0) {
               $row = $user_menu->fetch_assoc();
               $menu_item = unserialize($row['menu_item']);
@@ -164,7 +164,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
               }
               $target = 'adminmenu-' . $menu_id;
             }
-            $stopthali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu_values['menu_date'] . "' AND `thali` = '" . $values['id'] . "'") or die(mysqli_error($link));
+            $stopthali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu_values['menu_date'] . "' AND `thali` = '" . $values['Thali'] . "'") or die(mysqli_error($link));
             if ($stopthali->num_rows > 0) {
               $status = '<span style="color:#ff0000;">Stop</span>';
             } else {
@@ -220,7 +220,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
     <?php
     date_default_timezone_set('Asia/Kolkata');
     $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-        SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `thali` = '" . $values['id'] . "'
+        SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `Thali` = '" . $values['Thali'] . "'
     ),
     grouped_dates AS (
         SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates

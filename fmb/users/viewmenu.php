@@ -1,5 +1,5 @@
 <?php
-$takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SESSION['thaliid'] . "' AND `hardstop` != 1") or die(mysqli_error($link));
+$takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_SESSION['thali'] . "' AND `hardstop` != 1") or die(mysqli_error($link));
 ?>
 
 <?php if (isset($takesFmb) && $takesFmb->num_rows > 0) {
@@ -61,7 +61,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
   $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));
   $sched_res = [];
   while ($menu = mysqli_fetch_assoc($result)) {
-    $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
+    $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
     if ($user_menu->num_rows > 0) {
       $row = $user_menu->fetch_assoc();
       $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $row['menu_date'] . "'") or die(mysqli_error($link));
@@ -74,13 +74,13 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
       $menu['menu_item'] = unserialize($menu['menu_item']);
       $menu['sdate'] = date("F d, Y h:i A", strtotime($menu['menu_date']));
     }
-    $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
+    $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
     if ($user_feedmenu->num_rows > 0) {
       $rowfeed = $user_feedmenu->fetch_assoc();
       $menu['menu_feed'] = unserialize($rowfeed['menu_feed']);
       $menu['feedback'] = $rowfeed['feedback'];
     }
-    $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
+    $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
     if ($stop_thali->num_rows > 0) {
       $menu['status'] = 'stop';
     } else {
@@ -98,7 +98,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
         <form id="changemenu" class="form-horizontal" method="post" action="changemenu.php" autocomplete="off">
           <input type="hidden" name="action" value="change_menu" />
           <input type="hidden" id="menu_id" name="menu_id" value="" />
-          <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thaliid']; ?>" />
+          <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thali']; ?>" />
           <input type="hidden" id="thalisize" name="thalisize" value="<?php echo $thalisize; ?>" />
           <div class="modal-header">
             <h4 class="modal-title"></h4>
@@ -189,7 +189,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
         <form id="feedbackmenu" class="form-horizontal" method="post" action="changemenu.php" autocomplete="off">
           <input type="hidden" name="action" value="feedback_menu" />
           <input type="hidden" id="menu_id" name="menu_id" value="" />
-          <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thaliid']; ?>" />
+          <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thali']; ?>" />
           <input type="hidden" id="thalisize" name="thalisize" value="<?php echo $thalisize; ?>" />
           <div class="modal-header">
             <h4 class="modal-title"></h4>
