@@ -72,6 +72,7 @@ if (is_record_found($result)) {
         <div class="container">
             <div class="row">
                 <div class="col-12">
+                    <p class="mb-1"><small><strong>Helpline:</strong> <a href="https://wa.me/+917767825353">+91 77678 25353</a></small></p>
                     <p><small>&copy; Copyright <?php echo date('Y'); ?> Kalimi Mohallah - Poona. All Rights Reserved.</small></p>
                 </div>
             </div>
