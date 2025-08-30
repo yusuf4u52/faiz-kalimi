@@ -59,17 +59,18 @@ if( $isInRange ) {
                                 </form>
                                 <?php if( !empty($_POST['sabeel_no']) ) {
                                     $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_POST['sabeel_no'] . "' AND `hardstop` != 1") or die(mysqli_error($link)); 
-                                    if (isset($takesFmb) && $takesFmb->num_rows > 0) { ?>
+                                    if (isset($takesFmb) && $takesFmb->num_rows > 0) {
+                                        $takesFmb = $takesFmb->fetch_assoc(); ?>
                                         <hr>
                                         <form id="feedbackmenu" class="form-horizontal" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
                                             <input type="hidden" name="action" value="feedback_menu" />
                                             <input type="hidden" name="thali" id="thali" value="<?php echo (!empty($_POST['sabeel_no']) ? $_POST['sabeel_no'] : ''); ?>" />
                                             <?php $result = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` BETWEEN DATE_ADD(CURDATE(), INTERVAL -WEEKDAY(CURDATE()) DAY) AND DATE_ADD(CURDATE(), INTERVAL (5 - WEEKDAY(CURDATE())) DAY) AND `thali` = '" . $_POST['sabeel_no'] . "' order by `menu_date` ASC") or die(mysqli_error($link));
                                             if ($result->num_rows > 0) {
-                                                echo '<div class="alert alert-info" role="alert">You have already submitted your feedback.</div>';
+                                                echo '<div class="alert alert-info" role="alert">Salaam <strong class="text-capitalize">'.strtolower($takesFmb['NAME']).'</strong>, you have already submitted your feedback.</div>';
                                             } else {
                                                 $result = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` BETWEEN DATE_ADD(CURDATE(), INTERVAL -WEEKDAY(CURDATE()) DAY) AND DATE_ADD(CURDATE(), INTERVAL (5 - WEEKDAY(CURDATE())) DAY) AND `menu_type` = 'thaali' order by `menu_date` ASC") or die(mysqli_error($link));
-                                                echo '<div class="alert alert-info" role="alert">Please submit your feedback. Your feedback is valuable to us.</div>';
+                                                echo '<div class="alert alert-info" role="alert">Salaam <strong class="text-capitalize">'.strtolower($takesFmb['NAME']).'</strong>, please submit your feedback. Your feedback is valuable to us.</div>';
                                             }
                                             while ($menu = mysqli_fetch_assoc($result)) {
                                                 if( !empty($menu['menu_item'])) {
