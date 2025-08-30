@@ -8,7 +8,7 @@ $time = $now->format('H:i'); // Current time in HH:MM
 $isInRange = false;
 if ($dayOfWeek == 6 && $time >= '13:00') {
     $isInRange = true;
-} elseif ($dayOfWeek == 0 && $time <= '20:00') {
+} elseif ($dayOfWeek == 0 && $time <= '20:00') { 
     $isInRange = true;
 }
 if( $isInRange ) {
