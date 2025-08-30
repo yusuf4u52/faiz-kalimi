@@ -3,6 +3,12 @@
 function content_display()
 {
     $uri = getAppData('BASE_URI');
+    $user_session_data = getSessionData(THE_SESSION_ID);
+    $its_id = 0;
+    if( isset($user_session_data) && is_array($user_session_data) ) {
+        $its_id = array_key_exists('ITSID' , $user_session_data) ? $user_session_data[ITSID] : 0;
+    }
+
     ?>
     <div class="row">
         <div class="col-12 col-md-6">
@@ -23,5 +29,21 @@ function content_display()
                 </div>
             </div>
         </div>
+        <?php if( $its_id === '30359589' ) { ?>
+        <div class="col-md-4 col-sm-6 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">ITS RECORDs</h5>
+                    <p class="card-text">DUMP OF ITS DATA</p>
+                    <form action="<?=$uri?>/its_upload" method="post" enctype="multipart/form-data">
+                        <div class="input-group mb-3">
+                            <input type='file' class='form-control file-upload-browse' name='itsdatafile' required />
+                            <button class="btn btn-outline-primary" type="submit" id="button-addon2">GO</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <?php } ?>
     </div>
 <?php } ?>

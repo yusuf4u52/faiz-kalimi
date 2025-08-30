@@ -68,13 +68,13 @@ function content_display()
                                 echo "<td><label class='form-check-label'>{$row["$col"]}</label></td>";
                             }
                             if( $row['mohallah'] === 'Other' && $row['hof_id'] != $row['its_id']) { ?>
-                                    <!--<td><form method="post" action="delete_member">
+                                    <td><form method="post" action="delete_member">
                                         <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
                                         <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
                                         <input type="hidden" value="<?= $row['its_id'] ?>" name="its_id" id="its_id">
                                         <input type="hidden" value="show" name="action" id="action">
                                         <button type="submit" class="btn btn-light"><i class="bi bi-trash"></i></button>
-                                    </form></td-->
+                                    </form></td>
                             <?php }    
                         echo "</div>";
                     } 
