@@ -1,20 +1,34 @@
 <?php
 include('../users/connection.php');
 include('../users/header.php');
-if (isset($_POST['action']) && $_POST['action'] == 'feedback_menu') {
-    foreach( $_POST['feedback'] as $date => $value ) {
-        $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-        if ($user_feedmenu->num_rows > 0) {
-            $row = $user_feedmenu->fetch_assoc();
-            $sql = "UPDATE `user_feedmenu` SET `menu_feed` = '" . serialize($value['menu_item']) . "', `feedback` = '" . $value['comment'] . "' WHERE `id` = '" . $row['id'] . "'";
-            $action = 'editfeed';
-        } else {
-            $sql = "INSERT INTO `user_feedmenu` (`thali`,`menu_date`,`menu_feed`,`feedback`) VALUES ('" . $_POST['thali'] . "', '" . $date . "', '" . serialize($value['menu_item']) . "', '" . $value['comment'] . "')";
-            $action = 'addfeed';
+date_default_timezone_set('Asia/Kolkata');
+$now = new DateTime();
+$dayOfWeek = $now->format('w'); // 0 (for Sunday) through 6 (for Saturday)
+$time = $now->format('H:i'); // Current time in HH:MM
+$isInRange = false;
+if ($dayOfWeek == 6 && $time >= '13:00') {
+    $isInRange = true;
+} elseif ($dayOfWeek == 0 && $time <= '20:00') {
+    $isInRange = true;
+}
+if( $isInRange ) {
+    if (isset($_POST['action']) && $_POST['action'] == 'feedback_menu') {
+        foreach( $_POST['feedback'] as $date => $value ) {
+            $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
+            if ($user_feedmenu->num_rows > 0) {
+                $row = $user_feedmenu->fetch_assoc();
+                $sql = "UPDATE `user_feedmenu` SET `menu_feed` = '" . serialize($value['menu_item']) . "', `feedback` = '" . $value['comment'] . "' WHERE `id` = '" . $row['id'] . "'";
+                $action = 'editfeed';
+            } else {
+                $sql = "INSERT INTO `user_feedmenu` (`thali`,`menu_date`,`menu_feed`,`feedback`) VALUES ('" . $_POST['thali'] . "', '" . $date . "', '" . serialize($value['menu_item']) . "', '" . $value['comment'] . "')";
+                $action = 'addfeed';
+            }
+            mysqli_query($link, $sql) or die(mysqli_error($link));
         }
-        mysqli_query($link, $sql) or die(mysqli_error($link));
-    }
-   $msg = 'successfeed';
+        $msg = 'successfeed';
+    } 
+} else {
+    $msg = 'notinrange';
 } ?>
 <div class="fmb-content mt-4">
 	<div class="container">
@@ -22,13 +36,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'feedback_menu') {
 			<div class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
 				<div class="card">
 					<div class="card-body">
-						<a href="/fmb/index.php"><img class="img-fluid mx-auto d-block my-3" src="../users/assets/img/logo.png" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="390" height="157" /></a>
+						<a href="/fmb/index.php"><img class="img-fluid mx-auto d-block my-3" src="../users/assets/img/logo.png" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="253" height="253" /></a>
 						<hr>
 	  					<h3 class="mb-4 text-center">Feedback</h3>
-                        <?php $today_date = date("Y-m-d");
-                        $day = date("l", strtotime($today_date));
-                        if( $day != 'Tuesday') {
-                            echo '<h5>Feedback will be live on <strong>Sunday</strong> for this week.</h5>';
+                        <?php if( !$isInRange ) {
+                            echo '<h5>Feedback will be live from <strong class="text-danger">Saturday: 01:00 PM</strong> to <strong class="text-danger">Sunday: 08:00 PM</strong> for this week.</h5>';
                         } else {
                             if (isset($msg)) {
                                 echo '<h5 class="text-success mt-5">Thank you <strong>Sabeel No: ' . $_POST['thali'] . '</strong> for your valuable feedback.</h5>';
