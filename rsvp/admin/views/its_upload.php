@@ -22,7 +22,7 @@ function _manage_upload() {
     $message = '';
     $target_file = null;
     try {
-        $target_dir = "./uploads/";
+        $target_dir = "./its_data_files/";
         $target_file = $target_dir . basename($_FILES["itsdatafile"]["name"]);
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
     

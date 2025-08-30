@@ -6,7 +6,7 @@ function content_display()
     $user_session_data = getSessionData(THE_SESSION_ID);
     $its_id = 0;
     if( isset($user_session_data) && is_array($user_session_data) ) {
-        $its_id = array_key_exists('ITSID' , $user_session_data) ? $user_session_data[ITSID] : 0;
+        $its_id = array_key_exists('ITSID' , $user_session_data) ? $user_session_data['ITSID'] : 0;
     }
 
     ?>
