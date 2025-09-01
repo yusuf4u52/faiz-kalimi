@@ -6,7 +6,7 @@ function content_display()
     $user_session_data = getSessionData(THE_SESSION_ID);
     $its_id = 0;
     if( isset($user_session_data) && is_array($user_session_data) ) {
-        $its_id = array_key_exists('ITSID' , $user_session_data) ? $user_session_data[ITSID] : 0;
+        $its_id = array_key_exists('ITSID' , $user_session_data) ? $user_session_data['ITSID'] : 0;
     }
 
     ?>
@@ -37,6 +37,7 @@ function content_display()
                     <p class="card-text">DUMP OF ITS DATA</p>
                     <form action="<?=$uri?>/its_upload" method="post" enctype="multipart/form-data">
                         <div class="input-group mb-3">
+                            <input type='hidden' name='action' value="file"/>    
                             <input type='file' class='form-control file-upload-browse' name='itsdatafile' required />
                             <button class="btn btn-outline-primary" type="submit" id="button-addon2">GO</button>
                         </div>
