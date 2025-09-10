@@ -79,208 +79,201 @@ if (isset($_GET['year'])) {
   $max_days = mysqli_fetch_row(mysqli_query($link, "SELECT MAX(thalicount) as max FROM `$thalilist_tablename`"));
 }
 ?>
-<div class="fmb-content mt-5">
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <div class="card mb-4">
-          <div class="card-body">
-            <h2 class="mb-3">Thali Search</h2>
-            <?php if (isset($action) && $action == 'cmusaid') { ?>
-              <div class="alert alert-success" role="alert">Musaid change to <strong><?php echo $cmusaid; ?></strong>.
-              </div>
-            <?php }
-            if (isset($action) && $action == 'comment') { ?>
-              <div class="alert alert-success" role="alert">A new comment is added for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong>.
-              </div>
-            <?php }
-            if (isset($action) && $action == 'csize') { ?>
-              <div class="alert alert-success" role="alert">Thali size is changes to
-                <strong><?php echo $csize; ?></strong> for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong>.
-              </div>
-            <?php }
-            if (isset($action) && $action == 'eroti') { ?>
-              <div class="alert alert-success" role="alert">Extra Roti
-                <strong><?php echo $eroti; ?></strong> is added for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong>.
-              </div>
-            <?php }
-            if (isset($action) && $action == 'cemail') { ?>
-              <div class="alert alert-success" role="alert">Email Id change to
-                <strong><?php echo $cemail; ?></strong> for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong>.
-              </div>
-            <?php }
-            if (isset($action) && $action == 'remail') { ?>
-              <div class="alert alert-success" role="alert">Email Id 
-                <strong><?php echo $remail; ?></strong> is already registered in our system.
-              </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'srange') { ?>
-              <div class="alert alert-success" role="alert">Thali from <strong>
-                  <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
-                </strong> to <strong>
-                  <?php echo date('d M Y', strtotime($_GET['edate'])); ?></strong> for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong> is stopped successfully.
-              </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'start') { ?>
-              <div class="alert alert-success" role="alert">Stop thali dates from <strong>
-                  <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
-                </strong> to <strong>
-                  <?php echo date('d M Y', strtotime($_GET['edate'])); ?>
-                </strong> for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong> is deleted successfully.
-              </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'srsvp') { ?>
-              <div class="alert alert-warning" role="alert">RSVP ended to stop thali of <strong>
-                  <?php echo date('d M Y', strtotime($_GET['date'])); ?> for sabeel no
-                  <strong><?php echo $_GET['thalino']; ?></strong>
-                </strong>.</div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'spermanant') { ?>
-              <div class="alert alert-danger" role="alert">Thali is stopped permanently for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong>
-              </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
-              <div class="alert alert-success" role="alert">Thali of
-                <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is edited successfully for sabeel
-                no
-                <strong><?php echo $_GET['thalino']; ?></strong>
-              </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'sedit') { ?>
-              <div class="alert alert-success" role="alert">Thali of <strong>
-                  <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-                </strong> is started & edited successfully for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong>.
-              </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'nochange') { ?>
-              <div class="alert alert-warning" role="alert">No change found for Thali of
-                <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong>.
-              </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'snochange') { ?>
-              <div class="alert alert-success" role="alert">Thali of <strong>
-                  <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-                </strong> is started successfully for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong>.
-              </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'astop') { ?>
-              <div class="alert alert-warning" role="alert">Thali of <strong>
-                  <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-                </strong> is already stopped for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong>.
-              </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'stop') { ?>
-              <div class="alert alert-success" role="alert">Thali of <strong>
-                  <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-                </strong> is stopped successfully for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong>.
-              </div>
-            <?php }
-            if (isset($_GET['action']) && $_GET['action'] == 'rsvp') { ?>
-              <div class="alert alert-danger" role="alert">You can't edit the thali now because RSVP time for editing
-                Thali
-                of
-                <strong>
-                  <?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> for sabeel no
-                <strong><?php echo $_GET['thalino']; ?></strong> is finished.
-              </div>
-            <?php } ?>
-            <form class="form-horizontal" autocomplete="off">
-              <div class="mb-3 row">
-                <label for="inputThalino" class="col-3 control-label">Sabeel No</label>
-                <div class="col-9">
-                  <input type="text" class="form-control" id="inputThalino" placeholder="Sabeel No" name="thalino">
-                </div>
-              </div>
-              <div class="mb-3 row">
-                <label for="inputThalino" class="col-3 control-label">Tiffin No</label>
-                <div class="col-9">
-                  <input type="text" class="form-control" id="inputTiffinno" placeholder="Tiffin No" name="tiffinno">
-                </div>
-              </div>
-              <div class="mb-3 row">
-                <label for="inputGeneral" class="col-3 control-label">Other</label>
-                <div class="col-9">
-                  <input type="text" class="form-control" id="inputGeneral" placeholder="Contact/ ITS no / Email / Name"
-                    name="general">
-                </div>
-              </div>
-              <div class="mb-3 row">
-                <label for="year" class="col-3 control-label">Year</label>
-                <div class="col-9">
-                  <select class="form-select" id="year" name="year">
-                    <?php for ($i = 1438; $i <= 1450; $i++) { ?>
-                      <option value="<?php echo $i; ?>" <?php if ($current_year['value'] == $i)
-                           echo "selected"; ?>>
-                        <?php echo $i; ?>
-                      </option>
-                    <?php } ?>
-                  </select>
-                </div>
-              </div>
-              <div class="mb-3 row">
-                <div class="col-9 offset-3">
-                  <button type="submit" class="btn btn-light">Submit</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
 
-        <?php if (isset($_GET['year'])): ?>
-          <div class="card">
-            <div class="card-body">
-              <h2 class="mb-3">Thali Info</h2>
-              <!--<form id="receiptForm" action="post" autocomplete="off">
-                <div class="mb-3 row">
-                  <div class="col-5 col-md-6">
-                    <input class="form-control" type="number" name="receipt_amount" placeholder="Receipt Amount"
-                      required />
-                  </div>
-                  <div class="col-3">
-                    <select class="form-select" name="payment_type" id="payment_type" required>
-                      <option value="">Select</option>
-                      <option value="Cash">Cash</option>
-                      <option value="Online">Online</option>
-                      <option value="Cheque">Cheque</option>
-                    </select>
-                  </div>
-                  <div class="col-4 col-md-3">
-                    <input type="text" style="display:none" name="transaction_id" id="transaction_id"
-                      placeholder="Transaction ID" />
-                    <input type="hidden" name="receipt_thali" />
-                    <input class="btn btn-light" type="button" name="cancel" value="Cancel" />
-                    <input class="btn btn-light" type="button" name="save" value="Save" />
-                  </div>
-                </div>
-              </form> -->
-              <?php
-              if (mysqli_num_rows($result) > 1):
-                include('_thalisearch_multiple.php');
-              elseif (mysqli_num_rows($result) == 1):
-                include('_thalisearch_single.php');
-              else:
-                echo "No records found";
-              endif;
-              ?>
-            </div>
-          </div>
-        <?php endif; ?>
+<div class="card">
+  <div class="card-body">
+    <h2 class="mb-3">Thali Search</h2>
+    <?php if (isset($action) && $action == 'cmusaid') { ?>
+      <div class="alert alert-success" role="alert">Musaid change to <strong><?php echo $cmusaid; ?></strong>.
       </div>
-    </div>
+    <?php }
+    if (isset($action) && $action == 'comment') { ?>
+      <div class="alert alert-success" role="alert">A new comment is added for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>.
+      </div>
+    <?php }
+    if (isset($action) && $action == 'csize') { ?>
+      <div class="alert alert-success" role="alert">Thali size is changes to
+        <strong><?php echo $csize; ?></strong> for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>.
+      </div>
+    <?php }
+    if (isset($action) && $action == 'eroti') { ?>
+      <div class="alert alert-success" role="alert">Extra Roti
+        <strong><?php echo $eroti; ?></strong> is added for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>.
+      </div>
+    <?php }
+    if (isset($action) && $action == 'cemail') { ?>
+      <div class="alert alert-success" role="alert">Email Id change to
+        <strong><?php echo $cemail; ?></strong> for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>.
+      </div>
+    <?php }
+    if (isset($action) && $action == 'remail') { ?>
+      <div class="alert alert-success" role="alert">Email Id 
+        <strong><?php echo $remail; ?></strong> is already registered in our system.
+      </div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'srange') { ?>
+      <div class="alert alert-success" role="alert">Thali from <strong>
+          <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
+        </strong> to <strong>
+          <?php echo date('d M Y', strtotime($_GET['edate'])); ?></strong> for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong> is stopped successfully.
+      </div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'start') { ?>
+      <div class="alert alert-success" role="alert">Stop thali dates from <strong>
+          <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
+        </strong> to <strong>
+          <?php echo date('d M Y', strtotime($_GET['edate'])); ?>
+        </strong> for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong> is deleted successfully.
+      </div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'srsvp') { ?>
+      <div class="alert alert-warning" role="alert">RSVP ended to stop thali of <strong>
+          <?php echo date('d M Y', strtotime($_GET['date'])); ?> for sabeel no
+          <strong><?php echo $_GET['thalino']; ?></strong>
+        </strong>.</div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'spermanant') { ?>
+      <div class="alert alert-danger" role="alert">Thali is stopped permanently for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>
+      </div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
+      <div class="alert alert-success" role="alert">Thali of
+        <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is edited successfully for sabeel
+        no
+        <strong><?php echo $_GET['thalino']; ?></strong>
+      </div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'sedit') { ?>
+      <div class="alert alert-success" role="alert">Thali of <strong>
+          <?php echo date('d M Y', strtotime($_GET['date'])); ?>
+        </strong> is started & edited successfully for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>.
+      </div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'nochange') { ?>
+      <div class="alert alert-warning" role="alert">No change found for Thali of
+        <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>.
+      </div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'snochange') { ?>
+      <div class="alert alert-success" role="alert">Thali of <strong>
+          <?php echo date('d M Y', strtotime($_GET['date'])); ?>
+        </strong> is started successfully for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>.
+      </div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'astop') { ?>
+      <div class="alert alert-warning" role="alert">Thali of <strong>
+          <?php echo date('d M Y', strtotime($_GET['date'])); ?>
+        </strong> is already stopped for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>.
+      </div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'stop') { ?>
+      <div class="alert alert-success" role="alert">Thali of <strong>
+          <?php echo date('d M Y', strtotime($_GET['date'])); ?>
+        </strong> is stopped successfully for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>.
+      </div>
+    <?php }
+    if (isset($_GET['action']) && $_GET['action'] == 'rsvp') { ?>
+      <div class="alert alert-danger" role="alert">You can't edit the thali now because RSVP time for editing
+        Thali
+        of
+        <strong>
+          <?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong> is finished.
+      </div>
+    <?php } ?>
+    <form class="form-horizontal" autocomplete="off">
+      <div class="mb-3 row">
+        <label for="inputThalino" class="col-3 control-label">Sabeel No</label>
+        <div class="col-9">
+          <input type="text" class="form-control" id="inputThalino" placeholder="Sabeel No" name="thalino">
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label for="inputThalino" class="col-3 control-label">Tiffin No</label>
+        <div class="col-9">
+          <input type="text" class="form-control" id="inputTiffinno" placeholder="Tiffin No" name="tiffinno">
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label for="inputGeneral" class="col-3 control-label">Other</label>
+        <div class="col-9">
+          <input type="text" class="form-control" id="inputGeneral" placeholder="Contact/ ITS no / Email / Name"
+            name="general">
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label for="year" class="col-3 control-label">Year</label>
+        <div class="col-9">
+          <select class="form-select" id="year" name="year">
+            <?php for ($i = 1438; $i <= 1450; $i++) { ?>
+              <option value="<?php echo $i; ?>" <?php if ($current_year['value'] == $i)
+                    echo "selected"; ?>>
+                <?php echo $i; ?>
+              </option>
+            <?php } ?>
+          </select>
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <div class="col-9 offset-3">
+          <button type="submit" class="btn btn-light">Submit</button>
+        </div>
+      </div>
+    </form>
   </div>
 </div>
+
+<?php if (isset($_GET['year'])): ?>
+  <div class="card mt-4">
+    <div class="card-body">
+      <h2 class="mb-3">Thali Info</h2>
+      <!--<form id="receiptForm" action="post" autocomplete="off">
+        <div class="mb-3 row">
+          <div class="col-5 col-md-6">
+            <input class="form-control" type="number" name="receipt_amount" placeholder="Receipt Amount"
+              required />
+          </div>
+          <div class="col-3">
+            <select class="form-select" name="payment_type" id="payment_type" required>
+              <option value="">Select</option>
+              <option value="Cash">Cash</option>
+              <option value="Online">Online</option>
+              <option value="Cheque">Cheque</option>
+            </select>
+          </div>
+          <div class="col-4 col-md-3">
+            <input type="text" style="display:none" name="transaction_id" id="transaction_id"
+              placeholder="Transaction ID" />
+            <input type="hidden" name="receipt_thali" />
+            <input class="btn btn-light" type="button" name="cancel" value="Cancel" />
+            <input class="btn btn-light" type="button" name="save" value="Save" />
+          </div>
+        </div>
+      </form> -->
+      <?php
+      if (mysqli_num_rows($result) > 1):
+        include('_thalisearch_multiple.php');
+      elseif (mysqli_num_rows($result) == 1):
+        include('_thalisearch_single.php');
+      else:
+        echo "No records found";
+      endif;
+      ?>
+    </div>
+  </div>
+<?php endif; ?>
 
 <div class="modal fade" id="changeMusaid">
   <div class="modal-dialog">
@@ -291,7 +284,7 @@ if (isset($_GET['year'])) {
         <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
         <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
         <div class="modal-header">
-          <h4 class="modal-title fs-5">Change Musaid</h4>
+          <h4 class="modal-title">Change Musaid</h4>
           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
               class="bi bi-x-lg"></i></button>
         </div>
@@ -325,7 +318,7 @@ if (isset($_GET['year'])) {
         <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
         <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
         <div class="modal-header">
-          <h4 class="modal-title fs-5">Change Thali Size</h4>
+          <h4 class="modal-title">Change Thali Size</h4>
           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
               class="bi bi-x-lg"></i></button>
         </div>
@@ -356,7 +349,7 @@ if (isset($_GET['year'])) {
         <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
         <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
         <div class="modal-header">
-          <h4 class="modal-title fs-5">Extra Roti</h4>
+          <h4 class="modal-title">Extra Roti</h4>
           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
               class="bi bi-x-lg"></i></button>
         </div>
@@ -382,7 +375,7 @@ if (isset($_GET['year'])) {
         <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
         <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
         <div class="modal-header">
-          <h4 class="modal-title fs-5">Change Email Address</h4>
+          <h4 class="modal-title">Change Email Address</h4>
           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
               class="bi bi-x-lg"></i></button>
         </div>
@@ -411,7 +404,7 @@ if (isset($_GET['year'])) {
         <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
         <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
         <div class="modal-header">
-          <h4 class="modal-title fs-5">Stop Thali of sabeel no <?php echo $values['Thali']; ?></h4>
+          <h4 class="modal-title">Stop Thali of sabeel no <?php echo $values['Thali']; ?></h4>
           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
               class="bi bi-x-lg"></i></button>
         </div>
@@ -443,7 +436,7 @@ if (isset($_GET['year'])) {
         <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
         <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
         <div class="modal-header">
-          <h4 class="modal-title fs-5">Stop Permanent Thali of sabeel no <?php echo $values['Thali']; ?></h4>
+          <h4 class="modal-title">Stop Permanent Thali of sabeel no <?php echo $values['Thali']; ?></h4>
           <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
               class="bi bi-x-lg"></i></button>
         </div>
@@ -510,7 +503,7 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
           <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
           <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
           <div class="modal-header">
-            <h4 class="modal-title fs-5">Edit Menu of
+            <h4 class="modal-title">Edit Menu of
               <?php echo date('D d M y', strtotime($amenu_values['menu_date'])); ?> for Thaali no
               <?php echo $values['Thali']; ?>
             </h4>
@@ -523,7 +516,7 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
               <div class="col-6">
                 <div class="form-check form-switch d-flex align-items-center">
                   <input class="form-check-input" type="checkbox" role="switch" id="status" name="status" <?php echo ($status == 'start' ? 'checked' : ''); ?>>
-                  <label id="status" class="form-check-label ms-1" for="status" <?php echo ($status == 'start' ? 'style=color:#3C5A05;' : 'style=color:#ff0000;'); ?>><?php echo ($status == 'start' ? 'Start' : 'Stop'); ?></label>
+                  <label id="status" class="form-check-label ms-1" for="status" <?php echo ($status == 'start' ? 'style=color:#198754;' : 'style=color:#dc3545;'); ?>><?php echo ($status == 'start' ? 'Start' : 'Stop'); ?></label>
                 </div>
               </div>
             </div>
@@ -636,7 +629,7 @@ if (isset($stop_dates) && $stop_dates->num_rows > 0) {
             <input type="hidden" name="start_date" value="<?php echo $values['start_date']; ?>" />
             <input type="hidden" name="end_date" value="<?php echo $values['end_date']; ?>" />
             <div class="modal-header">
-              <h4 class="modal-title fs-5">Delete Stop Thali Dates</h4>
+              <h4 class="modal-title">Delete Stop Thali Dates</h4>
               <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
                   class="bi bi-x-lg"></i></button>
             </div>

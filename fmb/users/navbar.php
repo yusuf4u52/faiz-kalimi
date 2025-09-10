@@ -58,16 +58,20 @@ if($curr_page != 'events.php') {
 	}
 }
 ?>
-<header class="fmb-header">
-    <!--<a href="/fmb/users/index.php"><img class="img-fluid mx-auto d-block my-3" src="assets/img/logo.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="390" height="157" /></a>-->
-    <div class="container-fluid py-2 text-center">
-        <div class="row">
-            <div class="col-12">
+<header class="header">
+    <div class="container-fluid py-2">
+        <div class="row align-items-center">
+            <div class="col-4">
+                <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/styles/img/logo.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
+            </div>
+            <div class="col-8 text-end">
                 <p class="text-capitalize m-0 fw-bold fst-italic">Salaam, <?php echo strtolower($values['NAME']); ?></p>
                 <?php if (!empty($values['yearly_hub'])) {
-                    echo '<p class="m-0">Sabeel No : <strong>' . $values['Thali'] . '</strong> | Thali No : <strong>' . $values['tiffinno'] . '</strong></p> ';
-                } else {
-                    echo '<p class="m-0">Sabeel No : <strong>' . $values['Thali'] . '</strong></p>';
+                    if ($values['Active'] == 1) { 
+                        echo '<p class="m-0">Thali No: <strong>' . $values['tiffinno'] . '</strong> | Thali Status: <strong class="text-success">Start</strong></p> ';
+                    } else {
+                        echo '<p class="m-0">Thali No: <strong>' . $values['tiffinno'] . '</strong> | Thali Status: <strong class="text-danger">Stop</strong></p> ';
+                    }
                 } ?>
             </div>
         </div>
@@ -97,10 +101,10 @@ if($curr_page != 'events.php') {
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">Menu Management</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/fmb/users/foodlist.php">Food Items</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/menulist.php">Menu List</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/usermenu.php">User Menu</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/userfeedmenu.php">User Feedback</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/menu/food.php">Food Items</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/menu/list.php">Menu List</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/menu/edited.php">Edited Menu</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/menu/feedback.php">Menu Feedback</a></li>
                             </ul>
                         </li>
                         <?php
@@ -113,10 +117,10 @@ if($curr_page != 'events.php') {
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">Roti Management</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/fmb/users/rotimaker.php">Roti Maker</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/rotidistribute.php">Distribution</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/rotirecieved.php">Recieved</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/rotireport.php">Report</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/roti/maker.php">Roti Maker</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/roti/distribute.php">Distribution</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/roti/recieved.php">Recieved</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/roti/report.php">Report</a></li>
                             </ul>
                         </li>
                         <?php
@@ -129,11 +133,11 @@ if($curr_page != 'events.php') {
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">Transporter Management</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/fmb/users/transporter.php">Transporter</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporteractive.php">Active Thali</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporterinactive.php">Inactive Thali</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporterthalicount.php">Thali Count</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporterpayment.php">Payment</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/list.php">Transporter</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/activethali.php">Active Thali</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/inactivethali.php">Inactive Thali</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/thalicount.php">Thali Count</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/payment.php">Payment</a></li>
                             </ul>
                         </li>
                         <?php
@@ -201,3 +205,7 @@ if($curr_page != 'events.php') {
         </div>
     </nav>
 </header>
+<div class="content mt-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">

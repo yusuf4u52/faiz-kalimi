@@ -1,6 +1,6 @@
 <?php
-include('header.php');
-include('navbar.php');
+include('../header.php');
+include('../navbar.php');
 include('getHijriDate.php');
 
 if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
@@ -280,4 +280,4 @@ if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
     </div>
 </div>
 
-<?php include('footer.php'); ?>
+<?php include('../footer.php'); ?>

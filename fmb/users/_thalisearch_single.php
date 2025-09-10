@@ -166,9 +166,9 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
             }
             $stopthali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu_values['menu_date'] . "' AND `thali` = '" . $values['Thali'] . "'") or die(mysqli_error($link));
             if ($stopthali->num_rows > 0) {
-              $status = '<span style="color:#ff0000;">Stop</span>';
+              $status = '<span style="color:#dc3545;">Stop</span>';
             } else {
-              $status = '<span style="color:#3C5A05;">Start</span>';
+              $status = '<span style="color:#198754;">Start</span>';
             } ?>
             <tr>
               <td><?php echo date('d M Y', strtotime($menu_date)); ?></td>
@@ -241,8 +241,8 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
                         $stop_date = new DateTime($stop_values['start_date'] . '00:00:00');
                         $stop_date = $stop_date->format('Y-m-d H:i:s'); ?>
                         <tr>
-                            <td><?php echo date('d M Y', strtotime($stop_values['start_date'])); ?></td>
-                            <td><?php echo date('d M Y', strtotime($stop_values['end_date'])); ?></td>
+                            <td data-sort="<?php echo strtotime($stop_values['start_date']); ?>"><?php echo date('d M Y', strtotime($stop_values['start_date'])); ?></td>
+                            <td data-sort="<?php echo strtotime($stop_values['end_date']); ?>"><?php echo date('d M Y', strtotime($stop_values['end_date'])); ?></td>
                             <td><?php if (date('Y-m-d H:i:s') < $stop_date) { ?><button type="button"
                                         class="btn btn-light"
                                         data-bs-target="#startthali-<?php echo $stop_values['id']; ?>"

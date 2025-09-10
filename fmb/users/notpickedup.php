@@ -27,30 +27,23 @@ if ($_POST) {
 }
 
 ?>
-<div class="content mt-5">
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body">
-            <h2 class="mb-3">Fine thalis that didn't Pickup</h2>
-            <form method="post" class="form-horizontal">
-              <div class="mb-3 row">
-                <label for="inputThalino" class="col-2 control-label">Thali No</label>
-                <div class="col-10">
-                  <input type="text" class="form-control" id="inputThalino" placeholder="e.g. 508,37" name="thalino">
-                </div>
-              </div>
-              <div class="mb-3 row">
-                <div class="col-10 offset-2">
-                  <button type="submit" class="btn btn-light">Submit</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+
+<div class="card">
+  <div class="card-body">
+	<h2 class="mb-3">Fine thalis that didn't Pickup</h2>
+	<form method="post" class="form-horizontal">
+	  <div class="mb-3 row">
+		<label for="inputThalino" class="col-2 control-label">Thali No</label>
+		<div class="col-10">
+		  <input type="text" class="form-control" id="inputThalino" placeholder="e.g. 508,37" name="thalino">
+		</div>
+	  </div>
+	  <div class="mb-3 row">
+		<div class="col-10 offset-2">
+		  <button type="submit" class="btn btn-light">Submit</button>
+		</div>
+	  </div>
+	</form>
   </div>
 </div>
 

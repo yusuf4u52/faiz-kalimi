@@ -13,7 +13,7 @@
         <th>Start Date</th>
         <th>Stop Date</th>
         <th>Thali Delivered</th>
-        <th>Hub pending</th>
+        <th>Current Hub</th>
       </tr>
     </thead>
     <tbody>
@@ -33,7 +33,7 @@
         <td class="hijridate"><?php echo $values['Thali_start_date']; ?></td>
         <td class="hijridate"><?php echo $values['Thali_stop_date']; ?></td>
         <td><?php echo round($values['thalicount'] * 100 / $max_days[0]); ?>% of days</td>
-        <td><?php echo $values['Total_Pending']; ?></td>
+        <td><?php echo $values['yearly_hub']; ?></td>
       </tr>
       <?php } ?>
     </tbody>

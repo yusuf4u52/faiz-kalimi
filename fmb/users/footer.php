@@ -1,9 +1,13 @@
-    <footer class="fmb-footer text-center">
-        <div class="container">
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer my-2 text-center">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <p class="m-1"><small><strong>Complaint:</strong> <a href="https://wa.me/+918999023962">+91 89990 23962</a></small></p>
-                    <p class="m-1"><small><strong>Helpline:</strong> <a href="https://wa.me/+919826932974">+91 98269 32974</a> | <a href="https://wa.me/+919820518835">+91 98205 18835</a></small></p>
+                    <p class="mb-1"><small><strong>Complaint:</strong> <a href="https://wa.me/+918999023962">+91 89990 23962</a></small></p>
+                    <p class="mb-1"><small><strong>Helpline:</strong> <a href="https://wa.me/+919826932974">+91 98269 32974</a> | <a href="https://wa.me/+919820518835">+91 98205 18835</a></small></p>
                     <p><small>&copy; Copyright <?php echo date('Y'); ?> FMB (Kalimi Mohallah - Poona). All Rights Reserved.</small></p>
                 </div>
             </div>

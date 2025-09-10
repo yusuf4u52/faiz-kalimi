@@ -1,7 +1,7 @@
 <?php
-include('connection.php');
-include('_authCheck.php');
-require '../vendor/autoload.php';
+include('../connection.php');
+include('../_authCheck.php');
+require '../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -39,7 +39,7 @@ if (isset($_POST['import']) && isset($_FILES['roti_import'])) {
         }
         
     }
-    header("Location: /fmb/users/rotirecieved.php?action=upload");
+    header("Location: /fmb/users/roti/recieved.php?action=upload");
 } else {
     echo "No file uploaded.";
 }
