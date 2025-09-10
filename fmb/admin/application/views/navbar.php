@@ -1,4 +1,4 @@
-<header class="fmb-header">
+<header class="header">
     <nav class="navbar">
         <div class="container-fluid">
             <a class="navbar-brand" href="/fmb/users/index.php">FMB (Kalimi Mohalla)</a>
@@ -24,10 +24,10 @@
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">Menu Management</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/fmb/users/foodlist.php">Food Items</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/menulist.php">Menu List</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/usermenu.php">User Menu</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/userfeedmenu.php">User Feedback</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/menu/food.php">Food Items</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/menu/list.php">Menu List</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/menu/edited.php">Edited Menu</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/menu/feedback.php">Menu Feedback</a></li>
                             </ul>
                         </li>
                         <?php
@@ -40,10 +40,10 @@
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">Roti Management</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/fmb/users/rotimaker.php">Roti Maker</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/rotidistribute.php">Distribution</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/rotirecieved.php">Recieved</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/rotireport.php">Report</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/roti/maker.php">Roti Maker</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/roti/distribute.php">Distribution</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/roti/recieved.php">Recieved</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/roti/report.php">Report</a></li>
                             </ul>
                         </li>
                         <?php
@@ -56,11 +56,11 @@
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">Transporter Management</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/fmb/users/transporter.php">Transporter</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporteractive.php">Active Thali</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporterinactive.php">Inactive Thali</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporterthalicount.php">Thali Count</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporterpayment.php">Payment</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/list.php">Transporter</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/activethali.php">Active Thali</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/inactivethali.php">Inactive Thali</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/thalicount.php">Thali Count</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/payment.php">Payment</a></li>
                             </ul>
                         </li>
                         <?php
@@ -104,7 +104,7 @@
                     }
                     ?>
                     <?php
-                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com',))) {
+                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
                         ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/amount_received_by.php">Received</a>
                         </li>
