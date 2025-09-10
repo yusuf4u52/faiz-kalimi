@@ -17,10 +17,13 @@ if ($query->num_rows > 0 ) {
   exit;
 }
 ?>
-<header class="fmb-header">
-    <div class="container-fluid py-2 text-center">
-        <div class="row">
-            <div class="col-12">
+<header class="header">
+    <div class="container-fluid py-2">
+        <div class="row align-items-center">
+            <div class="col-4">
+                <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/styles/img/logo.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
+            </div>
+            <div class="col-8 text-end">
                 <p class="text-capitalize m-0 fw-bold fst-italic">Salaam, <?php echo strtolower($_SESSION['transporter']); ?> Bhai</p>
             </div>
         </div>
@@ -44,3 +47,7 @@ if ($query->num_rows > 0 ) {
         </div>
     </nav>
 </header>
+<div class="content mt-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">

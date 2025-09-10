@@ -1,5 +1,9 @@
-    <footer class="fmb-footer text-center">
-        <div class="container">
+                 </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer my-2 text-center">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <p><small>&copy; Copyright <?php echo date('Y'); ?> FMB (Kalimi Mohallah - Poona). All Rights Reserved.</small></p>
