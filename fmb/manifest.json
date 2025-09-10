@@ -33,7 +33,7 @@
     {
       "src": "https://kalimijamaatpoona.org/fmb/styles/img/screenshot.png",
       "type": "image/png",
-      "sizes": "500x728",
+      "sizes": "628x1031",
       "label": "Homescreen of FMB Kalimi App"
     }
   ],
@@ -41,7 +41,7 @@
   "theme_color": "#c36d29",
   "display": "standalone",
   "dir": "ltr",
-  "orientation": "landscape",
+  "orientation": "portrait",
   "start_url": ".",
   "categories": ["community", "food", "mumineen"],
   "scope": "/",
