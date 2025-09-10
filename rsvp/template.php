@@ -21,7 +21,7 @@ if (is_record_found($result)) {
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="/rsvp/assets/imgs/logo.png" />
+    <link rel="shortcut icon" href="/rsvp/assets/imgs/Logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alice&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@ if (is_record_found($result)) {
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-6">
-                    <a href="<?= getAppData('BASE_URI') ?>"><img class="img-fluid" src="/rsvp/assets/imgs/logo.png" alt="Miqaat RSVP (Kalimi Mohalla - Poona)" width="153" height="153" /></a>
+                    <a href="<?= getAppData('BASE_URI') ?>"><img class="img-fluid" src="/rsvp/assets/imgs/Logo.png" alt="Miqaat RSVP (Kalimi Mohalla - Poona)" width="153" height="153" /></a>
                 </div>
                 <div class="col-6 text-end">
                     <h5><a href="<?= getAppData('BASE_URI') ?>">Miqaat RSVP <br/> (Kalimi Mohalla - Poona)</a></h5>
