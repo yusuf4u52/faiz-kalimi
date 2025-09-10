@@ -33,11 +33,11 @@ if (is_record_found($result)) {
     <header class="header">
         <div class="container-fluid">
             <div class="row align-items-center">
-                <div class="col-6">
+                <div class="col-4">
                     <a href="<?= getAppData('BASE_URI') ?>"><img class="img-fluid" src="/rsvp/assets/imgs/Logo.png" alt="Miqaat RSVP (Kalimi Mohalla - Poona)" width="153" height="153" /></a>
                 </div>
-                <div class="col-6 text-end">
-                    <h5><a href="<?= getAppData('BASE_URI') ?>">Miqaat RSVP <br/> (Kalimi Mohalla - Poona)</a></h5>
+                <div class="col-8 text-end">
+                    <h4><a href="<?= getAppData('BASE_URI') ?>">Miqaat RSVP <br/> (Kalimi Mohalla - Poona)</a></h4>
                 </div>
             </div>
         </div>
