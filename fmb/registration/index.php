@@ -58,7 +58,7 @@ if ($_POST) {
 }
 ?>
 
-<div class="fmb-content mt-4">
+<div class="content mt-4">
 	<div class="container">
 		<div class="row">
 			<div class="col-12 offset-sm-1 col-sm-10 offset-lg-2 col-lg-8">
