@@ -74,7 +74,7 @@ if (is_record_found($result)) {
             </div>
         </div>
     </div>
-    <footer class="rsvp-footer text-center my-2">
+    <footer class="footer text-center my-2">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
