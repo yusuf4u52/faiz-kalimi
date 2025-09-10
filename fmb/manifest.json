@@ -5,25 +5,25 @@
   "description": "A FMB App for Kalimi Mohalla (Poona) Mumineen",
   "icons": [
     {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo-192x192.png",
+      "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo-192x192.png",
+      "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo-512x512.png",
+      "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo-512x512.png",
+      "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "monochrome"
@@ -31,14 +31,14 @@
   ],
   "screenshots": [
     {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/fmb-screenshot.png",
+      "src": "https://kalimijamaatpoona.org/fmb/styles/img/screenshot.png",
       "type": "image/png",
       "sizes": "500x728",
       "label": "Homescreen of FMB Kalimi App"
     }
   ],
   "background_color": "#FFFFFF",
-  "theme_color": "#b18e3d",
+  "theme_color": "#c36d29",
   "display": "standalone",
   "dir": "ltr",
   "orientation": "landscape",
@@ -52,7 +52,7 @@
       "description": "A FMB App for Kalimi Mohalla (Poona) Mumineen",
       "icons": [
         {
-          "src": "https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo-192x192.png",
+          "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-192x192.png",
           "sizes": "192x192"
         }
       ]
