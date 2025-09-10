@@ -3,7 +3,7 @@ include('../users/connection.php');
 include('../users/header.php');
 require '../sms/_credentials.php';
 include('call_api.php');
-require '../users/_sendMail.php';
+require_once '../users/_sendMail.php';
 
 session_start();
 if (mysqli_connect_errno()) {
@@ -50,22 +50,23 @@ if ($_POST) {
   $msgvar = "Salaam " . $firstname . "bhai,<br><br>New Registration form for Faiz ul Mawaid il Burhaniyah thali has been successfully submitted.<br>
   <b>Please contact Kalimi Mohalla Jamaat Office to start your thali.</b><br><br>
   For any concerns mail kalimimohallapoona@gmail.com";
-  sendEmail($email, 'New Registration Successful, Visit Faiz to start the thali', $msgvar, null);
+  sendEmail($email, 'New Registration Successful, Visit Faiz to start the thali', $msgvar, null, null, true);
   echo ("<SCRIPT LANGUAGE='JavaScript'>
     window.alert('Please contact Kalimi Mohalla Jamaat Office to start your thali. Address: Near Burhani Park, Kalimi Masjid, Yewlewadi, Office Time - 10AM to 12AM.')
     window.location.href='index.php';
     </SCRIPT>");
 }
 ?>
-<div class="fmb-content mt-5">
+
+<div class="fmb-content mt-4">
 	<div class="container">
 		<div class="row">
-			<div class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
+			<div class="col-12 offset-sm-1 col-sm-10 offset-lg-2 col-lg-8">
 				<div class="card">
 					<div class="card-body">
-						<a href="/fmb/index.php"><img class="img-fluid mx-auto d-block my-3" src="../users/assets/img/logo.png" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="390" height="157" /></a>
+						<a href="/fmb/index.php"><img class="img-fluid mx-auto d-block my-3" src="../styles/img/logo.png" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="253" height="253" /></a>
 						<hr>
-	  					<h3 class="mb-4 text-center">Thaali Registration</h3>
+						<h2 class="mb-4 text-center">Thaali Registration</h2>
 						<form class="form-horizontal" method="post" autocomplete="off">
 							<div class="mb-3 row">
 							<label for="its" class="col-3 control-label">ITS No</label>
@@ -129,4 +130,5 @@ if ($_POST) {
 		</div>
 	</div>
 </div>
+
 <?php include('../users/footer.php'); ?>

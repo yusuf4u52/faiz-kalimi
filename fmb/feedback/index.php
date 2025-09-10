@@ -30,15 +30,16 @@ if( $isInRange ) {
 } else {
     $msg = 'notinrange';
 } ?>
+
 <div class="fmb-content mt-4">
 	<div class="container">
 		<div class="row">
-			<div class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
+			<div class="col-12 offset-sm-1 col-sm-10 offset-lg-2 col-lg-8">
 				<div class="card">
 					<div class="card-body">
-						<a href="/fmb/index.php"><img class="img-fluid mx-auto d-block my-3" src="../users/assets/img/logo.png" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="253" height="253" /></a>
+						<a href="/fmb/index.php"><img class="img-fluid mx-auto d-block my-3" src="/fmb/styles/img/logo.png" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="253" height="253" /></a>
 						<hr>
-	  					<h3 class="mb-4 text-center">Feedback</h3>
+	  					<h2 class="mb-4 text-center">Feedback</h2>
                         <?php if( !$isInRange ) {
                             echo '<h5>Feedback will be live from <strong class="text-danger">Saturday: 01:00 PM</strong> to <strong class="text-danger">Sunday: 08:00 PM</strong> for this week.</h5>';
                         } else {
@@ -85,24 +86,24 @@ if( $isInRange ) {
                                                         <div class="col-8">
                                                             <input type="hidden" class="form-control" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][item]" value="<?php echo $menu_item['sabji']['item']; ?>">
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input mt-2 sabjirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][rating]" value="1" <?php echo ((!empty($menu_item['sabji']['rating']) && $menu_item['sabji']['rating'] == '1') ? 'checked' : '' ); ?> required>
-                                                                <label class="form-check-label" for="sabjirating1">1</label>
+                                                                <input class="form-check-input mt-2 sabjirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][rating]" value="Excellent" <?php echo ((!empty($menu_item['sabji']['rating']) && $menu_item['sabji']['rating'] == 'Excellent') ? 'checked' : '' ); ?> required>
+                                                                <label class="form-check-label" for="sabjirating1">Excellent</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input mt-2 sabjirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][rating]" value="2" <?php echo ((!empty($menu_item['sabji']['rating']) && $menu_item['sabji']['rating'] == '2') ? 'checked' : '' ); ?> required>
-                                                                <label class="form-check-label" for="sabjirating2">2</label>
+                                                                <input class="form-check-input mt-2 sabjirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][rating]" value="Good" <?php echo ((!empty($menu_item['sabji']['rating']) && $menu_item['sabji']['rating'] == 'Good') ? 'checked' : '' ); ?> required>
+                                                                <label class="form-check-label" for="sabjirating2">Good</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input mt-2 sabjirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][rating]" value="3" <?php echo ((!empty($menu_item['sabji']['rating']) && $menu_item['sabji']['rating'] == '3') ? 'checked' : '' ); ?> required>
-                                                                <label class="form-check-label" for="sabjirating3">3</label>
+                                                                <input class="form-check-input mt-2 sabjirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][rating]" value="Ok" <?php echo ((!empty($menu_item['sabji']['rating']) && $menu_item['sabji']['rating'] == 'Ok') ? 'checked' : '' ); ?> required>
+                                                                <label class="form-check-label" for="sabjirating3">Ok</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input mt-2 sabjirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][rating]" value="4" <?php echo ((!empty($menu_item['sabji']['rating']) && $menu_item['sabji']['rating'] == '4') ? 'checked' : '' ); ?> required>
-                                                                <label class="form-check-label" for="sabjirating4">4</label>
+                                                                <input class="form-check-input mt-2 sabjirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][rating]" value="Not Satisfied" <?php echo ((!empty($menu_item['sabji']['rating']) && $menu_item['sabji']['rating'] == 'Not Satisfied') ? 'checked' : '' ); ?> required>
+                                                                <label class="form-check-label" for="sabjirating4">Not Satisfied</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input mt-2 sabjirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][rating]" value="5" <?php echo ((!empty($menu_item['sabji']['rating']) && $menu_item['sabji']['rating'] == '5') ? 'checked' : '' ); ?> required>
-                                                                <label class="form-check-label" for="sabjirating5">5</label>
+                                                                <input class="form-check-input mt-2 sabjirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][sabji][rating]" value="Not Taken" <?php echo ((!empty($menu_item['sabji']['rating']) && $menu_item['sabji']['rating'] == 'Not Taken') ? 'checked' : '' ); ?> required>
+                                                                <label class="form-check-label" for="sabjirating5">Not Taken</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -113,24 +114,24 @@ if( $isInRange ) {
                                                         <div class="col-8">
                                                             <input type="hidden" class="form-control" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][item]" value="<?php echo $menu_item['tarkari']['item']; ?>">
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 tarkarirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][rating]" value="1" <?php echo ((!empty($menu_item['tarkari']['rating']) && $menu_item['tarkari']['rating'] == '1') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="tarkarirating1">1</label>
+                                                            <input class="form-check-input mt-2 tarkarirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][rating]" value="Excellent" <?php echo ((!empty($menu_item['tarkari']['rating']) && $menu_item['tarkari']['rating'] == 'Excellent') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="tarkarirating1">Excellent</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 tarkarirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][rating]" value="2" <?php echo ((!empty($menu_item['tarkari']['rating']) && $menu_item['tarkari']['rating'] == '2') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="tarkarirating2">2</label>
+                                                            <input class="form-check-input mt-2 tarkarirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][rating]" value="Good" <?php echo ((!empty($menu_item['tarkari']['rating']) && $menu_item['tarkari']['rating'] == 'Good') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="tarkarirating2">Good</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 tarkarirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][rating]" value="3" <?php echo ((!empty($menu_item['tarkari']['rating']) && $menu_item['tarkari']['rating'] == '3') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="tarkarirating3">3</label>
+                                                            <input class="form-check-input mt-2 tarkarirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][rating]" value="Ok" <?php echo ((!empty($menu_item['tarkari']['rating']) && $menu_item['tarkari']['rating'] == 'Ok') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="tarkarirating3">Ok</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 tarkarirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][rating]" value="4" <?php echo ((!empty($menu_item['tarkari']['rating']) && $menu_item['tarkari']['rating'] == '4') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="tarkarirating4">4</label>
+                                                            <input class="form-check-input mt-2 tarkarirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][rating]" value="Not Satisfied" <?php echo ((!empty($menu_item['tarkari']['rating']) && $menu_item['tarkari']['rating'] == 'Not Satisfied') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="tarkarirating4">Not Satisfied</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 tarkarirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][rating]" value="5" <?php echo ((!empty($menu_item['tarkari']['rating']) && $menu_item['tarkari']['rating'] == '5') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="tarkarirating5">5</label>
+                                                            <input class="form-check-input mt-2 tarkarirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][tarkari][rating]" value="Not Taken" <?php echo ((!empty($menu_item['tarkari']['rating']) && $menu_item['tarkari']['rating'] == 'Not Taken') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="tarkarirating5">Not Taken</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -141,24 +142,24 @@ if( $isInRange ) {
                                                         <div class="col-8">
                                                             <input type="hidden" class="form-control" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][item]" value="<?php echo $menu_item['rice']['item']; ?>">
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 ricerating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][rating]" value="1" <?php echo ((!empty($menu_item['rice']['rating']) && $menu_item['rice']['rating'] == '1') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="ricerating1">1</label>
+                                                            <input class="form-check-input mt-2 ricerating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][rating]" value="Excellent" <?php echo ((!empty($menu_item['rice']['rating']) && $menu_item['rice']['rating'] == 'Excellent') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="ricerating1">Excellent</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 ricerating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][rating]" value="2" <?php echo ((!empty($menu_item['rice']['rating']) && $menu_item['rice']['rating'] == '2') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="ricerating2">2</label>
+                                                            <input class="form-check-input mt-2 ricerating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][rating]" value="Good" <?php echo ((!empty($menu_item['rice']['rating']) && $menu_item['rice']['rating'] == 'Good') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="ricerating2">Good</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 ricerating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][rating]" value="3" <?php echo ((!empty($menu_item['rice']['rating']) && $menu_item['rice']['rating'] == '3') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="ricerating3">3</label>
+                                                            <input class="form-check-input mt-2 ricerating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][rating]" value="Ok" <?php echo ((!empty($menu_item['rice']['rating']) && $menu_item['rice']['rating'] == 'Ok') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="ricerating3">Ok</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 ricerating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][rating]" value="4" <?php echo ((!empty($menu_item['rice']['rating']) && $menu_item['rice']['rating'] == '4') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="ricerating4">4</label>
+                                                            <input class="form-check-input mt-2 ricerating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][rating]" value="Not Satisfied" <?php echo ((!empty($menu_item['rice']['rating']) && $menu_item['rice']['rating'] == 'Not Satisfied') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="ricerating4">Not Satisfied</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 ricerating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][rating]" value="5" <?php echo ((!empty($menu_item['rice']['rating']) && $menu_item['rice']['rating'] == '5') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="ricerating5">5</label>
+                                                            <input class="form-check-input mt-2 ricerating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][rice][rating]" value="Not Taken" <?php echo ((!empty($menu_item['rice']['rating']) && $menu_item['rice']['rating'] == 'Not Taken') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="ricerating5">Not Taken</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -169,24 +170,24 @@ if( $isInRange ) {
                                                         <div class="col-8">
                                                             <input type="hidden" class="form-control" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][item]" value="<?php echo $menu_item['roti']['item']; ?>">
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 rotirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][rating]" value="1" <?php echo ((!empty($menu_item['roti']['rating']) && $menu_item['roti']['rating'] == '1') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="rotirating1">1</label>
+                                                            <input class="form-check-input mt-2 rotirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][rating]" value="Excellent" <?php echo ((!empty($menu_item['roti']['rating']) && $menu_item['roti']['rating'] == 'Excellent') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="rotirating1">Excellent</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 rotirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][rating]" value="2" <?php echo ((!empty($menu_item['roti']['rating']) && $menu_item['roti']['rating'] == '2') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="rotirating2">2</label>
+                                                            <input class="form-check-input mt-2 rotirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][rating]" value="Good" <?php echo ((!empty($menu_item['roti']['rating']) && $menu_item['roti']['rating'] == 'Good') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="rotirating2">Good</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 rotirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][rating]" value="3" <?php echo ((!empty($menu_item['roti']['rating']) && $menu_item['roti']['rating'] == '3') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="rotirating3">3</label>
+                                                            <input class="form-check-input mt-2 rotirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][rating]" value="Ok" <?php echo ((!empty($menu_item['roti']['rating']) && $menu_item['roti']['rating'] == 'Ok') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="rotirating3">Ok</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 rotirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][rating]" value="4" <?php echo ((!empty($menu_item['roti']['rating']) && $menu_item['roti']['rating'] == '4') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="rotirating4">4</label>
+                                                            <input class="form-check-input mt-2 rotirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][rating]" value="Not Satisfied" <?php echo ((!empty($menu_item['roti']['rating']) && $menu_item['roti']['rating'] == 'Not Satisfied') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="rotirating4">Not Satisfied</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 rotirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][rating]" value="5" <?php echo ((!empty($menu_item['roti']['rating']) && $menu_item['roti']['rating'] == '5') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="rotirating5">5</label>
+                                                            <input class="form-check-input mt-2 rotirating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][roti][rating]" value="Not Taken" <?php echo ((!empty($menu_item['roti']['rating']) && $menu_item['roti']['rating'] == 'Not Taken') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="rotirating5">Not Taken</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -197,24 +198,24 @@ if( $isInRange ) {
                                                         <div class="col-8">
                                                             <input type="hidden" class="form-control" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][item]" value="<?php echo $menu_item['extra']['item']; ?>">
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 extrarating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][rating]" value="1" <?php echo ((!empty($menu_item['extra']['rating']) && $menu_item['extra']['rating'] == '1') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="extrarating1">1</label>
+                                                            <input class="form-check-input mt-2 extrarating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][rating]" value="Excellent" <?php echo ((!empty($menu_item['extra']['rating']) && $menu_item['extra']['rating'] == 'Excellent') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="extrarating1">Excellent</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 extrarating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][rating]" value="2" <?php echo ((!empty($menu_item['extra']['rating']) && $menu_item['extra']['rating'] == '2') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="extrarating2">2</label>
+                                                            <input class="form-check-input mt-2 extrarating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][rating]" value="Good" <?php echo ((!empty($menu_item['extra']['rating']) && $menu_item['extra']['rating'] == 'Good') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="extrarating2">Good</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 extrarating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][rating]" value="3" <?php echo ((!empty($menu_item['extra']['rating']) && $menu_item['extra']['rating'] == '3') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="extrarating3">3</label>
+                                                            <input class="form-check-input mt-2 extrarating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][rating]" value="Ok" <?php echo ((!empty($menu_item['extra']['rating']) && $menu_item['extra']['rating'] == 'Ok') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="extrarating3">Ok</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 extrarating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][rating]" value="4" <?php echo ((!empty($menu_item['extra']['rating']) && $menu_item['extra']['rating'] == '4') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="extrarating4">4</label>
+                                                            <input class="form-check-input mt-2 extrarating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][rating]" value="Not Satisfied" <?php echo ((!empty($menu_item['extra']['rating']) && $menu_item['extra']['rating'] == 'Not Satisfied') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="extrarating4">Not Satisfied</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                            <input class="form-check-input mt-2 extrarating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][rating]" value="5" <?php echo ((!empty($menu_item['extra']['rating']) && $menu_item['extra']['rating'] == '5') ? 'checked' : '' ); ?> required>
-                                                            <label class="form-check-label" for="extrarating5">5</label>
+                                                            <input class="form-check-input mt-2 extrarating" type="radio" name="feedback[<?php echo $menu['menu_date']; ?>][menu_item][extra][rating]" value="Not Taken" <?php echo ((!empty($menu_item['extra']['rating']) && $menu_item['extra']['rating'] == 'Not Taken') ? 'checked' : '' ); ?> required>
+                                                            <label class="form-check-label" for="extrarating5">Not Taken</label>
                                                             </div>
                                                         </div>
                                                     </div>
