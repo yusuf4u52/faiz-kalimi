@@ -72,7 +72,7 @@ if( isset($_POST['menu_type']) && isset($_POST['menu_item']) ) {
 if( isset($_POST['action']) && $_POST['action'] == 'add_menu' ) {
     $user_menu_date = mysqli_query($link, "SELECT `menu_date` FROM menu_list WHERE `menu_date` = '".$_POST['menu_date']."'") or die(mysqli_error($link));
     if(isset($user_menu_date) && $user_menu_date->num_rows > 0) {
-        header("Location: /fmb/users/menulist.php?action=existed&date=".$_POST['menu_date']);
+        header("Location: /fmb/users/menu/list.php?action=existed&date=".$_POST['menu_date']);
     } else {
         $sql = "INSERT INTO menu_list (`menu_date`,`menu_type`,`menu_item`) VALUES ('" . $_POST['menu_date'] . "', '" . $_POST['menu_type'] . "', '" . serialize($menu_item) . "')";
         mysqli_query($link, $sql) or die(mysqli_error($link));
