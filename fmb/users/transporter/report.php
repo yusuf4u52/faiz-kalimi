@@ -11,9 +11,9 @@ include('../navbar.php');
                     list($year, $week) = explode('-W', $_GET['payment_week']);
                     $start_date = date('Y-m-d', strtotime($year . 'W' . $week));
                     $end_date = date('Y-m-d', strtotime($year . 'W' . $week . '+6 days')); ?>
-                    <h2 class="mb-3">Transporter Payment from <?php echo $start_date; ?> to <?php echo $end_date; ?></h2>
+                    <h2 class="mb-3">Transporter Report from <?php echo $start_date; ?> to <?php echo $end_date; ?></h2>
                 <?php } else { ?>   
-                    <h2 class="mb-3">Transporter Payment Module</h2>
+                    <h2 class="mb-3">Transporter Report</h2>
                 <?php } ?>
             </div>
         </div>

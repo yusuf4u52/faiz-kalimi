@@ -1,4 +1,14 @@
 <header class="header">
+    <div class="container-fluid py-2">
+        <div class="row align-items-center">
+            <div class="col-4">
+                <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/styles/img/logo.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
+            </div>
+            <div class="col-8 text-end">
+                <h4>Admin Panel</h4>
+            </div>
+        </div>
+    </div>
     <nav class="navbar">
         <div class="container-fluid">
             <a class="navbar-brand" href="/fmb/users/index.php">FMB (Kalimi Mohalla)</a>
@@ -60,7 +70,7 @@
                                 <li><a class="dropdown-item" href="/fmb/users/transporter/activethali.php">Active Thali</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/transporter/inactivethali.php">Inactive Thali</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/transporter/thalicount.php">Thali Count</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporter/payment.php">Payment</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/report.php">Payment</a></li>
                             </ul>
                         </li>
                         <?php
