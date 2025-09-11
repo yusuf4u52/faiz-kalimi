@@ -21,7 +21,7 @@ if ($menu_item->num_rows > 0) {
 			<table border="0" width="1140" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="color:#333333; padding:1rem;">
 				<tr>
 					<td align="left">
-						<img src="https://kalimijamaatpoona.org/fmb/styles/img/fmb-logo.png" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="152" height="62"> 
+						<img src="https://kalimijamaatpoona.org/fmb/styles/img/logo.png" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="90" height="90"> 
 					</td>
 					<td align="right"><strong>Updated Thali of '.$day .'<br/>'.$hijridate.' '.$tomorrow_date.'</strong></td>
 				</tr>
@@ -36,14 +36,14 @@ if ($menu_item->num_rows > 0) {
 				$sabeelno = "'" . implode ( "', '", $thalino ) . "'";
 				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND Thali IN (".$sabeelno.") ORDER BY Transporter");
 				while ($row_trans = mysqli_fetch_assoc($transporter)) {
-					$msgmenu .= '<table border="0" width="1140" cellpadding="3" cellspacing="3" bgcolor="#778b2a" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
+					$msgmenu .= '<table border="0" width="1140" cellpadding="3" cellspacing="3" bgcolor="#c36d29" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
 						<tr>
 							<th align="center"><strong>'.$row_trans['Transporter'].'</strong></th>
 						</tr>
 					</table>
 					<table width="1140" cellpadding="0" cellspacing="0" border="1" bgcolor="#ffffff" style="color:#333333;">
 						<thead>
-							<tr bgcolor="#778b2a" style="color:#FFFFFF;">
+							<tr bgcolor="#c36d29" style="color:#FFFFFF;">
 								<th width="7%">Tiffin No</th>
 								<th width="7%">Tiffin Size</th>';
 								if (!empty($menu_item['sabji']['item'])) {
@@ -56,7 +56,7 @@ if ($menu_item->num_rows > 0) {
 									$msgmenu .= '<th width="7%">' . $menu_item['rice']['item'] . '</th>';
 								}
 							$msgmenu .= '<th>Name</th>
-								<th>Flat / Society</th>
+								<th>Flat/Society</th>
 							<tr>
 						</thead>
 						<tbody>';
@@ -103,7 +103,7 @@ if ($menu_item->num_rows > 0) {
 	sendEmail($emails, 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
 
 	if(isset($_GET['menu_date'])) {
-		header("Location: /fmb/users/usermenu.php?action=send&date=" . $_GET['menu_date']);	
+		header("Location: /fmb/users/menu/edited.php?action=send&date=" . $_GET['menu_date']);	
 	}
 } else {
 	echo "Skipping email as no thali on Miqaat or any other reason.";
