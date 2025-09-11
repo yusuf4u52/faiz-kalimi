@@ -41,7 +41,7 @@ $rights = array(
 		"/fmb/users/transporter/activethali.php",
 		"/fmb/users/transporter/inactivethali.php",
 		"/fmb/users/transporter/thalicount.php",
-		"/fmb/users/transporter/payment.php",
+		"/fmb/users/transporter/report.php",
 		"/fmb/users/pendingactions.php",
 		"/fmb/users/_stop_thali_admin.php",
 		"/fmb/sms/index.php"
