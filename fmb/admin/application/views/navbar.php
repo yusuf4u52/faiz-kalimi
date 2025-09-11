@@ -70,7 +70,7 @@
                                 <li><a class="dropdown-item" href="/fmb/users/transporter/activethali.php">Active Thali</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/transporter/inactivethali.php">Inactive Thali</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/transporter/thalicount.php">Thali Count</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporter/report.php">Payment</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/transporter/report.php">Report</a></li>
                             </ul>
                         </li>
                         <?php
