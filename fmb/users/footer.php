@@ -34,12 +34,12 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript" id="pwa-register-sw-js-extra">
         /* <![CDATA[ */
-        var superpwa_sw = {"url":"\/fmb\/sw.js","disable_addtohome":"0","enableOnDesktop":"","offline_message":"1","offline_message_txt":"You are currently offline.","online_message_txt":"You're back online . <a href=\"javascript:location.reload()\">refresh<\/a>","manifest_name":"manifest.json"};
+        var pwa_sw = {"url":"\/fmb\/sw.js","disable_addtohome":"0","enableOnDesktop":"","offline_message":"1","offline_message_txt":"You are currently offline.","online_message_txt":"You're back online . <a href=\"javascript:location.reload()\">refresh<\/a>","manifest_name":"manifest.json"};
         /* ]]> */
     </script>
 	<script type="text/javascript" src="/fmb/users/assets/js/register-sw.js"></script>
     <script type="text/javascript" id="pwa_ptrfp_lib_script-js-extra">
-        var superpwa_ptr_obj = {"instrPullToRefresh":"Pull down to refresh","instrReleaseToRefresh":"Release to refresh","instrRefreshing":"Refreshing","instrptr_font_size":"0.85em","instrptr_font_color":"#212529"};
+        var pwa_ptr_obj = {"instrPullToRefresh":"Pull down to refresh","instrReleaseToRefresh":"Release to refresh","instrRefreshing":"Refreshing","instrptr_font_size":"0.85em","instrptr_font_color":"#212529"};
     </script>
 	<script type="text/javascript" src="/fmb/users/assets/js/pulltorefresh-sw.js"></script>
     <script type="text/javascript" src="/fmb/users/assets/js/main.js"></script>
