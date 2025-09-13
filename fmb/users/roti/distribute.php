@@ -111,7 +111,7 @@ if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <form id="editrdistribute-<?php echo $values['id']; ?>" class="form-horizontal"
-                                method="post" action="saverdistribute.php" autocomplete="off">
+                                method="post" action="savedistribute.php" autocomplete="off">
                                 <input type="hidden" name="action" value="edit_rdistribute" />
                                 <input type="hidden" name="rdistribute_id" value="<?php echo $values['id']; ?>" />
                                 <input type="hidden" name="distributed_by" value="<?php echo $_SESSION['email']; ?>" />
@@ -174,7 +174,7 @@ if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <form id="deleterdistribute-<?php echo $values['id']; ?>" class="form-horizontal"
-                                method="post" action="saverdistribute.php" autocomplete="off">
+                                method="post" action="savedistribute.php" autocomplete="off">
                                 <input type="hidden" name="action" value="delete_rdistribute" />
                                 <input type="hidden" name="rdistribute_id" value="<?php echo $values['id']; ?>" />
                                 <input type="hidden" name="maker_id" value="<?php echo $values['maker_id']; ?>" />
@@ -204,7 +204,7 @@ if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
             <div class="modal fade" id="addrdistribute">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        <form id="addrdistribute" class="form-horizontal" method="post" action="saverdistribute.php" autocomplete="off">
+                        <form id="addrdistribute" class="form-horizontal" method="post" action="savedistribute.php" autocomplete="off">
                             <input type="hidden" name="action" value="add_rdistribute" />
                             <input type="hidden" name="distributed_by" value="<?php echo $_SESSION['email']; ?>" />
                             <div class="modal-header">
