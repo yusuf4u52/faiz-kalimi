@@ -10,7 +10,7 @@ if (!empty($values['yearly_hub'])) {
 
 <div class="card">
   <div class="card-body">
-	<h2 class="mb-3">Hoob Details</h2>
+	<h2 class="mb-3">Hub Details</h2>
 	<div class="Payment-details text-center mb-3">
 	  <img class="img-fluid mx-auto d-block mb-3" src="assets/img/fmb-account.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla) Acoount" width="900" height="548" />
 	  <h5 class="mb-3 text-center">Your total takhmeen for this year</h5>

@@ -121,7 +121,7 @@
                         <?php
                     }
                     ?>
-                    <li class="nav-item"><a class="nav-link" href="/fmb/users/hoob_details.php">Hoob details</a>
+                    <li class="nav-item"><a class="nav-link" href="/fmb/users/hub_details.php">Hub details</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="/fmb/users/stop_dates.php">Stop Dates</a>
                     </li>
