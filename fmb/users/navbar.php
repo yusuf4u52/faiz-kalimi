@@ -95,7 +95,7 @@ if($curr_page != 'events.php') {
                         </li>
                     <?php } ?>
                     <?php
-                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) {
+                    if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'aliasgaraurangabadwala@gmail.com'))) {
                         ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
