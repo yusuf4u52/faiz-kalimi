@@ -8,7 +8,7 @@ $time = $now->format('H:i'); // Current time in HH:MM
 $isInRange = false;
 if ($dayOfWeek == 6 && $time >= '13:00') {
     $isInRange = true;
-} elseif ($dayOfWeek == 0 && $time <= '20:00') { 
+} elseif ($dayOfWeek == 0 && $time <= '23:59') { 
     $isInRange = true;
 }
 if( $isInRange ) {
@@ -41,7 +41,7 @@ if( $isInRange ) {
 						<hr>
 	  					<h2 class="mb-4 text-center">Feedback</h2>
                         <?php if( !$isInRange ) {
-                            echo '<h5>Feedback will be live from <strong class="text-danger">Saturday: 01:00 PM</strong> to <strong class="text-danger">Sunday: 08:00 PM</strong> for this week.</h5>';
+                            echo '<h5>Feedback will be live from <strong class="text-danger">Saturday: 01:00 PM</strong> to <strong class="text-danger">Sunday: 12:00 PM</strong> for this week.</h5>';
                         } else {
                             if (isset($msg)) {
                                 echo '<h5 class="text-success mt-5">Thank you <strong>Sabeel No: ' . $_POST['thali'] . '</strong> for your valuable feedback.</h5>';
@@ -66,18 +66,15 @@ if( $isInRange ) {
                                         <form class="form-horizontal" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
                                             <input type="hidden" name="action" value="feedback_menu" />
                                             <input type="hidden" name="thali" value="<?php echo (!empty($_POST['sabeel_no']) ? $_POST['sabeel_no'] : ''); ?>" />
-                                            <?php $result = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` BETWEEN DATE_ADD(CURDATE(), INTERVAL -WEEKDAY(CURDATE()) DAY) AND DATE_ADD(CURDATE(), INTERVAL (5 - WEEKDAY(CURDATE())) DAY) AND `thali` = '" . $_POST['sabeel_no'] . "' order by `menu_date` ASC") or die(mysqli_error($link));
-                                            if ($result->num_rows > 0) {
-                                                echo '<div class="alert alert-info" role="alert">Salaam <strong class="text-capitalize">'.strtolower($takesFmb['NAME']).'</strong>, you have already submitted your feedback.</div>';
-                                            } else {
-                                                $result = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` BETWEEN DATE_ADD(CURDATE(), INTERVAL -WEEKDAY(CURDATE()) DAY) AND DATE_ADD(CURDATE(), INTERVAL (5 - WEEKDAY(CURDATE())) DAY) AND `menu_type` = 'thaali' order by `menu_date` ASC") or die(mysqli_error($link));
-                                                echo '<div class="alert alert-info" role="alert">Salaam <strong class="text-capitalize">'.strtolower($takesFmb['NAME']).'</strong>, please submit your feedback. Your feedback is valuable to us.</div>';
-                                            }
+                                            <?php $result = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` BETWEEN DATE_ADD(CURDATE(), INTERVAL -WEEKDAY(CURDATE()) DAY) AND DATE_ADD(CURDATE(), INTERVAL (5 - WEEKDAY(CURDATE())) DAY) AND `menu_type` = 'thaali' order by `menu_date` ASC") or die(mysqli_error($link));                                
+                                            echo '<div class="alert alert-info" role="alert">Salaam <strong class="text-capitalize">'.strtolower($takesFmb['NAME']).'</strong>, your feedback is valuable to us. Please submit or review your feedback.</div>';
                                             while ($menu = mysqli_fetch_assoc($result)) {
-                                                if( !empty($menu['menu_item'])) {
+                                                $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '".$menu['menu_item']."'  AND `thali` = '" . $_POST['sabeel_no'] . "' order by `menu_date` ASC") or die(mysqli_error($link));
+                                                if ($user_feedmenu->num_rows > 0) {
+                                                    $rowfeed = $user_feedmenu->fetch_assoc();
+                                                    $menu_item = unserialize($rowfeed['menu_feed']);
+                                                } elseif( !empty($menu['menu_item'])) {
                                                     $menu_item = unserialize($menu['menu_item']);
-                                                } elseif( !empty($menu['menu_feed'])) {
-                                                    $menu_item = unserialize($menu['menu_feed']);
                                                 }
                                                 echo '<h5 class="mb-3">'.date('d M Y (l)', strtotime($menu['menu_date'])).'</h5>';
                                                 if (!empty($menu_item['sabji']['item'])) { ?>

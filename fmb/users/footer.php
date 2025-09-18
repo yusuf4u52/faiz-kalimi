@@ -6,8 +6,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <p class="mb-1 fw-bold"><small>Complaint: <a href="https://wa.me/+918999023962">+91 89990 23962</a></small></p>
-                    <p class="mb-1 fw-bold"><small>Helpline: <a href="https://wa.me/+919826932974">+91 98269 32974</a> | <a href="https://wa.me/+919820518835">+91 98205 18835</a></small></p>
+                    <p class="mb-1"><small><strong>Complaint:</strong> <a href="https://wa.me/+918999023962">+91 89990 23962</a></small></p>
+                    <p class="mb-1"><small><strong>Helpline:</strong> <a href="https://wa.me/+919826932974">+91 98269 32974</a> | <a href="https://wa.me/+919820518835">+91 98205 18835</a></small></p>
                     <p><small>&copy; Copyright <?php echo date('Y'); ?> FMB (Kalimi Mohallah - Poona). All Rights Reserved.</small></p>
                 </div>
             </div>
@@ -22,7 +22,7 @@
     <script src="/fmb/users/assets/js/hijri_date.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>  
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>

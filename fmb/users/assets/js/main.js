@@ -3,8 +3,11 @@
     e.preventDefault();
   });
 
-  $("#selectpicker").selectpicker({
-    container: ".modal",
+  $(document).ready(function () {
+    $(".form-select").select2({
+      dropdownParent: $(".modal"),
+      theme: "bootstrap-5",
+    });
   });
 
   new DataTable("table.display", {
