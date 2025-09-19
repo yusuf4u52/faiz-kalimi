@@ -5,8 +5,8 @@ require '../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-if (isset($_POST['import']) && isset($_FILES['roti_import'])) {
-    $filePath = $_FILES['roti_import']['tmp_name'];
+if (isset($_POST['import']) && isset($_FILES['distribute_import'])) {
+    $filePath = $_FILES['distribute_import']['tmp_name'];
 
     // Load the XLSX file
     $spreadsheet = IOFactory::load($filePath);
@@ -26,20 +26,20 @@ if (isset($_POST['import']) && isset($_FILES['roti_import'])) {
                 if ($roti_maker->num_rows > 0) {
                     $maker = mysqli_fetch_assoc($roti_maker);
                 }
-                $arecieved = mysqli_query($link, "SELECT * FROM fmb_roti_recieved WHERE `recieved_date` = '".$date."' AND `maker_id` = '" . $maker['id'] . "' order by `recieved_date` DESC LIMIT 1") or die(mysqli_error($link));
+                $arecieved = mysqli_query($link, "SELECT * FROM fmb_roti_distribution WHERE `distribution_date` = '".$date."' AND `maker_id` = '" . $maker['id'] . "' order by `distribution_date` DESC LIMIT 1") or die(mysqli_error($link));
                 if ($arecieved->num_rows > 0) {
                     $row_arecieved = $arecieved->fetch_assoc();
-                    $sql = "UPDATE  fmb_roti_recieved SET `roti_recieved` = '" . $roti . "', `roti_status` = 'pending', `recieved_by` = '" . $_POST['recieved_by'] . "' WHERE `id` = '".$row_arecieved['id']."'";
+                    $sql = "UPDATE  fmb_roti_distribution SET `roti_recieved` = '" . $roti . "', `roti_status` = 'pending', `distributed_by` = '" . $_POST['distributed_by'] . "' WHERE `id` = '".$row_arecieved['id']."'";
                     mysqli_query($link,$sql) or die(mysqli_error($link));
                 } else {
-                    $sql = "INSERT INTO  fmb_roti_recieved (`maker_id`, `recieved_date`, `roti_recieved`, `roti_status`, `recieved_by`) VALUES ('" . $maker['id'] . "', '" . $date . "', '" . $roti . "', 'pending', '" . $_POST['recieved_by'] . "')";
+                    $sql = "INSERT INTO  fmb_roti_distribution (`maker_id`, `distribution_date`, `roti_recieved`, `roti_status`, `distributed_by`) VALUES ('" . $maker['id'] . "', '" . $date . "', '" . $roti . "', 'pending', '" . $_POST['distributed_by'] . "')";
                     mysqli_query($link,$sql) or die(mysqli_error($link));
                 }
             }
         }
         
     }
-    header("Location: /fmb/users/roti/recieved.php?action=upload");
+    header("Location: /fmb/users/roti/distribute.php?action=upload");
 } else {
     echo "No file uploaded.";
 }

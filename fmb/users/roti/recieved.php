@@ -25,13 +25,13 @@ if ( isset($_GET['recieved_date']) && !empty($_GET['recieved_date']) ) {
         <div class="row">
             <div class="col-12">
                 <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) { ?>
-                    <form id="rotiimport" class="form-horizontal my-3" method="POST"
-                        action="rotiimport.php" enctype="multipart/form-data" autocomplete="off">
+                    <form id="recieveimport" class="form-horizontal my-3" method="POST"
+                        action="recieveimport.php" enctype="multipart/form-data" autocomplete="off">
                         <div class="mb-3 row">
-                            <label for="recieved_date" class="col-4 control-label">Import Roti Sheet</label>
+                            <label for="recieve_import" class="col-4 control-label">Import Recieved Sheet</label>
                             <div class="col-4">
                                 <input type="hidden" name="recieved_by" value="<?php echo $_SESSION['email']; ?>" />
-                                <input type="file" class="form-control" name="roti_import" accept=".xlsx" id="roti_import">
+                                <input type="file" class="form-control" name="recieve_import" accept=".xlsx" id="recieve_import">
                             </div>
                             <div class="col-4">
                                 <button class="btn btn-light" type="submit" name="import">Import</button>
@@ -127,8 +127,7 @@ if ( isset($_GET['recieved_date']) && !empty($_GET['recieved_date']) ) {
             </div>
 
             <?php $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieved_date` DESC") or die(mysqli_error($link));
-            while ($values = mysqli_fetch_assoc($result)) {
-                $fmb_roti_maker = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name` ASC") or die(mysqli_error($link)); ?>
+            while ($values = mysqli_fetch_assoc($result)) { ?>
                 <div class="modal fade" id="editrrecieved-<?php echo $values['id']; ?>" tabindex="-1"
                     aria-labelledby="editrrecieved-<?php echo $values['id']; ?>-Label" aria-hidden="true">
                     <div class="modal-dialog">
@@ -151,17 +150,16 @@ if ( isset($_GET['recieved_date']) && !empty($_GET['recieved_date']) ) {
                                                 value="<?php echo $values['recieved_date']; ?>" readonly>
                                         </div>
                                     </div>
-                                    <div class="mb-3 row">
-                                        <label for="maker_id" class="col-4 control-label">Roti Maker</label>
-                                        <div class="col-8">
-                                            <select type="text" class="form-select" name="maker_id" readonly required>
-                                                <option value="">Select Roti Maker</option>
-                                                <?php while ($roti_maker = mysqli_fetch_assoc($fmb_roti_maker)) { ?>
-                                                    <option value="<?php echo $roti_maker['id']; ?>" <?php echo ($roti_maker['id'] == $values['maker_id'] ? 'selected' : ''); ?> ><?php echo $roti_maker['code']; ?></option>
-                                                <?php } ?>
-                                            </select>
+                                    <?php $fmb_roti_maker = mysqli_query($link, "SELECT `code` FROM fmb_roti_maker WHERE `id` = '".$values['maker_id']."' order by `code` ASC") or die(mysqli_error($link));
+                                    if ($fmb_roti_maker->num_rows > 0) {
+                                        $roti_maker = $fmb_roti_maker->fetch_assoc(); ?>
+                                        <div class="mb-3 row">
+                                            <label for="maker_id" class="col-4 control-label">Roti Maker</label>
+                                            <div class="col-8">
+                                                <input type="text" name="maker_id" class="form-control" value="<?php echo $roti_maker['code']; ?>" readonly>
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php } mysqli_free_result($fmb_roti_maker); ?>
                                     <div class="mb-3 row">
                                         <label for="roti_recieved" class="col-4 control-label">Roti Recieved</label>
                                         <div class="col-8">
@@ -197,8 +195,8 @@ if ( isset($_GET['recieved_date']) && !empty($_GET['recieved_date']) ) {
                         </div>
                     </div>
                 </div>
-            <?php mysqli_free_result($fmb_roti_maker); }
-            mysqli_free_result($result); ?>
+            <?php }
+                mysqli_free_result($result); ?>
 
             <?php $result = mysqli_query($link, "SELECT * FROM fmb_roti_recieved order by `recieved_date` DESC") or die(mysqli_error($link));
             while ($values = mysqli_fetch_assoc($result)) { ?>
@@ -254,7 +252,7 @@ if ( isset($_GET['recieved_date']) && !empty($_GET['recieved_date']) ) {
                                 <div class="mb-3 row">
                                     <label for="maker_id" class="col-4 control-label">Roti Maker</label>
                                     <div class="col-8">
-                                        <select type="text" class="form-select" name="maker_id" required>
+                                        <select type="text" class="form-select" name="maker_id" id="maker_id" required>
                                             <option value="">Select Roti Maker</option>
                                             <?php while ($roti_maker = mysqli_fetch_assoc($fmb_roti_maker)) { 
                                                 echo '<option value="'.$roti_maker['id'].'">'.$roti_maker['code'].'</option>';

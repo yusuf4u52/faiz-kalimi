@@ -24,6 +24,21 @@ if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
         </div>
         <div class="row">
             <div class="col-12">
+                <?php /*if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) { ?>
+                    <form id="distributeimport" class="form-horizontal my-3" method="POST"
+                        action="distributeimport.php" enctype="multipart/form-data" autocomplete="off">
+                        <div class="mb-3 row">
+                            <label for="distribute_import" class="col-4 control-label">Import Distribution Sheet</label>
+                            <div class="col-4">
+                                <input type="hidden" name="distributed_by" value="<?php echo $_SESSION['email']; ?>" />
+                                <input type="file" class="form-control" name="distribute_import" accept=".xlsx" id="distribute_import">
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-light" type="submit" name="import">Import</button>
+                            </div>
+                        </div>
+                    </form>
+                <?php }*/ ?>
                 <form id="rotipayment" class="form-horizontal my-3" method="GET"
                     action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
                     <div class="mb-3 row">
@@ -104,8 +119,7 @@ if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
             </div>
 
             <?php $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `distribution_date` DESC") or die(mysqli_error($link));
-            while ($values = mysqli_fetch_assoc($result)) { 
-                $fmb_roti_maker = mysqli_query($link, "SELECT * FROM fmb_roti_maker order by `full_name` ASC") or die(mysqli_error($link)); ?>
+            while ($values = mysqli_fetch_assoc($result)) { ?>
                 <div class="modal fade" id="editrdistribute-<?php echo $values['id']; ?>" tabindex="-1"
                     aria-labelledby="editrdistribute-<?php echo $values['id']; ?>-Label" aria-hidden="true">
                     <div class="modal-dialog">
@@ -128,17 +142,16 @@ if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
                                                 value="<?php echo $values['distribution_date']; ?>" readonly>
                                         </div>
                                     </div>
-                                    <div class="mb-3 row">
-                                        <label for="maker_id" class="col-4 control-label">Roti Maker</label>
-                                        <div class="col-8">
-                                            <select type="text" class="form-select" name="maker_id" required>
-                                                <option value="">Select Roti Maker</option>
-                                                <?php while ($roti_maker = mysqli_fetch_assoc($fmb_roti_maker)) { ?>
-                                                    <option value="<?php echo $roti_maker['id']; ?>" <?php echo ($roti_maker['id'] == $values['maker_id'] ? 'selected' : ''); ?> ><?php echo $roti_maker['code']; ?></option>
-                                                <?php } ?>
-                                            </select>
+                                    <?php $fmb_roti_maker = mysqli_query($link, "SELECT `code` FROM fmb_roti_maker WHERE `id` = '".$values['maker_id']."' order by `code` ASC") or die(mysqli_error($link));
+                                    if ($fmb_roti_maker->num_rows > 0) {
+                                        $roti_maker = $fmb_roti_maker->fetch_assoc(); ?>
+                                        <div class="mb-3 row">
+                                            <label for="maker_id" class="col-4 control-label">Roti Maker</label>
+                                            <div class="col-8">
+                                                <input type="text" name="maker_id" class="form-control" value="<?php echo $roti_maker['code']; ?>" readonly>
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php } mysqli_free_result($fmb_roti_maker); ?>
                                     <div class="mb-3 row">
                                         <label for="flour_distributed" class="col-4 control-label">Flour Distribution</label>
                                         <div class="col-8">
@@ -165,7 +178,7 @@ if ( isset($_GET['distribution_date']) && !empty($_GET['distribution_date']) ) {
                         </div>
                     </div>
                 </div>
-            <?php mysqli_free_result($fmb_roti_maker); }
+            <?php }
             mysqli_free_result($result); ?>
 
             <?php $result = mysqli_query($link, "SELECT * FROM fmb_roti_distribution order by `distribution_date` DESC") or die(mysqli_error($link));
