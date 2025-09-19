@@ -327,7 +327,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               </div>
             </div>
             <div id="feedback" class="mb-3 row">
-              <label for="feedback" class="col-4 control-label" id="feedback">Feedback</label>
+              <label for="feedback" class="col-4 control-label" id="feedback">Comment</label>
               <div class="col-8">
                 <textarea class="form-control" id="feedback" name="feedback" rows="3"></textarea>
               </div>

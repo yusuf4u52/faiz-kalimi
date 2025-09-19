@@ -59,7 +59,7 @@ $rights = array(
 		"/fmb/users/changemenu.php",
 		"/fmb/users/hoobHistory.php",
 		"/fmb/users/events.php",
-		"/fmb/users/hoob_details.php",
+		"/fmb/users/hub_details.php",
 		"/fmb/users/thali_details.php",
 		"/fmb/users/update_details.php",
 		"/fmb/users/selectyearlyhub.php",
