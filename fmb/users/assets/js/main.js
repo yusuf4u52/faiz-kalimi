@@ -4,8 +4,12 @@
   });
 
   $(document).ready(function () {
-    $(".form-select").select2({
-      dropdownParent: $(".modal"),
+    $("#addrdistribute .form-select").select2({
+      dropdownParent: $("div#addrdistribute"),
+      theme: "bootstrap-5",
+    });
+    $("#addrrecieved .form-select").select2({
+      dropdownParent: $("div#addrrecieved"),
       theme: "bootstrap-5",
     });
   });
