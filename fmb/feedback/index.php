@@ -6,7 +6,7 @@ $now = new DateTime();
 $dayOfWeek = $now->format('w'); // 0 (for Sunday) through 6 (for Saturday)
 $time = $now->format('H:i'); // Current time in HH:MM
 $isInRange = false;
-if ($dayOfWeek == 6 && $time >= '13:00') {
+if ($dayOfWeek == 6 && $time >= '10:00') {
     $isInRange = true;
 } elseif ($dayOfWeek == 0 && $time <= '23:59') { 
     $isInRange = true;
@@ -49,27 +49,28 @@ if( $isInRange ) {
                             } else { ?>
                                 <form class="form-horizontal my-3" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
                                     <div class="mb-3 row">
-                                        <label for="sabeel_no" class="col-4 control-label">Sabeel No</label>
+                                        <label for="its_no" class="col-4 control-label">HOF ITS No</label>
                                         <div class="col-5">
-                                            <input type="text" class="form-control" name="sabeel_no" value="<?php echo (!empty($_POST['sabeel_no']) ? $_POST['sabeel_no'] : ''); ?>" required>
+                                            <input type="text" class="form-control" name="its_no" value="<?php echo (!empty($_POST['its_no']) ? $_POST['its_no'] : ''); ?>" required>
+                                            <p class="help-block mb-0 text-danger text-end"><small>Please enter HOF ITS No.</small></p>
                                         </div>
                                         <div class="col-3">
                                             <button class="btn btn-light" type="submit">Search</button>
                                         </div>
                                     </div>
                                 </form>
-                                <?php if( !empty($_POST['sabeel_no']) ) {
-                                    $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_POST['sabeel_no'] . "' AND `hardstop` != 1") or die(mysqli_error($link)); 
+                                <?php if( !empty($_POST['its_no']) ) {
+                                    $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `ITS_No` = '" . $_POST['its_no'] . "' AND `hardstop` != 1") or die(mysqli_error($link)); 
                                     if (isset($takesFmb) && $takesFmb->num_rows > 0) {
                                         $takesFmb = $takesFmb->fetch_assoc(); ?>
                                         <hr>
                                         <form class="form-horizontal" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
                                             <input type="hidden" name="action" value="feedback_menu" />
-                                            <input type="hidden" name="thali" value="<?php echo (!empty($_POST['sabeel_no']) ? $_POST['sabeel_no'] : ''); ?>" />
+                                            <input type="hidden" name="thali" value="<?php echo $takesFmb['Thali']; ?>" />
                                             <?php $result = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` BETWEEN DATE_ADD(CURDATE(), INTERVAL -WEEKDAY(CURDATE()) DAY) AND DATE_ADD(CURDATE(), INTERVAL (5 - WEEKDAY(CURDATE())) DAY) AND `menu_type` = 'thaali' order by `menu_date` ASC") or die(mysqli_error($link));                                
                                             echo '<div class="alert alert-info" role="alert">Salaam <strong class="text-capitalize">'.strtolower($takesFmb['NAME']).'</strong>, your feedback is valuable to us. Please submit or review your feedback.</div>';
                                             while ($menu = mysqli_fetch_assoc($result)) {
-                                                $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '".$menu['menu_item']."'  AND `thali` = '" . $_POST['sabeel_no'] . "' order by `menu_date` ASC") or die(mysqli_error($link));
+                                                $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '".$menu['menu_date']."'  AND `thali` = '" . $takesFmb['Thali'] . "' order by `menu_date` ASC") or die(mysqli_error($link));
                                                 if ($user_feedmenu->num_rows > 0) {
                                                     $rowfeed = $user_feedmenu->fetch_assoc();
                                                     $menu_item = unserialize($rowfeed['menu_feed']);
