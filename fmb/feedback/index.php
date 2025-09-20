@@ -6,9 +6,9 @@ $now = new DateTime();
 $dayOfWeek = $now->format('w'); // 0 (for Sunday) through 6 (for Saturday)
 $time = $now->format('H:i'); // Current time in HH:MM
 $isInRange = false;
-if ($dayOfWeek == 6 && $time >= '10:00') {
+if ($dayOfWeek == 6 && $time >= '13:00') {
     $isInRange = true;
-} elseif ($dayOfWeek == 0 && $time <= '23:59') { 
+} elseif ($dayOfWeek == 0 && $time <= '23:30') { 
     $isInRange = true;
 }
 if( $isInRange ) {
@@ -41,7 +41,7 @@ if( $isInRange ) {
 						<hr>
 	  					<h2 class="mb-4 text-center">Feedback</h2>
                         <?php if( !$isInRange ) {
-                            echo '<h5>Feedback will be live from <strong class="text-danger">Saturday: 01:00 PM</strong> to <strong class="text-danger">Sunday: 12:00 PM</strong> for this week.</h5>';
+                            echo '<h5>Feedback will be live from <strong class="text-danger">Saturday: 01:00 PM</strong> to <strong class="text-danger">Sunday: 11:30 PM</strong> for this week.</h5>';
                         } else {
                             if (isset($msg)) {
                                 echo '<h5 class="text-success mt-5">Thank you <strong>Sabeel No: ' . $_POST['thali'] . '</strong> for your valuable feedback.</h5>';
