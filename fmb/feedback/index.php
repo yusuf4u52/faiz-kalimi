@@ -48,7 +48,7 @@ if( $isInRange ) {
                                 if (isset($hofName) && $hofName->num_rows > 0) {
                                     $hofName = $hofName->fetch_assoc();
                                     echo '<h5 class="text-success mt-5">Thank you <strong class="text-capitalize">'.strtolower($hofName['NAME']).'</strong> for your valuable feedback.</h5>';
-                                    echo '<h6><a href="/fmb/feedback">Click here</a> to submit review or another feedback.</h5>';
+                                    echo '<h6><a href="/fmb/feedback">Click here</a> to review your feedback.</h5>';
                                 }
                             } else { ?>
                                 <form class="form-horizontal my-3" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
