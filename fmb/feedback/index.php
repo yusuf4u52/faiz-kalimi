@@ -55,7 +55,7 @@ if( $isInRange ) {
                                     <div class="mb-3 row">
                                         <label for="its_no" class="col-4 control-label">HOF ITS No</label>
                                         <div class="col-5">
-                                            <input type="text" class="form-control" name="its_no" value="<?php echo (!empty($_POST['its_no']) ? $_POST['its_no'] : ''); ?>" required>
+                                            <input type="number" class="form-control" name="its_no" pattern="[0-9]{8}" value="<?php echo (!empty($_POST['its_no']) ? $_POST['its_no'] : ''); ?>" required>
                                             <p class="help-block mb-0 text-danger text-end"><small>Please enter HOF ITS No.</small></p>
                                         </div>
                                         <div class="col-3">
