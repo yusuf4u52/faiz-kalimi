@@ -44,8 +44,12 @@ if( $isInRange ) {
                             echo '<h5>Feedback will be live from <strong class="text-danger">Saturday: 01:00 PM</strong> to <strong class="text-danger">Sunday: 11:30 PM</strong> for this week.</h5>';
                         } else {
                             if (isset($msg)) {
-                                echo '<h5 class="text-success mt-5">Thank you <strong>Sabeel No: ' . $_POST['thali'] . '</strong> for your valuable feedback.</h5>';
-                                echo '<h6><a href="/fmb/feedback">Click here</a> to submit review or another feedback.</h5>';
+                                $hofName = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_POST['thali'] . "' AND `hardstop` != 1") or die(mysqli_error($link)); 
+                                if (isset($hofName) && $hofName->num_rows > 0) {
+                                    $hofName = $hofName->fetch_assoc();
+                                    echo '<h5 class="text-success mt-5">Thank you <strong class="text-capitalize">'.strtolower($hofName['NAME']).'</strong> for your valuable feedback.</h5>';
+                                    echo '<h6><a href="/fmb/feedback">Click here</a> to submit review or another feedback.</h5>';
+                                }
                             } else { ?>
                                 <form class="form-horizontal my-3" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
                                     <div class="mb-3 row">
