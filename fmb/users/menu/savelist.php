@@ -84,10 +84,34 @@ if( isset($_POST['action']) && $_POST['action'] == 'edit_menu' ) {
     $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '".$_POST['menu_date']."'") or die(mysqli_error($link));
     if($user_menu->num_rows > 0) {
         while ($menu_values = mysqli_fetch_assoc($user_menu)) {
-            $menu_delete = "DELETE FROM user_menu WHERE `id` = '".$menu_values['id']."'";
-            mysqli_query($link,$menu_delete) or die(mysqli_error($link));
+            if($_POST['menu_type'] == 'miqaat') {
+                $sqluser = "DELETE FROM user_menu WHERE `id` = '".$menu_values['id']."'";
+                mysqli_query($link,$sqluser) or die(mysqli_error($link));
+            } else {
+                $menu_item_values = unserialize($menu_values['menu_item']);
+                if (!empty($menu_item_values['sabji']['item'])) {
+                    if( $menu_item_values['sabji']['item'] != $_POST['menu_item']['sabji']['item'] ) {
+                        $menu_item_values['sabji']['item'] = $_POST['menu_item']['sabji']['item'];
+                        $menu_item_values['sabji']['qty'] = $_POST['menu_item']['sabji']['qty'];
+                    }
+                }
+                if (!empty($menu_item_values['tarkari']['item'])) {
+                    if( $menu_item_values['tarkari']['item'] != $_POST['menu_item']['tarkari']['item'] ) {
+                        $menu_item_values['tarkari']['item'] = $_POST['menu_item']['tarkari']['item'];
+                        $menu_item_values['tarkari']['qty'] = $_POST['menu_item']['tarkari']['qty'];
+                    }
+                }
+                if (!empty($menu_item_values['rice']['item'])) {
+                    if( $menu_item_values['rice']['item'] != $_POST['menu_item']['rice']['item'] ) {
+                        $menu_item_values['rice']['item'] = $_POST['menu_item']['rice']['item'];
+                        $menu_item_values['rice']['qty'] = $_POST['menu_item']['rice']['qty'];
+                    }
+                } 
+                $sqluser = "UPDATE user_menu SET `menu_item` = '".serialize($menu_item_values)."' WHERE `id` = '".$menu_values['id']."'";
+                mysqli_query($link,$sqluser) or die(mysqli_error($link));
+            }
         }
-    }
+    } mysqli_free_result($user_menu);
     $sql = "UPDATE menu_list SET `menu_date` = '".$_POST['menu_date']."', `menu_type` = '" . $_POST['menu_type'] . "', `menu_item` = '".serialize($menu_item)."' WHERE `id` = '".$_POST['menu_id']."'";
     mysqli_query($link,$sql) or die(mysqli_error($link));
     header("Location: /fmb/users/menu/list.php?action=edit&date=".$_POST['menu_date']);
