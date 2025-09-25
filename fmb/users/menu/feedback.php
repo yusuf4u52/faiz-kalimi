@@ -22,7 +22,6 @@ if (isset($_GET['menu_date'])) {
                         <label for="menu_date" class="col-4 control-label">Menu Date</label>
                         <div class="col-4">
                             <input type="date" class="form-control"
-                                min="<?php echo date('Y-m-d', strtotime('- 1 week')); ?>"
                                 name="menu_date"
                                 value="<?php echo (!empty($_GET['menu_date']) ? $_GET['menu_date'] : ''); ?>"
                                 required>
