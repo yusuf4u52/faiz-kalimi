@@ -61,7 +61,7 @@ include('navbar.php');
           </div>
         </div>
 
-        <?php include('viewmenu.php'); ?>
+        <?php //include('viewmenu.php'); ?>
 
       <?php } else { ?>
         <h5 class="mb-3">Sabeel no is not assigned yet. Please contact Moiz Bhai Mulla at <a href="https://api.whatsapp.com/send?phone=+919096778753">9096778753</a> to view this page.</h5>
