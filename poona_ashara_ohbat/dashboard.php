@@ -128,12 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <script>
                         function changeCount(type, delta) {
-                            const countSpan = document.getElementById('count-' + type);
                             const input = document.getElementById('input-' + type);
-                            let current = parseInt(countSpan.textContent);
+                            let current = parseInt(input.textContent);
                             current += delta;
                             if (current < 0) current = 0;
-                            countSpan.textContent = current;
                             input.value = current;
                         }
                     </script>

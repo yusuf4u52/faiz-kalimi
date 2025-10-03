@@ -9,7 +9,7 @@ $success = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $its = $_POST['its'] ?? '';
     $full_name = $_POST['full_name'] ?? '';
-    $mobie_no = $_POST['mobie_no'] ?? '';
+    $mobile_no = $_POST['mobile_no'] ?? '';
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
 
