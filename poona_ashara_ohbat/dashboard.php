@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <script>
                         function changeCount(type, delta) {
                             const input = document.getElementById('input-' + type);
-                            let current = parseInt(input.textContent);
+                            let current = parseInt(input.value) || 0;
                             current += delta;
                             if (current < 0) current = 0;
                             input.value = current;
