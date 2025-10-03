@@ -1,12 +1,15 @@
 <?php
 session_start();
 include('../fmb/users/connection.php');
+include('header.php');
 
 $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $its = $_POST['its'] ?? '';
+    $full_name = $_POST['full_name'] ?? '';
+    $mobie_no = $_POST['mobie_no'] ?? '';
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
 
@@ -20,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($result->num_rows == 0) {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $link->prepare("INSERT INTO poona_users (its, password) VALUES (?, ?)");
-                $stmt->bind_param("ss", $its, $hashed_password);
+                $stmt = $link->prepare("INSERT INTO poona_users (`its`, `full_name`, `mobile_no`, `password`) VALUES (?, ?, ?, ?)");
+                $stmt->bind_param("ssss", $its, $full_name, $mobile_no, $hashed_password);
                 if ($stmt->execute()) {
                     $success = "Registration successful! You can now <a href='index.php'>login</a>.";
                 } else {
@@ -38,22 +41,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <?php include('../fmb/users/header.php'); ?>
-    <title>Poona Ashara Ohbat - Register</title>
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
+<div class="content mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
                 <div class="card">
-                    <div class="card-header text-center">
-                        <h2>Register for Poona Ashara Ohbat</h2>
-                    </div>
                     <div class="card-body">
+                        <a href="/poona_ashara_ohbat/index.php"><img class="img-fluid mx-auto d-block" src="ya-hussain.png" alt="Ya Hussain" width="253" height="253" /></a>
+                        <hr>
+                        <h2 class="text-center mb-2">Register for Poona Ashara Ohbat</h2>
                         <?php if ($error): ?>
                             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
                         <?php endif; ?>
@@ -61,20 +57,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="alert alert-success"><?php echo $success; ?></div>
                         <?php endif; ?>
                         <form method="POST" action="">
-                            <div class="mb-3">
-                                <label for="its" class="form-label">ITS (8 digit ID)</label>
-                                <input type="text" id="its" name="its" maxlength="8" required pattern="\d{8}" class="form-control" />
+                            <div class="mb-3 row">
+                                <label for="its" class="col-4 control-label">ITS (8 digit ID)</label>
+                                <div class="col-8">
+                                    <input type="text" id="its" name="its" maxlength="8" pattern="\d{8}" class="form-control" required />
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" name="password" required class="form-control" />
+                            <div class="mb-3 row">
+                                <label for="full_name" class="col-4 control-label">Full Name</label>
+                                <div class="col-8">
+                                    <input type="text" id="full_name" name="full_name" pattern="[A-Za-z ]+" class="form-control" required />
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="confirm_password" class="form-label">Confirm Password</label>
-                                <input type="password" id="confirm_password" name="confirm_password" required class="form-control" />
+                            <div class="mb-3 row">
+                                <label for="mobile_no" class="col-4 control-label">Mobile No</label>
+                                <div class="col-8">
+                                    <input type="number" id="mobile_no" name="mobile_no" maxlength="10" pattern="[0-9]{10}" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="password" class="col-4 control-label">Password</label>
+                                <div class="col-8">
+                                    <input type="password" id="password" name="password" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="confirm_password" class="col-4 control-label">Confirm Password</label>
+                                <div class="col-8">
+                                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" required />
+                                </div>
                             </div>
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Register</button>
+                                <button type="submit" class="btn btn-light">Register</button>
                             </div>
                         </form>
                         <div class="text-center mt-3">
@@ -85,5 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<?php include('footer.php'); ?>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include('../fmb/users/connection.php');
+include('header.php');
 
 if (isset($_SESSION['user_id'])) {
     header("Location: dashboard.php");
@@ -38,22 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <?php include('../fmb/users/header.php'); ?>
-    <title>Poona Ashara Ohbat - Login</title>
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
+<div class="content mt-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
                 <div class="card">
-                    <div class="card-header text-center">
-                        <h2>Login</h2>
-                    </div>
                     <div class="card-body">
+                        <a href="/poona_ashara_ohbat/index.php"><img class="img-fluid mx-auto d-block" src="ya-hussain.png" alt="Ya Hussain" width="253" height="253" /></a>
+                        <hr>
+                        <h2 class="text-center mb-2">Login</h2>
                         <?php if ($error): ?>
                             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
                         <?php endif; ?>
@@ -67,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <input type="password" id="password" name="password" required class="form-control" />
                             </div>
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Login</button>
+                                <button type="submit" class="btn btn-light">Login</button>
                             </div>
                         </form>
                         <div class="text-center mt-3">
@@ -78,5 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<?php include('footer.php'); ?>
