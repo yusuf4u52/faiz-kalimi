@@ -87,12 +87,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <input type="password" id="confirm_password" name="confirm_password" class="form-control" required />
                                 </div>
                             </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-light">Register</button>
+                            <div class="mb-3 row">
+                                <div class="col-8 offset-4 d-grid">
+                                    <button type="submit" class="btn btn-light">Login</button>
+                                </div>
                             </div>
                         </form>
-                        <div class="text-center mt-3">
-                            <p>Already have an account? <a href="index.php">Login here</a></p>
+                        <div class="mb-3 row">
+                            <div class="col-8 offset-4">
+                                <p>Already have an account? <a href="index.php">Login here</a></p>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -26,34 +26,44 @@ $full_name = $user['full_name'];
 $is_admin = $user['is_admin'];
 
 // Get all counter types
-$counter_types = [];
-$result = $link->query("SELECT * FROM poona_counter_types ORDER BY id ASC");
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $counter_types[] = $row;
+$category = ['Quran', 'Dua', 'Tasbih'];
+foreach ($category as $cat) {
+    $counter_types[$cat] = [];
+    $stmt = $link->prepare("SELECT * FROM poona_counter_types WHERE category = ? ORDER BY id ASC");
+    $stmt->bind_param("s", $cat);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $counter_types[$cat][] = $row;
+        }
     }
 }
 
 // Get current recitations for user
 $recitations = [];
-foreach ($counter_types as $type) {
-    $stmt = $link->prepare("SELECT count FROM poona_recitations WHERE user_id = ? AND counter_type_id = ?");
-    $stmt->bind_param("ii", $user_id, $type['id']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $recitations[$type['id']] = $row ? $row['count'] : 0;
+foreach ($counter_types as $category => $types) {
+    foreach ($types as $type) {
+        $stmt = $link->prepare("SELECT count FROM poona_recitations WHERE user_id = ? AND counter_type_id = ?");
+        $stmt->bind_param("ii", $user_id, $type['id']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $recitations[$type['id']] = $row ? $row['count'] : 0;
+    }
 }
 
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    foreach ($counter_types as $type) {
-        $count = (int)($_POST['counter_' . $type['id']] ?? 0);
-        $stmt = $link->prepare("INSERT INTO poona_recitations (user_id, counter_type_id, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE count = ?");
-        $stmt->bind_param("iiii", $user_id, $type['id'], $count, $count);
-        $stmt->execute();
-        $recitations[$type['id']] = $count;
+    foreach ($counter_types as $category => $types) {
+        foreach ($types as $type) {
+            $count = (int)($_POST['counter_' . $type['id']] ?? 0);
+            $stmt = $link->prepare("INSERT INTO poona_recitations (user_id, counter_type_id, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE count = ?");
+            $stmt->bind_param("iiii", $user_id, $type['id'], $count, $count);
+            $stmt->execute();
+            $recitations[$type['id']] = $count;
+        }
     }
     $message = "Recitations updated successfully!";
 }
@@ -72,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <nav class="navbar">
         <div class="container">
-            <a class="navbar-brand" href="/fmb/users/index.php">Poona Ashara Ohbat</a>
+            <a class="navbar-brand" href="/poona_ashara_ohbat/dashboard.php">Poona Ashara Ohbat</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headernavbar"
                 aria-controls="headernavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="bi bi-list"></i>
@@ -109,17 +119,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="text-center mb-4">
                                 <button type="submit" class="btn btn-light">Update Recitations</button>
                             </div>
-                            <?php foreach ($counter_types as $type): ?>
-                                <div class="mb-3 row">
-                                    <label for="label-<?php echo $type['id']; ?>" class="col-6 control-label" id="label-<?php echo $type['id']; ?>"><?php echo htmlspecialchars($type['name']); ?></label>
-                                    <div class="col-6">     
-                                        <div class="input-group">
-                                            <button class="btn btn-light btn-counter" type="button" onclick="changeCount(<?php echo $type['id']; ?>, -1)">-</button>
-                                            <input type="number" class="form-control" name="counter_<?php echo $type['id']; ?>" id="input-<?php echo $type['id']; ?>" value="<?php echo $recitations[$type['id']]; ?>" min="0" readonly>
-                                            <button class="btn btn-light btn-counter" type="button" onclick="changeCount(<?php echo $type['id']; ?>, 1)">+</button>
+                            <hr>
+                            <?php foreach ($counter_types as $category => $types): ?>
+                                <h3 class="mb-3"><?php echo htmlspecialchars($category); ?></h3>
+                                <?php foreach ($types as $type): ?>
+                                    <div class="mb-3 row">
+                                        <label for="label-<?php echo $type['id']; ?>" class="col-6 control-label" id="label-<?php echo $type['id']; ?>"><?php echo htmlspecialchars($type['name']); ?></label>
+                                        <div class="col-6">     
+                                            <div class="input-group">
+                                                <button class="btn btn-light btn-counter" type="button" onclick="changeCount(<?php echo $type['id']; ?>, -1)">-</button>
+                                                <input type="number" class="form-control" name="counter_<?php echo $type['id']; ?>" id="input-<?php echo $type['id']; ?>" value="<?php echo $recitations[$type['id']]; ?>" min="0" readonly>
+                                                <button class="btn btn-light btn-counter" type="button" onclick="changeCount(<?php echo $type['id']; ?>, 1)">+</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                <?php endforeach; ?>
+                                <hr>
                             <?php endforeach; ?>
                             <div class="text-center mt-4">
                                 <button type="submit" class="btn btn-light">Update Recitations</button>

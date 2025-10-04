@@ -68,7 +68,7 @@ foreach ($counter_types as $type) {
     </div>
     <nav class="navbar">
         <div class="container">
-            <a class="navbar-brand" href="/fmb/users/index.php">Poona Ashara Ohbat</a>
+            <a class="navbar-brand" href="/poona_ashara_ohbat/dashboard.php">Poona Ashara Ohbat</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headernavbar"
                 aria-controls="headernavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="bi bi-list"></i>
@@ -104,6 +104,7 @@ foreach ($counter_types as $type) {
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>Recitation Category</th>
                                     <th>Recitation Type</th>
                                     <th>Total Count</th>
                                 </tr>
@@ -111,6 +112,7 @@ foreach ($counter_types as $type) {
                             <tbody>
                                 <?php foreach ($counter_types as $type): ?>
                                     <tr>
+                                        <td><?php echo htmlspecialchars($type['category']); ?></td>
                                         <td><?php echo htmlspecialchars($type['name']); ?></td>
                                         <td><?php echo $totals[$type['id']] ?? 0; ?></td>
                                     </tr>

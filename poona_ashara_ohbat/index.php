@@ -52,20 +52,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
                         <?php endif; ?>
                         <form method="POST" action="">
-                            <div class="mb-3">
-                                <label for="its" class="form-label">ITS (8 digit ID)</label>
-                                <input type="text" id="its" name="its" maxlength="8" required pattern="\d{8}" class="form-control" />
+                            <div class="mb-3 row">
+                                <label for="its" class="control-label col-4">ITS (8 digit ID)</label>
+                                <div class="col-8">
+                                    <input type="number" id="its" name="its" maxlength="8" pattern="[0-9]{8}" class="form-control" required />
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" name="password" required class="form-control" />
+                            <div class="mb-3 row">
+                                <label for="password" class="control-label col-4">Password</label>
+                                <div class="col-8">
+                                    <input type="password" id="password" name="password" class="form-control" required />
+                                </div>
                             </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-light">Login</button>
+                            <div class="mb-3 row">
+                                <div class="col-8 offset-4 d-grid">
+                                    <button type="submit" class="btn btn-light">Login</button>
+                                </div>
                             </div>
                         </form>
-                        <div class="text-center mt-3">
-                            <p>Don't have an account? <a href="register.php">Register here</a></p>
+                        <div class="mb-3 row">
+                            <div class="col-8 offset-4">
+                                <p>Don't have an account? <a href="register.php">Register here</a></p>
+                            </div>
                         </div>
                     </div>
                 </div>

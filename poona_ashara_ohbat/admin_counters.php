@@ -32,13 +32,14 @@ $success = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'] ?? '';
     $name = trim($_POST['name'] ?? '');
+    $category = trim($_POST['category'] ?? '');
     if ($name === '') {
         $error = "Counter name cannot be empty.";
     } else {
         if ($id) {
             // Update existing
-            $stmt = $link->prepare("UPDATE poona_counter_types SET name = ? WHERE id = ?");
-            $stmt->bind_param("si", $name, $id);
+            $stmt = $link->prepare("UPDATE poona_counter_types SET name = ? AND category = ? WHERE id = ?");
+            $stmt->bind_param("ssi", $name, $category, $id);
             if ($stmt->execute()) {
                 $success = "Counter updated successfully.";
             } else {
@@ -93,7 +94,7 @@ if ($result) {
     </div>
     <nav class="navbar">
         <div class="container">
-            <a class="navbar-brand" href="/fmb/users/index.php">Poona Ashara Ohbat</a>
+            <a class="navbar-brand" href="/poona_ashara_ohbat/dashboard.php">Poona Ashara Ohbat</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headernavbar"
                 aria-controls="headernavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="bi bi-list"></i>
@@ -132,6 +133,17 @@ if ($result) {
                         <form method="POST" class="mb-4">
                             <input type="hidden" name="id" id="counter-id" value="" />
                             <div class="mb-3 row">
+                                <label for="name" class="control-label col-4">Category</label>
+                                <div class="col-8">
+                                    <select name="category" id="category-name" class="form-select" required>
+                                        <option value="">Select Category</option>
+                                        <option value="Quran">Quran</option>
+                                        <option value="Dua">Dua</option>
+                                        <option value="Tasbih">Tasbih</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
                                 <label for="name" class="control-label col-4">Counter Name</label>
                                 <div class="col-8">
                                     <input type="text" name="name" id="counter-name" class="form-control" required />
@@ -155,6 +167,7 @@ if ($result) {
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Category</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -162,8 +175,9 @@ if ($result) {
                                 <?php foreach ($counters as $counter): ?>
                                     <tr>
                                         <td><?php echo htmlspecialchars($counter['name']); ?></td>
+                                        <td><?php echo htmlspecialchars($counter['category']); ?></td>
                                         <td>
-                                            <button class="btn btn-sm btn-light" onclick="editCounter(<?php echo $counter['id']; ?>, '<?php echo htmlspecialchars(addslashes($counter['name'])); ?>')"><i class="bi bi-pencil-square"></i></button>
+                                            <button class="btn btn-sm btn-light" onclick="editCounter(<?php echo $counter['id']; ?>, '<?php echo htmlspecialchars(addslashes($counter['name'])); ?>', '<?php echo htmlspecialchars(addslashes($counter['category'])); ?>')"><i class="bi bi-pencil-square"></i></button>
                                             <a href="?delete=<?php echo $counter['id']; ?>" class="btn btn-sm btn-light" onclick="return confirm('Are you sure you want to delete this counter?');"><i class="bi bi-trash"></i></a>
                                         </td>
                                     </tr>
@@ -180,13 +194,15 @@ if ($result) {
     </div>
 </div>
 <script>
-    function editCounter(id, name) {
+    function editCounter(id, name, category) {
         document.getElementById('counter-id').value = id;
+        document.getElementById('category-name').value = category;
         document.getElementById('counter-name').value = name;
         window.scrollTo(0, 0);
     }
     function clearForm() {
         document.getElementById('counter-id').value = '';
+        document.getElementById('category-name').value = '';
         document.getElementById('counter-name').value = '';
     }
 </script>
