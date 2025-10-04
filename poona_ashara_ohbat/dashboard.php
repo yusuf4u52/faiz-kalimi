@@ -119,17 +119,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="text-center mb-4">
                                 <button type="submit" class="btn btn-light">Update Recitations</button>
                             </div>
-                            <?php foreach ($counter_types as $type): ?>
-                                <div class="mb-3 row">
-                                    <label for="label-<?php echo $type['id']; ?>" class="col-6 control-label" id="label-<?php echo $type['id']; ?>"><?php echo htmlspecialchars($type['name']); ?></label>
-                                    <div class="col-6">     
-                                        <div class="input-group">
-                                            <button class="btn btn-light btn-counter" type="button" onclick="changeCount(<?php echo $type['id']; ?>, -1)">-</button>
-                                            <input type="number" class="form-control" name="counter_<?php echo $type['id']; ?>" id="input-<?php echo $type['id']; ?>" value="<?php echo $recitations[$type['id']]; ?>" min="0" readonly>
-                                            <button class="btn btn-light btn-counter" type="button" onclick="changeCount(<?php echo $type['id']; ?>, 1)">+</button>
+                            <hr>
+                            <?php foreach ($counter_types as $category => $types): ?>
+                                <h3 class="mb-3"><?php echo htmlspecialchars($category); ?></h3>
+                                <?php foreach ($types as $type): ?>
+                                    <div class="mb-3 row">
+                                        <label for="label-<?php echo $type['id']; ?>" class="col-6 control-label" id="label-<?php echo $type['id']; ?>"><?php echo htmlspecialchars($type['name']); ?></label>
+                                        <div class="col-6">     
+                                            <div class="input-group">
+                                                <button class="btn btn-light btn-counter" type="button" onclick="changeCount(<?php echo $type['id']; ?>, -1)">-</button>
+                                                <input type="number" class="form-control" name="counter_<?php echo $type['id']; ?>" id="input-<?php echo $type['id']; ?>" value="<?php echo $recitations[$type['id']]; ?>" min="0" readonly>
+                                                <button class="btn btn-light btn-counter" type="button" onclick="changeCount(<?php echo $type['id']; ?>, 1)">+</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                <?php endforeach; ?>
+                                <hr>
                             <?php endforeach; ?>
                             <div class="text-center mt-4">
                                 <button type="submit" class="btn btn-light">Update Recitations</button>
