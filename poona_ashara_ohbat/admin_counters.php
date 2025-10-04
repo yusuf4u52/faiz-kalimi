@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         if ($id) {
             // Update existing
-            $stmt = $link->prepare("UPDATE poona_counter_types SET name = ? AND category = ? WHERE id = ?");
+            $stmt = $link->prepare("UPDATE poona_counter_types SET name = ?, category = ? WHERE id = ?");
             $stmt->bind_param("ssi", $name, $category, $id);
             if ($stmt->execute()) {
                 $success = "Counter updated successfully.";
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             // Insert new
             $stmt = $link->prepare("INSERT INTO poona_counter_types (name) VALUES (?)");
-            $stmt->bind_param("s", $name);
+            $stmt->bind_param("ss", $name, $category);
             if ($stmt->execute()) {
                 $success = "Counter added successfully.";
             } else {
