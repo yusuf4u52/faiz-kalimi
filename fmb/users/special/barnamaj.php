@@ -29,9 +29,9 @@ if (mysqli_num_rows($result) > 1): ?>
                     <?php while($values = mysqli_fetch_assoc($result)) { ?>
                         <tr>
                             <?php if ($values['Active'] == '1') { ?>
-                                <td><a href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a></td>
+                                <td><a href="#" onclick="stopThali_admin('<?php echo $values['Thali']; ?>', '0')">Stop Thaali</a></td>
                             <?php } else { ?>
-                                <td><a href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a></td>
+                                <td><a href="#" onclick="stopThali_admin('<?php echo $values['Thali']; ?>', '1')">Start Thaali</a></td>
                             <?php } ?>
                             <td><?php echo $values['tiffinno']; ?></td>
                             <td><?php echo $values['Thali']; ?></td>
