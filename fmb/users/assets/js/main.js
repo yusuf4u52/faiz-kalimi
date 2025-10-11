@@ -284,14 +284,7 @@
   });
 })(jQuery);
 
-function stopThali_admin(
-  thaaliId,
-  active,
-  hardStop,
-  hardStopComment,
-  successCallback,
-  failureCallback
-) {
+function stopThali_admin(thaaliId, active, hardStop, hardStopComment) {
   var data = "thaali_id=" + thaaliId + "&active=" + active;
   if (hardStop) {
     data += "&hardstop=1&hardstopcomment=" + hardStopComment;
