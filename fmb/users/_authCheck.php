@@ -22,6 +22,8 @@ $rights = array(
 		"/fmb/users/admin_scripts.php",
 		"/fmb/users/stop_permanant.php",
 		"/fmb/users/thalisearch.php",
+		"/fmb/users/special/friday.php",
+		"/fmb/users/special/barnamaj.php",
 		"/fmb/users/menu/food.php",
 		"/fmb/users/menu/savefood.php",
 		"/fmb/users/menu/list.php",

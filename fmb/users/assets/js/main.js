@@ -244,12 +244,7 @@
       $(this).attr("data-thali"),
       $(this).attr("data-active"),
       false,
-      false,
-      function (data) {
-        // if (data === 'success') {
-        location.reload();
-        // }
-      }
+      false
     );
   });
 
@@ -303,7 +298,7 @@ function stopThali_admin(
   }
   $.ajax({
     method: "post",
-    url: "_stop_thali_admin.php",
+    url: "/fmb/users/_stop_thali_admin.php",
     async: true,
     data: data,
     success: function (data) {
@@ -322,9 +317,7 @@ function stopThali_admin(
             ". Please contact Mustafa Manawar or Yusuf Rampur"
         );
       }
-      if (successCallback) {
-        successCallback(data);
-      }
+      location.reload();
     },
     error: function () {
       alert(
@@ -332,9 +325,7 @@ function stopThali_admin(
           thaaliId +
           ". Please contact Mustafa Manawar or Yusuf Rampur"
       );
-      if (failureCallback) {
-        failureCallback();
-      }
+      location.reload();
     },
   });
 }

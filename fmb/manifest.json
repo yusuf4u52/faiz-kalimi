@@ -5,25 +5,13 @@
   "description": "A FMB App for Kalimi Mohalla (Poona) Mumineen",
   "icons": [
     {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
       "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-512x512.png",
+      "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-512x512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -45,19 +33,6 @@
   "start_url": ".",
   "categories": ["community", "food", "mumineen"],
   "scope": "/",
-  "shortcuts": [
-    {
-      "name": "FMB (Kalimi)",
-      "url": "/",
-      "description": "A FMB App for Kalimi Mohalla (Poona) Mumineen",
-      "icons": [
-        {
-          "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
-    }
-  ],
   "launch_handler": {
     "client_mode": "auto"
   },
