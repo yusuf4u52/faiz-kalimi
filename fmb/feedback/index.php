@@ -37,7 +37,7 @@ if( $isInRange ) {
 			<div class="col-12 offset-sm-1 col-sm-10 offset-lg-2 col-lg-8">
 				<div class="card">
 					<div class="card-body">
-						<a href="/fmb/index.php"><img class="img-fluid mx-auto d-block my-3" src="/fmb/styles/img/logo.png" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="253" height="253" /></a>
+						<a href="/fmb/index.php"><img class="img-fluid mx-auto d-block my-3" src="/fmb/styles/img/logo.avif" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="253" height="253" /></a>
 						<hr>
 	  					<h2 class="mb-4 text-center">Feedback</h2>
                         <?php if( !$isInRange ) {

@@ -21,7 +21,7 @@ if ($query->num_rows > 0 ) {
     <div class="container-fluid py-2">
         <div class="row align-items-center">
             <div class="col-4">
-                <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/styles/img/logo.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
+                <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/styles/img/logo.avif" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
             </div>
             <div class="col-8 text-end">
                 <p class="text-capitalize m-0 fw-bold fst-italic">Salaam, <?php echo strtolower($_SESSION['transporter']); ?> Bhai</p>
