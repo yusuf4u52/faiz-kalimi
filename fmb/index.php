@@ -58,12 +58,12 @@ if (isset($authUrl) || isset($_GET['status'])) { ?>
 				<div class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
 					<div class="card">
 						<div class="card-body">
-							<img class="img-fluid mx-auto d-block" src="styles/img/logo.png"
+							<img class="img-fluid mx-auto d-block" src="styles/img/logo.avif"
 								alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="253" height="253" />
 							<hr>
-							<img class="img-fluid mx-auto d-block" src="styles/img/sakat-hoi.png" alt="sakat hoi"
+							<img class="img-fluid mx-auto d-block" src="styles/img/sakat-hoi.avif" alt="sakat hoi"
 								width="877" height="284" />
-							<img class="img-fluid mx-auto d-block" src="styles/img/pakavi.png" alt="pakavi" width=981
+							<img class="img-fluid mx-auto d-block" src="styles/img/pakavi.avif" alt="pakavi" width=981
 								height="254" />
 							<hr>
 							<h3>Already have Kalimi Mohalla Sabil?</h3>
