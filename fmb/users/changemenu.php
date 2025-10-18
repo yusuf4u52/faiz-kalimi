@@ -12,7 +12,7 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
     
     date_default_timezone_set('Asia/Kolkata');
     if (isset($_POST['action']) && $_POST['action'] == 'change_menu') {
-        $GivenDate = new DateTime($menu_date . '20:00:00');
+        $GivenDate = new DateTime($menu_date . '17:00:00');
         $GivenDate->modify('-1 day');
         $GivenDate = $GivenDate->format('Y-m-d H:i:s');
         $CurrentDate = date('Y-m-d H:i:s');

@@ -166,6 +166,9 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
                   <input type="text" class="form-control" name="menu_item[extra][qty]" id="extraqty" value="" readonly>
                 </div>
               </div>
+              <div id="close" class="mb-3">
+                <p class="mb-0 text-warning"><strong>Note:</strong> Menu Editing will End on 5 PM.</p>
+              </div>
             </div>
           </div>
           <div class="modal-footer">

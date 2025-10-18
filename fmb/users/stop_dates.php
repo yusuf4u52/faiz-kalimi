@@ -62,6 +62,7 @@ include('navbar.php');
                                         <input type="text" class="form-control" name="end_date" id="end_date"
                                             placeholder="End Date">
                                     </div>
+                                    <p class="text-warning mb-3"><strong>Note:<strong> RSVP Will End at 5 PM.<p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-light"
@@ -93,7 +94,7 @@ include('navbar.php');
                             </thead>
                             <tbody>
                                 <?php while ($values = mysqli_fetch_assoc($stop_dates)) {
-                                    $stop_date = new DateTime($values['start_date'] . '20:00:00');
+                                    $stop_date = new DateTime($values['start_date'] . '17:00:00');
                                     $stop_date->modify('-1 day');
                                     $stop_date = $stop_date->format('Y-m-d H:i:s'); ?>
                                     <tr>

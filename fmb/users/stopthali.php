@@ -21,7 +21,7 @@ if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
 
     date_default_timezone_set('Asia/Kolkata');
     if (isset($_POST['action']) && ($_POST['action'] == 'stop_thali' || $_POST['action'] == 'stop_date_thali' || $_POST['action'] == 'start_thali')) {
-        $GivenDate = new DateTime($_POST['start_date'] . '20:00:00');
+        $GivenDate = new DateTime($_POST['start_date'] . '17:00:00');
         $GivenDate->modify('-1 day');
         $GivenDate = $GivenDate->format('Y-m-d H:i:s');
         $CurrentDate = date('Y-m-d H:i:s');
