@@ -62,7 +62,7 @@ include('navbar.php');
                                         <input type="text" class="form-control" name="end_date" id="end_date"
                                             placeholder="End Date">
                                     </div>
-                                    <p class="text-warning mb-3"><strong>Note:</strong> RSVP Will End at 5 PM.<p>
+                                    <p class="text-danger mb-0"><strong>Note:</strong> RSVP Will End at 5 PM one day before start date.<p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-light"
