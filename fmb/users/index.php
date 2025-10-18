@@ -51,7 +51,7 @@ include('navbar.php');
                     <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                     <input type="text" class="form-control" name="end_date" id="end_date" placeholder="End Date">
                   </div>
-                  <p class="text-warning mb-3"><strong>Note:<strong> RSVP Will End at 5 PM.<p>
+                  <p class="text-warning mb-3"><strong>Note:</strong> RSVP Will End at 5 PM.<p>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
