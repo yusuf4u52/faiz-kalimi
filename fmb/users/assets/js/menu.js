@@ -176,7 +176,7 @@
             );
             GivenDate = new Date(GivenDate);
             GivenDate.setDate(GivenDate.getDate() - 1);
-            GivenDate.setHours(20, 0, 0, 0);
+            GivenDate.setHours(17, 0, 0, 0);
             var MenuDate = new Date(scheds[id].menu_date).toLocaleString(
               "en-US",
               { timeZone: "Asia/Kolkata" }

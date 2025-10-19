@@ -133,7 +133,7 @@
 
     // Define the time limit for today
     var cutoffTime = new Date();
-    cutoffTime.setHours(20, 0, 0); // 8:00 pm
+    cutoffTime.setHours(17, 0, 0); // 5:00 pm
 
     var acutoffTime = new Date();
     acutoffTime.setHours(23, 59, 59); // 12:00 pm

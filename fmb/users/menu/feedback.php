@@ -82,7 +82,7 @@ if (isset($_GET['menu_date'])) {
                                                     if(!empty($user_menu_item['sabji']['rating'])) {
                                                         $sabjirating = $user_menu_item['sabji']['rating'];
                                                     } else {
-                                                        $sabjirating = 'NA';
+                                                        $sabjirating = 'Not Taken';
                                                     }
                                                     echo '<td style="text-align:left">' . $sabjirating . '</td>';
                                                 }
@@ -90,7 +90,7 @@ if (isset($_GET['menu_date'])) {
                                                     if(!empty($user_menu_item['tarkari']['rating'])) {
                                                         $tarkarirating = $user_menu_item['tarkari']['rating'];
                                                     } else {
-                                                        $tarkarirating = 'NA';
+                                                        $tarkarirating = 'Not Taken';
                                                     }
                                                     echo '<td style="text-align:left">' . $tarkarirating . '</td>';
                                                 }
@@ -98,7 +98,7 @@ if (isset($_GET['menu_date'])) {
                                                     if(!empty($user_menu_item['rice']['rating'])) {
                                                         $ricerating = $user_menu_item['rice']['rating'];
                                                     } else {
-                                                        $ricerating = 'NA';
+                                                        $ricerating = 'Not Taken';
                                                     }
                                                     echo '<td style="text-align:left">' . $ricerating . '</td>';
                                                 } 
@@ -106,7 +106,7 @@ if (isset($_GET['menu_date'])) {
                                                     if(!empty($user_menu_item['roti']['rating'])) {
                                                         $rotirating = $user_menu_item['roti']['rating'];
                                                     } else {
-                                                        $rotirating = 'NA';
+                                                        $rotirating = 'Not Taken';
                                                     }
                                                     echo '<td style="text-align:left">' . $rotirating . '</td>';
                                                 }
@@ -114,7 +114,7 @@ if (isset($_GET['menu_date'])) {
                                                     if(!empty($user_menu_item['extra']['rating'])) {
                                                         $extrarating = $user_menu_item['extra']['rating'];
                                                     } else {
-                                                        $extrarating = 'NA';
+                                                        $extrarating = 'Not Taken';
                                                     }
                                                     echo '<td style="text-align:left">' . $extrarating . '</td>';
                                                 } ?>
