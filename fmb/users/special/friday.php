@@ -8,7 +8,15 @@ $max_days = mysqli_fetch_row(mysqli_query($link, "SELECT MAX(thalicount) as max 
 if (mysqli_num_rows($result) > 1): ?>
     <div class="card">
         <div class="card-body">
-            <h2 class="mb-3">Friday Thalis</h2>
+            <div class="row">
+                <div class="col-6">
+                    <h2 class="mb-3">Friday Thalis</h2>
+                </div>
+                <div class="col-6">
+                    <button type="button" class="btn btn-light mb-3" data-bs-target="#stopall"
+                    data-bs-toggle="modal">Stop All</button>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped display" width="100%">
                 <thead>
@@ -49,5 +57,28 @@ if (mysqli_num_rows($result) > 1): ?>
         </div>
     </div>
 <?php endif; ?>
+
+<div class="modal fade" id="stopall">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="stopall" class="form-horizontal"
+                method="post" action="stopall.php" autocomplete="off">
+                <input type="hidden" name="action" value="stop_friday" />
+                <div class="modal-header">
+                    <h4 class="modal-title">Stop Friday Thali</h4>
+                    <button type="button" class="btn ms-auto" data-bs-dismiss="modal"
+                        aria-label="Close"><i class="bi bi-x-lg"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to stop all Friday Thalis ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-light">Yes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <?php include('../footer.php'); ?>

@@ -18,10 +18,10 @@ $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_
 if ($menu_item->num_rows > 0) {
 	$msgmenu .= '<table border="0" bgcolor="#FFFFFF" width="100%" cellpadding="3" cellspacing="3">
 		<td align="center" valign="top">
-			<table border="0" width="1140" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="color:#333333; padding:1rem;">
+			<table border="0" width="720" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="color:#333333; padding:1rem;">
 				<tr>
 					<td align="left">
-						<img src="https://kalimijamaatpoona.org/fmb/styles/img/logo.png" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="90" height="90"> 
+						<img src="https://kalimijamaatpoona.org/fmb/styles/img/logo.avif" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="90" height="90"> 
 					</td>
 					<td align="right"><strong>Updated Thali of '.$day .'<br/>'.$hijridate.' '.$tomorrow_date.'</strong></td>
 				</tr>
@@ -36,12 +36,12 @@ if ($menu_item->num_rows > 0) {
 				$sabeelno = "'" . implode ( "', '", $thalino ) . "'";
 				$transporter = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND Thali IN (".$sabeelno.") ORDER BY Transporter");
 				while ($row_trans = mysqli_fetch_assoc($transporter)) {
-					$msgmenu .= '<table border="0" width="1140" cellpadding="3" cellspacing="3" bgcolor="#c36d29" style="color:#FFFFFF; padding:0.5rem;margin-top:1rem;">
+					$msgmenu .= '<table border="1" width="720" cellpadding="10" cellspacing="0" bgcolor="#c36d29" style="color:#FFFFFF;border-color:#548484;margin-top:1rem;">
 						<tr>
 							<th align="center"><strong>'.$row_trans['Transporter'].'</strong></th>
 						</tr>
 					</table>
-					<table width="1140" cellpadding="0" cellspacing="0" border="1" bgcolor="#ffffff" style="color:#333333;">
+					<table width="720" cellpadding="0" cellspacing="0" border="1" bgcolor="#ffffff" style="color:#000; border-color:#548484;">
 						<thead>
 							<tr bgcolor="#c36d29" style="color:#FFFFFF;">
 								<th width="7%">Tiffin No</th>
