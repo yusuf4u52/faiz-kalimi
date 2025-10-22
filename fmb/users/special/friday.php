@@ -17,6 +17,11 @@ if (mysqli_num_rows($result) > 1): ?>
                     data-bs-toggle="modal">Stop All</button>
                 </div>
             </div>
+            <?php if (isset($_GET['action']) && $_GET['action'] == 'delete') { ?>
+                <div class="alert alert-danger" role="alert">
+                    All Friday Thalis are stopped successfully.
+                </div>
+            <?php } ?>
             <div class="table-responsive">
                 <table class="table table-striped display" width="100%">
                 <thead>
