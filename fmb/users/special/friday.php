@@ -12,7 +12,7 @@ if (mysqli_num_rows($result) > 1): ?>
                 <div class="col-6">
                     <h2 class="mb-3">Friday Thalis</h2>
                 </div>
-                <div class="col-6">
+                <div class="col-6 text-end">
                     <button type="button" class="btn btn-light mb-3" data-bs-target="#stopall"
                     data-bs-toggle="modal">Stop All</button>
                 </div>
