@@ -21,9 +21,9 @@ if (mysqli_num_rows($result) > 1): ?>
                 <table class="table table-striped display" width="100%">
                 <thead>
                     <tr>
-                        <th>Thali Status</th>
                         <th>Tiffin No</th>
                         <th>Sabeel No</th>
+                        <th>Thali Status</th>
                         <th>Name</th>
                         <th>Mobile No</th>
                         <th>Active</th>
@@ -36,13 +36,13 @@ if (mysqli_num_rows($result) > 1): ?>
                 <tbody>
                     <?php while($values = mysqli_fetch_assoc($result)) { ?>
                         <tr>
+                            <td><?php echo $values['tiffinno']; ?></td>
+                            <td><?php echo $values['Thali']; ?></td>
                             <?php if ($values['Active'] == '1') { ?>
                                 <td><a href="#" onclick="stopThali_admin('<?php echo $values['Thali']; ?>', '0')">Stop Thaali</a></td>
                             <?php } else { ?>
                                 <td><a href="#" onclick="stopThali_admin('<?php echo $values['Thali']; ?>', '1')">Start Thaali</a></td>
                             <?php } ?>
-                            <td><?php echo $values['tiffinno']; ?></td>
-                            <td><?php echo $values['Thali']; ?></td>
                             <td><?php echo $values['NAME']; ?></td>
                             <td><a href="tel:<?php echo $values['CONTACT']; ?>"><?php echo $values['CONTACT']; ?></a></td>
                             <td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
