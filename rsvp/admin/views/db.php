@@ -5,7 +5,13 @@ function content_display()
     $result = null;
     if (is_post()) {
         $query = $_POST['query'];
-        $result = execute_query($query, false, false);
+        $multipleQueries = false;
+        $semicolonPosition = strpos($query, ';');
+
+        if ($semicolonPosition !== false) {
+            $multipleQueries = true;
+        }
+        $result = execute_query($query, false, $multipleQueries);
     }
 
     ?>

@@ -29,12 +29,13 @@ function content_display()
                 </div>
             </div>
         </div>
-        <?php if( $its_id === '30359589' ) { ?>
-        <div class="col-md-4 col-sm-6 col-12">
-            <div class="card">
+        <?php if( $its_id == 30359589 ) { ?>
+        <div class="col-12 col-md-6">
+            <div class="card mt-4">
                 <div class="card-body">
                     <h5 class="card-title">ITS RECORDs</h5>
-                    <p class="card-text">DUMP OF ITS DATA</p>
+                    <p class="card-text">Only these columns allowed</p>
+                    <p class="card-text">ITS id,HOF id,Sabeel no,Full name,Age,Gender,Misaq,Address,Sector,Subsector,mohallah</p>
                     <form action="<?=$uri?>/its_upload" method="post" enctype="multipart/form-data">
                         <div class="input-group mb-3">
                             <input type='hidden' name='action' value="file"/>    

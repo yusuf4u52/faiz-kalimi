@@ -26,8 +26,9 @@ function content_display() {
 function _manage_upload() {
     $action = $_POST['action'] ?? '';
     if( $action === 'dump') {
-         $query = 'DELETE FROM ITS_DB; INSERT INTO ITS_DB SELECT * FROM ITS_DB_TRANSIT;';
-         $resp = execute_query($query, true, true);
+         $query = 'DELETE FROM its_data; INSERT INTO its_data SELECT * FROM its_data_transit;';
+         $resp = run_statement($query);
+
          do_redirect_with_message('/dashboard', 'Data has been loaded successfully.');
     } else {
         _manage_upload_1();
@@ -68,20 +69,20 @@ function _manage_upload_1() {
     
             if ($xlsx = SimpleXLSX::parse($target_file)) {
                 $first = true;
-                $page_data .= '<table border=1>';
+                $page_data .= '<div class="table-responsive mt-4"> <table class="table table-striped display" width="100%">';
                 $query = '';
     
-                $query = "DELETE FROM its_data_transit; INSERT INTO its_data_transit SELECT * FROM its_data; UPDATE its_data_transit SET mohallah='Other';";
-                $result = execute_query($query,true, true);
+                $query = 'DELETE FROM its_data_transit; INSERT INTO its_data_transit SELECT * FROM its_data; UPDATE its_data_transit SET mohallah=?';
+                $result = run_statement($query , 'Other');
                     
                 $error_found = 0;
                 foreach ($xlsx->rows() as $row) {
                     if ($first) {
                         $first = false;
-                        $page_data .= '<tr><th>Status</th><th>' . implode('</th><th>', $row) . '</th></tr>';
+                        $page_data .= '<thead><tr><th>Status</th><th>' . implode('</th><th>', $row) . '</th></tr></thead><tbody>';
                     } else {
                         // if 3rd colum is blank, means Mumin has taken transfer out but not transfer in elsewhere.
-                        if (strlen($row[2]) == 0) {
+                        if (strlen($row[1]) == 0) {
                             $page_data .= '<tr><td><b>IGNORED</b>' . implode('</td><td>', $row) . '</td></tr>';
                             continue;
                         } 
@@ -97,22 +98,26 @@ function _manage_upload_1() {
                         $sector = $row[8];
                         $subsector = $row[9];
                         $mohalla = 'Kalimi';
-                        $query = "INSERT INTO its_data_transit (its_id,hof_id,sabeel_no,full_name,age,
+                        
+                $query = 'INSERT INTO its_data_transit (its_id,hof_id,sabeel_no,full_name,age,
                         misaq,address,gender,sector,subsector,mohallah) 
-                VALUES ('$itsid','$hofid','$sabeel','$name','$age','$misaq','$address','$gender','$sector','$subsector','$mohalla') 
-                ON DUPLICATE KEY UPDATE hof_id='$hofid',sabeel_no='$sabeel',full_name='$name',
-                age='$age',misaq='$misaq',address='$address',
-                gender='$gender',sector='$sector',subsector='$subsector',mohallah='$mohalla';";
+                VALUES (?,?,?,?,?,?,?,?,?,?,?) 
+                ON DUPLICATE KEY UPDATE hof_id=?,sabeel_no=?,full_name=?,age=?,
+                        misaq=?,address=?,gender=?,sector=?,subsector=?,mohallah=?;';
 
-                        $resp = execute_query($query, true);
+                        $resp = run_statement($query, $itsid,$hofid,$sabeel,$name,$age,
+                        $misaq,$address,$gender,$sector,$subsector,$mohalla, $hofid,$sabeel,$name,$age,
+                        $misaq,$address,$gender,$sector,$subsector,$mohalla);
                         if( $resp->count > 0) {
-                            $page_data .= '<tr><td><b>SUCCESS</b>' . implode('</td><td>', $row) . '</td></tr>';
+                            $page_data .= '<tr><td><b>SUCCESS</b></td><td>' . implode('</td><td>', $row) . '</td></tr>';
                         } else {
-                            $page_data .= '<tr><td><b>NO CHANGE</b>' . implode('</td><td>', $row) . '</td></tr>';
-                        }                        
+                            $page_data .= '<tr><td><b>NO CHANGE</b></td><td>' . implode('</td><td>', $row) . '</td></tr>';
+                        }
+
+
                     }
                 }
-                $page_data .= '</table>';
+                $page_data .= '<tbody></table>';
 
                 setAppData('page_data', $page_data);
             } else {
