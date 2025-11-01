@@ -106,6 +106,108 @@ function getPageName()
  * Database Function
  */
 
+function get_database_connection($count = 1)
+{
+    $conn = null;
+    if ($count < 10) {
+
+        try {
+            $conn = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
+            // set the PDO error mode to exception
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            // echo "Connected successfully";
+        } catch (PDOException $e) {
+            // echo "Connection failed: " . $e->getMessage();
+            usleep(pow(2, $count) * 10000);
+            return get_database_connection($count + 1);
+        }
+    }
+    return $conn;
+}
+
+function bind_query_values($statement, $value, $counter = 1)
+{
+    if (is_array($value)) {
+        foreach ($value as $val) {
+            bind_query_values($statement, $val, $counter++);
+        }
+    } else {
+        $statement->bindValue($counter, $value, PDO::PARAM_STR);
+    }
+}
+
+function create_object()
+{
+    return json_decode('{}');
+}
+
+function run_statement($query, ...$args)
+{
+    $resultData = create_object();
+    $resultData->success = false;
+    $resultData->message = 'Invalid request';
+    $resultData->count = 0;
+    $resultData->data = array();
+    $conn = get_database_connection(1);
+
+    if (!isset($conn)) {
+        $resultData->message = 'No connection found.';
+        return $resultData;
+    }
+
+    $stmt = null;
+    // Execute and Collect the result
+    try {
+        // $conn = Flight::db(false);
+        // $conn = Flight::getDBConn();
+        // Generate the statement for the given query.
+        $stmt = $conn->prepare($query);
+
+        // $counter = 1;
+        // Flight::bindVal($stmt, $counter, $args);
+        bind_query_values($stmt, $args);
+
+        $stmt->execute();
+        $numRows = $stmt->rowCount();
+        $colCount = $stmt->columnCount();
+
+        $resultData->insertedID = $conn->lastInsertId() ?? -1;
+        $resultData->success = true;
+        $resultData->message = 'Success';
+        $resultData->count = $numRows;
+        $resultData->data = array();
+
+        // This is select query..
+        if ($colCount > 0 && $numRows > 0) {
+            $allRowData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $resultData->data = json_decode(json_encode($allRowData));
+        }
+    } catch (PDOException $e) {
+        $resultData->message = $e->getMessage();
+        $resultData->success = false;
+        $resultData->count = 0;
+        // $resultData->data = array(
+        //     'data' => $e->getMessage()
+        // );
+        if ($e->errorInfo[1] == 1062) {
+            //The INSERT query failed due to a key constraint violation.
+            $resultData->message = 'Same value is used before.';
+        }
+    } catch (Exception $e2) {
+        $resultData->message = $e2->getMessage();
+        $resultData->success = false;
+        $resultData->count = 0;
+        // $resultData->data = array(
+        //     'data' => []
+        // );
+    } finally {
+        $stmt = null;
+        $conn = null;
+    }
+
+    return $resultData;
+}
+
 function execute_query($sql, $update = false, $multi = false)
 {
     global $link;
@@ -247,7 +349,6 @@ function getURISegments($uri_segments): array
     return array_filter($args, 'strlen');
 }
 
-
 function is_post()
 {
     $method = strtolower($_SERVER['REQUEST_METHOD']);
@@ -274,6 +375,13 @@ function if_not_post_redirect($page, $relativePath = true)
 {
     if (!is_post()) {
         do_redirect($page, $relativePath);
+    }
+}
+
+function do_for_post($callback)
+{
+    if (is_post()) {
+        $callback();
     }
 }
 
