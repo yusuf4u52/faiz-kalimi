@@ -1,6 +1,7 @@
 <?php
 include ('connection.php');
 include ('_authCheck.php');
+include('getHijriDate.php');
 
 
 $thali = $_POST['Thali'];
@@ -9,10 +10,7 @@ $clearhub = true;
 if (isset($_POST['action']) && $_POST['action'] == 'stop_permanant') {
 	stoppermenant($thali, $clearhub);
 
-	function stoppermenant($thali, $clearhub)
-	{
-		include('connection.php');
-		include('getHijriDate.php');
+	function stoppermenant($thali, $clearhub) {
 
 		$today = getTodayDateHijri();
 		$sql = "select id, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending from thalilist WHERE Thali = '" . $thali . "'";
