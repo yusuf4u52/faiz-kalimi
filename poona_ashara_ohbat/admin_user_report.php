@@ -103,7 +103,7 @@ foreach ($counter_types as $type) {
 <div class="content mt-4">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12 offset-sm-1 col-sm-10 offset-lg-2 col-lg-8">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-body">
                         <h2 class="text-center mb-4">Admin Report - User Recitations</h2>  

@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="content mt-4">
     <div class="container">
         <div class="row">
-            <div class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
+            <div class="col-12 offset-md-2 col-md-8 offset-xl-3 col-xl-6">
                 <div class="card">
                     <div class="card-body">
                         <a href="/poona_ashara_ohbat/index.php"><img class="img-fluid mx-auto d-block" src="ya-hussain.png" alt="Ya Hussain" width="253" height="253" /></a>

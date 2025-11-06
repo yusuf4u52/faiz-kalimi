@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="content mt-4">
     <div class="container">
         <div class="row">
-            <div class="col-12 offset-sm-1 col-sm-10 offset-lg-2 col-lg-8">
+            <div class="col-12 offset-md-1 col-md-10 offset-xl-2 col-xl-8">
                 <div class="card">
                     <div class="card-body">
                         <h2 class="text-center mb-4">Your Recitations</h2>
