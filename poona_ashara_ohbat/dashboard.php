@@ -94,9 +94,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <a class="nav-link" href="admin_report.php">View Admin Report</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="admin_user_report.php">View User Report</a>
+                        </li> 
+                        <li class="nav-item">
                             <a class="nav-link" href="admin_counters.php">Manage Counters</a>
                         </li>
                     <?php endif; ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="update_details.php">Update Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="change_password.php">Change Password</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="logout.php">Logout</a>
                     </li>

@@ -11,7 +11,16 @@
             </div>
         </div>
     </footer>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer ></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js" defer ></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js" defer ></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js" defer ></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.bootstrap5.js" defer ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" defer ></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js" defer ></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js" defer ></script>
+    <script src="/poona_ashara_ohbat/main.js" defer ></script>
     </body>
 </html>

@@ -71,7 +71,7 @@ if (isset($_GET['delete'])) {
 }
 
 // Fetch all counters
-$result = $link->query("SELECT * FROM poona_counter_types ORDER BY id ASC");
+$result = $link->query("SELECT * FROM poona_counter_types ORDER BY category ASC");
 $counters = [];
 if ($result) {
     while ($row = $result->fetch_assoc()) {
@@ -106,9 +106,18 @@ if ($result) {
                             <a class="nav-link" href="admin_report.php">View Admin Report</a>
                         </li> 
                         <li class="nav-item">
+                            <a class="nav-link" href="admin_user_report.php">View User Report</a>
+                        </li> 
+                        <li class="nav-item">
                             <a class="nav-link" href="admin_counters.php">Manage Counters</a>
                         </li>
                     <?php endif; ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="update_details.php">Update Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="change_password.php">Change Password</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="logout.php">Logout</a>
                     </li>
@@ -163,30 +172,32 @@ if ($result) {
                                 </div>
                             </div>
                         </form>
-                        <table class="table table-striped display" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Category</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($counters as $counter): ?>
+                        <div class="table-responsive">
+                            <table class="table table-striped display" width="100%">
+                                <thead>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($counter['name']); ?></td>
-                                        <td><?php echo htmlspecialchars($counter['category']); ?></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-light" onclick="editCounter(<?php echo $counter['id']; ?>, '<?php echo htmlspecialchars(addslashes($counter['name'])); ?>', '<?php echo htmlspecialchars(addslashes($counter['category'])); ?>')"><i class="bi bi-pencil-square"></i></button>
-                                            <a href="?delete=<?php echo $counter['id']; ?>" class="btn btn-sm btn-light" onclick="return confirm('Are you sure you want to delete this counter?');"><i class="bi bi-trash"></i></a>
-                                        </td>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Actions</th>
                                     </tr>
-                                <?php endforeach; ?>
-                                <?php if (empty($counters)): ?>
-                                    <tr><td colspan="2" class="text-center">No counters found.</td></tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($counters as $counter): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($counter['name']); ?></td>
+                                            <td><?php echo htmlspecialchars($counter['category']); ?></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-light" onclick="editCounter(<?php echo $counter['id']; ?>, '<?php echo htmlspecialchars(addslashes($counter['name'])); ?>', '<?php echo htmlspecialchars(addslashes($counter['category'])); ?>')"><i class="bi bi-pencil-square"></i></button>
+                                                <a href="?delete=<?php echo $counter['id']; ?>" class="btn btn-sm btn-light" onclick="return confirm('Are you sure you want to delete this counter?');"><i class="bi bi-trash"></i></a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    <?php if (empty($counters)): ?>
+                                        <tr><td colspan="2" class="text-center">No counters found.</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

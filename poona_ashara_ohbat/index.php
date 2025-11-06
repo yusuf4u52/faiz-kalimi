@@ -51,7 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <?php if ($error): ?>
                             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
                         <?php endif; ?>
-                        <form method="POST" action="">
+                        <?php if ( isset($_GET['msg']) && $_GET['msg'] == 'password_updated'): ?>
+                            <div class="alert alert-success">Your password is successfully updated. Please login again.</div>
+                        <?php endif; ?>
+                        <form method="POST" action="/poona_ashara_ohbat/index.php">
                             <div class="mb-3 row">
                                 <label for="its" class="control-label col-4">ITS (8 digit ID)</label>
                                 <div class="col-8">
@@ -73,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="mb-3 row">
                             <div class="col-8 offset-4">
                                 <p>Don't have an account? <a href="register.php">Register here</a></p>
+                                <p>Don't remember password? <a href="forgot_password.php">Click here</a></p>
                             </div>
                         </div>
                     </div>

@@ -12,7 +12,7 @@ $user_id = $_SESSION['user_id'];
 $is_admin = $_SESSION['is_admin'];
 
 // Verify user exists in database
-$stmt = $link->prepare("SELECT id, full_name, is_admin FROM poona_users WHERE id = ?");
+$stmt = $link->prepare("SELECT id, its, full_name, mobile_no, is_admin FROM poona_users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -35,11 +35,11 @@ if ($result) {
 }
 
 // Get total users
-$total_users = 0;
-$result = $link->query("SELECT COUNT(*) as total FROM poona_users");
+$result = $link->query("SELECT * FROM poona_users");
 if ($result) {
-    $row = $result->fetch_assoc();
-    $total_users = $row['total'];
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
+    }
 }
 
 // Get total recitations
@@ -106,25 +106,33 @@ foreach ($counter_types as $type) {
             <div class="col-12 offset-sm-1 col-sm-10 offset-lg-2 col-lg-8">
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="text-center mb-4">Admin Report - Total Recitations</h2>  
-                        <div class="alert alert-info">
-                            <strong>Total Users:</strong> <?php echo $total_users; ?>
-                        </div>
+                        <h2 class="text-center mb-4">Admin Report - User Recitations</h2>  
                         <div class="table-responsive">
                             <table id="report" class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Recitation Category</th>
-                                        <th>Recitation Type</th>
-                                        <th>Total Count</th>
+                                        <th>ITS No</th>
+                                        <th>Full Name</th>
+                                        <th>Mobile No</th>
+                                        <?php foreach ($counter_types as $type) { 
+                                            echo '<th>'.$type['name'].'</th>';
+                                        } ?>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($counter_types as $type): ?>
+                                    <?php foreach ($users as $user): ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($type['category']); ?></td>
-                                            <td><?php echo htmlspecialchars($type['name']); ?></td>
-                                            <td><?php echo $totals[$type['id']] ?? 0; ?></td>
+                                            <td><?php echo htmlspecialchars($user['its']); ?></td>
+                                            <td><?php echo htmlspecialchars($user['full_name']); ?></td>
+                                            <td><?php echo $user['mobile_no']; ?></td>
+                                            <?php foreach ($counter_types as $type) {
+                                                $stmt = $link->prepare("SELECT count FROM poona_recitations WHERE counter_type_id = ? AND user_id = ?");
+                                                $stmt->bind_param("ii", $type['id'], $user['id']);
+                                                $stmt->execute();
+                                                $result = $stmt->get_result();
+                                                $row = $result->fetch_assoc();
+                                                echo (isset($row['count']) ? '<td>'.$row['count'].'</td>' : '<td>0</td>');
+                                            } ?>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
