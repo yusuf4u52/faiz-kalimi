@@ -101,7 +101,7 @@ foreach ($counter_types as $type) {
     </nav>
 </header>
 <div class="content mt-4">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-12 offset-sm-1 col-sm-10 offset-lg-2 col-lg-8">
                 <div class="card">

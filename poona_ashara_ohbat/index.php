@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="mb-3 row">
                             <div class="col-8 offset-4">
                                 <p>Don't have an account? <a href="register.php">Register here</a></p>
-                                <p>Don't remember password? <a href="forgot_password.php">Click here</a></p>
+                                <p><a href="forgot_password.php">Forgot Password</a></p>
                             </div>
                         </div>
                     </div>
