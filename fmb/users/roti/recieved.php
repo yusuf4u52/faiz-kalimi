@@ -24,7 +24,7 @@ if ( isset($_GET['recieved_date']) && !empty($_GET['recieved_date']) ) {
         </div>
         <div class="row">
             <div class="col-12">
-                <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) { ?>
+                <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'hussainbarnagarwala14@gmail.com', 'gheewalamf@gmail.com'))) { ?>
                     <form id="recieveimport" class="form-horizontal my-3" method="POST"
                         action="recieveimport.php" enctype="multipart/form-data" autocomplete="off">
                         <div class="mb-3 row">
