@@ -13,7 +13,7 @@ function content_display()
             echo '<thead><tr><th>' . implode('</th><th>', $hdr) . '</th></tr></thead>';
             echo '<tbody>';
                 foreach ($data as $row) {
-                    echo "<tr><td><a href='sectorwise_report/{$row['id']}'>Sectorwise</a></td>";
+                    echo "<tr><td><a href='sectorwise_report/{$row['id']}'>Sectorwise</a> | <a href='not_filled/{$row['id']}'>Not Filled</a></td>";
                     foreach ($cols as $col) {
                         echo "<td>{$row["$col"]}</td>";                        
                     }

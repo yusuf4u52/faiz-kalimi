@@ -247,3 +247,10 @@ function add_attendance_for($its_id, $hof_id, $miqaat_id)
     VALUES ('$its_id','$hof_id','$miqaat_id', now());";
     return change_data($query);
 }
+
+function get_missing_hof($miqaat_id) {
+    $query = "select * FROM its_data WHERE mohallah = 'Kalimi' 
+    and its_id = hof_id and its_id not in 
+    ( select its_id from rsvp_miqaat_survey_data where miqaat_id = $miqaat_id) order by subsector;";
+    return fetch_data($query);
+}
