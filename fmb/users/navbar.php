@@ -174,7 +174,28 @@ if($curr_page != 'events.php') {
         </div>
     </nav>
 </header>
-<div class="content mt-4">
+<?php if($values['Total_Pending'] != 0) { ?>
+    <div class="payment-reminder mt-3">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert <?php echo( ($values['yearly_hub'] > $values['Total_Pending']) ? 'alert-info' : 'alert-danger'); ?> mb-0" role="alert">
+                        <div class="row align-items-center">
+                            <div class="col-9">
+                                <h6 class="mb-0">Request you to pay your FMB pending hub amount <strong>₹<?php echo $values['Total_Pending']; ?></strong>. Please share screenshot on <a href="https://wa.me/+917499860950 "><strong>+91 74998 60950</strong></a> for reciept.<h6>
+                            </div>
+                            <div class="col-3 text-end">
+                                <a class="btn btn-light btn-sm mb-0" href="upi://pay?pa=dbjt-fmb-kalimi@ybl&pn=D B J T TRUST K M POONA - FMB&cu=INR" id="__UPI_BUTTON__">Pay Now</a>
+                            </div>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+
+<div class="content mt-3">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">

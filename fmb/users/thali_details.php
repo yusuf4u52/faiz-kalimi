@@ -47,9 +47,18 @@ $transvalues = $transporters->fetch_assoc();
 		</li>
 	  <?php } ?>
 	  <li class="list-group-item">
+		<div class="fw-bold">Previous Due</div>
+		<?php echo '₹ '. $values['Previous_Due']; ?>
+	  </li>
+	  <li class="list-group-item">
 		<div class="fw-bold">Current Year Takhmeen</div>
 		<?php echo '₹ '. $values['yearly_hub']; ?>
 	  </li>
+	  <li class="list-group-item">
+        <div class="fw-bold">Hub Pending</div>
+        ₹<?php echo $values['Total_Pending'] + $values['Paid']; ?> -
+        ₹<?php echo $values['Paid']; ?> = ₹<?php echo $values['Total_Pending']; ?>
+      </li>
 	  <li class="list-group-item">
 		<div class="fw-bold">Is Active?</div>
 		<p class="list-group-item-text">
