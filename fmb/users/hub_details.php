@@ -12,7 +12,7 @@ if (!empty($values['yearly_hub'])) {
   <div class="card-body">
 	<h2 class="mb-3">Hub Details</h2>
 	<div class="Payment-details text-center mb-3">
-	  <img class="img-fluid mx-auto d-block mb-3" src="assets/img/fmb-account.png" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla) Acoount" width="900" height="548" />
+	  <img class="img-fluid mx-auto d-block mb-3" src="assets/img/fmb-account.avif" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla) Acoount" width="900" height="548" />
 	  <h5 class="mb-3 text-center">Your total outstanding amount is</h5>
 	  <h1 class="mb-3 text-center" style="color:#198754;"><i class="bi bi-currency-rupee"></i><?php echo $values['Total_Pending']; ?></h1>
 	  <a class="btn btn-light btn-lg mb-3" href="upi://pay?pa=dbjt-fmb-kalimi@ybl&pn=D B J T TRUST K M POONA - FMB&cu=INR" id="__UPI_BUTTON__">Pay</a>
