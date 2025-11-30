@@ -19,7 +19,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                     <form id="uploadreciept" class="form-horizontal my-3" method="POST"
                         action="uploadreciept.php" enctype="multipart/form-data" autocomplete="off">
                         <div class="mb-3 row">
-                            <label for="import_reciept" class="col-4 control-label">Import FMB Report</label>
+                            <label for="import_reciept" class="col-4 control-label">Import FMB Reciept</label>
                             <div class="col-4">
                                 <input type="file" class="form-control" name="import_reciept" accept=".xls,.xlsx" id="import_reciept">
                             </div>
@@ -39,20 +39,24 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                     $headers = array_shift($rows);
                     // Skip header row and loop through the data
                     foreach ($rows as $row) {
-                        $its = $row[0];
-                        $outstanding = str_replace(',', '', $row[3]);
-                        $outstanding = intval($outstanding);
-                        $takmeem = intval($row[6]); 
-                        if( $takmeem > $outstanding ) {
-                            $prev = 0;
-                            $paid = $takmeem - $outstanding;
-                        } else {
-                            $prev = $outstanding - $takmeem;
-                            $paid = 0;
+                        $Receipt_No  = 'FMB-'.$row[1];
+                        $its = $row[2];
+                        $date = date('Y-m-d', strtotime($row[1]));
+                        $thalilist = mysqli_query($link, "SELECT * FROM thalilist WHERE `ITS_No` = '" . $its . "' LIMIT 1");
+                        if ($thalilist->num_rows > 0) {
+                            $thali = mysqli_fetch_assoc($thalilist);
+                            $receipts = mysqli_query($link, "SELECT * FROM receipts WHERE `id` = '" . $id . "' LIMIT 1");
+                            if ($thalilist->num_rows > 0) {
+                                $rec = mysqli_fetch_assoc($thalilist);  
+                                $sql = "UPDATE receipts SET `Thali_No` = '" . $thali['Thali'] . "', `userid ` = '" . $thali['id'] . "', `name` = '" . $thali['NAME'] . "', `Amount` = '" . $row[6] . "', `Date` = '" . $date . "', `received_by` = 'saminabarnagarwala2812@gmail.com', `payment_type` = '" . $row[9] . "' WHERE `Receipt_No ` = '".$Receipt_No."'";
+                                mysqli_query($link,$sql) or die(mysqli_error($link));
+                                echo '<h4>'.$its.' reciept updated successfully</h4>';
+                            } else {
+                                $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid`, `name`, `Amount`, `Date`, `received_by`, `payment_type`) VALUES ('" . $Receipt_No . "', '" . $thali['Thali'] . "', '" . $thali['id'] . "', '" . $thali['NAME'] . "', '" . $row[6] . ", '" . $date . "', 'saminabarnagarwala2812@gmail.com', '" . $row[9] . "'')";
+                                mysqli_query($link,$sql) or die(mysqli_error($link));
+                                echo '<h4>'.$its.' reciept inserted successfully</h4>';
+                            }
                         }
-                        $sql = "UPDATE  thalilist SET `Previous_Due` = '" . $prev . "', `yearly_hub` = '" . $takmeem . "', `Paid` = '" . $paid . "' WHERE `ITS_No` = '".$its."'";
-                        mysqli_query($link,$sql) or die(mysqli_error($link));
-                        echo '<h4>'.$its.' data updated successfully</h4>';
                     }
                 } else {
                     //echo "No file uploaded.";
