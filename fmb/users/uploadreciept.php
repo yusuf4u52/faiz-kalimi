@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
     <div class="card-body">
         <div class="row align-items-center">
             <div class="col-6">
-                <h2 class="mb-3">Upload FMB Report</h2>
+                <h2 class="mb-3">Upload FMB Reciept</h2>
             </div>
         </div>
         <div class="row">
@@ -45,10 +45,10 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                         $thalilist = mysqli_query($link, "SELECT * FROM thalilist WHERE `ITS_No` = '" . $its . "' LIMIT 1");
                         if ($thalilist->num_rows > 0) {
                             $thali = mysqli_fetch_assoc($thalilist);
-                            $receipts = mysqli_query($link, "SELECT * FROM receipts WHERE `id` = '" . $id . "' LIMIT 1");
+                            $receipts = mysqli_query($link, "SELECT * FROM receipts WHERE `Receipt_No` = '" . $Receipt_No . "' LIMIT 1");
                             if ($thalilist->num_rows > 0) {
                                 $rec = mysqli_fetch_assoc($thalilist);  
-                                $sql = "UPDATE receipts SET `Thali_No` = '" . $thali['Thali'] . "', `userid ` = '" . $thali['id'] . "', `name` = '" . $thali['NAME'] . "', `Amount` = '" . $row[6] . "', `Date` = '" . $date . "', `received_by` = 'saminabarnagarwala2812@gmail.com', `payment_type` = '" . $row[9] . "' WHERE `Receipt_No ` = '".$Receipt_No."'";
+                                $sql = "UPDATE receipts SET `Thali_No` = '" . $thali['Thali'] . "', `userid` = '" . $thali['id'] . "', `name` = '" . $thali['NAME'] . "', `Amount` = '" . $row[6] . "', `Date` = '" . $date . "', `received_by` = 'saminabarnagarwala2812@gmail.com', `payment_type` = '" . $row[9] . "' WHERE `Receipt_No ` = '".$Receipt_No."'";
                                 mysqli_query($link,$sql) or die(mysqli_error($link));
                                 echo '<h4>'.$its.' reciept updated successfully</h4>';
                             } else {
