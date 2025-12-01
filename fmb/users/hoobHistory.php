@@ -25,7 +25,7 @@ include('navbar.php');
 		  echo "<tr>";
 		  echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
 		  echo "<td>" . nl2br($row['Amount']) . "</td>";
-		  echo "<td class=\"hijridate\">" . nl2br($row['Date']) . "</td>";
+		  echo "<td data-sort="<?php echo strtotime($row['date']); ?>">" . <?php echo date('d M Y', strtotime($row['date'])) . "</td>";
 		  echo "</tr>";
 		}
 		?>
