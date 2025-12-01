@@ -52,7 +52,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                                 mysqli_query($link,$sql) or die(mysqli_error($link));
                                 echo '<h4>'.$its.' reciept updated successfully</h4>';
                             } else {
-                                echo $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid`, `name`, `Amount`, `Date`, `received_by`, `payment_type`) VALUES ('" . $Receipt_No . "', '" . $thali['Thali'] . "', '" . $thali['id'] . "', '" . $thali['NAME'] . "', '" . $row[6] . ", '" . $date . "', 'saminabarnagarwala2812@gmail.com', '" . $row[9] . "')";
+                                echo $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid`, `name`, `Amount`, `Date`, `received_by`, `payment_type`) VALUES ('" . $Receipt_No . "', '" . $thali['Thali'] . "', '" . $thali['id'] . "', '" . $thali['NAME'] . "', '" . $row[6] . "', '" . $date . "', 'saminabarnagarwala2812@gmail.com', '" . $row[9] . "')";
                                 mysqli_query($link,$sql) or die(mysqli_error($link));
                                 echo '<h4>'.$its.' reciept inserted successfully</h4>';
                             }
