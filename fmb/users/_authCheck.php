@@ -47,6 +47,7 @@ $rights = array(
 		"/fmb/users/transporter/report.php",
 		"/fmb/users/pendingactions.php",
 		"/fmb/users/_stop_thali_admin.php",
+		"/fmb/users/uploadoutstanding.php",
 		"/fmb/users/uploadreciept.php",
 		"/fmb/sms/index.php"
 	),
