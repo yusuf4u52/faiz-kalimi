@@ -17,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
             <div class="col-12">
                 <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) { ?>
                     <form id="uploadreciept" class="form-horizontal my-3" method="POST"
-                        action="uploadreciept.php" enctype="multipart/form-data" autocomplete="off">
+                        action="uploadoutstanding.php" enctype="multipart/form-data" autocomplete="off">
                         <div class="mb-3 row">
                             <label for="import_reciept" class="col-4 control-label">Import FMB Report</label>
                             <div class="col-4">
