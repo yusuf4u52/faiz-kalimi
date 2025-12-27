@@ -41,7 +41,7 @@ if( $isInRange ) {
 						<hr>
 	  					<h2 class="mb-4 text-center">Feedback</h2>
                         <?php if( !$isInRange ) {
-                            echo '<h5>Feedback will be live from <strong class="text-danger">Saturday: 01:00 PM</strong> to <strong class="text-danger">Sunday: 11:30 PM</strong> for this week.</h5>';
+                            echo '<h5>Feedback will be live from <strong class="text-danger">Monday: 01:00 PM</strong> to <strong class="text-danger">Sunday: 11:30 PM</strong> for this week.</h5>';
                         } else {
                             if (isset($msg)) {
                                 $hofName = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_POST['thali'] . "' AND `hardstop` != 1") or die(mysqli_error($link)); 
