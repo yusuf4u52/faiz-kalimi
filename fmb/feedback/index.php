@@ -5,11 +5,11 @@ date_default_timezone_set('Asia/Kolkata');
 $now = new DateTime();
 $dayOfWeek = $now->format('w'); // 0 (for Sunday) through 6 (for Saturday)
 $time = $now->format('H:i'); // Current time in HH:MM
-echo $isInRange = false;
-if ($dayOfWeek == 1 && $time >= '13:00') {
-    echo $isInRange = true;
+$isInRange = false;
+if ($dayOfWeek >= 1 && $time >= '13:00') {
+    $isInRange = true;
 } elseif ($dayOfWeek == 0 && $time <= '23:30') { 
-    echo $isInRange = true;
+    $isInRange = true;
 }
 if( $isInRange ) {
     if (isset($_POST['action']) && $_POST['action'] == 'feedback_menu') {
