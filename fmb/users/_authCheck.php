@@ -49,6 +49,7 @@ $rights = array(
 		"/fmb/users/_stop_thali_admin.php",
 		"/fmb/users/uploadoutstanding.php",
 		"/fmb/users/uploadreciept.php",
+		"/fmb/users/uploadsector.php",
 		"/fmb/sms/index.php"
 	),
 	"staff" => array(
