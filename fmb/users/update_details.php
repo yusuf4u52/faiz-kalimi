@@ -8,7 +8,6 @@ if ($_POST) {
   $_POST['address'] = str_replace("'", "", $_POST['address']);
   mysqli_query($link, "UPDATE thalilist set
                       CONTACT='" . $_POST["contact"] . "',
-                      Full_Address='" . mysqli_real_escape_string($link, $_POST["address"]) . "',
                       ITS_No='" . $_POST["its"] . "',
                       wingflat='" . $_POST["wingflat"] . "',
                       society='" . $_POST["society"] . "',
@@ -16,9 +15,13 @@ if ($_POST) {
                       WHERE Thali = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
 
   if ($_POST['society'] != $_SESSION['old_society']) {
-    mysqli_query($link, "UPDATE thalilist set Transporter=NULL, sector = NULL, subsector = NULL where id ='" . $_SESSION['thaliid'] . "'");
-    mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_SESSION['thaliid'] . "' and `Operation` in ('Update Address') and processed = 0") or die(mysqli_error($link));
-    mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`) VALUES ('" . $_SESSION['thali'] . "','" . $_SESSION['thaliid'] . "', 'Update Address','" . $today . "')") or die(mysqli_error($link));
+		$checksociety =  mysqli_query($link , "SELECT * FROM thalilist where society = '" . $_POST['society'] . "' LIMIT 1") or die(mysqli_error($link));
+       	if ($checksociety->num_rows > 0) {
+			$row = $checksociety->fetch_assoc();
+			mysqli_query($link, "UPDATE thalilist set Transporter= '" . $row['Transporter'] . "', sector = '" . $row['sector'] . "', subsector = NULL, Full_Address = '". $row['Full_Address'] ."' where id ='" . $_SESSION['thaliid'] . "'");
+			mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_SESSION['thaliid'] . "' and `Operation` in ('Update Address') and processed = 0") or die(mysqli_error($link));
+			mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`) VALUES ('" . $_SESSION['thali'] . "','" . $_SESSION['thaliid'] . "', 'Update Address','" . $today . "')") or die(mysqli_error($link));
+	  	}
   }
 
   if(!empty($_POST['second_email'])) {
@@ -119,30 +122,6 @@ $_SESSION['active'] = $Active;
 			required='required' name="whatsapp" value='<?php echo $WhatsApp; ?>'>
 		</div>
 	  </div>
-	  <?php if ($yearly_hub >= 72000) { ?>
-		<!-- <div class="mb-3 row">
-			<label class="col-3 control-label">Aata Required</label>
-			<div class="col-9">
-			  <select class="form-control" name="aata" required='required'>
-				<option value='' <?php echo (is_null($aata)) ? "selected" : ""; ?>></option>
-				<option value='0' <?php echo ($aata == '0') ? "selected" : ""; ?>>0 kg</option>
-				<option value='5' <?php echo ($aata == '5') ? "selected" : ""; ?>>5 kg</option>
-				<?php if ($thalisize == 'Medium' || $thalisize == 'Large') { ?>
-				  <option value='10' <?php echo ($aata == '10') ? "selected" : ""; ?>>10 kg</option>
-				<?php }
-				if ($thalisize == 'Large') { ?>
-				  <option value='15' <?php echo ($aata == '15') ? "selected" : ""; ?>>15 kg</option>
-				<?php } ?>
-			  </select>
-			</div>
-		  </div> -->
-		<!-- <div class="mb-3 row">
-			<label for="niyazdate" class="col-3 control-label">Niyaz Date</label>
-			<div class="col-9">
-			  <input type="text" class="form-control" id="niyazdate" name="niyazdate" value='<?php echo $niyazdate; ?>' <?php echo !empty($niyazdate) ? "disabled" : ""; ?>>
-			</div>
-		  </div>-->
-	  <?php } ?>
 	  <div class="mb-3 row">
 		<label class="col-3 control-label">Wing/Flat</label>
 		<div class="col-9">
@@ -166,13 +145,6 @@ $_SESSION['active'] = $Active;
 			}
 			?>
 		  </select>
-		</div>
-	  </div>
-	  <div class="mb-3 row">
-		<label for="inputAddress" class="col-3 control-label">Full Address</label>
-		<div class="col-9">
-		  <textarea class="form-control" id="inputAddress"
-			name="address"><?php echo $Full_Address; ?></textarea>
 		</div>
 	  </div>
 	  <div class="mb-3 row">
