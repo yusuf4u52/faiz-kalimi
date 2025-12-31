@@ -6,9 +6,11 @@ $now = new DateTime();
 $dayOfWeek = $now->format('w'); // 0 (for Sunday) through 6 (for Saturday)
 $time = $now->format('H:i'); // Current time in HH:MM
 $isInRange = false;
-if ($dayOfWeek >= 1 && $time >= '13:00') {
+if ($dayOfWeek == 1 && $time >= '13:00') {
     $isInRange = true;
-} elseif ($dayOfWeek == 0 && $time <= '23:30') { 
+} elseif ($dayOfWeek >= 2 && $dayOfWeek <= 6) {
+    $isInRange = true;
+} elseif ($dayOfWeek == 0 && $time <= '23:30') {
     $isInRange = true;
 }
 if( $isInRange ) {
