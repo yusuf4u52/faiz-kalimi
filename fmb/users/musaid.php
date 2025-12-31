@@ -97,7 +97,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 													<?php echo $values['Thali']; ?>
 													&nbsp;
 													<a data-bs-toggle="modal" href="#details-<?php echo $values['Thali']; ?>">
-														<img src="images/view.avif" style="width:20px;height:20px;">
+														<img src="assets/img/view.avif" style="width:20px;height:20px;">
 													</a>
 												</td>
 												<td><?php echo $values['tiffinno']; ?></td>
