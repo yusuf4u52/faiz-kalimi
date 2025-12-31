@@ -62,7 +62,7 @@ if (isset($_GET['year'])) {
     $receipts_tablename = "receipts_" . $_GET['year'];
   }
 
-  $query = "SELECT id, Thali, tiffinno, NAME, CONTACT, Active, Transporter, thalisize, extraRoti, yearly_hub, ITS_No, Email_ID, SEmail_ID, thalicount, Thali_start_date, Thali_stop_date, Full_Address, musaid, Paid, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist";
+  $query = "SELECT id, Thali, tiffinno, NAME, CONTACT, Active, Transporter, thalisize, wingflat, society, extraRoti, yearly_hub, ITS_No, Email_ID, SEmail_ID, thalicount, Thali_start_date, Thali_stop_date, Full_Address, musaid, Paid, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist";
   if (!empty($_GET['thalino'])) {
     $query .= " WHERE Thali LIKE '" . addslashes($_GET['thalino']) . "'";
   } else if (!empty($_GET['tiffinno'])) {
