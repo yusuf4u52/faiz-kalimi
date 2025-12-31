@@ -95,8 +95,8 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
         <?php echo $values['Transporter']; ?>
       </li>
       <li class="list-group-item">
-        <div class="fw-bold">Address</div>
-        <?php echo $values['Full_Address']; ?>
+        <div class="fw-bold">Full Address</div>
+        <?php echo $values['wingflat']; ?>, <?php echo $values['society']; ?>, <?php echo $values['Full_Address']; ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Start Date</div>
