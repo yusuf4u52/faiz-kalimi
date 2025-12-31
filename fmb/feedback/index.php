@@ -73,7 +73,14 @@ if( $isInRange ) {
                                         <form class="form-horizontal" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" autocomplete="off">
                                             <input type="hidden" name="action" value="feedback_menu" />
                                             <input type="hidden" name="thali" value="<?php echo $takesFmb['Thali']; ?>" />
-                                            <?php $result = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` BETWEEN DATE_ADD(CURDATE(), INTERVAL -WEEKDAY(CURDATE()) DAY) AND DATE_ADD(CURDATE(), INTERVAL (5 - WEEKDAY(CURDATE())) DAY) AND `menu_type` = 'thaali' order by `menu_date` ASC") or die(mysqli_error($link));                                
+                                            <?php $today = date('Y-m-d');
+											$yesterday = date('Y-m-d', strtotime('-1 day'));
+											$weekStart = date('Y-m-d', strtotime('monday this week'));
+											$endDate = $yesterday;
+											if ($time >= '13:00') {
+											    $endDate = $today;
+											}
+											$result = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` BETWEEN '$weekStart' AND '$endDate' AND `menu_type` = 'thaali' order by `menu_date` ASC") or die(mysqli_error($link));                                
                                             echo '<div class="alert alert-info" role="alert">Salaam <strong class="text-capitalize">'.strtolower($takesFmb['NAME']).'</strong>, your feedback is valuable to us. Please submit or review your feedback.</div>';
                                             while ($menu = mysqli_fetch_assoc($result)) {
                                                 $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '".$menu['menu_date']."'  AND `thali` = '" . $takesFmb['Thali'] . "' order by `menu_date` ASC") or die(mysqli_error($link));
