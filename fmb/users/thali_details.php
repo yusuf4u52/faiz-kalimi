@@ -72,8 +72,8 @@ $transvalues = $transporters->fetch_assoc();
 		</p>
 	  </li>
 	  <li class="list-group-item">
-		<div class="fw-bold">Address</div>
-		<p class="list-group-item-text"><?php echo $values['Full_Address']; ?></p>
+		<div class="fw-bold">Full Address</div>
+		<p class="list-group-item-text"><?php echo $values['wingflat']; ?>, <?php echo $values['society']; ?>, <?php echo $values['Full_Address']; ?></p>
 	  </li>
 
 	  <?php
