@@ -41,7 +41,7 @@ $transvalues = $transporters->fetch_assoc();
       </li>
 	  <?php if ($musaid_details) { ?>
 		<li class="list-group-item">
-		  <div class="fw-bold">Musaid</div>
+		  <div class="fw-bold">Masool</div>
 		  <?php echo $musaid_details['username']; ?> | <a 
 				href="https://wa.me/+91<?php echo $musaid_details['mobile']; ?>"><?php echo $musaid_details['mobile']; ?></a>
 		</li>
