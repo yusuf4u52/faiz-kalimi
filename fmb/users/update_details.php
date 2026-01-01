@@ -18,7 +18,7 @@ if ($_POST) {
 		$checksociety =  mysqli_query($link , "SELECT * FROM thalilist where society = '" . $_POST['society'] . "' LIMIT 1") or die(mysqli_error($link));
        	if ($checksociety->num_rows > 0) {
 			$row = $checksociety->fetch_assoc();
-			mysqli_query($link, "UPDATE thalilist set Transporter= '" . $row['Transporter'] . "', sector = '" . $row['sector'] . "', subsector = NULL, Full_Address = '". $row['Full_Address'] ."' where id ='" . $_SESSION['thaliid'] . "'");
+			mysqli_query($link, "UPDATE thalilist set Transporter= '" . $row['Transporter'] . "', sector = '" . $row['sector'] . "', subsector = NULL, musaid = '". $row['musaid'] ."', Full_Address = '". $row['Full_Address'] ."' where id ='" . $_SESSION['thaliid'] . "'");
 			mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_SESSION['thaliid'] . "' and `Operation` in ('Update Address') and processed = 0") or die(mysqli_error($link));
 			mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`) VALUES ('" . $_SESSION['thali'] . "','" . $_SESSION['thaliid'] . "', 'Update Address','" . $today . "')") or die(mysqli_error($link));
 	  	}
