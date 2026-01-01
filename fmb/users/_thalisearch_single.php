@@ -79,9 +79,9 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT F
       </li>
       <?php if ($musaid_details) { ?>
         <li class="list-group-item">
-          <div class="fw-bold">Musaid</div>
-          <?php echo $musaid_details['NAME']; ?> | <a
-            href="tel:<?php echo $musaid_details['CONTACT']; ?>"><?php echo $musaid_details['CONTACT']; ?></a></strong>
+          <div class="fw-bold">Masool</div>
+          <?php echo $musaid_details['username']; ?> | <a
+            href="tel:<?php echo $musaid_details['mobile']; ?>"><?php echo $musaid_details['mobile']; ?></a></strong>
           </p>
         </li>
       <?php } ?>
