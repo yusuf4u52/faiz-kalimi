@@ -2,7 +2,7 @@
 $comments_query = "SELECT `comments`.*, `thalilist`.`NAME` FROM `comments` INNER JOIN `thalilist` on `comments`.`author_id` = `thalilist`.`id`
 WHERE `comments`.`user_id` = '" . $values['id'] . "' ORDER BY `comments`.`created` DESC ";
 $comments_result = mysqli_query($link, $comments_query);
-$musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT FROM thalilist where Email_id = '" .
+$musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobile FROM users where email = '" .
   $values['musaid'] . "'")); ?>
 <ul class="nav nav-tabs mb-4" id="thaaliTab" role="thalilist">
   <li class="nav-item" role="presentation">
