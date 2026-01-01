@@ -8,7 +8,7 @@ $curr_page = basename($_SERVER['PHP_SELF']);
 $query = mysqli_query($link , "SELECT * FROM thalilist  where Email_ID = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
 $values = $query->fetch_assoc();
 
-$musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT NAME, CONTACT FROM thalilist where Email_ID = '" . $values['musaid'] . "'"));
+$musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobile FROM users where email = '" . $values['musaid'] . "'"));
 
 $_SESSION['thaliid'] = $values['id'];
 $_SESSION['thali'] = $values['Thali'];
