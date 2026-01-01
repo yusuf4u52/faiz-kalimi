@@ -27,7 +27,7 @@ class Examples extends CI_Controller
 	function faiz()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizlife@gmail.com','tinwalaabizer@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','tinwalaabizer@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 
@@ -42,7 +42,7 @@ class Examples extends CI_Controller
 	function transporter_count()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizlife@gmail.com','tzabuawala@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','tzabuawala@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 
@@ -57,7 +57,7 @@ class Examples extends CI_Controller
 	function notpickedup()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizlife@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 
@@ -72,7 +72,7 @@ class Examples extends CI_Controller
 	function daily_hisab_items()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizlife@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 
@@ -87,7 +87,7 @@ class Examples extends CI_Controller
 	function daily_menu_count()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizlife@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 
@@ -102,7 +102,7 @@ class Examples extends CI_Controller
 	function payments()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizlife@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 
@@ -120,7 +120,7 @@ class Examples extends CI_Controller
 	function sf_hisab()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizlife@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 
@@ -135,7 +135,7 @@ class Examples extends CI_Controller
 	function receipts()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizlife@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 
@@ -152,7 +152,7 @@ class Examples extends CI_Controller
 	function change()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizlife@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else {
 			header("Location: /fmb/index.php");
 		}
@@ -170,7 +170,7 @@ class Examples extends CI_Controller
 	function event_response()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizlife@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 
