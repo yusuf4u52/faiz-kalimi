@@ -21,10 +21,10 @@
                     <?php if (isset($_SESSION['role'])) { ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/musaid.php">Musaid</a></li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com', 'tinwalaabizer@gmail.com', 'saminabarnagarwala2812@gmail.com'))) { ?>
+                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizagasiyawala@gmail.com', 'tinwalaabizer@gmail.com', 'saminabarnagarwala2812@gmail.com'))) { ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/thalisearch.php">Thaali Search</a></li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) { ?>
+                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com'))) { ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Speacial Thalis</a>
                             <ul class="dropdown-menu">
@@ -33,7 +33,7 @@
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'aliasgaraurangabadwala@gmail.com'))) {
+                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com', 'aliasgaraurangabadwala@gmail.com'))) {
                         ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Menu Management</a>
@@ -45,7 +45,7 @@
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'hussainbarnagarwala14@gmail.com', 'abbas.saifee5@gmail.com', 'saminabarnagarwala2812@gmail.com', 'gheewalamf@gmail.com', 'zahradhorajiwala0@gmail.com'))) { ?>
+                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com', 'hussainbarnagarwala14@gmail.com', 'abbas.saifee5@gmail.com', 'saminabarnagarwala2812@gmail.com', 'gheewalamf@gmail.com', 'zahradhorajiwala0@gmail.com'))) { ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Roti Management</a>
                             <ul class="dropdown-menu">
@@ -56,7 +56,7 @@
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizlife@gmail.com', 'taherhafiji@gmail.com', 'saminabarnagarwala2812@gmail.com'))) { ?>
+                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com', 'taherhafiji@gmail.com', 'saminabarnagarwala2812@gmail.com'))) { ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Transporter Management</a>
                             <ul class="dropdown-menu">
@@ -68,7 +68,7 @@
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com', 'tinwalaabizer@gmail.com'))) { ?>
+                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizagasiyawala@gmail.com', 'tinwalaabizer@gmail.com'))) { ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/pendingactions.php">Pending Actions</a></li>
                         <!--<li class="nav-item"><a class="nav-link" href="/fmb/users/_daily_hisab_entry.php">Daily Hisab</a></li>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/requestarchive.txt">CR NR</a></li>
