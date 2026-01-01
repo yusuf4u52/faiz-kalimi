@@ -46,7 +46,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 <div class="accordion" id="accordionMusaid">
 	<?php
 	foreach ($musaid_list as $musaid) {
-		$result = mysqli_query($link, "SELECT * FROM thalilist where Total_Pending > 2 AND Transporter IS NOT NULL AND musaid='" . $musaid['email'] . "' order by `Paid %`");
+		$result = mysqli_query($link, "SELECT * FROM thalilist where Total_Pending > 0 AND Transporter IS NOT NULL AND musaid='" . $musaid['email'] . "' order by `Paid %`");
 		$thali_details = mysqli_fetch_all($result, MYSQLI_ASSOC);
 		$musaid_thali_count = count($thali_details);
 		if ($musaid_thali_count > 0) {
