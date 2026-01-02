@@ -69,10 +69,10 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 							<table class="table table-striped table-bordered display" style="width:100%">
 								<thead>
 									<tr>
-										<th scope="col">Thali#</th>
-										<th scope="col">Tiffin#</th>
+										<th scope="col">Sabeel No</th>
+										<th scope="col">Thali No</th>
 										<th scope="col">Action</th>
-										<th scope="col">Active</th>
+										<th scope="col">Sabeel Type</th>
 										<th scope="col">Name</th>
 										<th scope="col">Total Hub</th>
 										<th scope="col">Pending</th>
@@ -110,14 +110,8 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 														?>
 													<a target="_blank"
 														href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo ($msg); ?>">WhatsApp</a>
-													<!-- <?php if ($values['Active'] == '1') { ?>
-															<a href="#" data-key="startstopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a>
-														<?php } else { ?>
-															<a href="#" data-key="startstopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a>
-														<?php } ?> -->
 												</td>
-												<td><?php echo $values['Active'] ? '<span class="label label-success">Active</span>' : '<span class="label label-danger">Inactive</span>'; ?>
-												</td>
+												<td><?php echo $values['sabeelType'] ?></td>
 												<td><?php echo $values['NAME']; ?></td>
 												<td><?php echo $values['yearly_hub']; ?></td>
 												<td><?php echo $values['Total_Pending']; ?></td>
