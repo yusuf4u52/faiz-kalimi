@@ -15,7 +15,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
         </div>
         <div class="row">
             <div class="col-12">
-                <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizlife@gmail.com'))) { ?>
+                <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com'))) { ?>
                     <form id="uploadreciept" class="form-horizontal my-3" method="POST"
                         action="uploadoutstanding.php" enctype="multipart/form-data" autocomplete="off">
                         <div class="mb-3 row">
