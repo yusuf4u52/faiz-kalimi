@@ -39,7 +39,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                     $headers = array_shift($rows);
                     // Skip header row and loop through the data
                     foreach ($rows as $row) {
-                        $Receipt_No  = 'FMB-'.$row[0];
+                        $Receipt_No  = $row[0];
                         $its = $row[2];
                         $date = date('Y-m-d', strtotime($row[1]));
                         $thalilist = mysqli_query($link, "SELECT * FROM thalilist WHERE `ITS_No` = '" . $its . "' LIMIT 1");
