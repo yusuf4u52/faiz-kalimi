@@ -117,6 +117,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
       </li>
       <?php if($values['Total_Pending'] > 0) { ?>
         <li class="list-group-item">
+          <div class="fw-bold">Whatsapp Mumin for Hub</div>
           <?php $msg = "Salaam " . $values['NAME'] . ", %0A%0AAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Iltemas che k aapni pending hoob jald si jald ada kariye ane hamne FMB khidmat team ne yaari aapiye.
           %0A%0ASabil - " . $values['Thali'] . "
     			%0APending Hoob - " . $values['Total_Pending']
