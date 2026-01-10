@@ -115,7 +115,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         ₹<?php echo $values['Total_Pending'] + $values['Paid']; ?> -
         ₹<?php echo $values['Paid']; ?> = ₹<?php echo $values['Total_Pending']; ?>
       </li>
-      <?php <?php if($values['Total_Pending'] > 0) { ?>
+      <?php if($values['Total_Pending'] > 0) { ?>
         <li class="list-group-item">
           <?php $msg = "Salaam " . $values['NAME'] . ", %0A%0AAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Iltemas che k aapni pending hoob jald si jald ada kariye ane hamne FMB khidmat team ne yaari aapiye.
           %0A%0ASabil - " . $values['Thali'] . "
