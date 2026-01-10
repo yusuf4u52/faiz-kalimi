@@ -115,6 +115,15 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         ₹<?php echo $values['Total_Pending'] + $values['Paid']; ?> -
         ₹<?php echo $values['Paid']; ?> = ₹<?php echo $values['Total_Pending']; ?>
       </li>
+      <?php <?php if($values['Total_Pending'] > 0) { ?>
+        <li class="list-group-item">
+          <?php $msg = "Salaam " . $values['NAME'] . ", %0A%0AAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Iltemas che k aapni pending hoob jald si jald ada kariye ane hamne FMB khidmat team ne yaari aapiye.
+          %0A%0ASabil - " . $values['Thali'] . "
+    			%0APending Hoob - " . $values['Total_Pending']
+  				?>
+  				<a target="_blank" href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo ($msg); ?>">WhatsApp</a>
+        </li>
+      <?php } ?>
       <li class="list-group-item">
         <div class="fw-bold">Thali Delivered</div>
         <?php echo round($values['thalicount'] * 100 / $max_days[0]); ?>%
@@ -280,7 +289,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
             echo "<tr>";
             echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
             echo "<td>" . nl2br($row['Amount']) . "</td>";
-            echo "<td class=\"hijridate\">" . nl2br($row['Date']) . "</td>";
+            echo "<td data-sort=" . strtotime($row['Date']) . ">" . date('d M Y', strtotime($row['Date'])) . "</td>";
             echo "</tr>";
           }
           ?>
