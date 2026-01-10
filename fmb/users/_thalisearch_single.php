@@ -10,18 +10,18 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
       role="tab" aria-controls="thaali" aria-selected="true">Thaali Details</button>
   </li>
   <li class="nav-item" role="presentation">
+    <button class="nav-link" id="stop-tab" data-bs-toggle="tab" data-bs-target="#stop" type="button" role="tab"
+      aria-controls="menu" aria-selected="false">Stop Thaali</button>
+  </li>
+  <li class="nav-item" role="presentation">
     <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab"
       aria-controls="menu" aria-selected="false">Menu Details</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="stop-tab" data-bs-toggle="tab" data-bs-target="#stop" type="button" role="tab"
-      aria-controls="menu" aria-selected="false">Stop Thaali</button>
-  </li>
-  <!--<li class="nav-item" role="presentation">
     <button class="nav-link" id="receipt-tab" data-bs-toggle="tab" data-bs-target="#receipt" type="button" role="tab"
       aria-controls="receipt" aria-selected="false">Receipt</button>
   </li>
-  <li class="nav-item" role="presentation">
+  <!--<li class="nav-item" role="presentation">
     <button class="nav-link" id="comment-tab" data-bs-toggle="tab" data-bs-target="#comment" type="button" role="tab"
       aria-controls="comment" aria-selected="false">Comments</button>
   </li>-->
@@ -258,7 +258,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         echo '<h5 class="text-center mb-3">Currently you has no stop dates.</h5>';
     } mysqli_free_result($stop_dates); ?>
   </div>
-  <!--<div class="tab-pane fade" id="receipt" role="tabpanel" aria-labelledby="receipt-tab">
+  <div class="tab-pane fade" id="receipt" role="tabpanel" aria-labelledby="receipt-tab">
     <h4 class="mb-3">Receipt Details</h4>
     <div class="table-responsive">
       <table class="table table-striped display" width="100%">
@@ -288,7 +288,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
       </table>
     </div>
   </div>
-  <div class="tab-pane fade" id="comment" role="tabpanel" aria-labelledby="comment-tab">
+  <!--<div class="tab-pane fade" id="comment" role="tabpanel" aria-labelledby="comment-tab">
     <h4 class="mb-3">Comments</h4>
     <form method="post" autocomplete="off">
       <textarea name="comment" class="form-control" placeholder="Write a comment..." rows="3"></textarea>
