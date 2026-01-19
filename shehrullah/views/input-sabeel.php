@@ -5,10 +5,8 @@ do_for_post('_handle_form_submission');
 function content_display()
 {
     $url = getAppData('BASE_URI');
-    // $q = $_GET['test'] ?? 'real';
-    // if( $q === 'test' ) {
     ?>
-    <div class="card">
+    <!-- <div class="card">
         <div class="card-header">
             <h4 class="card-title">FMB - Lailatul Qadr Niyat</h4>
             <p class="card-description">Enter HOF ID and Search</p>
@@ -26,9 +24,8 @@ function content_display()
                 </div>
             </form>            
         </div>
-    </div>
-    <?php //} ?>
-    <!-- <div class="card">
+    </div> -->
+    <div class="card">
         <div class="card-header">
             <h4 class="card-title">Sabeel Search</h4>
             <p class="card-description"> Enter sabeel number and enter </p>
@@ -46,7 +43,8 @@ function content_display()
                 </div>
             </form>            
         </div>
-    </div> -->
+    </div>
+
     <!-- <br/>
     <hr/>
     <br/>
@@ -70,39 +68,40 @@ function _handle_form_submission()
     
 }
 
-// function sabeel_search() {
-//     $sabeel = $_POST['sabeel'];
-//     $sabeel_data = get_thaalilist_data($sabeel);
-//     if (is_null($sabeel_data)) {
-//         do_redirect_with_message('/input-sabeel', 'No records found for input ' . $sabeel . '. Enter correct sabeel number or HOF ITS.');
-//     }
+function sabeel_search() {
+    $sabeel = $_POST['sabeel'];
+    $sabeel_data = get_thaalilist_data($sabeel);
+    if (is_null($sabeel_data)) {
+        do_redirect_with_message('/input-sabeel', 'No records found for input ' . $sabeel . '. Enter correct sabeel number or HOF ITS.');
+    }
 
-//     $hof_id = $sabeel_data->ITS_No;
-//     setAppData('hof_id', $hof_id);
+    $hof_id = $sabeel_data->ITS_No;
+    setAppData('hof_id', $hof_id);
 
-//     $hof_data = get_hof_data($hof_id);
-//     if (is_null($hof_data)) {
-//         do_redirect_with_message('/input-sabeel', "This is not a HOF ID");
-//     }
+    $hof_data = get_hof_data($hof_id);
+    if (is_null($hof_data)) {
+        do_redirect_with_message('/input-sabeel', "This is not a HOF ID");
+    }
 
-//     if (intval($hof_data->sector) === 7) {
-//         if( $hof_id = 30359589 ) {
-//             do_redirect('/vjb.slot_booking/' . do_encrypt($sabeel));
-//         }
-//         do_redirect_with_message('/input-sabeel', 'Please contact Hatimi Hills Markaz for registration.');
-//     }
+    $hijri_year = get_current_hijri_year();
+    setAppData('hijri_year', $hijri_year);
 
-//     $hijri_year = get_current_hijri_year();
-//     setAppData('hijri_year', $hijri_year);
+    //This need to be revised as the new sector is created for E building
+    if (intval($hof_data->sector) === 7) {
+        if( $hof_id = 30359589 ) {
+            do_redirect('/vjb.slot_booking/' . do_encrypt($sabeel));
+        }
+        do_redirect_with_message('/input-sabeel', 'Please contact Hatimi Hills Markaz for registration.');
+    }
 
-//     $attendees_data = get_attendees_data_for($hof_id, $hijri_year, false);
-//     if (is_null($attendees_data)) {
-//         do_redirect_with_message('/input-sabeel', 'Error: Seems your ITS (' . $hof_id . ') belong to other mohallah. Please contact jamaat office.');
-//     }
+    $attendees_data = get_attendees_data_for($hof_id, $hijri_year, false);
+    if (is_null($attendees_data)) {
+        do_redirect_with_message('/input-sabeel', 'Error: Seems your ITS (' . $hof_id . ') belong to other mohallah. Please contact jamaat office.');
+    }
 
-//     $enc_sabeel = do_encrypt($sabeel);
-//     do_redirect('/input-attendees/' . $enc_sabeel);
-// }
+    $enc_sabeel = do_encrypt($sabeel);
+    do_redirect('/input-attendees/' . $enc_sabeel);
+}
 
 function hof_for_fmb() {
     $hof_id = $_POST['hof_id'];

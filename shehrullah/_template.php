@@ -22,7 +22,7 @@ $hijri = get_current_hijri_year() ?? 0;
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Shehrullah <?=$hijri?> - (AeK)</title>
+    <title>Shehrullah(AeK)</title>
     <link rel="stylesheet" href="<?= $url ?>/_assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="<?= $url ?>/_assets/vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="<?= $url ?>/_assets/css/style.css">
@@ -56,7 +56,7 @@ $hijri = get_current_hijri_year() ?? 0;
                                     <span class="availability-status online"></span>
                                 </div> -->
                                 <div class="nav-profile-text">
-                                    <p class="mb-1 text-black"><?=$udata->name?></p>
+                                    <p class="mb-1 text-black"><?=$udata->name??''?></p>
                                 </div>
                             </a>
                             <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">

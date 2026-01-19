@@ -10,7 +10,6 @@ function is_user_role($role)
 {
     $userData = getSessionData(THE_SESSION_ID);
     $roles = $userData->roles;
-
     return in_array($role, $roles);
 }
 
@@ -214,7 +213,7 @@ function get_thaalilist_data($sabeel_hof)
 
 
     $query = 'SELECT Thali, NAME, CONTACT, sabeelType, ITS_No, 
-    Email_ID,Full_Address,WhatsApp 
+    Email_ID,Full_Address,WhatsApp, sector
     FROM thalilist WHERE ITS_No=? or Thali=?;';
     $result = run_statement($query, $sabeel_hof, $sabeel_hof);
     return $result->success && $result->count > 0 ? $result->data[0] : null;
@@ -642,6 +641,23 @@ function get_last_year_takhmeen($hof_id) {
     $query = 'SELECT takhmeen FROM kl_shehrullah_takhmeen WHERE hof_id=? and year=?;';
     $result = run_statement($query, $hof_id, $year);
     return $result->success && $result->count > 0 ? $result->data[0]->takhmeen : 0;
+}
+
+function addClearanceData($sabeel, $hof_id, $clearance, $notes, $userid) {
+    $year = get_current_hijri_year();
+    
+    $query = 'INSERT INTO kl_shehrullah_sabeel_clearance (sabeel, hof_id, hijri, notes, clearance, createdby, created) 
+    VALUES (?,?,?,?,?,?,now()) ON DUPLICATE KEY UPDATE notes=?, clearance=?,updatedby=?,updated=now();';
+    $result = run_statement($query, $sabeel, $hof_id, $year, $notes, $clearance, $userid,$notes, $clearance, $userid);
+    return $result->success && $result->count > 0 ? true : false;
+}
+
+function getClearanceData($hof_id) {
+    $year = get_current_hijri_year();
+    
+    $query = 'SELECT * FROM kl_shehrullah_sabeel_clearance WHERE hof_id=? and hijri=?;';
+    $result = run_statement($query, $hof_id, $year);
+    return $result->success && $result->count > 0 ? $result->data[0] : null;
 }
 
 function add_hof($hof_id) {

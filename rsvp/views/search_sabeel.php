@@ -26,7 +26,14 @@ if (!is_record_found($sabeel_search_result)) {
             }
         }
     }
+
+    $sector = intval($record['sector']);
+    if( $miqaat_id == 56 && ($sector == 7 || $sector == 13)) {
+        do_redirect_with_message('/data_entry', 'Sorry, Your ITS belong to Hatimi Hills Sectors. You are excluded from this Survey.');
+    }
 }
+
+//Update
 
 function content_display()
 {

@@ -44,6 +44,22 @@ function content_display()
                     </div>
                 </div>
             </div>
+            <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-gradient-danger">
+                    <div class="card-body">
+                        <h5 class="card-title">Clearance</h5>
+                        <p class="card-text">Shehrullah clearance</p>
+                        <form action="sabeel_clearance" method="post">
+                            <input type="hidden" name="action" value="doSearch">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Sabeel" name="sabeel" id="sabeel"
+                                    aria-label="Sabeel" aria-describedby="button-addon2" pattern="^[0-9]{1,8}$" required>
+                                <button class="btn btn-outline-primary" type="submit" id="button-addon2">GO</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <!-- <div class="col-md-4 col-sm-6 col-12">
                 <div class="card">
                     <div class="card-body">

@@ -13,7 +13,11 @@ function initial_processing()
 
     $sabeel_data = get_thaalilist_data($sabeel);
     if (is_null($sabeel_data)) {
-        do_redirect('\input-sabeel');
+        do_redirect_with_message('/input-sabeel', 'No records found for input ' . $sabeel . '. Enter correct sabeel number or HOF ITS.');
+    }
+
+    if( $sabeel_data->sector == 7 || $sabeel_data->sector == 13 ) {
+        do_redirect_with_message('/input-sabeel', 'Error: Belongs to Hatimi Hills Markaz.');
     }
         
     setAppData('sabeel_data', $sabeel_data);
@@ -23,6 +27,11 @@ function initial_processing()
 
     $hijri_year = get_current_hijri_year();
     setAppData('hijri_year', $hijri_year);
+
+    // $data = getClearanceData($hof_id);
+    // if( is_null($data) ) {
+    //     do_redirect_with_message('/input-sabeel', "Your clearance process is pensing. Please visit jamaat office.");
+    // }
 
     $attendees_data = get_attendees_data_for($hof_id, $hijri_year, false);
     if (is_null($attendees_data)) {

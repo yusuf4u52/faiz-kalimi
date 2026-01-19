@@ -427,7 +427,7 @@ function do_redirect($page, $relativePath = true)
 
 function do_redirect_with_message($page, $message, $relativePath = true)
 {
-    setSessionData("transit_data", $message);
+    setSessionData(TRANSIT_DATA, $message);
     do_redirect($page, $relativePath);
 }
 
