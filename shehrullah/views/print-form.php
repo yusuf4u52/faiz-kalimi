@@ -42,6 +42,33 @@ if (is_null($takhmeen_data)) {
 }
 setAppData('takhmeen_data', $takhmeen_data);
 
+function calculate_total_niyaz($attendees_data, $shehrullah_data, $pirsa_count)
+{
+    $family_niyaz = $shehrullah_data->family_niyaz;
+    $per_kid_niyaz = $shehrullah_data->per_kid_niyaz;
+    $zero_hub_age = $shehrullah_data->zero_hub_age;
+    $half_hub_age = $shehrullah_data->half_hub_age;
+    $pirsu_hub = $shehrullah_data->pirsu;
+
+    
+    $total_niyaz = 0;
+    foreach ($attendees_data as $attendee) {
+        if( $attendee->age <= $zero_hub_age ) {
+            continue;
+        } else if( $attendee->age > $zero_hub_age && $attendee->age <= $half_hub_age ) {
+            $total_niyaz += $per_kid_niyaz;
+        } else {
+            $total_niyaz += $family_niyaz;
+        }
+    }
+
+    if( $pirsa_count > 0 ) {
+        $total_niyaz += $pirsu_hub;
+    }
+
+    return $total_niyaz;    
+}
+
 function content_display()
 {
     $hijri_year = get_current_hijri_year();
@@ -61,6 +88,14 @@ function content_display()
     //$attendees_records = get_attendees_data_for($thalidata->ITS_No, $hijri_year, $get_only_attends);
     $shehrullah_data = get_shehrullah_data_for($hijri_year);
 
+    $pirsa_count = $takhmeen_data->pirsa_count;
+    $family_niyaz = calculate_total_niyaz($attendees_records, $shehrullah_data, $pirsa_count);
+    setAppData('family_niyaz', $family_niyaz);
+
+    if( $last_year_takhmeen < $family_niyaz ) {
+        $last_year_takhmeen = '';
+    }
+
     $date = date("d/m/Y");
 
     $uri = getAppData('APP_BASE_URI');
@@ -73,7 +108,9 @@ function content_display()
         }
     </style>
     <?php if(!$print) { ?>
-        <h2>Shukran, Your data is submitted, collect printout visiting jamaat office.</h2>
+        <div class="alert alert-primary" role="alert">
+            <strong><h2>Shukran! Please visit the jamaat office for form collection.</h2></strong>
+        </div>
     <?php } ?>
     <div class="card" id="printableArea">
         <div class="card-body">
@@ -225,6 +262,8 @@ function content_display()
 function __display_niyaz_section(...$data)
 {
 
+    $family_niyaz = getAppData('family_niyaz');
+
     $takhmeen_data = (object) $data[0];
     $markaz_data = $data[1];
 
@@ -295,7 +334,7 @@ function __display_niyaz_section(...$data)
             <th style='font-size: 12px'>Zabihat</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$zabihat_hub</td><td>&nbsp;</td>
         </tr>
         <tr>            
-            <th style='font-size: 12px'>Family Niyaz</th><td style='font-size: 12px'>&nbsp;</td><td>&nbsp;</td>
+            <th style='font-size: 12px'>Family Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$family_niyaz</td><td>&nbsp;</td>
             <th style='font-size: 12px'>Fateha</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$fateha_hub</td><td>&nbsp;</td>
         </tr>
         <tr>            

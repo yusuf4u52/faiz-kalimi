@@ -204,13 +204,15 @@ function add_hijri_record($hijri_year, $english_date)
     return $result->success ? true : false;
 }
 
+function get_sabeel_data($sabeel)
+{
+    $query = 'SELECT * FROM kl_shehrullah_sabeel_data WHERE sabeel=?;';
+    $result = run_statement($query, $sabeel);
+    return $result->success && $result->count > 0 ? $result->data[0] : null;
+}
+
 function get_thaalilist_data($sabeel_hof)
 {
-    // $query = 'SELECT s.sabeel, i.*
-    // FROM kl_shehrullah_sabeel_data s 
-    // LEFT JOIN its_data i on i.its_id = s.hof_id
-    // WHERE s.hof_id =? OR sabeel = ?;';
-
 
     $query = 'SELECT Thali, NAME, CONTACT, sabeelType, ITS_No, 
     Email_ID,Full_Address,WhatsApp, sector

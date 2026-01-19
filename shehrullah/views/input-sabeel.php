@@ -70,13 +70,18 @@ function _handle_form_submission()
 
 function sabeel_search() {
     $sabeel = $_POST['sabeel'];
-    $sabeel_data = get_thaalilist_data($sabeel);
-    if (is_null($sabeel_data)) {
+    $thaali_data = get_thaalilist_data($sabeel);
+    if (is_null($thaali_data)) {
         do_redirect_with_message('/input-sabeel', 'No records found for input ' . $sabeel . '. Enter correct sabeel number or HOF ITS.');
     }
-
-    $hof_id = $sabeel_data->ITS_No;
+    $hof_id = $thaali_data->ITS_No;
     setAppData('hof_id', $hof_id);
+
+    $sabeel_id = $thaali_data->Thali;
+    $sabeel_data = get_sabeel_data($sabeel_id);
+    if (is_null($sabeel_data)) {
+        do_redirect_with_message('/input-sabeel', 'Please contact Kalimi Jamaat Office, your sabeel number not found for input ' . $sabeel);
+    }
 
     $hof_data = get_hof_data($hof_id);
     if (is_null($hof_data)) {
@@ -86,12 +91,13 @@ function sabeel_search() {
     $hijri_year = get_current_hijri_year();
     setAppData('hijri_year', $hijri_year);
 
-    //This need to be revised as the new sector is created for E building
-    if (intval($hof_data->sector) === 7) {
-        if( $hof_id = 30359589 ) {
+    $sector = intval($hof_data->sector);
+    
+    if ($sector == 7 || $sector == 13) {
+        if( $hof_id == 30359589 ) {
             do_redirect('/vjb.slot_booking/' . do_encrypt($sabeel));
         }
-        do_redirect_with_message('/input-sabeel', 'Please contact Hatimi Hills Markaz for registration.');
+        do_redirect_with_message('/input-sabeel', 'Please contact <b>Hatimi Hills Markaz</b> for registration.');
     }
 
     $attendees_data = get_attendees_data_for($hof_id, $hijri_year, false);
