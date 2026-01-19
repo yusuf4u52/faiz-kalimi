@@ -136,8 +136,7 @@ function get_family_details($hof_id, $miqaat_id)
     i.full_name,
     i.age,
     i.gender,
-    i.sector,
-    i.subsector, i.mohallah
+    i.mohallah
     from thalilist s
     left join its_data i on s.ITS_No =i.hof_id
     left join rsvp_miqaat_survey_data sd ON sd.its_id = i.its_id and sd.miqaat_id = '$miqaat_id'
