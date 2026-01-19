@@ -22,7 +22,7 @@ $hijri = get_current_hijri_year() ?? 0;
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Shehrullah(AeK)</title>
+    <title>Shehrullah <?=$hijri?> - (AeK)</title>
     <link rel="stylesheet" href="<?= $url ?>/_assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="<?= $url ?>/_assets/vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="<?= $url ?>/_assets/css/style.css">
