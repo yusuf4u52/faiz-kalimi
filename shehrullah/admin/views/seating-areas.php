@@ -46,7 +46,7 @@ function _handle_post()
         } else {
             setSessionData(TRANSIT_DATA, 'Failed to update area');
         }
-        do_redirect('/seat-management');
+        do_redirect('/seating-areas');
     }
 }
 
@@ -63,42 +63,46 @@ function content_display()
     }
     ?>
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Seating Areas - <?= $hijri_year ?>H</h5>
-            <a href="<?= $url ?>/seat-management" class="btn btn-sm btn-secondary">← Back</a>
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Seating Areas - <?= $hijri_year ?>H</h5>
+                <a href="<?= $url ?>/seat-management" class="btn btn-sm btn-outline-secondary">Back</a>
+            </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-sm table-hover mb-0 align-middle">
                 <thead class="table-light">
                     <tr>
                         <th>Code</th>
                         <th>Name</th>
                         <th>Gender</th>
-                        <th>Seat Range</th>
+                        <th>Seats</th>
                         <th>Status</th>
-                        <th width="100"></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($areas as $area) { ?>
                     <tr>
-                        <td><code><?= $area->area_code ?></code></td>
+                        <td><code class="small"><?= $area->area_code ?></code></td>
                         <td><?= $area->area_name ?></td>
-                        <td><?= $area->gender ?></td>
+                        <td><small><?= $area->gender ?></small></td>
                         <td>
                             <?php if ($area->seat_start && $area->seat_end) { ?>
-                                <?= $area->seat_start ?>-<?= $area->seat_end ?>
+                                <small><?= $area->seat_start ?>-<?= $area->seat_end ?></small>
                             <?php } else { ?>
-                                <span class="text-muted">—</span>
+                                <small class="text-muted">—</small>
                             <?php } ?>
                         </td>
                         <td>
-                            <span class="badge bg-<?= $area->is_active == 'Y' ? 'success' : 'secondary' ?>">
-                                <?= $area->is_active == 'Y' ? 'Active' : 'Inactive' ?>
-                            </span>
+                            <?php if ($area->is_active == 'Y') { ?>
+                                <small class="text-success">●</small>
+                            <?php } else { ?>
+                                <small class="text-muted">○</small>
+                            <?php } ?>
                         </td>
                         <td>
-                            <a href="?edit=<?= $area->area_code ?>" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="?edit=<?= $area->area_code ?>" class="btn btn-sm btn-link">Edit</a>
                         </td>
                     </tr>
                     <?php } ?>
@@ -120,12 +124,14 @@ function show_edit_area_page($area_code, $url)
     $blocked_seats = get_blocked_seats($area_code);
     ?>
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
-                <h5 class="mb-0"><?= $area->area_name ?> <small class="text-muted">(<?= $area->area_code ?>)</small></h5>
-                <small class="text-muted"><?= $area->gender ?> • Ages <?= $area->min_age ?>+ • Max <?= $area->max_seats_per_family ?: '∞' ?>/family</small>
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0"><?= $area->area_name ?> <code class="small text-muted"><?= $area->area_code ?></code></h5>
+                    <small class="text-muted"><?= $area->gender ?> • Ages <?= $area->min_age ?>+ • Max <?= $area->max_seats_per_family ?: '∞' ?>/family</small>
+                </div>
+                <a href="?" class="btn btn-sm btn-outline-secondary">Back</a>
             </div>
-            <a href="?" class="btn btn-sm btn-secondary">← Back</a>
         </div>
         <div class="card-body">
             <form method="post" id="editForm">
@@ -133,22 +139,22 @@ function show_edit_area_page($area_code, $url)
                 <input type="hidden" name="area_code" value="<?= $area->area_code ?>">
                 <input type="hidden" name="blocked_seats" id="blockedSeatsData">
                 
-                <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <label class="form-label">Area Name</label>
-                        <input type="text" name="area_name" class="form-control" value="<?= $area->area_name ?>" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Seat Range Start</label>
-                        <input type="number" name="seat_start" class="form-control" value="<?= $area->seat_start ?>" placeholder="Optional">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Seat Range End</label>
-                        <input type="number" name="seat_end" class="form-control" value="<?= $area->seat_end ?>" placeholder="Optional">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-5">
+                        <label class="form-label small">Area Name</label>
+                        <input type="text" name="area_name" class="form-control form-control-sm" value="<?= $area->area_name ?>" required>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label">Status</label>
-                        <select name="is_active" class="form-select">
+                        <label class="form-label small">Seat Start</label>
+                        <input type="number" name="seat_start" class="form-control form-control-sm" value="<?= $area->seat_start ?>" placeholder="—">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Seat End</label>
+                        <input type="number" name="seat_end" class="form-control form-control-sm" value="<?= $area->seat_end ?>" placeholder="—">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Status</label>
+                        <select name="is_active" class="form-select form-select-sm">
                             <option value="Y" <?= $area->is_active == 'Y' ? 'selected' : '' ?>>Active</option>
                             <option value="N" <?= $area->is_active == 'N' ? 'selected' : '' ?>>Inactive</option>
                         </select>
@@ -157,30 +163,22 @@ function show_edit_area_page($area_code, $url)
                 
                 <hr>
                 
-                <h6 class="mb-3">Block Seats</h6>
-                <div class="row g-2 mb-3">
-                    <div class="col-auto">
-                        <input type="number" id="seatFrom" class="form-control form-control-sm" placeholder="From" style="width:80px">
-                    </div>
-                    <div class="col-auto">
-                        <input type="number" id="seatTo" class="form-control form-control-sm" placeholder="To" style="width:80px">
-                    </div>
-                    <div class="col-auto" style="flex:1; min-width:200px">
-                        <input type="text" id="seatReason" class="form-control form-control-sm" placeholder="Reason (optional)">
-                    </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-sm btn-warning" onclick="addSeats()">+ Block</button>
-                    </div>
+                <label class="form-label small mb-2">Block Seats</label>
+                <div class="input-group input-group-sm mb-3" style="max-width: 500px;">
+                    <input type="number" id="seatFrom" class="form-control" placeholder="From" style="max-width:80px">
+                    <input type="number" id="seatTo" class="form-control" placeholder="To" style="max-width:80px">
+                    <input type="text" id="seatReason" class="form-control" placeholder="Reason (optional)">
+                    <button type="button" class="btn btn-outline-warning" onclick="addSeats()">Block</button>
                 </div>
                 
-                <div id="blockedList">
+                <div id="blockedList" class="mb-3">
                     <div class="text-muted small">No blocked seats</div>
                 </div>
                 
-                <hr class="my-4">
+                <hr>
                 
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a href="?" class="btn btn-link">Cancel</a>
+                <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                <a href="?" class="btn btn-sm btn-link">Cancel</a>
             </form>
         </div>
     </div>
@@ -199,13 +197,13 @@ function show_edit_area_page($area_code, $url)
             container.innerHTML = '<div class="text-muted small">No blocked seats</div>';
         } else {
             container.innerHTML = `
-                <div class="mb-2 small text-muted">${blocked.length} blocked seat${blocked.length !== 1 ? 's' : ''}</div>
+                <div class="mb-1 small text-muted">${blocked.length} blocked</div>
                 <div class="d-flex flex-wrap gap-2">
                     ${blocked.map(s => `
-                        <span class="badge bg-danger d-flex align-items-center gap-2" style="font-size:0.85rem">
-                            Seat ${s.seat_number}${s.reason ? ': ' + s.reason : ''}
+                        <span class="badge bg-danger d-flex align-items-center gap-1">
+                            ${s.seat_number}${s.reason ? ': ' + s.reason : ''}
                             <button type="button" class="btn-close btn-close-white" style="font-size:0.6rem" 
-                                onclick="remove(${s.seat_number})" aria-label="Remove"></button>
+                                onclick="remove(${s.seat_number})"></button>
                         </span>
                     `).join('')}
                 </div>

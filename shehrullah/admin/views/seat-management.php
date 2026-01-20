@@ -45,10 +45,8 @@ function _handle_post()
     } else if ($action === 'toggle_selection') {
         $open = $_POST['open'] ?? 'N';
         $success = toggle_seat_selection($open === 'Y');
-        if ($success) {
-            // Intentionally no success message (keep UI clean)
-        } else {
-            setSessionData(TRANSIT_DATA, 'Failed to toggle seat selection status.');
+        if (!$success) {
+            setSessionData(TRANSIT_DATA, 'Failed to update seat selection status.');
         }
     }
 }
@@ -73,116 +71,95 @@ function content_display()
         });
     }
     ?>
-    <div class="card mb-4">
-        <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
-            <h4 class="card-title mb-0">Seat Management - Shehrullah <?= $hijri_year ?>H</h4>
-
-            <!-- Seat Selection Open/Close -->
-            <form method="post" class="d-flex align-items-center mb-0">
-                <input type="hidden" name="action" value="toggle_selection">
-
-                <div class="btn-group btn-group-sm" role="group" aria-label="Seat selection status">
-                    <button
-                        type="submit"
-                        name="open"
-                        value="Y"
-                        class="btn <?= $is_selection_open ? 'btn-success' : 'btn-outline-success' ?>"
-                        onclick="return confirm('Open seat selection? Users will be able to select seats.');"
-                    >
-                        Open
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Seat Management - <?= $hijri_year ?>H</h5>
+                <form method="post" class="mb-0">
+                    <input type="hidden" name="action" value="toggle_selection">
+                    <input type="hidden" name="open" value="<?= $is_selection_open ? 'N' : 'Y' ?>">
+                    <button type="submit" class="btn btn-sm <?= $is_selection_open ? 'btn-success' : 'btn-outline-secondary' ?>">
+                        <?= $is_selection_open ? '● Open' : '○ Closed' ?>
                     </button>
-                    <button
-                        type="submit"
-                        name="open"
-                        value="N"
-                        class="btn <?= $is_selection_open ? 'btn-outline-danger' : 'btn-danger' ?>"
-                        onclick="return confirm('Close seat selection? Users will not be able to select seats.');"
-                    >
-                        Close
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
         <div class="card-body">
-            <!-- Search and Pre-allocate Section -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <form method="post" class="mb-3">
-                        <input type="hidden" name="action" value="search">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="search" placeholder="Search by HOF ID, ITS or Name" value="<?= htmlspecialchars($search_term) ?>">
-                            <button class="btn btn-primary" type="submit">Search</button>
-                            <a href="<?= $url ?>/seat-management" class="btn btn-secondary">Clear</a>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-md-6">
-                    <a href="<?= $url ?>/seat-pre-allocate" class="btn btn-success">Pre-Allocate Seat</a>
-                    <a href="<?= $url ?>/seating-areas" class="btn btn-info">Manage Areas</a>
-                    <a href="<?= $url ?>/seat-exceptions" class="btn btn-warning">Exceptions</a>
+            <!-- Toolbar -->
+            <div class="d-flex gap-2 mb-3 flex-wrap">
+                <form method="post" class="flex-fill" style="max-width: 400px;">
+                    <input type="hidden" name="action" value="search">
+                    <div class="input-group input-group-sm">
+                        <input type="text" name="search" class="form-control" placeholder="Search HOF, ITS, or Name..." value="<?= htmlspecialchars($search_term) ?>">
+                        <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        <?php if ($search_term) { ?>
+                        <a href="<?= $url ?>/seat-management" class="btn btn-outline-secondary">×</a>
+                        <?php } ?>
+                    </div>
+                </form>
+                <div class="btn-group btn-group-sm">
+                    <a href="<?= $url ?>/seat-pre-allocate" class="btn btn-outline-primary">Allocate</a>
+                    <a href="<?= $url ?>/seating-areas" class="btn btn-outline-primary">Areas</a>
+                    <a href="<?= $url ?>/seat-exceptions" class="btn btn-outline-primary">Exceptions</a>
                 </div>
             </div>
             
-            <!-- Quick Assign Seats by Area -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h5>Assign Sequential Seat Numbers</h5>
-                    <form method="post" class="form-inline">
-                        <input type="hidden" name="action" value="assign_seats">
-                        <div class="input-group" style="max-width: 400px;">
-                            <select name="area_code" class="form-control" required>
-                                <option value="">-- Select Area --</option>
-                                <?php foreach ($areas as $area) { ?>
-                                    <option value="<?= $area->area_code ?>"><?= $area->area_name ?></option>
-                                <?php } ?>
-                            </select>
-                            <button class="btn btn-warning" type="submit" onclick="return confirm('This will assign seat numbers to all unassigned allocations in this area. Continue?')">Assign Seats</button>
-                        </div>
-                    </form>
+            <!-- Auto-assign seats -->
+            <form method="post" class="mb-3">
+                <input type="hidden" name="action" value="assign_seats">
+                <div class="input-group input-group-sm" style="max-width: 450px;">
+                    <span class="input-group-text">Auto-assign seats for</span>
+                    <select name="area_code" class="form-select" required>
+                        <option value="">Select area...</option>
+                        <?php foreach ($areas as $area) { ?>
+                            <option value="<?= $area->area_code ?>"><?= $area->area_name ?></option>
+                        <?php } ?>
+                    </select>
+                    <button class="btn btn-outline-warning" type="submit">Assign</button>
                 </div>
-            </div>
+            </form>
             
             <!-- Allocations Table -->
-            <h5>All Seat Allocations (<?= count($allocations) ?>)</h5>
+            <div class="small text-muted mb-2"><?= count($allocations) ?> allocation<?= count($allocations) != 1 ? 's' : '' ?></div>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead>
+                <table class="table table-sm table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <th>HOF ID</th>
-                            <th>HOF Name</th>
+                            <th>HOF</th>
+                            <th>Family</th>
                             <th>Member</th>
                             <th>G/Age</th>
                             <th>Area</th>
-                            <th>Seat #</th>
-                            <th>Allocated By</th>
+                            <th>Seat</th>
+                            <th>By</th>
                             <th>Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php 
                         if (empty($allocations)) {
-                            echo "<tr><td colspan='8' class='text-center'>No allocations found</td></tr>";
+                            echo "<tr><td colspan='8' class='text-center text-muted'>No allocations found</td></tr>";
                         }
                         foreach ($allocations as $alloc) { 
                             $gender = substr($alloc->gender, 0, 1);
                             $allocated_by = $alloc->allocated_by ? 'Admin' : 'Self';
-                            $date = date('d/m/Y H:i', strtotime($alloc->allocated_at));
+                            $date = date('d/m H:i', strtotime($alloc->allocated_at));
                         ?>
                             <tr>
-                                <td><?= $alloc->hof_id ?></td>
+                                <td><code class="small"><?= $alloc->hof_id ?></code></td>
                                 <td><?= $alloc->hof_name ?></td>
                                 <td><?= $alloc->full_name ?></td>
-                                <td><?= $gender ?>/<?= $alloc->age ?></td>
-                                <td><?= $alloc->area_name ?></td>
+                                <td><small><?= $gender ?>/<?= $alloc->age ?></small></td>
+                                <td><small><?= $alloc->area_name ?></small></td>
                                 <td>
                                     <?php if ($alloc->seat_number) { ?>
-                                        <span class="badge bg-success"><?= $alloc->seat_number ?></span>
+                                        <strong><?= $alloc->seat_number ?></strong>
                                     <?php } else { ?>
-                                        <span class="badge bg-warning text-dark">Pending</span>
+                                        <span class="text-muted">—</span>
                                     <?php } ?>
                                 </td>
-                                <td><?= $allocated_by ?></td>
-                                <td><?= $date ?></td>
+                                <td><small><?= $allocated_by ?></small></td>
+                                <td><small class="text-muted"><?= $date ?></small></td>
                             </tr>
                         <?php } ?>
                     </tbody>

@@ -73,70 +73,77 @@ function content_display()
     ?>
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title">Pre-Allocate Seats (SUPER_ADMIN)</h4>
-            <p class="text-muted">Assign seats to any member, bypassing all rules</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">Pre-Allocate Seats</h5>
+                    <small class="text-muted">Bypass rules and assign seats directly</small>
+                </div>
+                <a href="<?= $url ?>/seat-management" class="btn btn-sm btn-outline-secondary">Back</a>
+            </div>
         </div>
         <div class="card-body">
             <!-- Search Section -->
-            <form method="post" class="mb-4">
+            <form method="post" class="mb-3">
                 <input type="hidden" name="action" value="search">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="sabeel" placeholder="Enter Sabeel or HOF ID" pattern="^[0-9]{1,8}$" required>
-                            <button class="btn btn-primary" type="submit">Search</button>
-                        </div>
-                    </div>
+                <div class="input-group" style="max-width: 400px;">
+                    <input type="text" name="sabeel" class="form-control" placeholder="Sabeel or HOF ID" pattern="^[0-9]{1,8}$" required>
+                    <button class="btn btn-primary" type="submit">Search</button>
                 </div>
             </form>
             
             <?php if ($thaali_data) { ?>
             <hr>
-            <h5>Family: [<?= $hof_id ?>] <?= $thaali_data->NAME ?></h5>
-            <p>Sabeel: <?= $thaali_data->Thali ?></p>
+            <div class="mb-3">
+                <strong><?= $thaali_data->NAME ?></strong> 
+                <code class="small"><?= $hof_id ?></code> 
+                <small class="text-muted">• Sabeel <?= $thaali_data->Thali ?></small>
+            </div>
             
             <?php if (empty($attendees)) { ?>
-                <div class="alert alert-warning">No eligible family members found (Misaq Done, Attending).</div>
+                <div class="alert alert-warning small">No eligible family members found (must have Misaq and be attending).</div>
             <?php } else { ?>
             
             <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
+                <table class="table table-sm table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <th>Name</th>
+                            <th>Member</th>
                             <th>G/Age</th>
                             <th>Chair</th>
-                            <th>Current Allocation</th>
-                            <th>Assign Area</th>
+                            <th>Current</th>
+                            <th>Area</th>
                             <th>Seat #</th>
-                            <th>Action</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($attendees as $attendee) { 
                             $gender = substr($attendee->gender, 0, 1);
-                            $chair = $attendee->chair_preference == 'Y' ? 'Yes' : 'No';
-                            $current_area = $attendee->allocated_area_name ?? 'Not assigned';
-                            $current_seat = $attendee->seat_number ?? '-';
+                            $chair = $attendee->chair_preference == 'Y' ? '✓' : '';
+                            $current_area = $attendee->allocated_area_name ?? '—';
+                            $current_seat = $attendee->seat_number ?? '';
                         ?>
                         <tr>
-                            <form method="post">
+                            <form method="post" class="contents">
                                 <input type="hidden" name="action" value="pre_allocate">
                                 <input type="hidden" name="its_id" value="<?= $attendee->its_id ?>">
                                 <input type="hidden" name="hof_id" value="<?= $hof_id ?>">
                                 
-                                <td><?= $attendee->full_name ?><br><small class="text-muted"><?= $attendee->its_id ?></small></td>
-                                <td><?= $gender ?>/<?= $attendee->age ?></td>
-                                <td><?= $chair ?></td>
                                 <td>
-                                    <?= $current_area ?>
-                                    <?php if ($current_seat != '-') { ?>
-                                        <br><span class="badge bg-success">Seat #<?= $current_seat ?></span>
+                                    <?= $attendee->full_name ?>
+                                    <br><code class="small text-muted"><?= $attendee->its_id ?></code>
+                                </td>
+                                <td><small><?= $gender ?>/<?= $attendee->age ?></small></td>
+                                <td><small><?= $chair ?></small></td>
+                                <td>
+                                    <small><?= $current_area ?></small>
+                                    <?php if ($current_seat) { ?>
+                                        <br><strong class="text-success">#<?= $current_seat ?></strong>
                                     <?php } ?>
                                 </td>
                                 <td>
-                                    <select name="area_code" class="form-control form-control-sm" required>
-                                        <option value="">-- Select --</option>
+                                    <select name="area_code" class="form-select form-select-sm" required>
+                                        <option value="">Select...</option>
                                         <?php foreach ($areas as $area) { 
                                             $selected = ($area->area_code == $attendee->allocated_area) ? 'selected' : '';
                                         ?>
@@ -145,10 +152,10 @@ function content_display()
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="seat_number" class="form-control form-control-sm" placeholder="Auto" style="width: 80px" value="<?= $current_seat != '-' ? $current_seat : '' ?>">
+                                    <input type="number" name="seat_number" class="form-control form-control-sm" placeholder="Auto" style="width:70px" value="<?= $current_seat ?>">
                                 </td>
                                 <td>
-                                    <button type="submit" class="btn btn-sm btn-success">Assign</button>
+                                    <button type="submit" class="btn btn-sm btn-primary">Assign</button>
                                 </td>
                             </form>
                         </tr>
@@ -158,10 +165,6 @@ function content_display()
             </div>
             <?php } ?>
             <?php } ?>
-            
-            <div class="mt-4">
-                <a href="<?= $url ?>/seat-management" class="btn btn-secondary">Back to Seat Management</a>
-            </div>
         </div>
     </div>
     <?php

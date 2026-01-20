@@ -77,22 +77,23 @@ function content_display()
     $search_takhmeen = getAppData('search_takhmeen');
     $has_exception = getAppData('has_exception');
     ?>
-    <div class="card mb-4">
+    <div class="card mb-3">
         <div class="card-header">
-            <h4 class="card-title">Seat Selection Exceptions - <?= $hijri_year ?>H</h4>
-            <p class="text-muted">Grant exceptions to allow seat selection without full payment</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">Seat Exceptions - <?= $hijri_year ?>H</h5>
+                    <small class="text-muted">Allow seat selection without full payment</small>
+                </div>
+                <a href="<?= $url ?>/seat-management" class="btn btn-sm btn-outline-secondary">Back</a>
+            </div>
         </div>
         <div class="card-body">
             <!-- Search Section -->
-            <form method="post" class="mb-4">
+            <form method="post" class="mb-3">
                 <input type="hidden" name="action" value="search">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="sabeel" placeholder="Enter Sabeel or HOF ID" pattern="^[0-9]{1,8}$" required>
-                            <button class="btn btn-primary" type="submit">Search</button>
-                        </div>
-                    </div>
+                <div class="input-group" style="max-width: 400px;">
+                    <input type="text" name="sabeel" class="form-control" placeholder="Sabeel or HOF ID" pattern="^[0-9]{1,8}$" required>
+                    <button class="btn btn-primary" type="submit">Search</button>
                 </div>
             </form>
             
@@ -100,23 +101,18 @@ function content_display()
             <hr>
             <div class="row">
                 <div class="col-md-6">
-                    <h5>Family Details</h5>
-                    <table class="table table-bordered">
+                    <div class="mb-3">
+                        <strong><?= $search_thaali_data->NAME ?></strong> 
+                        <code class="small"><?= $search_hof_id ?></code>
+                        <br><small class="text-muted">Sabeel <?= $search_thaali_data->Thali ?></small>
+                    </div>
+                    
+                    <table class="table table-sm table-bordered">
+                        <?php if ($search_takhmeen) { 
+                            $pending = $search_takhmeen->takhmeen - $search_takhmeen->paid_amount;
+                        ?>
                         <tr>
-                            <th>HOF ID</th>
-                            <td><?= $search_hof_id ?></td>
-                        </tr>
-                        <tr>
-                            <th>Name</th>
-                            <td><?= $search_thaali_data->NAME ?></td>
-                        </tr>
-                        <tr>
-                            <th>Sabeel</th>
-                            <td><?= $search_thaali_data->Thali ?></td>
-                        </tr>
-                        <?php if ($search_takhmeen) { ?>
-                        <tr>
-                            <th>Takhmeen</th>
+                            <th width="100">Takhmeen</th>
                             <td>Rs. <?= number_format($search_takhmeen->takhmeen) ?></td>
                         </tr>
                         <tr>
@@ -124,30 +120,27 @@ function content_display()
                             <td>Rs. <?= number_format($search_takhmeen->paid_amount) ?></td>
                         </tr>
                         <tr>
-                            <th>Pending</th>
+                            <th>Balance</th>
                             <td>
-                                <?php 
-                                $pending = $search_takhmeen->takhmeen - $search_takhmeen->paid_amount;
-                                if ($pending > 0) {
-                                    echo "<span class='text-danger'>Rs. " . number_format($pending) . "</span>";
-                                } else {
-                                    echo "<span class='text-success'>Fully Paid</span>";
-                                }
-                                ?>
+                                <?php if ($pending > 0) { ?>
+                                    <span class="text-danger">Rs. <?= number_format($pending) ?></span>
+                                <?php } else { ?>
+                                    <span class="text-success">Fully Paid</span>
+                                <?php } ?>
                             </td>
                         </tr>
                         <?php } else { ?>
                         <tr>
-                            <td colspan="2" class="text-warning">Takhmeen not done</td>
+                            <td colspan="2" class="text-warning small">Takhmeen not done</td>
                         </tr>
                         <?php } ?>
                         <tr>
-                            <th>Exception Status</th>
+                            <th>Exception</th>
                             <td>
                                 <?php if ($has_exception) { ?>
-                                    <span class="badge bg-success">Exception Granted</span>
+                                    <span class="text-success">● Granted</span>
                                 <?php } else { ?>
-                                    <span class="badge bg-secondary">No Exception</span>
+                                    <span class="text-muted">○ Not granted</span>
                                 <?php } ?>
                             </td>
                         </tr>
@@ -158,17 +151,16 @@ function content_display()
                     <form method="post">
                         <input type="hidden" name="action" value="grant">
                         <input type="hidden" name="hof_id" value="<?= $search_hof_id ?>">
-                        <div class="mb-3">
-                            <label class="form-label">Reason for Exception</label>
-                            <input type="text" name="reason" class="form-control" placeholder="Enter reason" required>
+                        <div class="mb-2">
+                            <input type="text" name="reason" class="form-control form-control-sm" placeholder="Reason for exception" required>
                         </div>
-                        <button type="submit" class="btn btn-success" onclick="return confirm('Grant seat selection exception to this family?')">Grant Exception</button>
+                        <button type="submit" class="btn btn-sm btn-success">Grant Exception</button>
                     </form>
                     <?php } else { ?>
                     <form method="post">
                         <input type="hidden" name="action" value="revoke">
                         <input type="hidden" name="hof_id" value="<?= $search_hof_id ?>">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Revoke seat selection exception? Family will not be able to select seats until payment is complete.')">Revoke Exception</button>
+                        <button type="submit" class="btn btn-sm btn-danger">Revoke Exception</button>
                     </form>
                     <?php } ?>
                 </div>
@@ -180,24 +172,24 @@ function content_display()
     <!-- Active Exceptions List -->
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Active Exceptions (<?= count($exceptions) ?>)</h5>
+            <h6 class="mb-0">Active Exceptions <span class="text-muted">(<?= count($exceptions) ?>)</span></h6>
         </div>
         <div class="card-body">
             <?php if (empty($exceptions)) { ?>
-                <p class="text-muted">No active exceptions.</p>
+                <p class="text-muted small mb-0">No active exceptions.</p>
             <?php } else { ?>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead>
+                <table class="table table-sm table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <th>HOF ID</th>
+                            <th>HOF</th>
                             <th>Name</th>
                             <th>Takhmeen</th>
                             <th>Paid</th>
-                            <th>Pending</th>
+                            <th>Balance</th>
                             <th>Reason</th>
-                            <th>Granted At</th>
-                            <th>Action</th>
+                            <th>Granted</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -205,24 +197,24 @@ function content_display()
                             $pending = ($exc->takhmeen ?? 0) - ($exc->paid_amount ?? 0);
                         ?>
                         <tr>
-                            <td><?= $exc->hof_id ?></td>
+                            <td><code class="small"><?= $exc->hof_id ?></code></td>
                             <td><?= $exc->full_name ?></td>
-                            <td>Rs. <?= number_format($exc->takhmeen ?? 0) ?></td>
-                            <td>Rs. <?= number_format($exc->paid_amount ?? 0) ?></td>
+                            <td><small>Rs. <?= number_format($exc->takhmeen ?? 0) ?></small></td>
+                            <td><small>Rs. <?= number_format($exc->paid_amount ?? 0) ?></small></td>
                             <td>
                                 <?php if ($pending > 0) { ?>
-                                    <span class="text-danger">Rs. <?= number_format($pending) ?></span>
+                                    <small class="text-danger">Rs. <?= number_format($pending) ?></small>
                                 <?php } else { ?>
-                                    <span class="text-success">Paid</span>
+                                    <small class="text-success">Paid</small>
                                 <?php } ?>
                             </td>
-                            <td><?= $exc->reason ?: '-' ?></td>
-                            <td><?= date('d/m/Y H:i', strtotime($exc->granted_at)) ?></td>
+                            <td><small><?= $exc->reason ?: '—' ?></small></td>
+                            <td><small class="text-muted"><?= date('d/m/y H:i', strtotime($exc->granted_at)) ?></small></td>
                             <td>
                                 <form method="post" style="display: inline;">
                                     <input type="hidden" name="action" value="revoke">
                                     <input type="hidden" name="hof_id" value="<?= $exc->hof_id ?>">
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Revoke this exception?')">Revoke</button>
+                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0">Revoke</button>
                                 </form>
                             </td>
                         </tr>
@@ -232,10 +224,6 @@ function content_display()
             </div>
             <?php } ?>
         </div>
-    </div>
-    
-    <div class="mt-3">
-        <a href="<?= $url ?>/seat-management" class="btn btn-secondary">Back to Seat Management</a>
     </div>
     <?php
 }
