@@ -46,8 +46,7 @@ function _handle_post()
         $open = $_POST['open'] ?? 'N';
         $success = toggle_seat_selection($open === 'Y');
         if ($success) {
-            $status = $open === 'Y' ? 'OPENED' : 'CLOSED';
-            setSessionData(TRANSIT_DATA, "Seat selection is now $status.");
+            // Intentionally no success message (keep UI clean)
         } else {
             setSessionData(TRANSIT_DATA, 'Failed to toggle seat selection status.');
         }
@@ -79,17 +78,8 @@ function content_display()
             <h4 class="card-title mb-0">Seat Management - Shehrullah <?= $hijri_year ?>H</h4>
 
             <!-- Seat Selection Open/Close -->
-            <form method="post" class="d-flex align-items-center gap-2 mb-0">
+            <form method="post" class="d-flex align-items-center mb-0">
                 <input type="hidden" name="action" value="toggle_selection">
-
-                <span class="text-muted small mb-0">
-                    Selection:
-                    <?php if ($is_selection_open) { ?>
-                        <span class="badge bg-success">OPEN</span>
-                    <?php } else { ?>
-                        <span class="badge bg-secondary">CLOSED</span>
-                    <?php } ?>
-                </span>
 
                 <div class="btn-group btn-group-sm" role="group" aria-label="Seat selection status">
                     <button
