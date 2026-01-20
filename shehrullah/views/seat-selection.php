@@ -42,32 +42,18 @@ function _handle_form_submit()
         $hof_id = getAppData('hof_id');
         
         if (empty($its_id) || empty($area_code)) {
-            setSessionData(TRANSIT_DATA, 'Invalid selection. Please try again.');
+            setSessionData(TRANSIT_DATA, 'Invalid selection.');
             return;
         }
         
-        // Check if admin pre-allocated (cannot change)
-        if (is_admin_allocated($its_id)) {
-            setSessionData(TRANSIT_DATA, 'This seat was assigned by admin and cannot be changed.');
-            return;
-        }
+        // Try to allocate seat
+        $seat_number = allocate_seat($its_id, $hof_id, $area_code);
         
-        // Validate area is eligible for this member
-        $eligible_areas = get_eligible_areas_for_attendee($its_id, $hof_id);
-        $area_codes = array_map(function($a) { return $a->area_code; }, $eligible_areas);
-        
-        if (!in_array($area_code, $area_codes)) {
-            setSessionData(TRANSIT_DATA, 'Selected area is not available for this member.');
-            return;
-        }
-        
-        // Save allocation (now auto-assigns seat number if area has capacity tracking)
-        $success = allocate_seat($its_id, $hof_id, $area_code);
-        
-        if ($success) {
-            setSessionData(TRANSIT_DATA, 'Seat selection saved successfully!');
+        // If seat number allocated = success, if not = failure
+        if (!empty($seat_number)) {
+            setSessionData(TRANSIT_DATA, 'Seat allocated successfully! Seat #' . $seat_number);
         } else {
-            setSessionData(TRANSIT_DATA, 'Sorry, this area is now full. Please select another area.');
+            setSessionData(TRANSIT_DATA, 'Limit reached. Please select another area.');
         }
         
         // Refresh attendees data
@@ -117,11 +103,14 @@ function content_display()
         } else {
             $opts = [];
             if (empty($allocated_area)) $opts[''] = '-- Select --';
+            
             foreach ($eligible_areas as $a) {
-                $chair_tag = ($a->chairs_allowed == 'Y') ? ' [Chairs]' : '';
-                $opts[$a->area_code] = $a->area_name . $chair_tag;
+                $opts[$a->area_code] = $a->area_name;
             }
-            if (empty($eligible_areas)) $opts[''] = 'No areas available';
+            
+            if (empty($eligible_areas)) {
+                $opts[''] = 'Limit reached';
+            }
             
             $area_cell = "<form method=\"post\" class=\"d-inline\" id=\"form_{$its_id}\">"
                 . "<input type=\"hidden\" name=\"action\" value=\"save_seat\">"
@@ -133,8 +122,6 @@ function content_display()
         // Seat cell
         if (!empty($seat_number)) {
             $seat_cell = ui_badge($seat_number, 'success');
-        } elseif (!empty($allocated_area)) {
-            $seat_cell = ui_badge('Pending', 'warning');
         } else {
             $seat_cell = '--';
         }
@@ -142,10 +129,8 @@ function content_display()
         // Action cell
         if ($is_admin) {
             $action_cell = ui_muted('--');
-        } elseif (!empty($eligible_areas)) {
-            $action_cell = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
         } else {
-            $action_cell = ui_muted('N/A');
+            $action_cell = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
         }
         
         ui_tr([
