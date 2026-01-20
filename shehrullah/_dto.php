@@ -942,6 +942,17 @@ function allocate_seat($its_id, $hof_id, $area_code) {
  */
 function admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $allocated_by) {
     $hijri_year = get_current_hijri_year();
+    
+    // Validation 1: Check if seat is already allocated to someone else
+    if ($seat_number) {
+        $check_query = 'SELECT its_id FROM kl_shehrullah_seat_allocation 
+                        WHERE area_code = ? AND seat_number = ? AND hijri_year = ? AND its_id != ?';
+        $check_result = run_statement($check_query, $area_code, $seat_number, $hijri_year, $its_id);
+        if ($check_result->success && $check_result->count > 0) {
+            return false; // Seat already allocated to someone else
+        }
+    }
+    
     $query = 'INSERT INTO kl_shehrullah_seat_allocation 
               (its_id, hof_id, area_code, seat_number, allocated_by, hijri_year, allocated_at)
               VALUES (?, ?, ?, ?, ?, ?, NOW())
@@ -949,6 +960,12 @@ function admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $al
               area_code = ?, seat_number = ?, allocated_by = ?, allocated_at = NOW()';
     $result = run_statement($query, $its_id, $hof_id, $area_code, $seat_number, $allocated_by, 
                             $hijri_year, $area_code, $seat_number, $allocated_by);
+    
+    // Validation 2: Unblock seat if allocated by admin
+    if ($result->success && $seat_number) {
+        unblock_seat($area_code, $seat_number);
+    }
+    
     return $result->success;
 }
 

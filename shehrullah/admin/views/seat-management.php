@@ -34,7 +34,7 @@ function _handle_post()
         if ($success) {
             setSessionData(TRANSIT_DATA, 'Seat pre-allocated successfully!');
         } else {
-            setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat.');
+            setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat. Seat may already be taken by someone else.');
         }
     } else if ($action === 'delete_allocation') {
         $its_id = $_POST['its_id'] ?? '';
