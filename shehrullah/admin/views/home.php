@@ -208,24 +208,6 @@ function content_display()
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 col-sm-6 col-12">
-                <div class="card bg-gradient-info">
-                    <div class="card-body">
-                        <h5 class="card-title">Seating Areas</h5>
-                        <p class="card-text">Configure areas & block seats</p>
-                        <a href="<?= $url ?>/seating-areas" class="btn btn-light">GO >></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-6 col-12">
-                <div class="card bg-gradient-warning">
-                    <div class="card-body">
-                        <h5 class="card-title">Seat Exceptions</h5>
-                        <p class="card-text">Grant payment exceptions</p>
-                        <a href="<?= $url ?>/seat-exceptions" class="btn btn-light">GO >></a>
-                    </div>
-                </div>
-            </div>
         <?php } ?>
 
     </div>
