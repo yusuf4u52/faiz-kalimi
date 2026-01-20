@@ -9,8 +9,6 @@ function initial_processing()
     $en_sabeel = getAppData('arg1');
     $sabeel = do_decrypt($en_sabeel);
 
-    //echo $sabeel;
-
     $sabeel_data = get_thaalilist_data($sabeel);
     if (is_null($sabeel_data)) {
         do_redirect_with_message('/input-sabeel', 'No records found for input ' . $sabeel . '. Enter correct sabeel number or HOF ITS.');
@@ -152,6 +150,9 @@ function content_display()
                 <div class="card-body">
                     <h4 class="card-title">Shehrullah Registration</h4>
                     <p class="card-description"> Select the attendess and enter the required details. </p>
+                    <div class="alert alert-warning" role="alert">
+                        <strong>Chair arrangements will be made for gents in the Sehan and for ladies in the basement.</strong>
+                    </div>
                     <form class="forms-sample" method="POST">
                         <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
                         <input type="hidden" name="hof_id" value="<?= $hof_id ?>">
