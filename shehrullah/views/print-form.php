@@ -196,19 +196,20 @@ function content_display()
 
             <table class='table table-bordered small-text'>
                 <tr>
-                    <th style='font-size: 12px'>Kindly submit form to receive izan card & carry izan card for our
+                    <th style='font-size: 12px' colspan="4">Kindly submit form to receive izan card & carry izan card for our
                         convenience.</th>
                 </tr>
                 <tr>
                     <th style='font-size: 12px'>Prev. Takhmeen / Niyaz</th>
                     <td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i><?=$prev_or_family_niyaz?></td>
                     <th style='font-size: 12px'>Committed Hub Amount</th>
+                    <td style='font-size: 12px'></td>
                 </tr>
-            </table>
-            <table class='table table-bordered'>
                 <tr>
                     <th style='font-size: 12px'>HOF Signature</th>
+                    <td style='font-size: 12px'></td>
                     <th style='font-size: 12px'>Auth. Signature</th>
+                    <td style='font-size: 12px'></td>
                 </tr>
             </table>
         </div>
@@ -337,9 +338,6 @@ function __display_niyaz_section(...$data)
         <tr>            
             <th style='font-size: 12px'>Kids Hub</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->per_kid_niyaz</td>
         </tr>
-        <tr>            
-            <th style='font-size: 12px' colspan=2>&nbsp</th>
-        </tr>        
         <tr>               
             <th style='font-size: 12px'>Pirsa</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$pirsa_hub</td>
         </tr>
