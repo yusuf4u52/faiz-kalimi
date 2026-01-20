@@ -197,6 +197,31 @@ function content_display()
     </div>
 
     <script>
+        let modalInstance = null;
+
+        function closeChairModal() {
+            const modal = document.getElementById('chairInfoModal');
+            
+            // Try Bootstrap 5
+            if (typeof bootstrap !== 'undefined' && modalInstance) {
+                modalInstance.hide();
+            } 
+            // Try Bootstrap 4 with jQuery
+            else if (typeof $ !== 'undefined' && $.fn.modal) {
+                $('#chairInfoModal').modal('hide');
+            }
+            // Fallback - remove modal manually
+            else {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Get all chair preference checkboxes
             const chairCheckboxes = document.querySelectorAll('input[name^="chair_preference_for_"]');
@@ -206,19 +231,22 @@ function content_display()
                 checkbox.addEventListener('change', function() {
                     // Show modal only when checking the box and if not shown before in this session
                     if (this.checked && !modalShown) {
-                        // If using Bootstrap 4
-                        if (typeof $ !== 'undefined' && $.fn.modal) {
-                            $('#chairInfoModal').modal('show');
-                        } else {
-                            // Fallback to native Bootstrap 5 or simple alert
-                            const modal = document.getElementById('chairInfoModal');
-                            if (modal && typeof bootstrap !== 'undefined') {
-                                const bsModal = new bootstrap.Modal(modal);
-                                bsModal.show();
-                            } else {
-                                alert('Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID');
-                            }
+                        const modal = document.getElementById('chairInfoModal');
+                        
+                        // Try Bootstrap 5
+                        if (typeof bootstrap !== 'undefined') {
+                            modalInstance = new bootstrap.Modal(modal);
+                            modalInstance.show();
                         }
+                        // Try Bootstrap 4 with jQuery
+                        else if (typeof $ !== 'undefined' && $.fn.modal) {
+                            $('#chairInfoModal').modal('show');
+                        } 
+                        // Fallback to alert
+                        else {
+                            alert('Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID');
+                        }
+                        
                         modalShown = true; // Mark as shown so it doesn't appear multiple times
                     }
                 });
