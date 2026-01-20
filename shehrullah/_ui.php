@@ -5,10 +5,22 @@
  */
 
 // Card with header
-function ui_card($title, $subtitle = '', $back_url = '') {
+function ui_card($title, $subtitle = '', $back_url = '', $actions = []) {
     $back = $back_url ? "<a href=\"$back_url\" class=\"btn btn-sm btn-outline-secondary\">Back</a>" : '';
     $sub = $subtitle ? "<small class=\"text-muted d-block\">$subtitle</small>" : '';
-    echo "<div class=\"card mb-3\"><div class=\"card-header\"><div class=\"d-flex justify-content-between align-items-center\"><div><h5 class=\"mb-0\">$title</h5>$sub</div>$back</div></div><div class=\"card-body\">";
+    
+    // Build actions HTML (can be array of label => html pairs, or just back button)
+    $actions_html = '';
+    if (!empty($actions)) {
+        foreach ($actions as $label => $html) {
+            $actions_html .= $html;
+        }
+    }
+    if ($back) {
+        $actions_html = $back . ($actions_html ? ' ' . $actions_html : '');
+    }
+    
+    echo "<div class=\"card mb-3\"><div class=\"card-header\"><div class=\"d-flex justify-content-between align-items-center\"><div><h5 class=\"mb-0\">$title</h5>$sub</div><div class=\"d-flex gap-2 align-items-center\">$actions_html</div></div></div><div class=\"card-body\">";
 }
 
 function ui_card_end() {
