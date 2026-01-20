@@ -28,27 +28,6 @@ function _handle_post()
             setSessionData(TRANSIT_DATA, 'Failed to update area.');
         }
         do_redirect('?edit=' . $area_code);
-    } else if ($action === 'block_seat') {
-        $area_code = $_POST['area_code'] ?? '';
-        $seat_number = $_POST['seat_number'] ?? '';
-        $reason = $_POST['reason'] ?? '';
-        
-        if (empty($area_code) || empty($seat_number)) {
-            setSessionData(TRANSIT_DATA, 'Please provide area and seat number.');
-            do_redirect('?edit=' . $area_code);
-        }
-        
-        $userData = getSessionData(THE_SESSION_ID);
-        $blocked_by = $userData->itsid ?? '';
-        
-        $success = block_seat($area_code, $seat_number, $reason, $blocked_by);
-        
-        if ($success) {
-            setSessionData(TRANSIT_DATA, 'Seat blocked successfully!');
-        } else {
-            setSessionData(TRANSIT_DATA, 'Failed to block seat.');
-        }
-        do_redirect('?edit=' . $area_code);
     } else if ($action === 'unblock_seat') {
         $area_code = $_POST['area_code'] ?? '';
         $seat_number = $_POST['seat_number'] ?? '';
@@ -65,7 +44,7 @@ function _handle_post()
         $area_code = $_POST['area_code'] ?? '';
         $start = intval($_POST['range_start'] ?? 0);
         $end = intval($_POST['range_end'] ?? 0);
-        $reason = $_POST['reason'] ?? 'Bulk blocked';
+        $reason = $_POST['reason'] ?? '';
         
         if (empty($area_code) || $start <= 0 || $end <= 0 || $start > $end) {
             setSessionData(TRANSIT_DATA, 'Invalid range provided.');
@@ -247,26 +226,6 @@ function show_edit_area_page($area_code, $url, $hijri_year)
             <h5 class="card-title">Blocked Seats Management</h5>
         </div>
         <div class="card-body">
-            <!-- Block Single Seat -->
-            <div class="mb-4">
-                <h6>Block Single Seat</h6>
-                <form method="post">
-                    <input type="hidden" name="action" value="block_seat">
-                    <input type="hidden" name="area_code" value="<?= $area_code ?>">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <input type="number" name="seat_number" class="form-control" placeholder="Seat #" required>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" name="reason" class="form-control" placeholder="Reason (optional)">
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-danger">Block Seat</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            
             <!-- Block Range -->
             <div class="mb-4">
                 <h6>Block Range of Seats</h6>
@@ -281,7 +240,7 @@ function show_edit_area_page($area_code, $url, $hijri_year)
                             <input type="number" name="range_end" class="form-control" placeholder="To" required>
                         </div>
                         <div class="col-md-3">
-                            <input type="text" name="reason" class="form-control" placeholder="Reason" value="Bulk blocked">
+                            <input type="text" name="reason" class="form-control" placeholder="Reason (optional)">
                         </div>
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-warning">Block Range</button>
