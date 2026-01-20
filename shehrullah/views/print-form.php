@@ -109,6 +109,77 @@ function content_display()
         .smalltext {
             font-size: 11px;
         }
+        @media print {
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+            body {
+                font-family: Arial, sans-serif;
+            }
+        }
+        #printableArea {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            padding: 5mm;
+            box-sizing: border-box;
+        }
+        #printableArea table {
+            margin-bottom: 2px;
+        }
+        #printableArea th, 
+        #printableArea td {
+            padding: 4px 6px;
+            vertical-align: middle;
+        }
+        .logo-cell {
+            width: 80px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .logo-cell img {
+            max-width: 70px;
+            height: auto;
+        }
+        .header-info {
+            width: auto;
+        }
+        .date-cell {
+            width: 100px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .col-label {
+            width: 60px;
+            font-weight: bold;
+        }
+        .col-sn {
+            width: 40px;
+            text-align: center;
+        }
+        .col-its-name {
+            width: auto;
+        }
+        .col-gender-age {
+            width: 70px;
+            text-align: center;
+        }
+        .col-chair {
+            width: 50px;
+            text-align: center;
+        }
+        .col-mohallah {
+            width: 80px;
+            text-align: center;
+        }
+        .niyaz-label {
+            width: 150px;
+        }
+        .niyaz-hub {
+            width: 120px;
+            text-align: right;
+        }
     </style>
     <?php if(!$print) { ?>
         <div class="alert alert-primary" role="alert">
@@ -117,46 +188,38 @@ function content_display()
     <?php } ?>
     <div class="card" id="printableArea">
         <div class="card-body">
-            <table class='table table-bordered'>
+            <table class='table table-bordered' style='margin-bottom: 5px;'>
                 <tr>
-                    <td><img src="<?= $uri ?>/_assets/images/anjuman_e_kalimi.png" /></td>
-                    <td>
-                        <table class='table table-bordered'>
-                            <tr>
-                                <th style='font-size: 12px'>SHEHRULLAH <?= $hijri_year ?>H / Kalimi Masjid, KALIMI MOHALLAH
-                                </th>
-                                <td><?=$date?></td>
-                            </tr>                            
-                        </table>
-                    </td>
-
+                    <td class='logo-cell'><img src="<?= $uri ?>/_assets/images/anjuman_e_kalimi.png" /></td>
+                    <td class='header-info' style='font-size: 12px; font-weight: bold; text-align: center;'>SHEHRULLAH <?= $hijri_year ?>H / Kalimi Masjid, KALIMI MOHALLAH</td>
+                    <td class='date-cell' style='font-size: 12px;'><?=$date?></td>
                 </tr>
             </table>
 
-            <table class='table table-bordered'>
+            <table class='table table-bordered' style='margin-bottom: 5px;'>
                 <tr>
-                    <th style='font-size: 12px'>HOF</th>
+                    <th class='col-label' style='font-size: 12px'>HOF</th>
                     <td style='font-size: 12px' colspan="5">[<?= $hof_id ?>] <?= $name ?></td>                                        
                 </tr>
                 <tr>
-                    <th style='font-size: 12px'>Sabil</th>
-                    <td style='font-size: 12px'><?= $sabeel ?></td>
-                    <th style='font-size: 12px'>WApp</th>
+                    <th class='col-label' style='font-size: 12px'>Sabil</th>
+                    <td style='font-size: 12px; width: 100px;'><?= $sabeel ?></td>
+                    <th style='font-size: 12px; width: 70px;'>WApp</th>
                     <td style='font-size: 12px' colspan="3"><?= $takhmeen_data->whatsapp ?></td>
                 </tr>
                 <tr>
-                    <th style='font-size: 12px'>Addr:</th>
+                    <th class='col-label' style='font-size: 12px'>Addr:</th>
                     <td style='font-size: 12px' colspan="5"><?= $address ?></td>
                 </tr>
             </table>
 
-            <table class='table table-bordered'>
+            <table class='table table-bordered' style='margin-bottom: 5px;'>
                 <tr>
-                    <th style='font-size: 12px'>SN</th>
-                    <th style='font-size: 12px'>ITS - NAME</th>
-                    <th style='font-size: 12px'>Gender/Age</th>
-                    <th style='font-size: 12px'>Chair</th>
-                    <th style='font-size: 12px'>Mohallah</th>
+                    <th class='col-sn' style='font-size: 12px'>SN</th>
+                    <th class='col-its-name' style='font-size: 12px'>ITS - NAME</th>
+                    <th class='col-gender-age' style='font-size: 12px'>Gender/Age</th>
+                    <th class='col-chair' style='font-size: 12px'>Chair</th>
+                    <th class='col-mohallah' style='font-size: 12px'>Mohallah</th>
                 </tr>
                 <?php
                 $index = 0;
@@ -182,11 +245,11 @@ function content_display()
                 
                     
                     echo "<tr>
-                        <td style='font-size: 12px'>$index</td>
-                        <td style='font-size: 12px'>$photo_pending $its - $name</td>
-                        <td style='font-size: 12px'>$gender/$age</td>
-                        <td style='font-size: 12px'>$chair_preference</td>
-                        <td style='font-size: 12px'><b>$mohalla</b></td>                        
+                        <td class='col-sn' style='font-size: 12px; text-align: center;'>$index</td>
+                        <td class='col-its-name' style='font-size: 12px;'>$photo_pending $its - $name</td>
+                        <td class='col-gender-age' style='font-size: 12px; text-align: center;'>$gender/$age</td>
+                        <td class='col-chair' style='font-size: 12px; text-align: center;'>$chair_preference</td>
+                        <td class='col-mohallah' style='font-size: 12px; text-align: center;'><b>$mohalla</b></td>                        
                         </tr>";
                 }
                 ?>
@@ -194,21 +257,21 @@ function content_display()
             
             <?php __display_niyaz_section($takhmeen_data, $shehrullah_data); ?>
 
-            <table class='table table-bordered small-text'>
+            <table class='table table-bordered' style='margin-bottom: 5px;'>
                 <tr>
-                    <th style='font-size: 12px'>Kindly submit form to receive izan card & carry izan card for our
+                    <th style='font-size: 12px' colspan="3">Kindly submit form to receive izan card & carry izan card for our
                         convenience.</th>
                 </tr>
                 <tr>
-                    <th style='font-size: 12px'>Prev. Takhmeen / Niyaz</th>
-                    <td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i><?=$prev_or_family_niyaz?></td>
-                    <th style='font-size: 12px'>Committed Hub Amount</th>
+                    <th style='font-size: 12px; width: 200px;'>Prev. Takhmeen / Niyaz</th>
+                    <td style='font-size: 12px; width: 150px; text-align: right;'><i class='mdi mdi-currency-inr'></i><?=$prev_or_family_niyaz?></td>
+                    <th style='font-size: 12px; width: auto;'>Committed Hub Amount</th>
                 </tr>
             </table>
-            <table class='table table-bordered'>
+            <table class='table table-bordered' style='margin-bottom: 5px;'>
                 <tr>
-                    <th style='font-size: 12px'>HOF Signature</th>
-                    <th style='font-size: 12px'>Auth. Signature</th>
+                    <th style='font-size: 12px; width: 50%;'>HOF Signature</th>
+                    <th style='font-size: 12px; width: 50%;'>Auth. Signature</th>
                 </tr>
             </table>
         </div>
@@ -229,10 +292,23 @@ function content_display()
 
                 var htmlToPrint = '' +
         '<style type="text/css">' +
+        '@page { size: A4; margin: 10mm; }' +
+        'body { font-family: Arial, sans-serif; }' +
+        'table { width: 100%; border-collapse: collapse; margin-bottom: 2px; }' +
         'table th, table tr, table td {' +
         'border:1px solid #000;' +
-        'padding:0.5em;' +
+        'padding:4px 6px;' +
+        'font-size: 12px;' +
         '}' +
+        '.logo-cell { width: 80px; text-align: center; }' +
+        '.logo-cell img { max-width: 70px; height: auto; }' +
+        '.date-cell { width: 100px; text-align: center; }' +
+        '.col-sn { width: 40px; text-align: center; }' +
+        '.col-gender-age { width: 70px; text-align: center; }' +
+        '.col-chair { width: 50px; text-align: center; }' +
+        '.col-mohallah { width: 80px; text-align: center; }' +
+        '.niyaz-label { width: 150px; }' +
+        '.niyaz-hub { width: 120px; text-align: right; }' +
         '</style>';
     htmlToPrint += printContents;
 
@@ -321,30 +397,37 @@ function __display_niyaz_section(...$data)
 
 	//20Jan - Other section removed.
         echo "
-    <table class='table table-bordered'>
+    <table class='table table-bordered' style='margin-bottom: 5px;'>
         <tr>                            
-            <th style='font-size: 12px'>Niyaz Khdimat</th><th style='font-size: 12px'>Hub</th>
+            <th class='niyaz-label' style='font-size: 12px; font-weight: bold;'>Niyaz Khdimat</th>
+            <th class='niyaz-hub' style='font-size: 12px; font-weight: bold; text-align: center;'>Hub</th>
         </tr>
         <tr>            
-            <th style='font-size: 12px'>Full Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->full_niyaz</td>
+            <th class='niyaz-label' style='font-size: 12px;'>Full Niyaz</th>
+            <td class='niyaz-hub' style='font-size: 12px; text-align: right;'><i class='mdi mdi-currency-inr'></i> $markaz_data->full_niyaz</td>
         </tr>
         <tr>            
-            <th style='font-size: 12px'>Half Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->half_niyaz</td>
+            <th class='niyaz-label' style='font-size: 12px;'>Half Niyaz</th>
+            <td class='niyaz-hub' style='font-size: 12px; text-align: right;'><i class='mdi mdi-currency-inr'></i> $markaz_data->half_niyaz</td>
         </tr>
         <tr>            
-            <th style='font-size: 12px'>Per Head Hub</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->family_niyaz</td>
+            <th class='niyaz-label' style='font-size: 12px;'>Per Head Hub</th>
+            <td class='niyaz-hub' style='font-size: 12px; text-align: right;'><i class='mdi mdi-currency-inr'></i> $markaz_data->family_niyaz</td>
         </tr>
         <tr>            
-            <th style='font-size: 12px'>Kids Hub</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->per_kid_niyaz</td>
+            <th class='niyaz-label' style='font-size: 12px;'>Kids Hub</th>
+            <td class='niyaz-hub' style='font-size: 12px; text-align: right;'><i class='mdi mdi-currency-inr'></i> $markaz_data->per_kid_niyaz</td>
         </tr>
         <tr>            
-            <th style='font-size: 12px' colspan=2>&nbsp</th>
+            <th style='font-size: 12px;' colspan=2>&nbsp</th>
         </tr>        
         <tr>               
-            <th style='font-size: 12px'>Pirsa</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$pirsa_hub</td>
+            <th class='niyaz-label' style='font-size: 12px;'>Pirsa</th>
+            <td class='niyaz-hub' style='font-size: 12px; text-align: right;'><i class='mdi mdi-currency-inr'></i> $pirsa_hub</td>
         </tr>
         <tr>               
-            <th style='font-size: 12px'>Chair</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$chair_hub</td>
+            <th class='niyaz-label' style='font-size: 12px;'>Chair</th>
+            <td class='niyaz-hub' style='font-size: 12px; text-align: right;'><i class='mdi mdi-currency-inr'></i> $chair_hub</td>
         </tr>  
         </table>      
     ";
