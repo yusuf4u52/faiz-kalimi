@@ -76,13 +76,13 @@ function content_display()
     
     // Toolbar
     ui_toolbar();
-    ui_search('search', 'Search HOF, ITS, or Name...', $search_term, $search_term ? "$url/seat-management" : '');
+    ui_search('search', 'Search ITS or Name...', $search_term, $search_term ? "$url/seat-management" : '');
     ui_btngroup(['Pre Allocate Seat' => "$url/seat-pre-allocate", 'Manage Grid' => "$url/seating-areas", 'Payment Exceptions' => "$url/seat-exceptions"]);
     ui_toolbar_end();
     
     // Table
     ui_count(count($allocations), 'allocation');
-    ui_table(['HOF', 'Family', 'Member', 'G/Age', 'Area', 'Seat', 'By', 'Date']);
+    ui_table(['ITS', 'Member', 'G/Age', 'Area', 'Seat', 'By', 'Date']);
     
     if (empty($allocations)) {
         ui_table_end('No allocations found', 0);
@@ -91,8 +91,7 @@ function content_display()
             $seat = $alloc->seat_number ? "<strong>{$alloc->seat_number}</strong>" : ui_muted('—');
             $by = $alloc->allocated_by ? 'Admin' : 'Self';
             ui_tr([
-                ui_code($alloc->hof_id),
-                h($alloc->hof_name),
+                ui_code($alloc->its_id),
                 h($alloc->full_name),
                 ui_ga($alloc->gender, $alloc->age),
                 ui_muted($alloc->area_name),
