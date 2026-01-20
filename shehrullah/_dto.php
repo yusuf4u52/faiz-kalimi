@@ -568,11 +568,11 @@ function get_registration_summary($hijri) {
     count(CASE WHEN a.attendance_type = "Y" and i.age < 5 THEN 1 ELSE NULL END) as infant,
     count(CASE WHEN a.attendance_type = "Y" THEN 1 ELSE NULL END) as attendees, 
     count(CASE WHEN a.chair_preference = "Y" THEN 1 ELSE NULL END) as chairs,
-    t.pirsa_count,t.takhmeen, t.paid_amount, t.zabihat_count 
+    t.pirsa_count,t.takhmeen, t.paid_amount, t.zabihat_count
     FROM kl_shehrullah_attendees a
     JOIN its_data i ON i.its_id = a.its_id
-    JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id    
-    WHERE t.year=? and a.year=? and t.takhmeen > 0
+    JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id
+    WHERE t.year=? and a.year=? and t.takhmeen >= 0
     GROUP BY a.hof_id    
     ) a;';
 
@@ -591,12 +591,12 @@ function get_registration_data($hijri)
     count(CASE WHEN a.attendance_type = "Y" and i.age < 12 and i.age > 4 THEN 1 ELSE NULL END) as kids,
     count(CASE WHEN a.attendance_type = "Y" and i.age < 5 THEN 1 ELSE NULL END) as infant,
     count(CASE WHEN a.attendance_type = "Y" THEN 1 ELSE NULL END) as attendees, 
-    count(CASE WHEN a.chair_preference = "Y" THEN 1 ELSE NULL END) as chairs,
-    t.pirsa_count,t.takhmeen, t.whatsapp, t.paid_amount, t.zabihat_count
+    count(CASE WHEN a.chair_preference = "Y" THEN 1 ELSE NULL END) as chairs
+    ,t.pirsa_count,t.takhmeen, t.whatsapp, t.paid_amount, t.zabihat_count
     FROM kl_shehrullah_attendees a
     JOIN its_data i ON i.its_id = a.its_id
-    JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id   
-    WHERE t.year=? and a.year=? and t.takhmeen > 0 GROUP BY a.hof_id;';
+    JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id 
+    WHERE t.year=? and a.year=? and t.takhmeen >= 0 GROUP BY a.hof_id;';    
 
     $result = run_statement($query, $hijri, $hijri);
     if ($result->success && $result->count > 0) {
@@ -604,7 +604,6 @@ function get_registration_data($hijri)
     }
     return [];
 }
-
 
 
 function get_itsdata_for($hof_id)
