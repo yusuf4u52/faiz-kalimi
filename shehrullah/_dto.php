@@ -571,10 +571,12 @@ function get_registration_summary($hijri) {
     t.pirsa_count,t.takhmeen, t.paid_amount, t.zabihat_count 
     FROM kl_shehrullah_attendees a
     JOIN its_data i ON i.its_id = a.its_id
-    JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id    
-    WHERE t.year=? and a.year=? and t.takhmeen >= 0
+    WHERE a.year=?
     GROUP BY a.hof_id    
     ) a;';
+
+    // JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id    
+    // WHERE t.year=? and a.year=? and t.takhmeen >= 0
 
     $result = run_statement($query, $hijri, $hijri);
     if ($result->success && $result->count > 0) {
