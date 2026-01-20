@@ -107,7 +107,11 @@ function content_display()
         </div>
     </form>
     
-    <?php if (!empty($area_blocked_seats)) { ?>
+    <?php if ($thaali_data) { 
+        ui_hr();
+        
+        // Show available blocked seats after search
+        if (!empty($area_blocked_seats)) { ?>
     <div class="mb-4">
         <h6 class="text-muted mb-2">Available Blocked Seats by Area</h6>
         <div class="row g-2">
@@ -129,10 +133,7 @@ function content_display()
             <?php } ?>
         </div>
     </div>
-    <?php } ?>
-    
-    <?php if ($thaali_data) { 
-        ui_hr();
+        <?php } 
     ?>
     <div class="mb-3">
         <strong><?= h($thaali_data->NAME) ?></strong> <?= ui_code($hof_id) ?> 
