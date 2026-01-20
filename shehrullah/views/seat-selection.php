@@ -162,7 +162,7 @@ function content_display()
     ui_table_end();
     ?>
     <div class="mt-4">
-        <?= ui_link('Back', "$url/input-sabeel", 'secondary') ?>
+        <?= ui_link('Back', "$url/input-seat-selection", 'secondary') ?>
     </div>
     <?php 
     ui_card_end();
