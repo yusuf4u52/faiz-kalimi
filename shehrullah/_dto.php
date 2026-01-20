@@ -666,3 +666,449 @@ function add_hof($hof_id) {
 
 }
 
+//--------------------------------------------
+// SEAT SELECTION FUNCTIONS
+//--------------------------------------------
+
+/**
+ * Check if seat selection is globally open (controlled by SUPER_ADMIN)
+ */
+function is_seat_selection_open() {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT seat_selection_open FROM kl_shehrullah_config WHERE year = ?';
+    $result = run_statement($query, $hijri_year);
+    if ($result->success && $result->count > 0) {
+        return $result->data[0]->seat_selection_open == 'Y';
+    }
+    return false;
+}
+
+/**
+ * Toggle seat selection open/close (SUPER_ADMIN only)
+ */
+function toggle_seat_selection($open) {
+    $hijri_year = get_current_hijri_year();
+    $value = $open ? 'Y' : 'N';
+    $query = 'UPDATE kl_shehrullah_config SET seat_selection_open = ? WHERE year = ?';
+    $result = run_statement($query, $value, $hijri_year);
+    return $result->success;
+}
+
+/**
+ * Check if a family can select seats (selection open + full payment or exception)
+ */
+function can_select_seats($hof_id) {
+    // First check if seat selection is globally open
+    if (!is_seat_selection_open()) {
+        return false;
+    }
+    
+    $hijri_year = get_current_hijri_year();
+    $takhmeen = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
+    
+    if (is_null($takhmeen) || $takhmeen->takhmeen <= 0) {
+        return false;
+    }
+    
+    // Check if full payment done
+    if ($takhmeen->paid_amount >= $takhmeen->takhmeen) {
+        return true;
+    }
+    
+    // Check if SUPER_ADMIN has granted an exception
+    return has_seat_exception($hof_id, $hijri_year);
+}
+
+/**
+ * Check if HOF has a payment exception for seat selection
+ */
+function has_seat_exception($hof_id, $hijri_year) {
+    $query = 'SELECT id FROM kl_shehrullah_seat_exceptions 
+              WHERE hof_id = ? AND hijri_year = ? AND is_active = "Y"';
+    $result = run_statement($query, $hof_id, $hijri_year);
+    return $result->success && $result->count > 0;
+}
+
+/**
+ * Grant payment exception for seat selection (SUPER_ADMIN only)
+ */
+function grant_seat_exception($hof_id, $reason, $granted_by) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'INSERT INTO kl_shehrullah_seat_exceptions 
+              (hof_id, hijri_year, reason, granted_by, granted_at, is_active)
+              VALUES (?, ?, ?, ?, NOW(), "Y")
+              ON DUPLICATE KEY UPDATE 
+              reason = ?, granted_by = ?, granted_at = NOW(), 
+              is_active = "Y", revoked_at = NULL';
+    $result = run_statement($query, $hof_id, $hijri_year, $reason, $granted_by, $reason, $granted_by);
+    return $result->success;
+}
+
+/**
+ * Revoke payment exception
+ */
+function revoke_seat_exception($hof_id) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'UPDATE kl_shehrullah_seat_exceptions 
+              SET is_active = "N", revoked_at = NOW() 
+              WHERE hof_id = ? AND hijri_year = ?';
+    $result = run_statement($query, $hof_id, $hijri_year);
+    return $result->success;
+}
+
+/**
+ * Get all active seat exceptions
+ */
+function get_all_seat_exceptions() {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT e.*, m.full_name, t.takhmeen, t.paid_amount 
+              FROM kl_shehrullah_seat_exceptions e
+              LEFT JOIN its_data m ON m.its_id = e.hof_id
+              LEFT JOIN kl_shehrullah_takhmeen t ON t.hof_id = e.hof_id AND t.year = e.hijri_year
+              WHERE e.hijri_year = ? AND e.is_active = "Y"
+              ORDER BY e.granted_at DESC';
+    $result = run_statement($query, $hijri_year);
+    return $result->success && $result->count > 0 ? $result->data : [];
+}
+
+/**
+ * Get all seating areas for current year
+ */
+function get_seating_areas() {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT * FROM kl_shehrullah_seating_areas 
+              WHERE hijri_year = ? AND is_active = "Y" ORDER BY id';
+    $result = run_statement($query, $hijri_year);
+    return $result->success && $result->count > 0 ? $result->data : [];
+}
+
+/**
+ * Get a specific seating area
+ */
+function get_seating_area($area_code) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT * FROM kl_shehrullah_seating_areas 
+              WHERE area_code = ? AND hijri_year = ? AND is_active = "Y"';
+    $result = run_statement($query, $area_code, $hijri_year);
+    return $result->success && $result->count > 0 ? $result->data[0] : null;
+}
+
+/**
+ * Get attendees eligible for seat selection (Misaq Done, attending)
+ */
+function get_attendees_for_seat_selection($hof_id) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT sa.its_id, sa.chair_preference, m.full_name, m.age, m.gender, m.misaq,
+              alloc.area_code as allocated_area, alloc.seat_number, alloc.allocated_by,
+              areas.area_name as allocated_area_name
+              FROM kl_shehrullah_attendees sa
+              JOIN its_data m ON m.its_id = sa.its_id
+              LEFT JOIN kl_shehrullah_seat_allocation alloc ON alloc.its_id = sa.its_id AND alloc.hijri_year = ?
+              LEFT JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = ?
+              WHERE sa.hof_id = ? AND sa.year = ? 
+              AND sa.attendance_type = "Y" AND m.misaq = "Done"
+              ORDER BY m.age DESC';
+    $result = run_statement($query, $hijri_year, $hijri_year, $hof_id, $hijri_year);
+    return $result->success && $result->count > 0 ? $result->data : [];
+}
+
+/**
+ * Get eligible seating areas for an attendee based on rules
+ */
+function get_eligible_areas_for_attendee($its_id, $hof_id) {
+    $hijri_year = get_current_hijri_year();
+    
+    // Get attendee info
+    $query = 'SELECT m.*, sa.chair_preference 
+              FROM its_data m 
+              JOIN kl_shehrullah_attendees sa ON sa.its_id = m.its_id AND sa.year = ?
+              WHERE m.its_id = ?';
+    $result = run_statement($query, $hijri_year, $its_id);
+    if (!$result->success || $result->count == 0) {
+        return [];
+    }
+    $attendee = $result->data[0];
+    
+    // Only Misaq Done members can select seats
+    if ($attendee->misaq != 'Done') {
+        return [];
+    }
+    
+    $areas = get_seating_areas();
+    $eligible = [];
+    
+    foreach ($areas as $area) {
+        // Gender check
+        if ($area->gender != 'All' && $area->gender != $attendee->gender) {
+            continue;
+        }
+        
+        // Age check (for first floor ladies)
+        if ($area->min_age > 0 && $attendee->age < $area->min_age) {
+            continue;
+        }
+        
+        // Max seats per family check (for Masjid and Ladies First Floor)
+        if ($area->max_seats_per_family > 0) {
+            $count = count_family_seats_in_area($hof_id, $area->area_code);
+            
+            // Check if this attendee already has this area (allow re-selection)
+            $current_alloc = get_seat_allocation_for_member($its_id);
+            $is_same_area = ($current_alloc && $current_alloc->area_code == $area->area_code);
+            
+            if ($count >= $area->max_seats_per_family && !$is_same_area) {
+                continue;
+            }
+        }
+        
+        // Chair preference check - if attendee needs chair, only show chair-allowed areas
+        if ($attendee->chair_preference == 'Y' && $area->chairs_allowed != 'Y') {
+            continue;
+        }
+        
+        $eligible[] = $area;
+    }
+    
+    return $eligible;
+}
+
+/**
+ * Count how many family members have seats in a specific area
+ */
+function count_family_seats_in_area($hof_id, $area_code) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT COUNT(*) as cnt FROM kl_shehrullah_seat_allocation 
+              WHERE hof_id = ? AND area_code = ? AND hijri_year = ?';
+    $result = run_statement($query, $hof_id, $area_code, $hijri_year);
+    return $result->success && $result->count > 0 ? intval($result->data[0]->cnt) : 0;
+}
+
+/**
+ * Get seat allocation for a specific member
+ */
+function get_seat_allocation_for_member($its_id) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT alloc.*, areas.area_name 
+              FROM kl_shehrullah_seat_allocation alloc
+              JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = alloc.hijri_year
+              WHERE alloc.its_id = ? AND alloc.hijri_year = ?';
+    $result = run_statement($query, $its_id, $hijri_year);
+    return $result->success && $result->count > 0 ? $result->data[0] : null;
+}
+
+/**
+ * Get all seat allocations for a family
+ */
+function get_seat_allocations_for_family($hof_id) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT alloc.*, areas.area_name, m.full_name
+              FROM kl_shehrullah_seat_allocation alloc
+              JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = alloc.hijri_year
+              JOIN its_data m ON m.its_id = alloc.its_id
+              WHERE alloc.hof_id = ? AND alloc.hijri_year = ?
+              ORDER BY alloc.allocated_at';
+    $result = run_statement($query, $hof_id, $hijri_year);
+    return $result->success && $result->count > 0 ? $result->data : [];
+}
+
+/**
+ * Allocate seat for a member (user self-selection)
+ */
+function allocate_seat($its_id, $hof_id, $area_code) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'INSERT INTO kl_shehrullah_seat_allocation 
+              (its_id, hof_id, area_code, hijri_year, allocated_at)
+              VALUES (?, ?, ?, ?, NOW())
+              ON DUPLICATE KEY UPDATE 
+              area_code = ?, allocated_at = NOW(), allocated_by = NULL';
+    $result = run_statement($query, $its_id, $hof_id, $area_code, $hijri_year, $area_code);
+    return $result->success;
+}
+
+/**
+ * SUPER_ADMIN pre-allocate seat (bypasses all rules)
+ */
+function admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $allocated_by) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'INSERT INTO kl_shehrullah_seat_allocation 
+              (its_id, hof_id, area_code, seat_number, allocated_by, hijri_year, allocated_at)
+              VALUES (?, ?, ?, ?, ?, ?, NOW())
+              ON DUPLICATE KEY UPDATE 
+              area_code = ?, seat_number = ?, allocated_by = ?, allocated_at = NOW()';
+    $result = run_statement($query, $its_id, $hof_id, $area_code, $seat_number, $allocated_by, 
+                            $hijri_year, $area_code, $seat_number, $allocated_by);
+    return $result->success;
+}
+
+/**
+ * Check if member's seat was pre-allocated by SUPER_ADMIN
+ */
+function is_admin_allocated($its_id) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT allocated_by FROM kl_shehrullah_seat_allocation 
+              WHERE its_id = ? AND hijri_year = ? AND allocated_by IS NOT NULL';
+    $result = run_statement($query, $its_id, $hijri_year);
+    return $result->success && $result->count > 0;
+}
+
+/**
+ * Get all seat allocations (for admin)
+ */
+function get_all_seat_allocations() {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT alloc.*, areas.area_name, m.full_name, m.gender, m.age,
+              hof.full_name as hof_name
+              FROM kl_shehrullah_seat_allocation alloc
+              JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = alloc.hijri_year
+              JOIN its_data m ON m.its_id = alloc.its_id
+              JOIN its_data hof ON hof.its_id = alloc.hof_id
+              WHERE alloc.hijri_year = ?
+              ORDER BY areas.area_name, alloc.seat_number, alloc.allocated_at';
+    $result = run_statement($query, $hijri_year);
+    return $result->success && $result->count > 0 ? $result->data : [];
+}
+
+/**
+ * Block a seat (SUPER_ADMIN)
+ */
+function block_seat($area_code, $seat_number, $reason, $blocked_by) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'INSERT INTO kl_shehrullah_blocked_seats 
+              (area_code, seat_number, reason, blocked_by, hijri_year)
+              VALUES (?, ?, ?, ?, ?)
+              ON DUPLICATE KEY UPDATE reason = ?, blocked_by = ?, blocked_at = NOW()';
+    $result = run_statement($query, $area_code, $seat_number, $reason, $blocked_by, $hijri_year, $reason, $blocked_by);
+    return $result->success;
+}
+
+/**
+ * Unblock a seat
+ */
+function unblock_seat($area_code, $seat_number) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'DELETE FROM kl_shehrullah_blocked_seats 
+              WHERE area_code = ? AND seat_number = ? AND hijri_year = ?';
+    $result = run_statement($query, $area_code, $seat_number, $hijri_year);
+    return $result->success;
+}
+
+/**
+ * Get blocked seats for an area
+ */
+function get_blocked_seats($area_code) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT * FROM kl_shehrullah_blocked_seats 
+              WHERE area_code = ? AND hijri_year = ? ORDER BY seat_number';
+    $result = run_statement($query, $area_code, $hijri_year);
+    return $result->success && $result->count > 0 ? $result->data : [];
+}
+
+/**
+ * Check if a specific seat is blocked
+ */
+function is_seat_blocked($area_code, $seat_number) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT id FROM kl_shehrullah_blocked_seats 
+              WHERE area_code = ? AND seat_number = ? AND hijri_year = ?';
+    $result = run_statement($query, $area_code, $seat_number, $hijri_year);
+    return $result->success && $result->count > 0;
+}
+
+/**
+ * Get next available seat number for an area (skips blocked and allocated)
+ */
+function get_next_available_seat($area_code) {
+    $hijri_year = get_current_hijri_year();
+    $area = get_seating_area($area_code);
+    
+    if (is_null($area) || is_null($area->seat_start) || is_null($area->seat_end)) {
+        return null;
+    }
+    
+    // Get all blocked seat numbers
+    $blocked_data = get_blocked_seats($area_code);
+    $blocked = array_map(function($item) { return intval($item->seat_number); }, $blocked_data);
+    
+    // Get all allocated seat numbers
+    $query = 'SELECT seat_number FROM kl_shehrullah_seat_allocation 
+              WHERE area_code = ? AND hijri_year = ? AND seat_number IS NOT NULL';
+    $result = run_statement($query, $area_code, $hijri_year);
+    $allocated = [];
+    if ($result->success && $result->count > 0) {
+        $allocated = array_map(function($item) { return intval($item->seat_number); }, $result->data);
+    }
+    
+    // Find next available
+    $unavailable = array_merge($blocked, $allocated);
+    for ($seat = intval($area->seat_start); $seat <= intval($area->seat_end); $seat++) {
+        if (!in_array($seat, $unavailable)) {
+            return $seat;
+        }
+    }
+    
+    return null; // All seats taken
+}
+
+/**
+ * Update seating area configuration
+ */
+function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'UPDATE kl_shehrullah_seating_areas 
+              SET area_name = ?, seat_start = ?, seat_end = ?, is_active = ?
+              WHERE area_code = ? AND hijri_year = ?';
+    $result = run_statement($query, $area_name, $seat_start, $seat_end, $is_active, $area_code, $hijri_year);
+    return $result->success;
+}
+
+/**
+ * Assign sequential seat numbers to all allocations in an area
+ */
+function assign_sequential_seats($area_code) {
+    $hijri_year = get_current_hijri_year();
+    
+    // Get all allocations without seat numbers, ordered by allocation time
+    $query = 'SELECT id FROM kl_shehrullah_seat_allocation 
+              WHERE area_code = ? AND hijri_year = ? AND seat_number IS NULL
+              ORDER BY allocated_at';
+    $result = run_statement($query, $area_code, $hijri_year);
+    
+    if (!$result->success || $result->count == 0) {
+        return true; // Nothing to assign
+    }
+    
+    $assigned = 0;
+    foreach ($result->data as $alloc) {
+        $next_seat = get_next_available_seat($area_code);
+        if (is_null($next_seat)) {
+            break; // No more seats available
+        }
+        
+        $update_query = 'UPDATE kl_shehrullah_seat_allocation SET seat_number = ? WHERE id = ?';
+        run_statement($update_query, $next_seat, $alloc->id);
+        $assigned++;
+    }
+    
+    return $assigned;
+}
+
+// TODO: WhatsApp Integration Placeholder
+// function send_seat_allocation_whatsapp($hof_id, $whatsapp_number) {
+//     $hijri_year = get_current_hijri_year();
+//     $allocations = get_seat_allocations_for_family($hof_id);
+//     
+//     $message = "Shehrullah $hijri_year - Seat Allocation Confirmation\n\n";
+//     
+//     foreach($allocations as $alloc) {
+//         $message .= "{$alloc->full_name}: {$alloc->area_name}";
+//         if($alloc->seat_number) $message .= " (Seat #{$alloc->seat_number})";
+//         $message .= "\n";
+//     }
+//     
+//     $message .= "\n📌 Seat selection is first come first serve basis.";
+//     $message .= "\n📌 Please arrive early to secure your allocated seat.";
+//     
+//     // Integration with WhatsApp Business API
+//     // Update whatsapp_sent and whatsapp_sent_at in kl_shehrullah_seat_allocation
+// }
+
