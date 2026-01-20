@@ -966,11 +966,6 @@ function admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $al
     $result = run_statement($query, $its_id, $hof_id, $area_code, $seat_number, $allocated_by, 
                             $hijri_year, $area_code, $seat_number, $allocated_by);
     
-    // Validation 2: Unblock seat if allocated by admin
-    if ($result->success && $seat_number) {
-        unblock_seat($area_code, $seat_number);
-    }
-    
     return $result->success;
 }
 
