@@ -45,6 +45,11 @@ function _handle_post()
             return;
         }
         
+        if (empty($hoob_clearance_date)) {
+            setSessionData(TRANSIT_DATA, 'Hoob clearance date is required.');
+            return;
+        }
+        
         // Check if takhmeen is done before granting exception
         $hijri_year = get_current_hijri_year();
         $takhmeen = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
@@ -141,8 +146,8 @@ function content_display()
                 <input type="hidden" name="hof_id" value="<?= h($search_hof_id) ?>">
                 <div class="mb-2"><?= ui_input('reason', '', 'Reason for exception') ?></div>
                 <div class="mb-2">
-                    <label class="form-label small">Expected Hoob Clearance Date</label>
-                    <input type="date" name="hoob_clearance_date" class="form-control form-control-sm">
+                    <label class="form-label small">Expected Hoob Clearance Date <span class="text-danger">*</span></label>
+                    <input type="date" name="hoob_clearance_date" class="form-control form-control-sm" required>
                 </div>
                 <?= ui_btn('Grant Exception', 'success') ?>
             </form>
