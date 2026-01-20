@@ -76,153 +76,90 @@ function content_display()
     $search_thaali_data = getAppData('search_thaali_data');
     $search_takhmeen = getAppData('search_takhmeen');
     $has_exception = getAppData('has_exception');
+    
+    // Main search card
+    ui_card("Seat Exceptions - {$hijri_year}H", 'Allow seat selection without full payment', "$url/seat-management");
     ?>
-    <div class="card mb-3">
-        <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="mb-0">Seat Exceptions - <?= $hijri_year ?>H</h5>
-                    <small class="text-muted">Allow seat selection without full payment</small>
-                </div>
-                <a href="<?= $url ?>/seat-management" class="btn btn-sm btn-outline-secondary">Back</a>
-            </div>
+    <form method="post" class="mb-3">
+        <input type="hidden" name="action" value="search">
+        <div class="input-group input-group-sm" style="max-width: 400px;">
+            <?= ui_input('sabeel', '', 'Sabeel or HOF ID') ?>
+            <?= ui_btn('Search', 'primary') ?>
         </div>
-        <div class="card-body">
-            <!-- Search Section -->
-            <form method="post" class="mb-3">
-                <input type="hidden" name="action" value="search">
-                <div class="input-group" style="max-width: 400px;">
-                    <input type="text" name="sabeel" class="form-control" placeholder="Sabeel or HOF ID" pattern="^[0-9]{1,8}$" required>
-                    <button class="btn btn-primary" type="submit">Search</button>
-                </div>
-            </form>
-            
-            <?php if ($search_thaali_data) { ?>
-            <hr>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <strong><?= $search_thaali_data->NAME ?></strong> 
-                        <code class="small"><?= $search_hof_id ?></code>
-                        <br><small class="text-muted">Sabeel <?= $search_thaali_data->Thali ?></small>
-                    </div>
-                    
-                    <table class="table table-sm table-bordered">
-                        <?php if ($search_takhmeen) { 
-                            $pending = $search_takhmeen->takhmeen - $search_takhmeen->paid_amount;
-                        ?>
-                        <tr>
-                            <th width="100">Takhmeen</th>
-                            <td>Rs. <?= number_format($search_takhmeen->takhmeen) ?></td>
-                        </tr>
-                        <tr>
-                            <th>Paid</th>
-                            <td>Rs. <?= number_format($search_takhmeen->paid_amount) ?></td>
-                        </tr>
-                        <tr>
-                            <th>Balance</th>
-                            <td>
-                                <?php if ($pending > 0) { ?>
-                                    <span class="text-danger">Rs. <?= number_format($pending) ?></span>
-                                <?php } else { ?>
-                                    <span class="text-success">Fully Paid</span>
-                                <?php } ?>
-                            </td>
-                        </tr>
-                        <?php } else { ?>
-                        <tr>
-                            <td colspan="2" class="text-warning small">Takhmeen not done</td>
-                        </tr>
-                        <?php } ?>
-                        <tr>
-                            <th>Exception</th>
-                            <td>
-                                <?php if ($has_exception) { ?>
-                                    <span class="text-success">● Granted</span>
-                                <?php } else { ?>
-                                    <span class="text-muted">○ Not granted</span>
-                                <?php } ?>
-                            </td>
-                        </tr>
-                    </table>
-                    
-                    <!-- Grant/Revoke Form -->
-                    <?php if (!$has_exception) { ?>
-                    <form method="post">
-                        <input type="hidden" name="action" value="grant">
-                        <input type="hidden" name="hof_id" value="<?= $search_hof_id ?>">
-                        <div class="mb-2">
-                            <input type="text" name="reason" class="form-control form-control-sm" placeholder="Reason for exception" required>
-                        </div>
-                        <button type="submit" class="btn btn-sm btn-success">Grant Exception</button>
-                    </form>
-                    <?php } else { ?>
-                    <form method="post">
-                        <input type="hidden" name="action" value="revoke">
-                        <input type="hidden" name="hof_id" value="<?= $search_hof_id ?>">
-                        <button type="submit" class="btn btn-sm btn-danger">Revoke Exception</button>
-                    </form>
-                    <?php } ?>
-                </div>
+    </form>
+    
+    <?php if ($search_thaali_data) { 
+        ui_hr();
+    ?>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <strong><?= h($search_thaali_data->NAME) ?></strong> <?= ui_code($search_hof_id) ?>
+                <br><?= ui_muted("Sabeel {$search_thaali_data->Thali}") ?>
             </div>
+            
+            <table class="table table-sm table-bordered">
+                <?php if ($search_takhmeen) { 
+                    $pending = $search_takhmeen->takhmeen - $search_takhmeen->paid_amount;
+                ?>
+                <tr><th width="100">Takhmeen</th><td><?= ui_money($search_takhmeen->takhmeen) ?></td></tr>
+                <tr><th>Paid</th><td><?= ui_money($search_takhmeen->paid_amount) ?></td></tr>
+                <tr><th>Balance</th><td><?= $pending > 0 ? "<span class=\"text-danger\">" . ui_money($pending) . "</span>" : "<span class=\"text-success\">Fully Paid</span>" ?></td></tr>
+                <?php } else { ?>
+                <tr><td colspan="2" class="text-warning small">Takhmeen not done</td></tr>
+                <?php } ?>
+                <tr><th>Exception</th><td><?= ui_status($has_exception, ['Granted', 'Not granted']) ?></td></tr>
+            </table>
+            
+            <?php if (!$has_exception) { ?>
+            <form method="post">
+                <input type="hidden" name="action" value="grant">
+                <input type="hidden" name="hof_id" value="<?= h($search_hof_id) ?>">
+                <div class="mb-2"><?= ui_input('reason', '', 'Reason for exception') ?></div>
+                <?= ui_btn('Grant Exception', 'success') ?>
+            </form>
+            <?php } else { ?>
+            <form method="post">
+                <input type="hidden" name="action" value="revoke">
+                <input type="hidden" name="hof_id" value="<?= h($search_hof_id) ?>">
+                <?= ui_btn('Revoke Exception', 'danger') ?>
+            </form>
             <?php } ?>
         </div>
     </div>
+    <?php } ?>
+    <?php ui_card_end(); ?>
     
     <!-- Active Exceptions List -->
     <div class="card">
-        <div class="card-header">
-            <h6 class="mb-0">Active Exceptions <span class="text-muted">(<?= count($exceptions) ?>)</span></h6>
-        </div>
+        <div class="card-header"><h6 class="mb-0">Active Exceptions <?= ui_muted("(" . count($exceptions) . ")") ?></h6></div>
         <div class="card-body">
-            <?php if (empty($exceptions)) { ?>
-                <p class="text-muted small mb-0">No active exceptions.</p>
-            <?php } else { ?>
-            <div class="table-responsive">
-                <table class="table table-sm table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>HOF</th>
-                            <th>Name</th>
-                            <th>Takhmeen</th>
-                            <th>Paid</th>
-                            <th>Balance</th>
-                            <th>Reason</th>
-                            <th>Granted</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($exceptions as $exc) { 
-                            $pending = ($exc->takhmeen ?? 0) - ($exc->paid_amount ?? 0);
-                        ?>
-                        <tr>
-                            <td><code class="small"><?= $exc->hof_id ?></code></td>
-                            <td><?= $exc->full_name ?></td>
-                            <td><small>Rs. <?= number_format($exc->takhmeen ?? 0) ?></small></td>
-                            <td><small>Rs. <?= number_format($exc->paid_amount ?? 0) ?></small></td>
-                            <td>
-                                <?php if ($pending > 0) { ?>
-                                    <small class="text-danger">Rs. <?= number_format($pending) ?></small>
-                                <?php } else { ?>
-                                    <small class="text-success">Paid</small>
-                                <?php } ?>
-                            </td>
-                            <td><small><?= $exc->reason ?: '—' ?></small></td>
-                            <td><small class="text-muted"><?= date('d/m/y H:i', strtotime($exc->granted_at)) ?></small></td>
-                            <td>
-                                <form method="post" style="display: inline;">
-                                    <input type="hidden" name="action" value="revoke">
-                                    <input type="hidden" name="hof_id" value="<?= $exc->hof_id ?>">
-                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0">Revoke</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-            </div>
-            <?php } ?>
+    <?php
+    if (empty($exceptions)) {
+        echo ui_muted('No active exceptions.');
+    } else {
+        ui_table(['HOF', 'Name', 'Takhmeen', 'Paid', 'Balance', 'Reason', 'Granted', '']);
+        foreach ($exceptions as $exc) {
+            $pending = ($exc->takhmeen ?? 0) - ($exc->paid_amount ?? 0);
+            $balance = $pending > 0 
+                ? "<small class=\"text-danger\">" . ui_money($pending) . "</small>" 
+                : "<small class=\"text-success\">Paid</small>";
+            $revoke = '<form method="post" style="display:inline"><input type="hidden" name="action" value="revoke"><input type="hidden" name="hof_id" value="' . h($exc->hof_id) . '"><button type="submit" class="btn btn-sm btn-link text-danger p-0">Revoke</button></form>';
+            
+            ui_tr([
+                ui_code($exc->hof_id),
+                h($exc->full_name),
+                ui_muted(ui_money($exc->takhmeen ?? 0)),
+                ui_muted(ui_money($exc->paid_amount ?? 0)),
+                $balance,
+                ui_muted($exc->reason ?: '—'),
+                ui_date($exc->granted_at, 'd/m/y H:i'),
+                $revoke
+            ]);
+        }
+        ui_table_end();
+    }
+    ?>
         </div>
     </div>
     <?php

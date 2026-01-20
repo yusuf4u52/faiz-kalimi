@@ -82,143 +82,91 @@ function content_display()
     $hof_id = getAppData('hof_id');
     $hijri_year = getAppData('hijri_year');
     $attendees = getAppData('attendees');
+    $url = getAppData('BASE_URI');
     
     $name = $sabeel_data->NAME ?? '';
     $sabeel = $sabeel_data->Thali ?? '';
-    $whatsapp = $sabeel_data->WhatsApp ?? '';
     
-    $arg1 = getAppData('arg1');
+    ui_card("Seat Selection - Shehrullah {$hijri_year}H");
+    ui_alert('<strong>Important:</strong> Seat selection is on <strong>first come first serve</strong> basis. Please complete your selection promptly.', 'warning');
     ?>
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Seat Selection - Shehrullah <?= $hijri_year ?>H</h4>
-        </div>
-        <div class="card-body">
-            <div class="alert alert-warning" role="alert">
-                <strong>Important:</strong> Seat selection is on <strong>first come first serve</strong> basis. 
-                Please complete your selection promptly.
-            </div>
-            
-            <table class="table table-bordered mb-4">
-                <tr>
-                    <th style="width: 20%">HOF</th>
-                    <td>[<?= $hof_id ?>] <?= $name ?></td>
-                </tr>
-                <tr>
-                    <th>Sabeel</th>
-                    <td><?= $sabeel ?></td>
-                </tr>
-            </table>
-            
-            <h5 class="mb-3">Select Seating Area for Family Members</h5>
-            
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>SN</th>
-                            <th>Name</th>
-                            <th>Gender/Age</th>
-                            <th>Chair</th>
-                            <th>Select Area</th>
-                            <th>Seat #</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php 
-                        $index = 0;
-                        foreach ($attendees as $attendee) {
-                            $index++;
-                            $its_id = $attendee->its_id;
-                            $full_name = $attendee->full_name;
-                            $gender = substr($attendee->gender, 0, 1);
-                            $age = $attendee->age;
-                            $chair = $attendee->chair_preference == 'Y' ? 'Yes' : 'No';
-                            $allocated_area = $attendee->allocated_area ?? '';
-                            $allocated_area_name = $attendee->allocated_area_name ?? '';
-                            $seat_number = $attendee->seat_number ?? '';
-                            $is_admin = !empty($attendee->allocated_by);
-                            
-                            // Get eligible areas for this attendee
-                            $eligible_areas = get_eligible_areas_for_attendee($its_id, $hof_id);
-                            
-                            echo "<tr>";
-                            echo "<td>$index</td>";
-                            echo "<td>$full_name</td>";
-                            echo "<td>$gender/$age</td>";
-                            echo "<td>$chair</td>";
-                            
-                            // Area dropdown or display
-                            echo "<td>";
-                            if ($is_admin) {
-                                // Admin allocated - show as read-only
-                                echo "<span class='badge bg-info'>$allocated_area_name</span>";
-                                echo "<br><small class='text-muted'>Assigned by Admin</small>";
-                            } else {
-                                echo "<form method='post' class='d-inline seat-form' id='form_$its_id'>";
-                                echo "<input type='hidden' name='action' value='save_seat'>";
-                                echo "<input type='hidden' name='its_id' value='$its_id'>";
-                                echo "<select name='area_code' class='form-control form-control-sm' required>";
-                                
-                                if (empty($allocated_area)) {
-                                    echo "<option value=''>-- Select --</option>";
-                                }
-                                
-                                foreach ($eligible_areas as $area) {
-                                    $selected = ($area->area_code == $allocated_area) ? 'selected' : '';
-                                    $chair_badge = ($area->chairs_allowed == 'Y') ? ' [Chairs]' : '';
-                                    echo "<option value='{$area->area_code}' $selected>{$area->area_name}$chair_badge</option>";
-                                }
-                                
-                                if (empty($eligible_areas)) {
-                                    echo "<option value='' disabled>No areas available</option>";
-                                }
-                                
-                                echo "</select>";
-                                echo "</form>";
-                            }
-                            echo "</td>";
-                            
-                            // Seat number
-                            echo "<td>";
-                            if (!empty($seat_number)) {
-                                echo "<span class='badge bg-success'>$seat_number</span>";
-                            } else if (!empty($allocated_area)) {
-                                echo "<span class='badge bg-warning text-dark'>Pending</span>";
-                            } else {
-                                echo "--";
-                            }
-                            echo "</td>";
-                            
-                            // Action button
-                            echo "<td>";
-                            if ($is_admin) {
-                                echo "<span class='text-muted'>--</span>";
-                            } else if (!empty($eligible_areas)) {
-                                echo "<button type='button' class='btn btn-primary btn-sm' onclick=\"document.getElementById('form_$its_id').submit();\">Save</button>";
-                            } else {
-                                echo "<span class='text-muted'>N/A</span>";
-                            }
-                            echo "</td>";
-                            
-                            echo "</tr>";
-                        }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="mt-4">
-                <a href="<?= getAppData('BASE_URI') ?>/input-seat-selection" class="btn btn-secondary">Back</a>
-            </div>
-        </div>
-    </div>
+    <table class="table table-sm table-bordered mb-4" style="max-width:500px">
+        <tr><th style="width:100px">HOF</th><td><?= ui_code($hof_id) ?> <?= h($name) ?></td></tr>
+        <tr><th>Sabeel</th><td><?= h($sabeel) ?></td></tr>
+    </table>
     
-    <script>
-        function the_script() {
-            // No additional scripts needed for now
+    <h6 class="mb-3">Select Seating Area for Family Members</h6>
+    <?php
+    ui_table(['#', 'Name', 'G/Age', 'Chair', 'Select Area', 'Seat #', 'Action']);
+    
+    $index = 0;
+    foreach ($attendees as $att) {
+        $index++;
+        $its_id = $att->its_id;
+        $chair = $att->chair_preference == 'Y' ? 'Yes' : 'No';
+        $allocated_area = $att->allocated_area ?? '';
+        $seat_number = $att->seat_number ?? '';
+        $is_admin = !empty($att->allocated_by);
+        
+        // Get eligible areas
+        $eligible_areas = get_eligible_areas_for_attendee($its_id, $hof_id);
+        
+        // Area cell
+        if ($is_admin) {
+            $area_cell = ui_badge($att->allocated_area_name ?? '', 'info') . "<br>" . ui_muted('Assigned by Admin');
+        } else {
+            $opts = [];
+            if (empty($allocated_area)) $opts[''] = '-- Select --';
+            foreach ($eligible_areas as $a) {
+                $chair_tag = ($a->chairs_allowed == 'Y') ? ' [Chairs]' : '';
+                $opts[$a->area_code] = $a->area_name . $chair_tag;
+            }
+            if (empty($eligible_areas)) $opts[''] = 'No areas available';
+            
+            $area_cell = "<form method=\"post\" class=\"d-inline\" id=\"form_{$its_id}\">"
+                . "<input type=\"hidden\" name=\"action\" value=\"save_seat\">"
+                . "<input type=\"hidden\" name=\"its_id\" value=\"{$its_id}\">"
+                . ui_select('area_code', $opts, $allocated_area)
+                . "</form>";
         }
-    </script>
+        
+        // Seat cell
+        if (!empty($seat_number)) {
+            $seat_cell = ui_badge($seat_number, 'success');
+        } elseif (!empty($allocated_area)) {
+            $seat_cell = ui_badge('Pending', 'warning');
+        } else {
+            $seat_cell = '--';
+        }
+        
+        // Action cell
+        if ($is_admin) {
+            $action_cell = ui_muted('--');
+        } elseif (!empty($eligible_areas)) {
+            $action_cell = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
+        } else {
+            $action_cell = ui_muted('N/A');
+        }
+        
+        ui_tr([
+            $index,
+            h($att->full_name),
+            ui_ga($att->gender, $att->age),
+            $chair,
+            $area_cell,
+            $seat_cell,
+            $action_cell
+        ]);
+    }
+    
+    ui_table_end();
+    ?>
+    <div class="mt-4">
+        <?= ui_link('Back', "$url/input-seat-selection", 'secondary') ?>
+    </div>
+    <?php 
+    ui_card_end();
+    ?>
+    <script>function the_script() {}</script>
     <?php
 }

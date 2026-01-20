@@ -61,125 +61,84 @@ function content_display()
         show_edit_area_page($edit_area, $url);
         return;
     }
-    ?>
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Seating Areas - <?= $hijri_year ?>H</h5>
-                <a href="<?= $url ?>/seat-management" class="btn btn-sm btn-outline-secondary">Back</a>
-            </div>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-sm table-hover mb-0 align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Name</th>
-                        <th>Gender</th>
-                        <th>Seats</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($areas as $area) { ?>
-                    <tr>
-                        <td><?= $area->area_name ?></td>
-                        <td><small><?= $area->gender ?></small></td>
-                        <td>
-                            <?php if ($area->seat_start && $area->seat_end) { ?>
-                                <small><?= $area->seat_start ?>-<?= $area->seat_end ?></small>
-                            <?php } else { ?>
-                                <small class="text-muted">—</small>
-                            <?php } ?>
-                        </td>
-                        <td>
-                            <?php if ($area->is_active == 'Y') { ?>
-                                <small class="text-success">●</small>
-                            <?php } else { ?>
-                                <small class="text-muted">○</small>
-                            <?php } ?>
-                        </td>
-                        <td>
-                            <a href="?edit=<?= $area->area_code ?>" class="btn btn-sm btn-link">Edit</a>
-                        </td>
-                    </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <?php
+    
+    ui_card("Seating Areas - {$hijri_year}H", '', "$url/seat-management");
+    ui_table(['Name', 'Gender', 'Seats', 'Status', '']);
+    
+    foreach ($areas as $area) {
+        $seats = ($area->seat_start && $area->seat_end) 
+            ? ui_muted("{$area->seat_start}-{$area->seat_end}") 
+            : ui_muted('—');
+        ui_tr([
+            h($area->area_name),
+            ui_muted($area->gender),
+            $seats,
+            ui_dot($area->is_active == 'Y'),
+            ui_link('Edit', "?edit={$area->area_code}", 'link')
+        ]);
+    }
+    
+    ui_table_end();
+    ui_card_end();
 }
 
 function show_edit_area_page($area_code, $url)
 {
     $area = get_seating_area($area_code, false);
     if (!$area) {
-        echo '<div class="alert alert-danger">Area not found</div>';
+        ui_alert('Area not found', 'danger');
         return;
     }
     
     $blocked_seats = get_blocked_seats($area_code);
+    $subtitle = "{$area->gender} • Ages {$area->min_age}+ • Max " . ($area->max_seats_per_family ?: '∞') . "/family";
+    
+    ui_card("{$area->area_name} " . ui_code($area->area_code), $subtitle, '?');
     ?>
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="mb-0"><?= $area->area_name ?> <code class="small text-muted"><?= $area->area_code ?></code></h5>
-                    <small class="text-muted"><?= $area->gender ?> • Ages <?= $area->min_age ?>+ • Max <?= $area->max_seats_per_family ?: '∞' ?>/family</small>
-                </div>
-                <a href="?" class="btn btn-sm btn-outline-secondary">Back</a>
+    <form method="post" id="editForm">
+        <input type="hidden" name="action" value="update_area">
+        <input type="hidden" name="area_code" value="<?= h($area->area_code) ?>">
+        <input type="hidden" name="blocked_seats" id="blockedSeatsData">
+        
+        <div class="row g-3 mb-3">
+            <div class="col-md-5">
+                <label class="form-label small">Area Name</label>
+                <?= ui_input('area_name', $area->area_name) ?>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Seat Start</label>
+                <?= ui_input('seat_start', $area->seat_start, '—', 'number') ?>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Seat End</label>
+                <?= ui_input('seat_end', $area->seat_end, '—', 'number') ?>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Status</label>
+                <?= ui_select('is_active', ['Y' => 'Active', 'N' => 'Inactive'], $area->is_active) ?>
             </div>
         </div>
-        <div class="card-body">
-            <form method="post" id="editForm">
-                <input type="hidden" name="action" value="update_area">
-                <input type="hidden" name="area_code" value="<?= $area->area_code ?>">
-                <input type="hidden" name="blocked_seats" id="blockedSeatsData">
-                
-                <div class="row g-3 mb-3">
-                    <div class="col-md-5">
-                        <label class="form-label small">Area Name</label>
-                        <input type="text" name="area_name" class="form-control form-control-sm" value="<?= $area->area_name ?>" required>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label small">Seat Start</label>
-                        <input type="number" name="seat_start" class="form-control form-control-sm" value="<?= $area->seat_start ?>" placeholder="—">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label small">Seat End</label>
-                        <input type="number" name="seat_end" class="form-control form-control-sm" value="<?= $area->seat_end ?>" placeholder="—">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small">Status</label>
-                        <select name="is_active" class="form-select form-select-sm">
-                            <option value="Y" <?= $area->is_active == 'Y' ? 'selected' : '' ?>>Active</option>
-                            <option value="N" <?= $area->is_active == 'N' ? 'selected' : '' ?>>Inactive</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <hr>
-                
-                <label class="form-label small mb-2">Block Seats</label>
-                <div class="input-group input-group-sm mb-3" style="max-width: 500px;">
-                    <input type="number" id="seatFrom" class="form-control" placeholder="From" style="max-width:80px">
-                    <input type="number" id="seatTo" class="form-control" placeholder="To" style="max-width:80px">
-                    <input type="text" id="seatReason" class="form-control" placeholder="Reason (optional)">
-                    <button type="button" class="btn btn-outline-warning" onclick="addSeats()">Block</button>
-                </div>
-                
-                <div id="blockedList" class="mb-3">
-                    <div class="text-muted small">No blocked seats</div>
-                </div>
-                
-                <hr>
-                
-                <button type="submit" class="btn btn-sm btn-primary">Save</button>
-                <a href="?" class="btn btn-sm btn-link">Cancel</a>
-            </form>
+        
+        <?php ui_hr(); ?>
+        
+        <label class="form-label small mb-2">Block Seats</label>
+        <div class="input-group input-group-sm mb-3" style="max-width: 500px;">
+            <input type="number" id="seatFrom" class="form-control" placeholder="From" style="max-width:80px">
+            <input type="number" id="seatTo" class="form-control" placeholder="To" style="max-width:80px">
+            <input type="text" id="seatReason" class="form-control" placeholder="Reason (optional)">
+            <button type="button" class="btn btn-outline-warning" onclick="addSeats()">Block</button>
         </div>
-    </div>
+        
+        <div id="blockedList" class="mb-3">
+            <div class="text-muted small">No blocked seats</div>
+        </div>
+        
+        <?php ui_hr(); ?>
+        
+        <?= ui_btn('Save', 'primary') ?>
+        <?= ui_link('Cancel', '?', 'link') ?>
+    </form>
+    <?php ui_card_end(); ?>
     
     <script>
     let blocked = <?= json_encode($blocked_seats) ?>.map(s => ({
