@@ -27,6 +27,7 @@ function _handle_post()
         } else {
             setSessionData(TRANSIT_DATA, 'Failed to update area.');
         }
+        do_redirect('?edit=' . $area_code);
     } else if ($action === 'block_seat') {
         $area_code = $_POST['area_code'] ?? '';
         $seat_number = $_POST['seat_number'] ?? '';
@@ -34,7 +35,7 @@ function _handle_post()
         
         if (empty($area_code) || empty($seat_number)) {
             setSessionData(TRANSIT_DATA, 'Please provide area and seat number.');
-            return;
+            do_redirect('?edit=' . $area_code);
         }
         
         $userData = getSessionData(THE_SESSION_ID);
@@ -47,6 +48,7 @@ function _handle_post()
         } else {
             setSessionData(TRANSIT_DATA, 'Failed to block seat.');
         }
+        do_redirect('?edit=' . $area_code);
     } else if ($action === 'unblock_seat') {
         $area_code = $_POST['area_code'] ?? '';
         $seat_number = $_POST['seat_number'] ?? '';
@@ -58,6 +60,7 @@ function _handle_post()
         } else {
             setSessionData(TRANSIT_DATA, 'Failed to unblock seat.');
         }
+        do_redirect('?edit=' . $area_code);
     } else if ($action === 'block_range') {
         $area_code = $_POST['area_code'] ?? '';
         $start = intval($_POST['range_start'] ?? 0);
@@ -66,7 +69,7 @@ function _handle_post()
         
         if (empty($area_code) || $start <= 0 || $end <= 0 || $start > $end) {
             setSessionData(TRANSIT_DATA, 'Invalid range provided.');
-            return;
+            do_redirect('?edit=' . $area_code);
         }
         
         $userData = getSessionData(THE_SESSION_ID);
@@ -80,6 +83,7 @@ function _handle_post()
         }
         
         setSessionData(TRANSIT_DATA, "Blocked $count seats ($start to $end).");
+        do_redirect('?edit=' . $area_code);
     }
 }
 
@@ -89,11 +93,15 @@ function content_display()
     $url = getAppData('BASE_URI');
     $areas = get_seating_areas();
     
-    $selected_area = $_GET['area'] ?? ($areas[0]->area_code ?? '');
-    $blocked_seats = [];
-    if (!empty($selected_area)) {
-        $blocked_seats = get_blocked_seats($selected_area);
+    $edit_area = $_GET['edit'] ?? '';
+    
+    // If editing a specific area
+    if (!empty($edit_area)) {
+        show_edit_area_page($edit_area, $url, $hijri_year);
+        return;
     }
+    
+    // Main listing page
     ?>
     <div class="card mb-4">
         <div class="card-header">
@@ -118,36 +126,27 @@ function content_display()
                     <tbody>
                         <?php foreach ($areas as $area) { ?>
                         <tr>
-                            <form method="post">
-                                <input type="hidden" name="action" value="update_area">
-                                <input type="hidden" name="area_code" value="<?= $area->area_code ?>">
-                                
-                                <td><?= $area->area_code ?></td>
-                                <td>
-                                    <input type="text" name="area_name" class="form-control form-control-sm" value="<?= $area->area_name ?>" required>
-                                </td>
-                                <td><?= $area->gender ?></td>
-                                <td><?= $area->chairs_allowed == 'Y' ? 'Yes' : 'No' ?></td>
-                                <td><?= $area->min_age ?></td>
-                                <td><?= $area->max_seats_per_family ?: 'Unlimited' ?></td>
-                                <td>
-                                    <div class="d-flex gap-1">
-                                        <input type="number" name="seat_start" class="form-control form-control-sm" placeholder="Start" style="width: 70px" value="<?= $area->seat_start ?>">
-                                        <span>-</span>
-                                        <input type="number" name="seat_end" class="form-control form-control-sm" placeholder="End" style="width: 70px" value="<?= $area->seat_end ?>">
-                                    </div>
-                                </td>
-                                <td>
-                                    <select name="is_active" class="form-control form-control-sm">
-                                        <option value="Y" <?= $area->is_active == 'Y' ? 'selected' : '' ?>>Yes</option>
-                                        <option value="N" <?= $area->is_active == 'N' ? 'selected' : '' ?>>No</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-sm btn-primary">Save</button>
-                                    <a href="?area=<?= $area->area_code ?>" class="btn btn-sm btn-info">Blocked</a>
-                                </td>
-                            </form>
+                            <td><?= $area->area_code ?></td>
+                            <td><?= $area->area_name ?></td>
+                            <td><?= $area->gender ?></td>
+                            <td><?= $area->chairs_allowed == 'Y' ? 'Yes' : 'No' ?></td>
+                            <td><?= $area->min_age ?></td>
+                            <td><?= $area->max_seats_per_family ?: 'Unlimited' ?></td>
+                            <td>
+                                <?php if ($area->seat_start && $area->seat_end) { ?>
+                                    <?= $area->seat_start ?> - <?= $area->seat_end ?>
+                                <?php } else { ?>
+                                    <span class="text-muted">Not set</span>
+                                <?php } ?>
+                            </td>
+                            <td>
+                                <span class="badge badge-<?= $area->is_active == 'Y' ? 'success' : 'secondary' ?>">
+                                    <?= $area->is_active == 'Y' ? 'Active' : 'Inactive' ?>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="?edit=<?= $area->area_code ?>" class="btn btn-sm btn-primary">Edit</a>
+                            </td>
                         </tr>
                         <?php } ?>
                     </tbody>
@@ -156,51 +155,140 @@ function content_display()
         </div>
     </div>
     
-    <!-- Blocked Seats Section -->
-    <?php if (!empty($selected_area)) { 
-        $area_info = get_seating_area($selected_area);
+    <div class="mt-3">
+        <a href="<?= $url ?>/seat-management" class="btn btn-secondary">Back to Seat Management</a>
+    </div>
+    <?php
+}
+
+function show_edit_area_page($area_code, $url, $hijri_year)
+{
+    $area = get_seating_area($area_code);
+    if (!$area) {
+        echo '<div class="alert alert-danger">Area not found.</div>';
+        return;
+    }
+    
+    $blocked_seats = get_blocked_seats($area_code);
     ?>
+    <div class="mb-3">
+        <a href="?" class="btn btn-secondary">← Back to All Areas</a>
+    </div>
+    
+    <!-- Edit Area Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4 class="card-title">Edit Seating Area - <?= $area->area_name ?> (<?= $area->area_code ?>)</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <input type="hidden" name="action" value="update_area">
+                <input type="hidden" name="area_code" value="<?= $area->area_code ?>">
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Area Code</label>
+                        <input type="text" class="form-control" value="<?= $area->area_code ?>" disabled>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Area Name</label>
+                        <input type="text" name="area_name" class="form-control" value="<?= $area->area_name ?>" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Gender</label>
+                        <input type="text" class="form-control" value="<?= $area->gender ?>" disabled>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Chairs Allowed</label>
+                        <input type="text" class="form-control" value="<?= $area->chairs_allowed == 'Y' ? 'Yes' : 'No' ?>" disabled>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Min Age</label>
+                        <input type="text" class="form-control" value="<?= $area->min_age ?>" disabled>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Max Seats/Family</label>
+                        <input type="text" class="form-control" value="<?= $area->max_seats_per_family ?: 'Unlimited' ?>" disabled>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Seat Range Start</label>
+                        <input type="number" name="seat_start" class="form-control" value="<?= $area->seat_start ?>" placeholder="Leave empty for no range">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Seat Range End</label>
+                        <input type="number" name="seat_end" class="form-control" value="<?= $area->seat_end ?>" placeholder="Leave empty for no range">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="is_active" class="form-control">
+                            <option value="Y" <?= $area->is_active == 'Y' ? 'selected' : '' ?>>Active</option>
+                            <option value="N" <?= $area->is_active == 'N' ? 'selected' : '' ?>>Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="?" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Blocked Seats Section -->
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Blocked Seats - <?= $area_info->area_name ?? $selected_area ?></h5>
+            <h5 class="card-title">Blocked Seats Management</h5>
         </div>
         <div class="card-body">
             <!-- Block Single Seat -->
-            <form method="post" class="mb-3">
-                <input type="hidden" name="action" value="block_seat">
-                <input type="hidden" name="area_code" value="<?= $selected_area ?>">
-                <div class="row">
-                    <div class="col-md-2">
-                        <input type="number" name="seat_number" class="form-control" placeholder="Seat #" required>
+            <div class="mb-4">
+                <h6>Block Single Seat</h6>
+                <form method="post">
+                    <input type="hidden" name="action" value="block_seat">
+                    <input type="hidden" name="area_code" value="<?= $area_code ?>">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="number" name="seat_number" class="form-control" placeholder="Seat #" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="reason" class="form-control" placeholder="Reason (optional)">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-danger">Block Seat</button>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <input type="text" name="reason" class="form-control" placeholder="Reason (optional)">
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-danger">Block Seat</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
             
             <!-- Block Range -->
-            <form method="post" class="mb-3">
-                <input type="hidden" name="action" value="block_range">
-                <input type="hidden" name="area_code" value="<?= $selected_area ?>">
-                <div class="row">
-                    <div class="col-md-2">
-                        <input type="number" name="range_start" class="form-control" placeholder="From" required>
+            <div class="mb-4">
+                <h6>Block Range of Seats</h6>
+                <form method="post">
+                    <input type="hidden" name="action" value="block_range">
+                    <input type="hidden" name="area_code" value="<?= $area_code ?>">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="number" name="range_start" class="form-control" placeholder="From" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" name="range_end" class="form-control" placeholder="To" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="reason" class="form-control" placeholder="Reason" value="Bulk blocked">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-warning">Block Range</button>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <input type="number" name="range_end" class="form-control" placeholder="To" required>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="text" name="reason" class="form-control" placeholder="Reason" value="Bulk blocked">
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-warning">Block Range</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
             
             <hr>
             
@@ -208,7 +296,7 @@ function content_display()
             <?php if (empty($blocked_seats)) { ?>
                 <p class="text-muted">No blocked seats for this area.</p>
             <?php } else { ?>
-            <h6>Currently Blocked (<?= count($blocked_seats) ?>)</h6>
+            <h6>Currently Blocked Seats (<?= count($blocked_seats) ?>)</h6>
             <div class="table-responsive">
                 <table class="table table-sm table-bordered">
                     <thead>
@@ -230,7 +318,7 @@ function content_display()
                             <td>
                                 <form method="post" style="display: inline;">
                                     <input type="hidden" name="action" value="unblock_seat">
-                                    <input type="hidden" name="area_code" value="<?= $selected_area ?>">
+                                    <input type="hidden" name="area_code" value="<?= $area_code ?>">
                                     <input type="hidden" name="seat_number" value="<?= $bs->seat_number ?>">
                                     <button type="submit" class="btn btn-sm btn-success">Unblock</button>
                                 </form>
@@ -242,11 +330,6 @@ function content_display()
             </div>
             <?php } ?>
         </div>
-    </div>
-    <?php } ?>
-    
-    <div class="mt-3">
-        <a href="<?= $url ?>/seat-management" class="btn btn-secondary">Back to Seat Management</a>
     </div>
     <?php
 }
