@@ -92,8 +92,8 @@ function content_display()
             
             // Show admin name if allocated by admin, otherwise 'Self'
             if ($alloc->allocated_by) {
-                $admin_name = get_user_name($alloc->allocated_by);
-                $by = $admin_name ?: $alloc->allocated_by;
+                $admin_record = get_user_record_for($alloc->allocated_by);
+                $by = $admin_record && isset($admin_record->name) ? $admin_record->name : $alloc->allocated_by;
             } else {
                 $by = 'Self';
             }
