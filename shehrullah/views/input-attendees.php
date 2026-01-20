@@ -150,9 +150,6 @@ function content_display()
                 <div class="card-body">
                     <h4 class="card-title">Shehrullah Registration</h4>
                     <p class="card-description"> Select the attendess and enter the required details. </p>
-                    <div class="alert alert-warning" role="alert">
-                        <strong>Chair arrangements will be made for gents in the Sehan and for ladies in the basement.</strong>
-                    </div>
                     <form class="forms-sample" method="POST">
                         <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
                         <input type="hidden" name="hof_id" value="<?= $hof_id ?>">
@@ -178,6 +175,56 @@ function content_display()
             </div>
         </div>
     </div>
+
+    <!-- Modal for Chair Information -->
+    <div class="modal fade" id="chairInfoModal" tabindex="-1" role="dialog" aria-labelledby="chairInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chairInfoModalLabel">Chair Arrangement Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all chair preference checkboxes
+            const chairCheckboxes = document.querySelectorAll('input[name^="chair_preference_for_"]');
+            let modalShown = false;
+
+            chairCheckboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    // Show modal only when checking the box and if not shown before in this session
+                    if (this.checked && !modalShown) {
+                        // If using Bootstrap 4
+                        if (typeof $ !== 'undefined' && $.fn.modal) {
+                            $('#chairInfoModal').modal('show');
+                        } else {
+                            // Fallback to native Bootstrap 5 or simple alert
+                            const modal = document.getElementById('chairInfoModal');
+                            if (modal && typeof bootstrap !== 'undefined') {
+                                const bsModal = new bootstrap.Modal(modal);
+                                bsModal.show();
+                            } else {
+                                alert('Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID');
+                            }
+                        }
+                        modalShown = true; // Mark as shown so it doesn't appear multiple times
+                    }
+                });
+            });
+        });
+    </script>
     <?php
 }
 
