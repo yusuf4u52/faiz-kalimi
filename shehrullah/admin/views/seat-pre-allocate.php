@@ -180,6 +180,12 @@ function content_display()
             $current_seat = $att->seat_number ?? '';
             $seat_display = $current_seat ? "<br><strong class=\"text-success\">#{$current_seat}</strong>" : '';
             
+            // Show who allocated the seat if it's an admin allocation
+            $allocated_by_display = '';
+            if (!empty($att->allocated_by_name)) {
+                $allocated_by_display = "<br><small class=\"text-muted\">by " . h($att->allocated_by_name) . "</small>";
+            }
+            
             // Filter areas by gender compatibility for this member
             $compatible_areas = [];
             foreach ($area_opts as $code => $name) {
@@ -197,7 +203,7 @@ function content_display()
                     <td><?= h($att->full_name) ?><br><?= ui_code($att->its_id) ?></td>
                     <td><?= ui_ga($att->gender, $att->age) ?></td>
                     <td><?= ui_muted($chair) ?></td>
-                    <td><?= ui_muted($current_area) . $seat_display ?></td>
+                    <td><?= ui_muted($current_area) . $seat_display . $allocated_by_display ?></td>
                     <td><?= ui_select('area_code', $compatible_areas, $att->allocated_area ?? '', 'Select...') ?></td>
                     <td><?= ui_input('seat_number', $current_seat, 'Auto', 'number', 'width:70px') ?></td>
                     <td><?= ui_btn('Assign', 'primary') ?></td>

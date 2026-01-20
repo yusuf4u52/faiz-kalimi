@@ -766,10 +766,11 @@ function revoke_seat_exception($hof_id) {
  */
 function get_all_seat_exceptions() {
     $hijri_year = get_current_hijri_year();
-    $query = 'SELECT e.*, m.full_name, t.takhmeen, t.paid_amount 
+    $query = 'SELECT e.*, m.full_name, t.takhmeen, t.paid_amount, gb.full_name as granted_by_name
               FROM kl_shehrullah_seat_exceptions e
               LEFT JOIN its_data m ON m.its_id = e.hof_id
               LEFT JOIN kl_shehrullah_takhmeen t ON t.hof_id = e.hof_id AND t.year = e.hijri_year
+              LEFT JOIN its_data gb ON gb.its_id = e.granted_by
               WHERE e.hijri_year = ? AND e.is_active = "Y"
               ORDER BY e.hoob_clearance_date ASC, e.granted_at DESC';
     $result = run_statement($query, $hijri_year);
@@ -817,11 +818,12 @@ function get_attendees_for_seat_selection($hof_id) {
     $hijri_year = get_current_hijri_year();
     $query = 'SELECT sa.its_id, sa.chair_preference, m.full_name, m.age, m.gender, m.misaq,
               alloc.area_code as allocated_area, alloc.seat_number, alloc.allocated_by,
-              areas.area_name as allocated_area_name
+              areas.area_name as allocated_area_name, ab.full_name as allocated_by_name
               FROM kl_shehrullah_attendees sa
               JOIN its_data m ON m.its_id = sa.its_id
               LEFT JOIN kl_shehrullah_seat_allocation alloc ON alloc.its_id = sa.its_id AND alloc.hijri_year = ?
               LEFT JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = ?
+              LEFT JOIN its_data ab ON ab.its_id = alloc.allocated_by
               WHERE sa.hof_id = ? AND sa.year = ? 
               AND sa.attendance_type = "Y" AND m.misaq = "Done"
               ORDER BY m.age DESC';
@@ -918,10 +920,11 @@ function get_seat_allocation_for_member($its_id) {
  */
 function get_seat_allocations_for_family($hof_id) {
     $hijri_year = get_current_hijri_year();
-    $query = 'SELECT alloc.*, areas.area_name, m.full_name
+    $query = 'SELECT alloc.*, areas.area_name, m.full_name, ab.full_name as allocated_by_name
               FROM kl_shehrullah_seat_allocation alloc
               JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = alloc.hijri_year
               JOIN its_data m ON m.its_id = alloc.its_id
+              LEFT JOIN its_data ab ON ab.its_id = alloc.allocated_by
               WHERE alloc.hof_id = ? AND alloc.hijri_year = ?
               ORDER BY alloc.allocated_at';
     $result = run_statement($query, $hof_id, $hijri_year);
@@ -1005,11 +1008,12 @@ function is_admin_allocated($its_id) {
 function get_all_seat_allocations() {
     $hijri_year = get_current_hijri_year();
     $query = 'SELECT alloc.*, areas.area_name, m.full_name, m.gender, m.age,
-              hof.full_name as hof_name
+              hof.full_name as hof_name, ab.full_name as allocated_by_name
               FROM kl_shehrullah_seat_allocation alloc
               JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = alloc.hijri_year
               JOIN its_data m ON m.its_id = alloc.its_id
               JOIN its_data hof ON hof.its_id = alloc.hof_id
+              LEFT JOIN its_data ab ON ab.its_id = alloc.allocated_by
               WHERE alloc.hijri_year = ?
               ORDER BY areas.area_name, alloc.seat_number, alloc.allocated_at';
     $result = run_statement($query, $hijri_year);

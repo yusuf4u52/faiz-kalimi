@@ -231,7 +231,7 @@ function content_display()
                 $seats_display,
                 ui_muted($exc->reason ?: '—'),
                 $hoob_date_display,
-                ui_muted($exc->granted_by ?: '—'),
+                ui_muted($exc->granted_by_name ?: '—'),
                 $revoke
             ]);
         }
