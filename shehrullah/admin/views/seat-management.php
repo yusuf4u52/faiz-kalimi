@@ -89,7 +89,15 @@ function content_display()
     } else {
         foreach ($allocations as $alloc) {
             $seat = $alloc->seat_number ? "<strong>{$alloc->seat_number}</strong>" : ui_muted('—');
-            $by = $alloc->allocated_by ? 'Admin' : 'Self';
+            
+            // Show admin name if allocated by admin, otherwise 'Self'
+            if ($alloc->allocated_by) {
+                $admin_name = get_user_name($alloc->allocated_by);
+                $by = $admin_name ?: $alloc->allocated_by;
+            } else {
+                $by = 'Self';
+            }
+            
             ui_tr([
                 ui_code($alloc->its_id),
                 h($alloc->full_name),
