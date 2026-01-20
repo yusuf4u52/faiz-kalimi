@@ -109,52 +109,6 @@ function content_display()
         .smalltext {
             font-size: 11px;
         }
-        <?php if(!$print) { ?>
-        #printableArea {
-            position: relative;
-        }
-        #printableArea::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            background-image: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 100px,
-                rgba(255, 0, 0, 0.03) 100px,
-                rgba(255, 0, 0, 0.03) 200px
-            );
-            background-size: 100% 100%;
-        }
-        #printableArea::after {
-            content: 'ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 200%;
-            z-index: 1;
-            pointer-events: none;
-            font-size: 24px;
-            font-weight: bold;
-            color: rgba(255, 0, 0, 0.08);
-            transform: rotate(-45deg) translateX(-25%) translateY(-25%);
-            word-wrap: break-word;
-            line-height: 80px;
-            white-space: pre-wrap;
-            text-align: center;
-        }
-        #printableArea > .card-body {
-            position: relative;
-            z-index: 2;
-            background: white;
-        }
-        <?php } ?>
     </style>
     <?php if(!$print) { ?>
         <div class="alert alert-primary" role="alert">
