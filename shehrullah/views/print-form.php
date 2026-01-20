@@ -203,15 +203,21 @@ function content_display()
                     <th style='font-size: 12px'>Prev. Takhmeen / Niyaz</th>
                     <td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i><?=$prev_or_family_niyaz?></td>
                     <th style='font-size: 12px'>Committed Hub Amount</th>
-                    <td style='font-size: 12px'></td>
-                </tr>
-                <tr>
-                    <th style='font-size: 12px'>HOF Signature</th>
-                    <td style='font-size: 12px'></td>
-                    <th style='font-size: 12px'>Auth. Signature</th>
-                    <td style='font-size: 12px'></td>
+                    <td style='font-size: 12px'>_____________________</td>
                 </tr>
             </table>
+
+            <!-- Signature Section -->
+            <div style="margin-top: 40px; display: flex; justify-content: space-between; padding: 0 20px;">
+                <div style="width: 45%; text-align: center;">
+                    <div style="border-bottom: 2px solid #000; height: 60px; margin-bottom: 8px;"></div>
+                    <p style="font-size: 12px; font-weight: bold; margin: 0;">HOF Signature</p>
+                </div>
+                <div style="width: 45%; text-align: center;">
+                    <div style="border-bottom: 2px solid #000; height: 60px; margin-bottom: 8px;"></div>
+                    <p style="font-size: 12px; font-weight: bold; margin: 0;">Authorized Signature</p>
+                </div>
+            </div>
         </div>
     </div>
     <?php if($print) { ?>
