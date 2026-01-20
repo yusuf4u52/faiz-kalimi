@@ -54,12 +54,23 @@ function _handle_post()
         $userData = getSessionData(THE_SESSION_ID);
         $allocated_by = $userData->itsid ?? '';
         
-        $success = admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $allocated_by);
+        $result = admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $allocated_by);
         
-        if ($success) {
+        if ($result['success']) {
             setSessionData(TRANSIT_DATA, 'Seat pre-allocated successfully!');
         } else {
-            setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat. Seat may already be taken by someone else.');
+            $error = $result['error'] ?? 'UNKNOWN';
+            if ($error === 'GENDER_MISMATCH') {
+                $member_gender = $result['member_gender'] ?? '';
+                $area_gender = $result['area_gender'] ?? '';
+                setSessionData(TRANSIT_DATA, "Gender mismatch: Cannot allocate {$member_gender} member to {$area_gender} area.");
+            } else if ($error === 'SEAT_TAKEN') {
+                setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat. Seat is already taken by someone else.');
+            } else if ($error === 'INVALID_AREA') {
+                setSessionData(TRANSIT_DATA, 'Invalid area selected.');
+            } else {
+                setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat. Please try again.');
+            }
         }
         
         // Refresh data
@@ -89,8 +100,12 @@ function content_display()
     // Build area options and get available blocked seats for each area
     $area_opts = [];
     $area_blocked_seats = [];
+    $area_genders = [];
     foreach ($areas as $a) {
-        $area_opts[$a->area_code] = $a->area_name;
+        // Include gender in area name for clarity
+        $gender_label = $a->gender === 'All' ? '' : " ({$a->gender})";
+        $area_opts[$a->area_code] = $a->area_name . $gender_label;
+        $area_genders[$a->area_code] = $a->gender;
         $blocked = get_available_blocked_seats($a->area_code);
         if (!empty($blocked)) {
             $area_blocked_seats[$a->area_code] = $blocked;
@@ -164,6 +179,15 @@ function content_display()
             $current_area = $att->allocated_area_name ?? '—';
             $current_seat = $att->seat_number ?? '';
             $seat_display = $current_seat ? "<br><strong class=\"text-success\">#{$current_seat}</strong>" : '';
+            
+            // Filter areas by gender compatibility for this member
+            $compatible_areas = [];
+            foreach ($area_opts as $code => $name) {
+                $area_gender = $area_genders[$code] ?? 'All';
+                if ($area_gender === 'All' || $area_gender === $att->gender) {
+                    $compatible_areas[$code] = $name;
+                }
+            }
             ?>
             <tr>
                 <form method="post" class="contents">
@@ -174,7 +198,7 @@ function content_display()
                     <td><?= ui_ga($att->gender, $att->age) ?></td>
                     <td><?= ui_muted($chair) ?></td>
                     <td><?= ui_muted($current_area) . $seat_display ?></td>
-                    <td><?= ui_select('area_code', $area_opts, $att->allocated_area ?? '', 'Select...') ?></td>
+                    <td><?= ui_select('area_code', $compatible_areas, $att->allocated_area ?? '', 'Select...') ?></td>
                     <td><?= ui_input('seat_number', $current_seat, 'Auto', 'number', 'width:70px') ?></td>
                     <td><?= ui_btn('Assign', 'primary') ?></td>
                 </form>

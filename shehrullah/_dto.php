@@ -948,13 +948,32 @@ function allocate_seat($its_id, $hof_id, $area_code) {
 function admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $allocated_by) {
     $hijri_year = get_current_hijri_year();
     
-    // Validation 1: Check if seat is already allocated to someone else
+    // Validation 1: Check gender compatibility
+    $gender_query = 'SELECT m.gender, a.gender as area_gender, a.area_name
+                     FROM its_data m, kl_shehrullah_seating_areas a
+                     WHERE m.its_id = ? AND a.area_code = ? AND a.hijri_year = ?';
+    $gender_result = run_statement($gender_query, $its_id, $area_code, $hijri_year);
+    if (!$gender_result->success || $gender_result->count == 0) {
+        return ['success' => false, 'error' => 'INVALID_AREA'];
+    }
+    
+    $data = $gender_result->data[0];
+    $member_gender = $data->gender;
+    $area_gender = $data->area_gender;
+    
+    // Check if gender matches (area_gender 'All' allows both genders)
+    if ($area_gender != 'All' && $area_gender != $member_gender) {
+        return ['success' => false, 'error' => 'GENDER_MISMATCH', 
+                'area_gender' => $area_gender, 'member_gender' => $member_gender];
+    }
+    
+    // Validation 2: Check if seat is already allocated to someone else
     if ($seat_number) {
         $check_query = 'SELECT its_id FROM kl_shehrullah_seat_allocation 
                         WHERE area_code = ? AND seat_number = ? AND hijri_year = ? AND its_id != ?';
         $check_result = run_statement($check_query, $area_code, $seat_number, $hijri_year, $its_id);
         if ($check_result->success && $check_result->count > 0) {
-            return false; // Seat already allocated to someone else
+            return ['success' => false, 'error' => 'SEAT_TAKEN'];
         }
     }
     
@@ -966,7 +985,7 @@ function admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $al
     $result = run_statement($query, $its_id, $hof_id, $area_code, $seat_number, $allocated_by, 
                             $hijri_year, $area_code, $seat_number, $allocated_by);
     
-    return $result->success;
+    return $result->success ? ['success' => true] : ['success' => false, 'error' => 'DB_ERROR'];
 }
 
 /**

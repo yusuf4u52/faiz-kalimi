@@ -29,12 +29,23 @@ function _handle_post()
         $userData = getSessionData(THE_SESSION_ID);
         $allocated_by = $userData->itsid ?? '';
         
-        $success = admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $allocated_by);
+        $result = admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $allocated_by);
         
-        if ($success) {
+        if ($result['success']) {
             setSessionData(TRANSIT_DATA, 'Seat pre-allocated successfully!');
         } else {
-            setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat. Seat may already be taken by someone else.');
+            $error = $result['error'] ?? 'UNKNOWN';
+            if ($error === 'GENDER_MISMATCH') {
+                $member_gender = $result['member_gender'] ?? '';
+                $area_gender = $result['area_gender'] ?? '';
+                setSessionData(TRANSIT_DATA, "Gender mismatch: Cannot allocate {$member_gender} member to {$area_gender} area.");
+            } else if ($error === 'SEAT_TAKEN') {
+                setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat. Seat is already taken by someone else.');
+            } else if ($error === 'INVALID_AREA') {
+                setSessionData(TRANSIT_DATA, 'Invalid area selected.');
+            } else {
+                setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat. Please try again.');
+            }
         }
     } else if ($action === 'delete_allocation') {
         $its_id = $_POST['its_id'] ?? '';
