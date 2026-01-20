@@ -77,25 +77,35 @@ function content_display()
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title mb-0">Seat Management - Shehrullah <?= $hijri_year ?>H</h4>
-            <div>
-                <!-- Seat Selection Toggle -->
-                <form method="post" style="display: inline;">
-                    <input type="hidden" name="action" value="toggle_selection">
-                    <?php if ($is_selection_open) { ?>
-                        <input type="hidden" name="open" value="N">
-                        <span class="badge bg-success me-2">Selection OPEN</span>
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Close seat selection? Users will not be able to select seats.')">
-                            Close Selection
-                        </button>
-                    <?php } else { ?>
-                        <input type="hidden" name="open" value="Y">
-                        <span class="badge bg-danger me-2">Selection CLOSED</span>
-                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Open seat selection? Users will be able to select seats.')">
-                            Open Selection
-                        </button>
-                    <?php } ?>
-                </form>
-            </div>
+            <!-- Seat Selection Toggle Switch -->
+            <form method="post" id="toggleSelectionForm" class="d-flex align-items-center gap-2">
+                <input type="hidden" name="action" value="toggle_selection">
+                <input type="hidden" name="open" id="openValue" value="<?= $is_selection_open ? 'N' : 'Y' ?>">
+                <span class="text-muted small">Selection:</span>
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch" id="selectionToggle" 
+                        <?= $is_selection_open ? 'checked' : '' ?>
+                        onchange="confirmToggle(this)">
+                    <label class="form-check-label fw-semibold <?= $is_selection_open ? 'text-success' : 'text-danger' ?>" for="selectionToggle">
+                        <?= $is_selection_open ? 'OPEN' : 'CLOSED' ?>
+                    </label>
+                </div>
+            </form>
+            <script>
+            function confirmToggle(checkbox) {
+                const isChecked = checkbox.checked;
+                const message = isChecked 
+                    ? 'Open seat selection? Users will be able to select seats.'
+                    : 'Close seat selection? Users will not be able to select seats.';
+                
+                if (confirm(message)) {
+                    document.getElementById('openValue').value = isChecked ? 'Y' : 'N';
+                    document.getElementById('toggleSelectionForm').submit();
+                } else {
+                    checkbox.checked = !isChecked;
+                }
+            }
+            </script>
         </div>
         <div class="card-body">
             <!-- Search and Pre-allocate Section -->
