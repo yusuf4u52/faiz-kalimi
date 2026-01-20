@@ -182,7 +182,7 @@ function content_display()
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="chairInfoModalLabel">Chair Arrangement Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close" onclick="closeChairModal()">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -190,7 +190,7 @@ function content_display()
                     <p><strong>Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID</strong></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-bs-dismiss="modal" onclick="closeChairModal()">OK</button>
                 </div>
             </div>
         </div>
