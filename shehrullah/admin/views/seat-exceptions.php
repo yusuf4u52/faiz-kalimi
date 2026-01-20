@@ -113,7 +113,7 @@ function content_display()
                 ?>
                 <tr><th width="100">Takhmeen</th><td><?= ui_money($search_takhmeen->takhmeen) ?></td></tr>
                 <tr><th>Paid</th><td><?= ui_money($search_takhmeen->paid_amount) ?></td></tr>
-                <tr><th>Balance</th><td><?= $pending > 0 ? "<span class=\"text-danger\">" . ui_money($pending) . "</span>" : "<span class=\"text-success\">Fully Paid</span>" ?></td></tr>
+                <tr><th>Balance</th><td><?= $search_takhmeen->takhmeen > 0 && $pending <= 0 ? "<span class=\"text-success\">Fully Paid</span>" : "<span class=\"text-danger\">" . ui_money($pending) . "</span>" ?></td></tr>
                 <?php } else { ?>
                 <tr><td colspan="2" class="text-warning small">Takhmeen not done</td></tr>
                 <?php } ?>
@@ -156,9 +156,9 @@ function content_display()
         ui_table(['HOF', 'Name', 'Takhmeen', 'Paid', 'Balance', 'Reason', 'Granted', '']);
         foreach ($exceptions as $exc) {
             $pending = ($exc->takhmeen ?? 0) - ($exc->paid_amount ?? 0);
-            $balance = $pending > 0 
-                ? "<small class=\"text-danger\">" . ui_money($pending) . "</small>" 
-                : "<small class=\"text-success\">Paid</small>";
+            $balance = ($exc->takhmeen ?? 0) > 0 && $pending <= 0 
+                ? "<small class=\"text-success\">Paid</small>" 
+                : "<small class=\"text-danger\">" . ui_money($pending) . "</small>";
             $revoke = '<form method="post" style="display:inline"><input type="hidden" name="action" value="revoke"><input type="hidden" name="hof_id" value="' . h($exc->hof_id) . '"><button type="submit" class="btn btn-sm btn-link text-danger p-0">Revoke</button></form>';
             
             ui_tr([
