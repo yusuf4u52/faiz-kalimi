@@ -86,9 +86,16 @@ function content_display()
     $takhmeen_data = getAppData('takhmeen_data');
     $attendees = getAppData('attendees') ?? [];
     
-    // Build area options
+    // Build area options and get available blocked seats for each area
     $area_opts = [];
-    foreach ($areas as $a) $area_opts[$a->area_code] = $a->area_name;
+    $area_blocked_seats = [];
+    foreach ($areas as $a) {
+        $area_opts[$a->area_code] = $a->area_name;
+        $blocked = get_available_blocked_seats($a->area_code);
+        if (!empty($blocked)) {
+            $area_blocked_seats[$a->area_code] = $blocked;
+        }
+    }
     
     ui_card('Pre-Allocate Seats', 'Bypass rules and assign seats directly', "$url/seat-management");
     ?>
@@ -99,6 +106,30 @@ function content_display()
             <?= ui_btn('Search', 'primary') ?>
         </div>
     </form>
+    
+    <?php if (!empty($area_blocked_seats)) { ?>
+    <div class="mb-4">
+        <h6 class="text-muted mb-2">Available Blocked Seats by Area</h6>
+        <div class="row g-2">
+            <?php foreach ($area_blocked_seats as $area_code => $blocked_seats) { 
+                $area_name = $area_opts[$area_code] ?? $area_code;
+                $seat_numbers = array_map(function($s) { return $s->seat_number; }, $blocked_seats);
+                $seat_list = implode(', ', $seat_numbers);
+            ?>
+            <div class="col-md-6 col-lg-4">
+                <div class="card card-body py-2 px-3">
+                    <div class="small">
+                        <strong><?= h($area_name) ?></strong>
+                        <div class="text-muted" style="font-size: 0.85rem;">
+                            Seats: <?= h($seat_list) ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php } ?>
+        </div>
+    </div>
+    <?php } ?>
     
     <?php if ($thaali_data) { 
         ui_hr();

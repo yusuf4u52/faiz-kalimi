@@ -1055,6 +1055,25 @@ function is_seat_blocked($area_code, $seat_number) {
 }
 
 /**
+ * Get available blocked seats (blocked but not yet allocated)
+ */
+function get_available_blocked_seats($area_code) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT bs.* 
+              FROM kl_shehrullah_blocked_seats bs
+              LEFT JOIN kl_shehrullah_seat_allocation sa 
+                ON bs.area_code = sa.area_code 
+                AND bs.seat_number = sa.seat_number 
+                AND sa.hijri_year = bs.hijri_year
+              WHERE bs.area_code = ? 
+                AND bs.hijri_year = ? 
+                AND sa.seat_number IS NULL
+              ORDER BY bs.seat_number';
+    $result = run_statement($query, $area_code, $hijri_year);
+    return $result->success && $result->count > 0 ? $result->data : [];
+}
+
+/**
  * Get next available seat number for an area (skips blocked and allocated)
  */
 function get_next_available_seat($area_code) {
