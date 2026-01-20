@@ -332,13 +332,19 @@ function __display_niyaz_section(...$data)
             <th style='font-size: 12px'>Half Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->half_niyaz</td>
         </tr>
         <tr>            
-            <th style='font-size: 12px'>Family Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$family_niyaz</td>
+            <th style='font-size: 12px'>Per Head Hub</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->family_niyaz</td>
+        </tr>
+        <tr>            
+            <th style='font-size: 12px'>Kids Hub</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->per_kid_niyaz</td>
         </tr>
         <tr>            
             <th style='font-size: 12px' colspan=2>&nbsp</th>
         </tr>        
         <tr>               
             <th style='font-size: 12px'>Pirsa</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$pirsa_hub</td>
+        </tr>
+        <tr>               
+            <th style='font-size: 12px'>Chair</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$chair_hub</td>
         </tr>  
         </table>      
     ";
