@@ -1,4 +1,6 @@
 <?php
+// Include UI helper functions
+include_once __DIR__ . '/_ui.php';
 
 $header = getAppData('HEADER') ?? true;
 $footer = getAppData('FOOTER') ?? true;
@@ -26,6 +28,7 @@ $hijri = get_current_hijri_year() ?? 0;
     <link rel="stylesheet" href="<?= $url ?>/_assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="<?= $url ?>/_assets/vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="<?= $url ?>/_assets/css/style.css">
+    <link rel="stylesheet" href="<?= $url ?>/_assets/css/ui-theme.css">
     <link rel="shortcut icon" href="<?= $url ?>/_assets/images/favicon.ico" />
 </head>
 

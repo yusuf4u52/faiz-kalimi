@@ -101,11 +101,65 @@ function content_display()
     $uri = getAppData('APP_BASE_URI');
 
     $print = getAppData('print') ?? false;
+    
+    // Determine which is greater: Prev. Takhmeen or Family Niyaz
+    $prev_or_family_niyaz = max($last_year_takhmeen, $family_niyaz);
     ?>
     <style>
         .smalltext {
             font-size: 11px;
         }
+        <?php if(!$print) { ?>
+        #printableArea {
+            position: relative;
+        }
+        #printableArea::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 10px,
+                rgba(220, 53, 69, 0.02) 10px,
+                rgba(220, 53, 69, 0.02) 20px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+        .watermark-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+        .watermark-layer::after {
+            content: 'ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 36px;
+            font-weight: 900;
+            color: rgba(220, 53, 69, 0.12);
+            white-space: nowrap;
+            width: 300%;
+            text-align: center;
+            line-height: 150px;
+            letter-spacing: 3px;
+        }
+        #printableArea .card-body {
+            position: relative;
+            z-index: 3;
+        }
+        <?php } ?>
     </style>
     <?php if(!$print) { ?>
         <div class="alert alert-primary" role="alert">
@@ -113,6 +167,9 @@ function content_display()
         </div>
     <?php } ?>
     <div class="card" id="printableArea">
+        <?php if(!$print) { ?>
+        <div class="watermark-layer"></div>
+        <?php } ?>
         <div class="card-body">
             <table class='table table-bordered'>
                 <tr>
@@ -136,12 +193,10 @@ function content_display()
                     <td style='font-size: 12px' colspan="5">[<?= $hof_id ?>] <?= $name ?></td>                                        
                 </tr>
                 <tr>
-                    <th style='font-size: 12px'>Sabil</th>
-                    <td style='font-size: 12px'><?= $sabeel ?></td>
-                    <th style='font-size: 12px'>WApp</th>
-                    <td style='font-size: 12px'><?= $takhmeen_data->whatsapp ?></td>
-                    <th style='font-size: 12px'>Prev. Takhmeen</th>
-                    <td style='font-size: 12px'><?=$last_year_takhmeen?></td>
+                    <th style='font-size: 12px; width: 25%'>Sabil</th>
+                    <td style='font-size: 12px; width: 25%'><?= $sabeel ?></td>
+                    <th style='font-size: 12px; width: 25%'>WApp</th>
+                    <td style='font-size: 12px; width: 25%'><?= $takhmeen_data->whatsapp ?></td>
                 </tr>
                 <tr>
                     <th style='font-size: 12px'>Addr:</th>
@@ -195,21 +250,28 @@ function content_display()
 
             <table class='table table-bordered small-text'>
                 <tr>
-                    <th style='font-size: 12px' colspan=3>Kindly submit form to receive izan card & carry izan card for our
+                    <th style='font-size: 12px' colspan="4">Kindly submit form to receive izan card & carry izan card for our
                         convenience.</th>
                 </tr>
                 <tr>
-                    <th style='font-size: 12px'>Committed Hub Amount</th>
-                    <th style='font-size: 12px'>Receipt No.</th>
-                    <th style='font-size: 12px'>Date</th>
+                    <th style='font-size: 12px; width: 25%'>Prev. Takhmeen / Niyaz</th>
+                    <td style='font-size: 12px; width: 25%'><?=$prev_or_family_niyaz?></td>
+                    <th style='font-size: 12px; width: 25%'>Committed Hub Amount</th>
+                    <td style='font-size: 12px; width: 25%'></td>
                 </tr>
             </table>
-            <table class='table table-bordered'>
-                <tr>
-                    <th style='font-size: 12px'>HOF Signature</th>
-                    <th style='font-size: 12px'>Auth. Signature</th>
-                </tr>
-            </table>
+
+            <!-- Signature Section -->
+            <div style="margin-top: 40px; display: flex; justify-content: space-between; padding: 0 20px;">
+                <div style="width: 45%; text-align: center;">
+                    <div style="border-bottom: 2px solid #000; height: 60px; margin-bottom: 8px;"></div>
+                    <p style="font-size: 12px; font-weight: bold; margin: 0;">HOF Signature</p>
+                </div>
+                <div style="width: 45%; text-align: center;">
+                    <div style="border-bottom: 2px solid #000; height: 60px; margin-bottom: 8px;"></div>
+                    <p style="font-size: 12px; font-weight: bold; margin: 0;">Authorized Signature</p>
+                </div>
+            </div>
         </div>
     </div>
     <?php if($print) { ?>
@@ -318,32 +380,29 @@ function __display_niyaz_section(...$data)
     $chair_hub = $markaz_data->chair;//SHEHRULLAH_CONFIG->CHAIR;
     $chair_total = $chair_count * $chair_hub;
 
-
+	//20Jan - Other section removed.
         echo "
     <table class='table table-bordered'>
         <tr>                            
-            <th style='font-size: 12px'>Niyaz Khdimat</th><th style='font-size: 12px'>Hub</th><th style='font-size: 12px'>Count</th>
-            <th style='font-size: 12px'>Other Khidmat</th><th style='font-size: 12px'>Hub</th><th style='font-size: 12px'>Count</th>
+            <th style='font-size: 12px'>Niyaz Khdimat</th><th style='font-size: 12px'>Hub</th>
         </tr>
         <tr>            
-            <th style='font-size: 12px'>Full Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->full_niyaz</td><td>&nbsp;</td>
-            <th style='font-size: 12px'>Iftar</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$iftar_hub</td><td>&nbsp;</td>
+            <th style='font-size: 12px'>Full Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->full_niyaz</td>
         </tr>
         <tr>            
-            <th style='font-size: 12px'>Half Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->half_niyaz</td><td>&nbsp;</td>
-            <th style='font-size: 12px'>Zabihat</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$zabihat_hub</td><td>&nbsp;</td>
+            <th style='font-size: 12px'>Half Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->half_niyaz</td>
         </tr>
         <tr>            
-            <th style='font-size: 12px'>Family Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$family_niyaz</td><td>&nbsp;</td>
-            <th style='font-size: 12px'>Fateha</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$fateha_hub</td><td>&nbsp;</td>
+            <th style='font-size: 12px'>Per Head Hub</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->family_niyaz</td>
         </tr>
         <tr>            
-            <th style='font-size: 12px' colspan=3>&nbsp</th>
-            <th style='font-size: 12px'>Khajoor</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$khajoor_hub</td><td>&nbsp;</td>
-        </tr>        
+            <th style='font-size: 12px'>Kids Hub</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->per_kid_niyaz</td>
+        </tr>
         <tr>               
-            <th style='font-size: 12px'>Pirsa</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$pirsa_hub</td><td style='font-size: 12px'>$pirsa_selection</td>
-            <th style='font-size: 12px'>Chair</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$chair_hub</td><td style='font-size: 12px'>$chair_count</td>
+            <th style='font-size: 12px'>Pirsa</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$pirsa_hub</td>
+        </tr>
+        <tr>               
+            <th style='font-size: 12px'>Chair</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$chair_hub</td>
         </tr>  
         </table>      
     ";
@@ -351,24 +410,30 @@ function __display_niyaz_section(...$data)
     // echo "
     // <table class='table table-bordered'>
     //     <tr>                            
-    //         <th style='font-size: 12px' colspan=9>Niyaz/Other Khdimat</th>
+    //         <th style='font-size: 12px'>Niyaz Khdimat</th><th style='font-size: 12px'>Hub</th><th style='font-size: 12px'>Count</th>
+    //         <th style='font-size: 12px'>Other Khidmat</th><th style='font-size: 12px'>Hub</th><th style='font-size: 12px'>Count</th>
     //     </tr>
     //     <tr>            
-    //         <th style='font-size: 12px'>Full Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i> $markaz_data->full_niyaz</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-    //         <th style='font-size: 12px'>Half Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i> $markaz_data->half_niyaz</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-    //         <th style='font-size: 12px'>Family Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i> $family_hub</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-    //     </tr>
-    //     <tr>            
-    //         <th style='font-size: 12px'>Zabihat</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i> $zabihat_hub</td><td>&nbsp;</td>
+    //         <th style='font-size: 12px'>Full Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->full_niyaz</td><td>&nbsp;</td>
     //         <th style='font-size: 12px'>Iftar</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$iftar_hub</td><td>&nbsp;</td>
+    //     </tr>
+    //     <tr>            
+    //         <th style='font-size: 12px'>Half Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$markaz_data->half_niyaz</td><td>&nbsp;</td>
+    //         <th style='font-size: 12px'>Zabihat</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$zabihat_hub</td><td>&nbsp;</td>
+    //     </tr>
+    //     <tr>            
+    //         <th style='font-size: 12px'>Family Niyaz</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$family_niyaz</td><td>&nbsp;</td>
     //         <th style='font-size: 12px'>Fateha</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$fateha_hub</td><td>&nbsp;</td>
     //     </tr>
     //     <tr>            
-    //         <th style='font-size: 12px'>Khajoor</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$khajoor_hub</td><td style='font-size: 12px'>&nbsp;</td>
-    //         <th style='font-size: 12px'>Pirsa</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$pirsa_hub</td><td style='font-size: 12px'>$pirsa_selection</td>
-    //         <th style='font-size: 12px'>Chair</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i> $chair_hub x $chair_count</td><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i> $chair_total</td>
+    //         <th style='font-size: 12px' colspan=3>&nbsp</th>
+    //         <th style='font-size: 12px'>Khajoor</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$khajoor_hub</td><td>&nbsp;</td>
     //     </tr>        
-    // </table>
+    //     <tr>               
+    //         <th style='font-size: 12px'>Pirsa</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$pirsa_hub</td><td style='font-size: 12px'>$pirsa_selection</td>
+    //         <th style='font-size: 12px'>Chair</th><td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i>$chair_hub</td><td style='font-size: 12px'>$chair_count</td>
+    //     </tr>  
+    //     </table>      
     // ";
 }
 
