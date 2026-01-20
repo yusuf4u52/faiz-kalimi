@@ -139,10 +139,10 @@ function content_display()
                     <td style='font-size: 12px' colspan="5">[<?= $hof_id ?>] <?= $name ?></td>                                        
                 </tr>
                 <tr>
-                    <th style='font-size: 12px'>Sabil</th>
-                    <td style='font-size: 12px'><?= $sabeel ?></td>
-                    <th style='font-size: 12px'>WApp</th>
-                    <td style='font-size: 12px' colspan="3"><?= $takhmeen_data->whatsapp ?></td>
+                    <th style='font-size: 12px; width: 25%'>Sabil</th>
+                    <td style='font-size: 12px; width: 25%'><?= $sabeel ?></td>
+                    <th style='font-size: 12px; width: 25%'>WApp</th>
+                    <td style='font-size: 12px; width: 25%'><?= $takhmeen_data->whatsapp ?></td>
                 </tr>
                 <tr>
                     <th style='font-size: 12px'>Addr:</th>
@@ -200,10 +200,10 @@ function content_display()
                         convenience.</th>
                 </tr>
                 <tr>
-                    <th style='font-size: 12px'>Prev. Takhmeen / Niyaz</th>
-                    <td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i><?=$prev_or_family_niyaz?></td>
-                    <th style='font-size: 12px'>Committed Hub Amount</th>
-                    <td style='font-size: 12px'>_____________________</td>
+                    <th style='font-size: 12px; width: 25%'>Prev. Takhmeen / Niyaz</th>
+                    <td style='font-size: 12px; width: 25%'><?=$prev_or_family_niyaz?></td>
+                    <th style='font-size: 12px; width: 25%'>Committed Hub Amount</th>
+                    <td style='font-size: 12px; width: 25%'></td>
                 </tr>
             </table>
 
