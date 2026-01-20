@@ -27,7 +27,7 @@ function content_display()
         </div>
     </div> -->
     <div class="row">
-        <div class="col-md-6 mb-3">
+        <div class="<?php echo $is_selection_open ? 'col-md-6' : 'col-md-12'; ?> mb-3">
             <div class="card h-100">
                 <div class="card-header">
                     <h4 class="card-title">Shehrullah Registration</h4>
@@ -48,6 +48,7 @@ function content_display()
                 </div>
             </div>
         </div>
+        <?php if ($is_selection_open) { ?>
         <div class="col-md-6 mb-3">
             <div class="card h-100 border-success">
                 <div class="card-header bg-success text-white">
@@ -55,12 +56,6 @@ function content_display()
                     <p class="card-description text-white-50 mb-0">Select your seats after payment</p>
                 </div>
                 <div class="card-body">
-                    <?php if (!$is_selection_open) { ?>
-                    <div class="alert alert-danger" role="alert">
-                        <strong>Seat selection is currently CLOSED.</strong>
-                        <br>Please wait for the announcement to open seat selection.
-                    </div>
-                    <?php } else { ?>
                     <div class="alert alert-info" role="alert">
                         <strong>Note:</strong> Seat selection is available only after full payment of takhmeen.
                         <br>Seat selection is on <strong>first come first serve</strong> basis.
@@ -76,10 +71,10 @@ function content_display()
                             </div>
                         </div>
                     </form>
-                    <?php } ?>
                 </div>
             </div>
         </div>
+        <?php } ?>
     </div>
 
     <!-- <br/>
