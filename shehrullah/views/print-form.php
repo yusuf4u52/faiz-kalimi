@@ -200,9 +200,9 @@ function content_display()
                         convenience.</th>
                 </tr>
                 <tr>
-                    <th style='font-size: 12px'>Committed Hub Amount</th>
-                    <th style='font-size: 12px'>Prev. Takhmeen / Family Niyaz</th>
+                    <th style='font-size: 12px'>Prev. Takhmeen / Niyaz</th>
                     <td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i><?=$prev_or_family_niyaz?></td>
+                    <th style='font-size: 12px'>Committed Hub Amount</th>
                 </tr>
             </table>
             <table class='table table-bordered'>
