@@ -49,6 +49,7 @@ function _handle_post()
         if (empty($area_code) || $start <= 0 || $end <= 0 || $start > $end) {
             setSessionData(TRANSIT_DATA, 'Invalid range provided.');
             do_redirect('?edit=' . $area_code);
+            return;
         }
         
         $userData = getSessionData(THE_SESSION_ID);
