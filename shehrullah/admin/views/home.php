@@ -199,6 +199,15 @@ function content_display()
                     </div>
                 </div>
             </div>
+            <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-gradient-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Seat Management</h5>
+                        <p class="card-text">Manage seat allocations</p>
+                        <a href="<?= $url ?>/seat-management" class="btn btn-light">GO >></a>
+                    </div>
+                </div>
+            </div>
         <?php } ?>
 
     </div>
