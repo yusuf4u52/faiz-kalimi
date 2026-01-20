@@ -158,7 +158,7 @@ function content_display()
     if (empty($exceptions)) {
         echo ui_muted('No active exceptions.');
     } else {
-        ui_table(['HOF', 'Name', 'Takhmeen', 'Paid', 'Balance', 'Reason', 'Hoob Clearance', 'Granted', '']);
+        ui_table(['HOF', 'Name', 'Takhmeen', 'Paid', 'Balance', 'Reason', 'Hoob Clearance', 'Granted By', '']);
         foreach ($exceptions as $exc) {
             $pending = ($exc->takhmeen ?? 0) - ($exc->paid_amount ?? 0);
             $balance = ($exc->takhmeen ?? 0) > 0 && $pending <= 0 
@@ -194,7 +194,7 @@ function content_display()
                 $balance,
                 ui_muted($exc->reason ?: '—'),
                 $hoob_date_display,
-                ui_date($exc->granted_at, 'd/m/y H:i'),
+                ui_muted($exc->granted_by ?: '—'),
                 $revoke
             ]);
         }
