@@ -5,6 +5,7 @@ do_for_post('_handle_form_submission');
 function content_display()
 {
     $url = getAppData('BASE_URI');
+    $is_selection_open = is_seat_selection_open();
     ?>
     <!-- <div class="card">
         <div class="card-header">
@@ -54,13 +55,28 @@ function content_display()
                     <p class="card-description text-white-50 mb-0">Select your seats after payment</p>
                 </div>
                 <div class="card-body">
-                    <p class="small text-muted mb-3">
-                        Available after full payment of takhmeen.<br>
-                        First come, first serve basis.
-                    </p>
-                    <a href="<?= $url ?>/input-seat-selection" class="btn btn-success">
-                        <i class="mdi mdi-seat me-1"></i> Select Seats
-                    </a>
+                    <?php if (!$is_selection_open) { ?>
+                    <div class="alert alert-danger" role="alert">
+                        <strong>Seat selection is currently CLOSED.</strong>
+                        <br>Please wait for the announcement to open seat selection.
+                    </div>
+                    <?php } else { ?>
+                    <div class="alert alert-info" role="alert">
+                        <strong>Note:</strong> Seat selection is available only after full payment of takhmeen.
+                        <br>Seat selection is on <strong>first come first serve</strong> basis.
+                    </div>
+                    <form method="post" action="" class="forms-sample">
+                        <input type="hidden" name="action" value="seat_selection_search"/>
+                        <div class="form-group">
+                            <label class="col-form-label">Sabeel ID / HOF ID (Numbers only)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Sabeel Number or HOF ID" pattern="^[0-9]{1,8}$"
+                                    id="sabeel_seat" name="sabeel" aria-label="Sabeel number" aria-describedby="button-seat" required>
+                                <button class="btn btn-success" type="submit" id="button-seat">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    <?php } ?>
                 </div>
             </div>
         </div>
@@ -87,6 +103,48 @@ function _handle_form_submission()
         do_redirect('/input-sabeel');
     }
     
+}
+
+function seat_selection_search() {
+    $sabeel = $_POST['sabeel'];
+    
+    // Check if seat selection is open
+    if (!is_seat_selection_open()) {
+        do_redirect_with_message('/input-sabeel', 'Seat selection is currently CLOSED. Please wait for the announcement.');
+    }
+    
+    // Try to find by sabeel or HOF ID
+    $thaali_data = get_thaalilist_data($sabeel);
+    if (is_null($thaali_data)) {
+        do_redirect_with_message('/input-sabeel', 'No records found for input ' . $sabeel . '. Enter correct sabeel number or HOF ITS.');
+    }
+    
+    $hof_id = $thaali_data->ITS_No;
+    $hijri_year = get_current_hijri_year();
+    
+    // Check if takhmeen is done
+    $takhmeen_data = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
+    if (is_null($takhmeen_data) || $takhmeen_data->takhmeen <= 0) {
+        do_redirect_with_message('/input-sabeel', 'Takhmeen is not done yet. Please complete registration and takhmeen first.');
+    }
+    
+    // Check payment status
+    $is_paid = $takhmeen_data->paid_amount >= $takhmeen_data->takhmeen;
+    $has_exception = has_seat_exception($hof_id, $hijri_year);
+    
+    if (!$is_paid && !$has_exception) {
+        $pending = $takhmeen_data->takhmeen - $takhmeen_data->paid_amount;
+        do_redirect_with_message('/input-sabeel', 'Payment pending. Please complete payment of Rs. ' . number_format($pending) . ' to select seats.');
+    }
+    
+    // Check if there are any attendees eligible for seat selection
+    $attendees = get_attendees_for_seat_selection($hof_id);
+    if (empty($attendees)) {
+        do_redirect_with_message('/input-sabeel', 'No eligible family members found for seat selection. Only Misaq Done members who are attending can select seats.');
+    }
+    
+    $enc_sabeel = do_encrypt($sabeel);
+    do_redirect('/seat-selection/' . $enc_sabeel);
 }
 
 function sabeel_search() {

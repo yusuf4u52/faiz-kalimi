@@ -10,7 +10,7 @@ function initial_processing()
 
     $sabeel_data = get_thaalilist_data($sabeel);
     if (is_null($sabeel_data)) {
-        do_redirect_with_message('/input-seat-selection', 'No records found. Please enter correct sabeel number or HOF ITS.');
+        do_redirect_with_message('/input-sabeel', 'No records found. Please enter correct sabeel number or HOF ITS.');
     }
 
     $hof_id = $sabeel_data->ITS_No;
@@ -22,12 +22,12 @@ function initial_processing()
 
     // Verify eligibility
     if (!can_select_seats($hof_id)) {
-        do_redirect_with_message('/input-seat-selection', 'You are not eligible for seat selection. Please complete payment first.');
+        do_redirect_with_message('/input-sabeel', 'You are not eligible for seat selection. Please complete payment first.');
     }
 
     $attendees = get_attendees_for_seat_selection($hof_id);
     if (empty($attendees)) {
-        do_redirect_with_message('/input-seat-selection', 'No eligible family members found for seat selection.');
+        do_redirect_with_message('/input-sabeel', 'No eligible family members found for seat selection.');
     }
     setAppData('attendees', $attendees);
 }
@@ -162,7 +162,7 @@ function content_display()
     ui_table_end();
     ?>
     <div class="mt-4">
-        <?= ui_link('Back', "$url/input-seat-selection", 'secondary') ?>
+        <?= ui_link('Back', "$url/input-sabeel", 'secondary') ?>
     </div>
     <?php 
     ui_card_end();
