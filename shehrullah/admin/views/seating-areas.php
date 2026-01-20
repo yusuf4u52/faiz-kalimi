@@ -16,53 +16,43 @@ function _handle_post()
         $seat_start = $_POST['seat_start'] ?? null;
         $seat_end = $_POST['seat_end'] ?? null;
         $is_active = $_POST['is_active'] ?? 'Y';
+        $blocked_seats_json = $_POST['blocked_seats'] ?? '[]';
         
         if (empty($seat_start)) $seat_start = null;
         if (empty($seat_end)) $seat_end = null;
         
+        // Update area basic info
         $success = update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active);
         
         if ($success) {
-            setSessionData(TRANSIT_DATA, 'Area updated successfully!');
+            // Process blocked seats
+            $blocked_seats = json_decode($blocked_seats_json, true);
+            $userData = getSessionData(THE_SESSION_ID);
+            $blocked_by = $userData->itsid ?? '';
+            
+            // Get current blocked seats from database
+            $current_blocked = get_blocked_seats($area_code);
+            $current_blocked_numbers = array_map(function($b) { return $b->seat_number; }, $current_blocked);
+            
+            // Get new blocked seat numbers from form
+            $new_blocked_numbers = array_map(function($b) { return $b['seat_number']; }, $blocked_seats);
+            
+            // Unblock seats that are no longer in the list
+            foreach ($current_blocked_numbers as $seat_num) {
+                if (!in_array($seat_num, $new_blocked_numbers)) {
+                    unblock_seat($area_code, $seat_num);
+                }
+            }
+            
+            // Block new seats or update existing ones
+            foreach ($blocked_seats as $seat) {
+                block_seat($area_code, $seat['seat_number'], $seat['reason'], $blocked_by);
+            }
+            
+            setSessionData(TRANSIT_DATA, 'Area and blocked seats updated successfully!');
         } else {
             setSessionData(TRANSIT_DATA, 'Failed to update area.');
         }
-        do_redirect('?edit=' . $area_code);
-    } else if ($action === 'unblock_seat') {
-        $area_code = $_POST['area_code'] ?? '';
-        $seat_number = $_POST['seat_number'] ?? '';
-        
-        $success = unblock_seat($area_code, $seat_number);
-        
-        if ($success) {
-            setSessionData(TRANSIT_DATA, 'Seat unblocked successfully!');
-        } else {
-            setSessionData(TRANSIT_DATA, 'Failed to unblock seat.');
-        }
-        do_redirect('?edit=' . $area_code);
-    } else if ($action === 'block_range') {
-        $area_code = $_POST['area_code'] ?? '';
-        $start = intval($_POST['range_start'] ?? 0);
-        $end = intval($_POST['range_end'] ?? 0);
-        $reason = $_POST['reason'] ?? '';
-        
-        if (empty($area_code) || $start <= 0 || $end <= 0 || $start > $end) {
-            setSessionData(TRANSIT_DATA, 'Invalid range provided.');
-            do_redirect('?edit=' . $area_code);
-            return;
-        }
-        
-        $userData = getSessionData(THE_SESSION_ID);
-        $blocked_by = $userData->itsid ?? '';
-        
-        $count = 0;
-        for ($i = $start; $i <= $end; $i++) {
-            if (block_seat($area_code, $i, $reason, $blocked_by)) {
-                $count++;
-            }
-        }
-        
-        setSessionData(TRANSIT_DATA, "Blocked $count seats ($start to $end).");
         do_redirect('?edit=' . $area_code);
     }
 }
@@ -150,6 +140,7 @@ function show_edit_area_page($area_code, $url, $hijri_year)
     }
     
     $blocked_seats = get_blocked_seats($area_code);
+    $blocked_seats_json = json_encode($blocked_seats);
     ?>
     <div class="mb-3">
         <a href="?" class="btn btn-secondary">← Back to All Areas</a>
@@ -161,9 +152,10 @@ function show_edit_area_page($area_code, $url, $hijri_year)
             <h4 class="card-title">Edit Seating Area - <?= $area->area_name ?> (<?= $area->area_code ?>)</h4>
         </div>
         <div class="card-body">
-            <form method="post">
+            <form method="post" id="areaEditForm">
                 <input type="hidden" name="action" value="update_area">
                 <input type="hidden" name="area_code" value="<?= $area->area_code ?>">
+                <input type="hidden" name="blocked_seats" id="blockedSeatsInput" value="">
                 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -213,83 +205,207 @@ function show_edit_area_page($area_code, $url, $hijri_year)
                     </div>
                 </div>
                 
+                <hr class="my-4">
+                
+                <!-- Blocked Seats Section (integrated) -->
+                <h5 class="mb-3">Blocked Seats Management</h5>
+                <p class="text-muted small">Note: Changes to blocked seats are saved only when you click "Save All Changes" below.</p>
+                
+                <!-- Block Range -->
+                <div class="mb-4">
+                    <h6>Block Range of Seats</h6>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="number" id="rangeStart" class="form-control" placeholder="From">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" id="rangeEnd" class="form-control" placeholder="To">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="blockReason" class="form-control" placeholder="Reason (optional)">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-warning" onclick="blockRange()">Block Range</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Block Single Seat -->
+                <div class="mb-4">
+                    <h6>Block Single Seat</h6>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="number" id="singleSeat" class="form-control" placeholder="Seat #">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="singleReason" class="form-control" placeholder="Reason (optional)">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-warning" onclick="blockSingle()">Block Seat</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <!-- Blocked Seats List -->
+                <h6>Currently Blocked Seats (<span id="blockedCount">0</span>)</h6>
+                <div id="noBlockedSeats" class="text-muted" style="display: none;">No blocked seats for this area.</div>
+                <div class="table-responsive" id="blockedSeatsTable" style="display: none;">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Seat #</th>
+                                <th>Reason</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blockedSeatsBody">
+                        </tbody>
+                    </table>
+                </div>
+                
+                <hr class="my-4">
+                
                 <div class="mt-3">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary btn-lg">Save All Changes</button>
                     <a href="?" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
     
-    <!-- Blocked Seats Section -->
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title">Blocked Seats Management</h5>
-        </div>
-        <div class="card-body">
-            <!-- Block Range -->
-            <div class="mb-4">
-                <h6>Block Range of Seats</h6>
-                <form method="post">
-                    <input type="hidden" name="action" value="block_range">
-                    <input type="hidden" name="area_code" value="<?= $area_code ?>">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <input type="number" name="range_start" class="form-control" placeholder="From" required>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="number" name="range_end" class="form-control" placeholder="To" required>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="text" name="reason" class="form-control" placeholder="Reason (optional)">
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-warning">Block Range</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+    <script>
+    // JavaScript for managing blocked seats in UI
+    let blockedSeats = <?= $blocked_seats_json ?>;
+    
+    // Initialize the blocked seats display
+    function initBlockedSeats() {
+        blockedSeats = blockedSeats.map(seat => ({
+            seat_number: parseInt(seat.seat_number),
+            reason: seat.reason || ''
+        }));
+        renderBlockedSeats();
+    }
+    
+    // Render the blocked seats table
+    function renderBlockedSeats() {
+        const tbody = document.getElementById('blockedSeatsBody');
+        const count = document.getElementById('blockedCount');
+        const noSeatsMsg = document.getElementById('noBlockedSeats');
+        const table = document.getElementById('blockedSeatsTable');
+        
+        // Sort by seat number
+        blockedSeats.sort((a, b) => a.seat_number - b.seat_number);
+        
+        count.textContent = blockedSeats.length;
+        
+        if (blockedSeats.length === 0) {
+            noSeatsMsg.style.display = 'block';
+            table.style.display = 'none';
+            tbody.innerHTML = '';
+        } else {
+            noSeatsMsg.style.display = 'none';
+            table.style.display = 'block';
             
-            <hr>
-            
-            <!-- Blocked Seats List -->
-            <?php if (empty($blocked_seats)) { ?>
-                <p class="text-muted">No blocked seats for this area.</p>
-            <?php } else { ?>
-            <h6>Currently Blocked Seats (<?= count($blocked_seats) ?>)</h6>
-            <div class="table-responsive">
-                <table class="table table-sm table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Seat #</th>
-                            <th>Reason</th>
-                            <th>Blocked By</th>
-                            <th>Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($blocked_seats as $bs) { ?>
-                        <tr>
-                            <td><?= $bs->seat_number ?></td>
-                            <td><?= $bs->reason ?: '-' ?></td>
-                            <td><?= $bs->blocked_by ?></td>
-                            <td><?= date('d/m/Y', strtotime($bs->blocked_at)) ?></td>
-                            <td>
-                                <form method="post" style="display: inline;">
-                                    <input type="hidden" name="action" value="unblock_seat">
-                                    <input type="hidden" name="area_code" value="<?= $area_code ?>">
-                                    <input type="hidden" name="seat_number" value="<?= $bs->seat_number ?>">
-                                    <button type="submit" class="btn btn-sm btn-success">Unblock</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-            </div>
-            <?php } ?>
-        </div>
-    </div>
+            tbody.innerHTML = blockedSeats.map(seat => `
+                <tr>
+                    <td>${seat.seat_number}</td>
+                    <td>${seat.reason || '-'}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-success" onclick="unblockSeat(${seat.seat_number})">
+                            Unblock
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // Update hidden input
+        document.getElementById('blockedSeatsInput').value = JSON.stringify(blockedSeats);
+    }
+    
+    // Block a range of seats
+    function blockRange() {
+        const start = parseInt(document.getElementById('rangeStart').value);
+        const end = parseInt(document.getElementById('rangeEnd').value);
+        const reason = document.getElementById('blockReason').value.trim();
+        
+        if (!start || !end) {
+            alert('Please enter both start and end seat numbers.');
+            return;
+        }
+        
+        if (start > end) {
+            alert('Start seat number must be less than or equal to end seat number.');
+            return;
+        }
+        
+        // Add seats to the blocked list
+        let count = 0;
+        for (let i = start; i <= end; i++) {
+            if (!blockedSeats.some(s => s.seat_number === i)) {
+                blockedSeats.push({
+                    seat_number: i,
+                    reason: reason
+                });
+                count++;
+            }
+        }
+        
+        if (count > 0) {
+            alert(`Added ${count} seat(s) to blocked list. Click "Save All Changes" to apply.`);
+            // Clear inputs
+            document.getElementById('rangeStart').value = '';
+            document.getElementById('rangeEnd').value = '';
+            document.getElementById('blockReason').value = '';
+            renderBlockedSeats();
+        } else {
+            alert('All seats in this range are already blocked.');
+        }
+    }
+    
+    // Block a single seat
+    function blockSingle() {
+        const seatNum = parseInt(document.getElementById('singleSeat').value);
+        const reason = document.getElementById('singleReason').value.trim();
+        
+        if (!seatNum) {
+            alert('Please enter a seat number.');
+            return;
+        }
+        
+        if (blockedSeats.some(s => s.seat_number === seatNum)) {
+            alert('This seat is already blocked.');
+            return;
+        }
+        
+        blockedSeats.push({
+            seat_number: seatNum,
+            reason: reason
+        });
+        
+        alert('Seat added to blocked list. Click "Save All Changes" to apply.');
+        // Clear inputs
+        document.getElementById('singleSeat').value = '';
+        document.getElementById('singleReason').value = '';
+        renderBlockedSeats();
+    }
+    
+    // Unblock a seat
+    function unblockSeat(seatNumber) {
+        blockedSeats = blockedSeats.filter(s => s.seat_number !== seatNumber);
+        renderBlockedSeats();
+    }
+    
+    // Form submission handler
+    document.getElementById('areaEditForm').addEventListener('submit', function(e) {
+        // Update hidden input with latest blocked seats data
+        document.getElementById('blockedSeatsInput').value = JSON.stringify(blockedSeats);
+    });
+    
+    // Initialize on page load
+    initBlockedSeats();
+    </script>
     <?php
 }
