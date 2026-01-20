@@ -25,23 +25,44 @@ function content_display()
             </form>            
         </div>
     </div> -->
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Sabeel Search</h4>
-            <p class="card-description"> Enter sabeel number and enter </p>
-        </div>
-        <div class="card-body">
-            <form method="post" action="" class="forms-sample">
-                <input type="hidden" name="action" value="sabeel_search"/>
-                <div class="form-group">
-                    <label class="col-sm-3 col-form-label">Sabeel ID / HOF ID (Numbers only)</label>
-                    <div class="input-group col-xs-12">
-                        <input type="text" class="form-control" placeholder="Sabeel Number" pattern="^[0-9]{1,8}$"
-                            id="sabeel" name="sabeel" aria-label="Sabeel number" aria-describedby="button-addon2" required>
-                        <button class="btn btn-outline-primary" type="submit" id="button-addon2">Search</button>
-                    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h4 class="card-title">Shehrullah Registration</h4>
+                    <p class="card-description">Enter sabeel number to register</p>
                 </div>
-            </form>            
+                <div class="card-body">
+                    <form method="post" action="" class="forms-sample">
+                        <input type="hidden" name="action" value="sabeel_search"/>
+                        <div class="form-group">
+                            <label class="col-form-label">Sabeel ID / HOF ID (Numbers only)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Sabeel Number" pattern="^[0-9]{1,8}$"
+                                    id="sabeel" name="sabeel" aria-label="Sabeel number" aria-describedby="button-addon2" required>
+                                <button class="btn btn-outline-primary" type="submit" id="button-addon2">Search</button>
+                            </div>
+                        </div>
+                    </form>            
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card h-100 border-success">
+                <div class="card-header bg-success text-white">
+                    <h4 class="card-title text-white mb-0">Seat Selection</h4>
+                    <p class="card-description text-white-50 mb-0">Select your seats after payment</p>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-3">
+                        Available after full payment of takhmeen.<br>
+                        First come, first serve basis.
+                    </p>
+                    <a href="<?= $url ?>/input-seat-selection" class="btn btn-success">
+                        <i class="mdi mdi-seat me-1"></i> Select Seats
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
