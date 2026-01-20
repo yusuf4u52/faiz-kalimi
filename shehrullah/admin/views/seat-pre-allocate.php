@@ -19,8 +19,18 @@ function _handle_post()
                 return;
             }
             $hof_id = $thaali_data->ITS_No;
+            $hijri_year = get_current_hijri_year();
+            
+            // Check if takhmeen is done
+            $takhmeen_data = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
+            if (is_null($takhmeen_data) || $takhmeen_data->takhmeen <= 0) {
+                setSessionData(TRANSIT_DATA, 'Takhmeen is not done yet for this family. Please complete takhmeen first.');
+                return;
+            }
+            
             setAppData('hof_id', $hof_id);
             setAppData('thaali_data', $thaali_data);
+            setAppData('takhmeen_data', $takhmeen_data);
             
             // Get attendees for this family
             $attendees = get_attendees_for_seat_selection($hof_id);
@@ -56,6 +66,11 @@ function _handle_post()
         setAppData('hof_id', $hof_id);
         $thaali_data = get_thaalilist_data($hof_id);
         setAppData('thaali_data', $thaali_data);
+        
+        $hijri_year = get_current_hijri_year();
+        $takhmeen_data = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
+        setAppData('takhmeen_data', $takhmeen_data);
+        
         $attendees = get_attendees_for_seat_selection($hof_id);
         setAppData('attendees', $attendees);
     }
@@ -68,6 +83,7 @@ function content_display()
     
     $hof_id = getAppData('hof_id');
     $thaali_data = getAppData('thaali_data');
+    $takhmeen_data = getAppData('takhmeen_data');
     $attendees = getAppData('attendees') ?? [];
     
     // Build area options
@@ -91,6 +107,20 @@ function content_display()
         <strong><?= h($thaali_data->NAME) ?></strong> <?= ui_code($hof_id) ?> 
         <?= ui_muted("• Sabeel {$thaali_data->Thali}") ?>
     </div>
+    
+    <?php if ($takhmeen_data) { 
+        $pending = $takhmeen_data->takhmeen - $takhmeen_data->paid_amount;
+        $is_fully_paid = $pending <= 0;
+        $payment_badge = $is_fully_paid ? 'success' : 'warning';
+        $payment_text = $is_fully_paid ? 'PAID' : 'PENDING: Rs. ' . number_format($pending);
+    ?>
+    <div class="mb-3">
+        <small class="text-muted">Takhmeen: <?= ui_money($takhmeen_data->takhmeen) ?> | 
+        Paid: <?= ui_money($takhmeen_data->paid_amount) ?> | 
+        <span class="badge bg-<?= $payment_badge ?>"><?= $payment_text ?></span>
+        </small>
+    </div>
+    <?php } ?>
     
     <?php if (empty($attendees)) { 
         ui_alert('No eligible family members found (must have Misaq and be attending).', 'warning');
