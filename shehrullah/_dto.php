@@ -572,7 +572,7 @@ function get_registration_summary($hijri) {
     FROM kl_shehrullah_attendees a
     JOIN its_data i ON i.its_id = a.its_id
     JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id    
-    WHERE t.year=? and a.year=? and t.takhmeen > 0
+    WHERE t.year=? and a.year=? and t.takhmeen >= 0
     GROUP BY a.hof_id    
     ) a;';
 
