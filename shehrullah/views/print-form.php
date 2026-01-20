@@ -195,13 +195,11 @@ function content_display()
 
             <table class='table table-bordered small-text'>
                 <tr>
-                    <th style='font-size: 12px' colspan=3>Kindly submit form to receive izan card & carry izan card for our
+                    <th style='font-size: 12px'>Kindly submit form to receive izan card & carry izan card for our
                         convenience.</th>
                 </tr>
                 <tr>
                     <th style='font-size: 12px'>Committed Hub Amount</th>
-                    <th style='font-size: 12px'>Receipt No.</th>
-                    <th style='font-size: 12px'>Date</th>
                 </tr>
             </table>
             <table class='table table-bordered'>
