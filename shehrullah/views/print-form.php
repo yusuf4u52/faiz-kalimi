@@ -101,6 +101,9 @@ function content_display()
     $uri = getAppData('APP_BASE_URI');
 
     $print = getAppData('print') ?? false;
+    
+    // Determine which is greater: Prev. Takhmeen or Family Niyaz
+    $prev_or_family_niyaz = max($last_year_takhmeen, $family_niyaz);
     ?>
     <style>
         .smalltext {
@@ -139,9 +142,7 @@ function content_display()
                     <th style='font-size: 12px'>Sabil</th>
                     <td style='font-size: 12px'><?= $sabeel ?></td>
                     <th style='font-size: 12px'>WApp</th>
-                    <td style='font-size: 12px'><?= $takhmeen_data->whatsapp ?></td>
-                    <th style='font-size: 12px'>Prev. Takhmeen</th>
-                    <td style='font-size: 12px'><?=$last_year_takhmeen?></td>
+                    <td style='font-size: 12px' colspan="3"><?= $takhmeen_data->whatsapp ?></td>
                 </tr>
                 <tr>
                     <th style='font-size: 12px'>Addr:</th>
@@ -200,6 +201,8 @@ function content_display()
                 </tr>
                 <tr>
                     <th style='font-size: 12px'>Committed Hub Amount</th>
+                    <th style='font-size: 12px'>Prev. Takhmeen / Family Niyaz</th>
+                    <td style='font-size: 12px'><i class='mdi mdi-currency-inr'></i><?=$prev_or_family_niyaz?></td>
                 </tr>
             </table>
             <table class='table table-bordered'>
