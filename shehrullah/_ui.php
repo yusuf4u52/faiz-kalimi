@@ -50,7 +50,7 @@ function ui_table_end($empty_msg = '', $count = -1) {
 // Search form
 function ui_search($name, $placeholder, $value = '', $clear_url = '') {
     $clear = ($value && $clear_url) ? "<a href=\"$clear_url\" class=\"btn btn-outline-secondary\">&times;</a>" : '';
-    echo "<form method=\"post\" class=\"flex-fill\" style=\"max-width:400px\"><input type=\"hidden\" name=\"action\" value=\"search\"><div class=\"input-group input-group-sm\"><input type=\"text\" name=\"$name\" class=\"form-control\" placeholder=\"$placeholder\" value=\"" . h($value) . "\"><button class=\"btn btn-outline-secondary\" type=\"submit\">Search</button>$clear</div></form>";
+    echo "<form method=\"post\" class=\"me-auto\" style=\"max-width:400px\"><input type=\"hidden\" name=\"action\" value=\"search\"><div class=\"input-group input-group-sm\"><input type=\"text\" name=\"$name\" class=\"form-control\" placeholder=\"$placeholder\" value=\"" . h($value) . "\"><button class=\"btn btn-outline-secondary\" type=\"submit\">Search</button>$clear</div></form>";
 }
 
 // Form elements

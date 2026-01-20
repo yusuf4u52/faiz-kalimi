@@ -77,7 +77,7 @@ function content_display()
     // Toolbar
     ui_toolbar();
     ui_search('search', 'Search HOF, ITS, or Name...', $search_term, $search_term ? "$url/seat-management" : '');
-    ui_btngroup(['Allocate' => "$url/seat-pre-allocate", 'Areas' => "$url/seating-areas", 'Exceptions' => "$url/seat-exceptions"]);
+    ui_btngroup(['Pre Allocate Seat' => "$url/seat-pre-allocate", 'Manage Grid' => "$url/seating-areas", 'Payment Exceptions' => "$url/seat-exceptions"]);
     ui_toolbar_end();
     
     // Table
