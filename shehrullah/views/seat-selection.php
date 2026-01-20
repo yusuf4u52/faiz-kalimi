@@ -61,13 +61,13 @@ function _handle_form_submit()
             return;
         }
         
-        // Save allocation
+        // Save allocation (now auto-assigns seat number if area has capacity tracking)
         $success = allocate_seat($its_id, $hof_id, $area_code);
         
         if ($success) {
             setSessionData(TRANSIT_DATA, 'Seat selection saved successfully!');
         } else {
-            setSessionData(TRANSIT_DATA, 'Failed to save seat selection. Please try again.');
+            setSessionData(TRANSIT_DATA, 'Sorry, this area is now full. Please select another area.');
         }
         
         // Refresh attendees data
