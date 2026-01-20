@@ -113,52 +113,47 @@ function content_display()
         #printableArea {
             position: relative;
         }
-        #printableArea::before {
-            content: '';
-            position: absolute;
+        .watermark-overlay {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            z-index: 9999;
             pointer-events: none;
-            background-image: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 100px,
-                rgba(255, 0, 0, 0.03) 100px,
-                rgba(255, 0, 0, 0.03) 200px
-            );
-            background-size: 100% 100%;
+            overflow: hidden;
         }
-        #printableArea::after {
-            content: 'ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ';
+        .watermark-text {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 50%;
+            left: 50%;
             width: 200%;
             height: 200%;
-            z-index: 1;
-            pointer-events: none;
-            font-size: 24px;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 32px;
             font-weight: bold;
-            color: rgba(255, 0, 0, 0.08);
-            transform: rotate(-45deg) translateX(-25%) translateY(-25%);
-            word-wrap: break-word;
-            line-height: 80px;
-            white-space: pre-wrap;
+            color: rgba(220, 53, 69, 0.15);
+            line-height: 120px;
+            white-space: nowrap;
             text-align: center;
-        }
-        #printableArea > .card-body {
-            position: relative;
-            z-index: 2;
-            background: white;
         }
         <?php } ?>
     </style>
     <?php if(!$print) { ?>
         <div class="alert alert-primary" role="alert">
             <strong><h2>Shukran! Please visit the jamaat office for form collection.</h2></strong>
+        </div>
+        <div class="watermark-overlay">
+            <div class="watermark-text">
+                ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING<br>
+                ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING<br>
+                ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING<br>
+                ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING<br>
+                ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING<br>
+                ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING<br>
+                ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING<br>
+                ADMIN PRINT ONLY • NOT FOR SELF PRINTING • ADMIN PRINT ONLY • NOT FOR SELF PRINTING
+            </div>
         </div>
     <?php } ?>
     <div class="card" id="printableArea">
