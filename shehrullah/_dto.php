@@ -773,22 +773,34 @@ function get_all_seat_exceptions() {
 
 /**
  * Get all seating areas for current year
+ * @param bool $active_only If true, only returns active areas (default for user-facing pages)
  */
-function get_seating_areas() {
+function get_seating_areas($active_only = true) {
     $hijri_year = get_current_hijri_year();
-    $query = 'SELECT * FROM kl_shehrullah_seating_areas 
-              WHERE hijri_year = ? AND is_active = "Y" ORDER BY id';
+    if ($active_only) {
+        $query = 'SELECT * FROM kl_shehrullah_seating_areas 
+                  WHERE hijri_year = ? AND is_active = "Y" ORDER BY id';
+    } else {
+        $query = 'SELECT * FROM kl_shehrullah_seating_areas 
+                  WHERE hijri_year = ? ORDER BY id';
+    }
     $result = run_statement($query, $hijri_year);
     return $result->success && $result->count > 0 ? $result->data : [];
 }
 
 /**
  * Get a specific seating area
+ * @param bool $active_only If true, only returns if area is active (default for user-facing pages)
  */
-function get_seating_area($area_code) {
+function get_seating_area($area_code, $active_only = true) {
     $hijri_year = get_current_hijri_year();
-    $query = 'SELECT * FROM kl_shehrullah_seating_areas 
-              WHERE area_code = ? AND hijri_year = ? AND is_active = "Y"';
+    if ($active_only) {
+        $query = 'SELECT * FROM kl_shehrullah_seating_areas 
+                  WHERE area_code = ? AND hijri_year = ? AND is_active = "Y"';
+    } else {
+        $query = 'SELECT * FROM kl_shehrullah_seating_areas 
+                  WHERE area_code = ? AND hijri_year = ?';
+    }
     $result = run_statement($query, $area_code, $hijri_year);
     return $result->success && $result->count > 0 ? $result->data[0] : null;
 }

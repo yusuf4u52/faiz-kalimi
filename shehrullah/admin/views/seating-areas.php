@@ -54,7 +54,7 @@ function content_display()
 {
     $hijri_year = get_current_hijri_year();
     $url = getAppData('BASE_URI');
-    $areas = get_seating_areas();
+    $areas = get_seating_areas(false);
     $edit_area = $_GET['edit'] ?? '';
     
     if (!empty($edit_area)) {
@@ -73,7 +73,6 @@ function content_display()
             <table class="table table-sm table-hover mb-0 align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>Code</th>
                         <th>Name</th>
                         <th>Gender</th>
                         <th>Seats</th>
@@ -84,7 +83,6 @@ function content_display()
                 <tbody>
                     <?php foreach ($areas as $area) { ?>
                     <tr>
-                        <td><code class="small"><?= $area->area_code ?></code></td>
                         <td><?= $area->area_name ?></td>
                         <td><small><?= $area->gender ?></small></td>
                         <td>
@@ -115,7 +113,7 @@ function content_display()
 
 function show_edit_area_page($area_code, $url)
 {
-    $area = get_seating_area($area_code);
+    $area = get_seating_area($area_code, false);
     if (!$area) {
         echo '<div class="alert alert-danger">Area not found</div>';
         return;
