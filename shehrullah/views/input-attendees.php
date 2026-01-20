@@ -205,6 +205,8 @@ function content_display()
             // Try Bootstrap 5
             if (typeof bootstrap !== 'undefined' && modalInstance) {
                 modalInstance.hide();
+                modalInstance.dispose();
+                modalInstance = null;
             } 
             // Try Bootstrap 4 with jQuery
             else if (typeof $ !== 'undefined' && $.fn.modal) {
@@ -225,16 +227,18 @@ function content_display()
         document.addEventListener('DOMContentLoaded', function() {
             // Get all chair preference checkboxes
             const chairCheckboxes = document.querySelectorAll('input[name^="chair_preference_for_"]');
-            let modalShown = false;
 
             chairCheckboxes.forEach(function(checkbox) {
                 checkbox.addEventListener('change', function() {
-                    // Show modal only when checking the box and if not shown before in this session
-                    if (this.checked && !modalShown) {
+                    // Show modal every time a chair checkbox is checked
+                    if (this.checked) {
                         const modal = document.getElementById('chairInfoModal');
                         
                         // Try Bootstrap 5
                         if (typeof bootstrap !== 'undefined') {
+                            if (modalInstance) {
+                                modalInstance.dispose();
+                            }
                             modalInstance = new bootstrap.Modal(modal);
                             modalInstance.show();
                         }
@@ -246,8 +250,6 @@ function content_display()
                         else {
                             alert('Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID');
                         }
-                        
-                        modalShown = true; // Mark as shown so it doesn't appear multiple times
                     }
                 });
             });
