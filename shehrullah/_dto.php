@@ -732,15 +732,15 @@ function has_seat_exception($hof_id, $hijri_year) {
 /**
  * Grant payment exception for seat selection (SUPER_ADMIN only)
  */
-function grant_seat_exception($hof_id, $reason, $granted_by) {
+function grant_seat_exception($hof_id, $reason, $granted_by, $hoob_clearance_date = null) {
     $hijri_year = get_current_hijri_year();
     $query = 'INSERT INTO kl_shehrullah_seat_exceptions 
-              (hof_id, hijri_year, reason, granted_by, granted_at, is_active)
-              VALUES (?, ?, ?, ?, NOW(), "Y")
+              (hof_id, hijri_year, reason, hoob_clearance_date, granted_by, granted_at, is_active)
+              VALUES (?, ?, ?, ?, ?, NOW(), "Y")
               ON DUPLICATE KEY UPDATE 
-              reason = ?, granted_by = ?, granted_at = NOW(), 
+              reason = ?, hoob_clearance_date = ?, granted_by = ?, granted_at = NOW(), 
               is_active = "Y", revoked_at = NULL';
-    $result = run_statement($query, $hof_id, $hijri_year, $reason, $granted_by, $reason, $granted_by);
+    $result = run_statement($query, $hof_id, $hijri_year, $reason, $hoob_clearance_date, $granted_by, $reason, $hoob_clearance_date, $granted_by);
     return $result->success;
 }
 
@@ -766,7 +766,7 @@ function get_all_seat_exceptions() {
               LEFT JOIN its_data m ON m.its_id = e.hof_id
               LEFT JOIN kl_shehrullah_takhmeen t ON t.hof_id = e.hof_id AND t.year = e.hijri_year
               WHERE e.hijri_year = ? AND e.is_active = "Y"
-              ORDER BY e.granted_at DESC';
+              ORDER BY e.hoob_clearance_date ASC, e.granted_at DESC';
     $result = run_statement($query, $hijri_year);
     return $result->success && $result->count > 0 ? $result->data : [];
 }

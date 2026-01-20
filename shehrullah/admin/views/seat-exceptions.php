@@ -34,6 +34,7 @@ function _handle_post()
     } else if ($action === 'grant') {
         $hof_id = $_POST['hof_id'] ?? '';
         $reason = $_POST['reason'] ?? '';
+        $hoob_clearance_date = $_POST['hoob_clearance_date'] ?? null;
         
         if (empty($hof_id)) {
             setSessionData(TRANSIT_DATA, 'Invalid HOF ID.');
@@ -52,7 +53,7 @@ function _handle_post()
         $userData = getSessionData(THE_SESSION_ID);
         $granted_by = $userData->itsid ?? '';
         
-        $success = grant_seat_exception($hof_id, $reason, $granted_by);
+        $success = grant_seat_exception($hof_id, $reason, $granted_by, $hoob_clearance_date);
         
         if ($success) {
             setSessionData(TRANSIT_DATA, 'Exception granted successfully! Family can now select seats.');
@@ -126,6 +127,10 @@ function content_display()
                 <input type="hidden" name="action" value="grant">
                 <input type="hidden" name="hof_id" value="<?= h($search_hof_id) ?>">
                 <div class="mb-2"><?= ui_input('reason', '', 'Reason for exception') ?></div>
+                <div class="mb-2">
+                    <label class="form-label small">Expected Hoob Clearance Date</label>
+                    <input type="date" name="hoob_clearance_date" class="form-control form-control-sm">
+                </div>
                 <?= ui_btn('Grant Exception', 'success') ?>
             </form>
             <?php } else { ?>
@@ -153,12 +158,32 @@ function content_display()
     if (empty($exceptions)) {
         echo ui_muted('No active exceptions.');
     } else {
-        ui_table(['HOF', 'Name', 'Takhmeen', 'Paid', 'Balance', 'Reason', 'Granted', '']);
+        ui_table(['HOF', 'Name', 'Takhmeen', 'Paid', 'Balance', 'Reason', 'Hoob Clearance', 'Granted', '']);
         foreach ($exceptions as $exc) {
             $pending = ($exc->takhmeen ?? 0) - ($exc->paid_amount ?? 0);
             $balance = ($exc->takhmeen ?? 0) > 0 && $pending <= 0 
                 ? "<small class=\"text-success\">Paid</small>" 
                 : "<small class=\"text-danger\">" . ui_money($pending) . "</small>";
+            
+            // Format hoob clearance date with color coding
+            $hoob_date_display = '—';
+            if (!empty($exc->hoob_clearance_date)) {
+                $clearance_date = strtotime($exc->hoob_clearance_date);
+                $today = strtotime(date('Y-m-d'));
+                $days_diff = floor(($clearance_date - $today) / (60 * 60 * 24));
+                
+                if ($days_diff < 0) {
+                    // Overdue
+                    $hoob_date_display = '<small class="text-danger">' . ui_date($exc->hoob_clearance_date, 'd/m/y') . ' <span class="badge bg-danger">Overdue</span></small>';
+                } elseif ($days_diff <= 7) {
+                    // Due soon (within 7 days)
+                    $hoob_date_display = '<small class="text-warning">' . ui_date($exc->hoob_clearance_date, 'd/m/y') . '</small>';
+                } else {
+                    // Future date
+                    $hoob_date_display = '<small>' . ui_date($exc->hoob_clearance_date, 'd/m/y') . '</small>';
+                }
+            }
+            
             $revoke = '<form method="post" style="display:inline"><input type="hidden" name="action" value="revoke"><input type="hidden" name="hof_id" value="' . h($exc->hof_id) . '"><button type="submit" class="btn btn-sm btn-link text-danger p-0">Revoke</button></form>';
             
             ui_tr([
@@ -168,6 +193,7 @@ function content_display()
                 ui_muted(ui_money($exc->paid_amount ?? 0)),
                 $balance,
                 ui_muted($exc->reason ?: '—'),
+                $hoob_date_display,
                 ui_date($exc->granted_at, 'd/m/y H:i'),
                 $revoke
             ]);
