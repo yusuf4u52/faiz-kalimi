@@ -75,15 +75,18 @@ function content_display()
     }
     ?>
     <div class="card mb-4">
-        <div class="card-header d-flex align-items-center">
-            <h4 class="card-title mb-0 me-3">Seat Management - Shehrullah <?= $hijri_year ?>H</h4>
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h4 class="card-title mb-0">Seat Management - Shehrullah <?= $hijri_year ?>H</h4>
             <!-- Seat Selection Toggle Switch -->
-            <form method="post" id="toggleSelectionForm">
+            <form method="post" id="toggleSelectionForm" class="d-flex align-items-center">
                 <input type="hidden" name="action" value="toggle_selection">
                 <input type="hidden" name="open" id="openValue" value="<?= $is_selection_open ? 'N' : 'Y' ?>">
+                <label class="me-2 mb-0 text-muted small">
+                    Selection <?= $is_selection_open ? 'Open' : 'Closed' ?>:
+                </label>
                 <div class="form-check form-switch mb-0">
                     <input class="form-check-input fs-5" type="checkbox" role="switch" id="selectionToggle" 
-                        style="cursor: pointer;"
+                        style="cursor: pointer; margin-top: 0;"
                         <?= $is_selection_open ? 'checked' : '' ?>
                         onchange="confirmToggle(this)">
                 </div>
