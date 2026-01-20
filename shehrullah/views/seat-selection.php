@@ -46,14 +46,15 @@ function _handle_form_submit()
             return;
         }
         
-        // Try to allocate seat
-        $seat_number = allocate_seat($its_id, $hof_id, $area_code);
+        // Try to allocate seat - returns seat number/true on success, false on failure
+        $result = allocate_seat($its_id, $hof_id, $area_code);
         
-        // If seat number allocated = success, if not = failure
-        if (!empty($seat_number)) {
-            setSessionData(TRANSIT_DATA, 'Seat allocated successfully! Seat #' . $seat_number);
+        // Success if seat is allocated, failure if not
+        if ($result) {
+            $message = is_string($result) ? "Seat allocated successfully! Seat #{$result}" : 'Seat allocated successfully!';
+            setSessionData(TRANSIT_DATA, $message);
         } else {
-            setSessionData(TRANSIT_DATA, 'Limit reached. Please select another area.');
+            setSessionData(TRANSIT_DATA, 'Seat allocation failed. Area may be full or unavailable.');
         }
         
         // Refresh attendees data

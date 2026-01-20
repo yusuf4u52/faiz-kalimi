@@ -996,27 +996,15 @@ function get_seat_allocations_for_family($hof_id) {
 function allocate_seat($its_id, $hof_id, $area_code) {
     $hijri_year = get_current_hijri_year();
     
-    // Try to get next available seat number
+    // Get next available seat number
     $seat_number = get_next_available_seat($area_code);
     
-    // If null (no capacity tracking or area full)
+    // If no seat available, fail
     if ($seat_number === null) {
-        // Check if area has capacity tracking
-        $area_query = 'SELECT seat_start, seat_end FROM kl_shehrullah_seating_areas 
-                       WHERE area_code = ? AND hijri_year = ?';
-        $area_result = run_statement($area_query, $area_code, $hijri_year);
-        
-        if ($area_result->success && $area_result->count > 0) {
-            $area = $area_result->data[0];
-            // If area has capacity tracking but no seat available, it's full
-            if (!empty($area->seat_start) && !empty($area->seat_end)) {
-                return false; // Area is full
-            }
-        }
-        // Otherwise no capacity tracking, allow without seat number
+        return false;
     }
     
-    // Save allocation with or without seat number
+    // Save allocation
     $query = 'INSERT INTO kl_shehrullah_seat_allocation 
               (its_id, hof_id, area_code, seat_number, hijri_year, allocated_at)
               VALUES (?, ?, ?, ?, ?, NOW())
@@ -1024,7 +1012,9 @@ function allocate_seat($its_id, $hof_id, $area_code) {
               area_code = ?, seat_number = ?, allocated_at = NOW(), allocated_by = NULL';
     $result = run_statement($query, $its_id, $hof_id, $area_code, $seat_number, $hijri_year, 
                             $area_code, $seat_number);
-    return $result->success;
+    
+    // Success: return seat number, Failure: return false
+    return $result->success ? $seat_number : false;
 }
 
 /**
