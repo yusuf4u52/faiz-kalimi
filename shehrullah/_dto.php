@@ -867,8 +867,8 @@ function get_eligible_areas_for_attendee($its_id, $hof_id) {
             continue;
         }
         
-        // Max seats per family check (for Masjid and Ladies First Floor)
-        if ($area->max_seats_per_family > 0) {
+        // Max seats per family check (only for Ladies First Floor, not for males)
+        if ($area->max_seats_per_family > 0 && $area->gender !== 'Male') {
             $count = count_family_seats_in_area($hof_id, $area->area_code);
             
             // Check if this attendee already has this area (allow re-selection)
