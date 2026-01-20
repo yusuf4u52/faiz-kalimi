@@ -4,6 +4,17 @@ do_for_post('_handle_form_submission');
 
 function content_display()
 {
+    // Check if seat selection is open
+    if (!is_seat_selection_open()) {
+        ?>
+        <div class="alert alert-warning" role="alert">
+            <strong>Seat Selection is Currently CLOSED</strong><br>
+            Please wait for the announcement when seat selection opens.
+        </div>
+        <a href="<?= getAppData('BASE_URI') ?>" class="btn btn-primary">Go Back to Home</a>
+        <?php
+        return;
+    }
     ?>
     <div class="card">
         <div class="card-header">
