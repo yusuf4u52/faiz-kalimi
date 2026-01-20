@@ -44,7 +44,7 @@ function _handle_post()
         $hijri_year = get_current_hijri_year();
         $takhmeen = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
         
-        if (!$takhmeen) {
+        if (!$takhmeen || $takhmeen->takhmeen <= 0) {
             setSessionData(TRANSIT_DATA, 'Cannot grant exception: Takhmeen not done for this family.');
             return;
         }
