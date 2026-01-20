@@ -36,12 +36,6 @@ function _handle_post()
         } else {
             setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat.');
         }
-    } else if ($action === 'assign_seats') {
-        $area_code = $_POST['area_code'] ?? '';
-        if (!empty($area_code)) {
-            $assigned = assign_sequential_seats($area_code);
-            setSessionData(TRANSIT_DATA, "Assigned $assigned seat numbers for area.");
-        }
     } else if ($action === 'toggle_selection') {
         $open = $_POST['open'] ?? 'N';
         $success = toggle_seat_selection($open === 'Y');
@@ -85,18 +79,6 @@ function content_display()
     ui_search('search', 'Search HOF, ITS, or Name...', $search_term, $search_term ? "$url/seat-management" : '');
     ui_btngroup(['Allocate' => "$url/seat-pre-allocate", 'Areas' => "$url/seating-areas", 'Exceptions' => "$url/seat-exceptions"]);
     ui_toolbar_end();
-    
-    // Auto-assign form
-    ?>
-    <form method="post" class="mb-3">
-        <input type="hidden" name="action" value="assign_seats">
-        <div class="input-group input-group-sm" style="max-width: 450px;">
-            <span class="input-group-text">Auto-assign seats for</span>
-            <?= ui_select('area_code', $area_opts, '', 'Select area...') ?>
-            <?= ui_btn('Assign', 'outline-warning') ?>
-        </div>
-    </form>
-    <?php
     
     // Table
     ui_count(count($allocations), 'allocation');

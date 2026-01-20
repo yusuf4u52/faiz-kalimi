@@ -1073,37 +1073,6 @@ function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is
     return $result->success;
 }
 
-/**
- * Assign sequential seat numbers to all allocations in an area
- */
-function assign_sequential_seats($area_code) {
-    $hijri_year = get_current_hijri_year();
-    
-    // Get all allocations without seat numbers, ordered by allocation time
-    $query = 'SELECT id FROM kl_shehrullah_seat_allocation 
-              WHERE area_code = ? AND hijri_year = ? AND seat_number IS NULL
-              ORDER BY allocated_at';
-    $result = run_statement($query, $area_code, $hijri_year);
-    
-    if (!$result->success || $result->count == 0) {
-        return true; // Nothing to assign
-    }
-    
-    $assigned = 0;
-    foreach ($result->data as $alloc) {
-        $next_seat = get_next_available_seat($area_code);
-        if (is_null($next_seat)) {
-            break; // No more seats available
-        }
-        
-        $update_query = 'UPDATE kl_shehrullah_seat_allocation SET seat_number = ? WHERE id = ?';
-        run_statement($update_query, $next_seat, $alloc->id);
-        $assigned++;
-    }
-    
-    return $assigned;
-}
-
 // TODO: WhatsApp Integration Placeholder
 // function send_seat_allocation_whatsapp($hof_id, $whatsapp_number) {
 //     $hijri_year = get_current_hijri_year();
