@@ -109,6 +109,57 @@ function content_display()
         .smalltext {
             font-size: 11px;
         }
+        <?php if(!$print) { ?>
+        #printableArea {
+            position: relative;
+        }
+        #printableArea::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 10px,
+                rgba(220, 53, 69, 0.02) 10px,
+                rgba(220, 53, 69, 0.02) 20px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+        .watermark-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+        .watermark-layer::after {
+            content: 'ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 36px;
+            font-weight: 900;
+            color: rgba(220, 53, 69, 0.12);
+            white-space: nowrap;
+            width: 300%;
+            text-align: center;
+            line-height: 150px;
+            letter-spacing: 3px;
+        }
+        #printableArea .card-body {
+            position: relative;
+            z-index: 3;
+        }
+        <?php } ?>
     </style>
     <?php if(!$print) { ?>
         <div class="alert alert-primary" role="alert">
@@ -116,6 +167,9 @@ function content_display()
         </div>
     <?php } ?>
     <div class="card" id="printableArea">
+        <?php if(!$print) { ?>
+        <div class="watermark-layer"></div>
+        <?php } ?>
         <div class="card-body">
             <table class='table table-bordered'>
                 <tr>
