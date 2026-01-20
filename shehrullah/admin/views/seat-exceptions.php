@@ -40,6 +40,15 @@ function _handle_post()
             return;
         }
         
+        // Check if takhmeen is done before granting exception
+        $hijri_year = get_current_hijri_year();
+        $takhmeen = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
+        
+        if (!$takhmeen) {
+            setSessionData(TRANSIT_DATA, 'Cannot grant exception: Takhmeen not done for this family.');
+            return;
+        }
+        
         $userData = getSessionData(THE_SESSION_ID);
         $granted_by = $userData->itsid ?? '';
         
@@ -112,12 +121,18 @@ function content_display()
             </table>
             
             <?php if (!$has_exception) { ?>
+            <?php if ($search_takhmeen) { ?>
             <form method="post">
                 <input type="hidden" name="action" value="grant">
                 <input type="hidden" name="hof_id" value="<?= h($search_hof_id) ?>">
                 <div class="mb-2"><?= ui_input('reason', '', 'Reason for exception') ?></div>
                 <?= ui_btn('Grant Exception', 'success') ?>
             </form>
+            <?php } else { ?>
+            <div class="alert alert-warning small">
+                Cannot grant exception: Takhmeen must be done first.
+            </div>
+            <?php } ?>
             <?php } else { ?>
             <form method="post">
                 <input type="hidden" name="action" value="revoke">
