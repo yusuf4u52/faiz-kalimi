@@ -981,6 +981,17 @@ function get_all_seat_allocations() {
 }
 
 /**
+ * Delete seat allocation (SUPER_ADMIN)
+ */
+function delete_seat_allocation($its_id) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'DELETE FROM kl_shehrullah_seat_allocation 
+              WHERE its_id = ? AND hijri_year = ?';
+    $result = run_statement($query, $its_id, $hijri_year);
+    return $result->success;
+}
+
+/**
  * Block a seat (SUPER_ADMIN)
  */
 function block_seat($area_code, $seat_number, $reason, $blocked_by) {

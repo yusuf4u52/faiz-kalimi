@@ -36,6 +36,21 @@ function _handle_post()
         } else {
             setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat.');
         }
+    } else if ($action === 'delete_allocation') {
+        $its_id = $_POST['its_id'] ?? '';
+        
+        if (empty($its_id)) {
+            setSessionData(TRANSIT_DATA, 'Invalid ITS ID provided.');
+            return;
+        }
+        
+        $success = delete_seat_allocation($its_id);
+        
+        if ($success) {
+            setSessionData(TRANSIT_DATA, 'Seat allocation deleted successfully!');
+        } else {
+            setSessionData(TRANSIT_DATA, 'Failed to delete seat allocation.');
+        }
     } else if ($action === 'toggle_selection') {
         $open = $_POST['open'] ?? 'N';
         $success = toggle_seat_selection($open === 'Y');
@@ -82,7 +97,7 @@ function content_display()
     
     // Table
     ui_count(count($allocations), 'allocation');
-    ui_table(['ITS', 'Member', 'G/Age', 'Area', 'Seat', 'By', 'Date']);
+    ui_table(['ITS', 'Member', 'G/Age', 'Area', 'Seat', 'By', 'Date', '']);
     
     if (empty($allocations)) {
         ui_table_end('No allocations found', 0);
@@ -98,6 +113,9 @@ function content_display()
                 $by = 'Self';
             }
             
+            // Delete button
+            $delete_btn = '<form method="post" style="display:inline" onsubmit="return confirm(\'Delete allocation for ' . h($alloc->full_name) . '?\')"><input type="hidden" name="action" value="delete_allocation"><input type="hidden" name="its_id" value="' . h($alloc->its_id) . '"><button type="submit" class="btn btn-sm btn-link text-danger p-0">Delete</button></form>';
+            
             ui_tr([
                 ui_code($alloc->its_id),
                 h($alloc->full_name),
@@ -105,7 +123,8 @@ function content_display()
                 ui_muted($alloc->area_name),
                 $seat,
                 ui_muted($by),
-                ui_date($alloc->allocated_at)
+                ui_date($alloc->allocated_at),
+                $delete_btn
             ]);
         }
         ui_table_end();
