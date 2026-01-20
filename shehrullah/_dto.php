@@ -747,6 +747,12 @@ function grant_seat_exception($hof_id, $reason, $granted_by, $hoob_clearance_dat
  * Revoke payment exception
  */
 function revoke_seat_exception($hof_id) {
+    // Check if family has any allocated seats
+    $allocations = get_seat_allocations_for_family($hof_id);
+    if (!empty($allocations)) {
+        return false; // Cannot revoke if seats are allocated
+    }
+    
     $hijri_year = get_current_hijri_year();
     $query = 'UPDATE kl_shehrullah_seat_exceptions 
               SET is_active = "N", revoked_at = NOW() 

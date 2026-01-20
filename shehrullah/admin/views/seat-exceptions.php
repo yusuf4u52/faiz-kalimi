@@ -30,6 +30,10 @@ function _handle_post()
             // Check if already has exception
             $has_exception = has_seat_exception($hof_id, $hijri_year);
             setAppData('has_exception', $has_exception);
+            
+            // Check if family has allocated seats
+            $allocations = get_seat_allocations_for_family($hof_id);
+            setAppData('search_allocations', $allocations);
         }
     } else if ($action === 'grant') {
         $hof_id = $_POST['hof_id'] ?? '';
@@ -63,6 +67,13 @@ function _handle_post()
     } else if ($action === 'revoke') {
         $hof_id = $_POST['hof_id'] ?? '';
         
+        // Check if family has allocated seats
+        $allocations = get_seat_allocations_for_family($hof_id);
+        if (!empty($allocations)) {
+            setSessionData(TRANSIT_DATA, 'Cannot revoke exception: Family has already allocated seats. Please deallocate seats first.');
+            return;
+        }
+        
         $success = revoke_seat_exception($hof_id);
         
         if ($success) {
@@ -86,6 +97,7 @@ function content_display()
     $search_thaali_data = getAppData('search_thaali_data');
     $search_takhmeen = getAppData('search_takhmeen');
     $has_exception = getAppData('has_exception');
+    $search_allocations = getAppData('search_allocations') ?: [];
     
     // Main search card
     ui_card("Seat Exceptions - {$hijri_year}H", 'Allow seat selection without full payment', "$url/seat-management");
@@ -119,6 +131,7 @@ function content_display()
                 <tr><td colspan="2" class="text-warning small">Takhmeen not done</td></tr>
                 <?php } ?>
                 <tr><th>Exception</th><td><?= ui_status($has_exception, ['Granted', 'Not granted']) ?></td></tr>
+                <tr><th>Seats Allocated</th><td><?= count($search_allocations) > 0 ? "<span class=\"text-success\">" . count($search_allocations) . " seat(s)</span>" : ui_muted("None") ?></td></tr>
             </table>
             
             <?php if (!$has_exception) { ?>
@@ -139,11 +152,17 @@ function content_display()
             </div>
             <?php } ?>
             <?php } else { ?>
+            <?php if (count($search_allocations) > 0) { ?>
+            <div class="alert alert-warning small">
+                Cannot revoke exception: Family has <?= count($search_allocations) ?> allocated seat(s). Please deallocate seats first.
+            </div>
+            <?php } else { ?>
             <form method="post">
                 <input type="hidden" name="action" value="revoke">
                 <input type="hidden" name="hof_id" value="<?= h($search_hof_id) ?>">
                 <?= ui_btn('Revoke Exception', 'danger') ?>
             </form>
+            <?php } ?>
             <?php } ?>
         </div>
     </div>
@@ -158,12 +177,19 @@ function content_display()
     if (empty($exceptions)) {
         echo ui_muted('No active exceptions.');
     } else {
-        ui_table(['HOF', 'Name', 'Takhmeen', 'Paid', 'Balance', 'Reason', 'Hoob Clearance', 'Granted By', '']);
+        ui_table(['HOF', 'Name', 'Takhmeen', 'Paid', 'Balance', 'Seats', 'Reason', 'Hoob Clearance', 'Granted By', '']);
         foreach ($exceptions as $exc) {
             $pending = ($exc->takhmeen ?? 0) - ($exc->paid_amount ?? 0);
             $balance = ($exc->takhmeen ?? 0) > 0 && $pending <= 0 
                 ? "<small class=\"text-success\">Paid</small>" 
                 : "<small class=\"text-danger\">" . ui_money($pending) . "</small>";
+            
+            // Check if family has allocated seats
+            $allocations = get_seat_allocations_for_family($exc->hof_id);
+            $seats_count = count($allocations);
+            $seats_display = $seats_count > 0 
+                ? '<small class="text-success">' . $seats_count . '</small>' 
+                : ui_muted('0');
             
             // Format hoob clearance date with color coding
             $hoob_date_display = '—';
@@ -184,7 +210,12 @@ function content_display()
                 }
             }
             
-            $revoke = '<form method="post" style="display:inline"><input type="hidden" name="action" value="revoke"><input type="hidden" name="hof_id" value="' . h($exc->hof_id) . '"><button type="submit" class="btn btn-sm btn-link text-danger p-0">Revoke</button></form>';
+            // Only allow revoke if no seats are allocated
+            if ($seats_count > 0) {
+                $revoke = '<small class="text-muted" title="Cannot revoke: seats allocated">—</small>';
+            } else {
+                $revoke = '<form method="post" style="display:inline"><input type="hidden" name="action" value="revoke"><input type="hidden" name="hof_id" value="' . h($exc->hof_id) . '"><button type="submit" class="btn btn-sm btn-link text-danger p-0">Revoke</button></form>';
+            }
             
             ui_tr([
                 ui_code($exc->hof_id),
@@ -192,6 +223,7 @@ function content_display()
                 ui_muted(ui_money($exc->takhmeen ?? 0)),
                 ui_muted(ui_money($exc->paid_amount ?? 0)),
                 $balance,
+                $seats_display,
                 ui_muted($exc->reason ?: '—'),
                 $hoob_date_display,
                 ui_muted($exc->granted_by ?: '—'),
