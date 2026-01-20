@@ -75,37 +75,43 @@ function content_display()
     }
     ?>
     <div class="card mb-4">
-        <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
             <h4 class="card-title mb-0">Seat Management - Shehrullah <?= $hijri_year ?>H</h4>
-            <!-- Seat Selection Toggle Switch -->
-            <form method="post" id="toggleSelectionForm" class="d-flex align-items-center">
+
+            <!-- Seat Selection Open/Close -->
+            <form method="post" class="d-flex align-items-center gap-2 mb-0">
                 <input type="hidden" name="action" value="toggle_selection">
-                <input type="hidden" name="open" id="openValue" value="<?= $is_selection_open ? 'N' : 'Y' ?>">
-                <label class="me-2 mb-0 text-muted small">
-                    Selection <?= $is_selection_open ? 'Open' : 'Closed' ?>:
-                </label>
-                <div class="form-check form-switch mb-0">
-                    <input class="form-check-input fs-5" type="checkbox" role="switch" id="selectionToggle" 
-                        style="cursor: pointer; margin-top: 0;"
-                        <?= $is_selection_open ? 'checked' : '' ?>
-                        onchange="confirmToggle(this)">
+
+                <span class="text-muted small mb-0">
+                    Selection:
+                    <?php if ($is_selection_open) { ?>
+                        <span class="badge bg-success">OPEN</span>
+                    <?php } else { ?>
+                        <span class="badge bg-secondary">CLOSED</span>
+                    <?php } ?>
+                </span>
+
+                <div class="btn-group btn-group-sm" role="group" aria-label="Seat selection status">
+                    <button
+                        type="submit"
+                        name="open"
+                        value="Y"
+                        class="btn <?= $is_selection_open ? 'btn-success' : 'btn-outline-success' ?>"
+                        onclick="return confirm('Open seat selection? Users will be able to select seats.');"
+                    >
+                        Open
+                    </button>
+                    <button
+                        type="submit"
+                        name="open"
+                        value="N"
+                        class="btn <?= $is_selection_open ? 'btn-outline-danger' : 'btn-danger' ?>"
+                        onclick="return confirm('Close seat selection? Users will not be able to select seats.');"
+                    >
+                        Close
+                    </button>
                 </div>
             </form>
-            <script>
-            function confirmToggle(checkbox) {
-                const isChecked = checkbox.checked;
-                const message = isChecked 
-                    ? 'Open seat selection? Users will be able to select seats.'
-                    : 'Close seat selection? Users will not be able to select seats.';
-                
-                if (confirm(message)) {
-                    document.getElementById('openValue').value = isChecked ? 'Y' : 'N';
-                    document.getElementById('toggleSelectionForm').submit();
-                } else {
-                    checkbox.checked = !isChecked;
-                }
-            }
-            </script>
         </div>
         <div class="card-body">
             <!-- Search and Pre-allocate Section -->
