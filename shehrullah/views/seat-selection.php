@@ -109,7 +109,7 @@ function content_display()
     ui_card("Seat Selection - Shehrullah {$hijri_year}H");
     
     if ($selection_complete) {
-        ui_alert('<strong>Selection Complete!</strong> Your seat selection has been finalized. Click Print to view your tickets.', 'success');
+        ui_alert('<strong>Selection Complete!</strong> Your seat selection has been finalized. Click Print to view your seats.', 'success');
     } else {
         ui_alert('<strong>Important:</strong> Seat selection is on <strong>first come first serve</strong> basis. Please complete your selection promptly.', 'warning');
     }
@@ -182,7 +182,7 @@ function content_display()
             $action_cell = ui_muted('--');
         } else {
             if ($selection_complete) {
-                // Show Print button instead of Save when selection is complete - pass ITS ID to show only this person's ticket
+                // Show Print button instead of Save when selection is complete - pass ITS ID to show only this person's seat
                 $action_cell = "<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"showPrintModal('{$its_id}');\">Print</button>";
             } else {
                 $action_cell = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
@@ -232,7 +232,7 @@ function content_display()
         <?php
     }
     
-    // Print Modal with Ticket Structure
+    // Print Modal with Seat Structure
     if ($selection_complete) {
         ?>
         <div class="modal fade" id="printModal" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true">
@@ -240,11 +240,11 @@ function content_display()
                 <div class="modal-content">
                     <div class="modal-header bg-success text-white">
                         <h5 class="modal-title" id="printModalLabel">
-                            <i class="fas fa-ticket-alt"></i> Seat Tickets - Shehrullah <?= $hijri_year ?>H
+                            <i class="fas fa-ticket-alt"></i> Seats - Shehrullah <?= $hijri_year ?>H
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body" id="printableTickets">
+                    <div class="modal-body" id="printableSeats">
                         <style>
                             @media print {
                                 body * { visibility: hidden; }
@@ -261,12 +261,12 @@ function content_display()
                             $allocated_area = $att->allocated_area ?? '';
                             $seat_number = $att->seat_number ?? '';
                             
-                            // Only show tickets for attendees with allocated seats
+                            // Only show seats for attendees with allocated seats
                             if ($misaq_done && !empty($allocated_area) && !empty($seat_number)) {
                                 $area_name = $att->allocated_area_name ?? $allocated_area;
-                                $ticket_its_id = $att->its_id;
+                                $seat_its_id = $att->its_id;
                                 ?>
-                                <div class="ticket-card" data-its-id="<?= h($ticket_its_id) ?>" style="display: none;">
+                                <div class="seat-card" data-its-id="<?= h($seat_its_id) ?>" style="display: none;">
                                     <div class="card border-success mb-3">
                                         <div class="card-header bg-success text-white text-center">
                                             <h5 class="mb-0">Shehrullah <?= $hijri_year ?>H</h5>
@@ -299,7 +299,7 @@ function content_display()
                                                 </div>
                                             </div>
                                             <div class="text-center text-muted mt-3 pt-3 border-top">
-                                                <small>Please carry this ticket for your convenience</small>
+                                                <small>Please carry this seat for your convenience</small>
                                             </div>
                                         </div>
                                     </div>
@@ -311,7 +311,7 @@ function content_display()
                     </div>
                     <div class="modal-footer no-print">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success" onclick="printTickets();">
+                        <button type="button" class="btn btn-success" onclick="printSeats();">
                             <i class="fas fa-print"></i> Print
                         </button>
                     </div>
@@ -332,17 +332,17 @@ function content_display()
         });
         
         function showPrintModal(itsId) {
-            // Hide all tickets first
-            var allTickets = document.querySelectorAll('.ticket-card');
-            allTickets.forEach(function(ticket) {
-                ticket.style.display = 'none';
+            // Hide all seats first
+            var allSeats = document.querySelectorAll('.seat-card');
+            allSeats.forEach(function(seat) {
+                seat.style.display = 'none';
             });
             
-            // Show only the ticket for the selected attendee
+            // Show only the seat for the selected attendee
             if (itsId) {
-                var selectedTicket = document.querySelector('.ticket-card[data-its-id="' + itsId + '"]');
-                if (selectedTicket) {
-                    selectedTicket.style.display = 'block';
+                var selectedSeat = document.querySelector('.seat-card[data-its-id="' + itsId + '"]');
+                if (selectedSeat) {
+                    selectedSeat.style.display = 'block';
                 }
             }
             
@@ -353,7 +353,7 @@ function content_display()
             }
         }
         
-        function printTickets() {
+        function printSeats() {
             window.print();
         }
     </script>
