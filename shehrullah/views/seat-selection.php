@@ -109,7 +109,7 @@ function content_display()
     ui_card("Seat Selection - Shehrullah {$hijri_year}H");
     
     if ($selection_complete) {
-        ui_alert('<strong>Selection Complete!</strong> Your seat selection has been finalized. Click Print to view your seats.', 'success');
+        ui_alert('<strong>Selection Complete!</strong> Your seat selection has been finalized. Click View to see your seat card.', 'success');
     } else {
         ui_alert('<strong>Important:</strong> Seat selection is on <strong>first come first serve</strong> basis. Please complete your selection promptly.', 'warning');
     }
@@ -182,8 +182,8 @@ function content_display()
             $action_cell = ui_muted('--');
         } else {
             if ($selection_complete) {
-                // Show Print button instead of Save when selection is complete - pass ITS ID to show only this person's seat
-                $action_cell = "<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"showPrintModal('{$its_id}');\">Print</button>";
+                // Show View button when selection is complete - pass ITS ID to show only this person's seat
+                $action_cell = "<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"showPrintModal('{$its_id}');\">View</button>";
             } else {
                 $action_cell = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
             }
@@ -236,25 +236,15 @@ function content_display()
     if ($selection_complete) {
         ?>
         <div class="modal fade" id="printModal" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
                 <div class="modal-content">
                     <div class="modal-header bg-success text-white">
                         <h5 class="modal-title" id="printModalLabel">
-                            <i class="fas fa-ticket-alt"></i> Seats - Shehrullah <?= $hijri_year ?>H
+                            <i class="fas fa-ticket-alt"></i> Seat Card - Shehrullah <?= $hijri_year ?>H
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body" id="printableSeats">
-                        <style>
-                            @media print {
-                                body * { visibility: hidden; }
-                                #printModal, #printModal * { visibility: visible; }
-                                #printModal { position: absolute; left: 0; top: 0; width: 100%; }
-                                .modal-header, .modal-footer, .no-print { display: none !important; }
-                                .modal-dialog { max-width: 100%; margin: 0; }
-                                .modal-content { border: none; box-shadow: none; }
-                            }
-                        </style>
+                    <div class="modal-body p-0">
                         <?php
                         foreach ($attendees as $att) {
                             $misaq_done = ($att->misaq ?? '') === 'Done';
@@ -267,38 +257,28 @@ function content_display()
                                 $seat_its_id = $att->its_id;
                                 ?>
                                 <div class="seat-card" data-its-id="<?= h($seat_its_id) ?>" style="display: none;">
-                                    <div class="card border-success mb-3">
-                                        <div class="card-header bg-success text-white text-center">
+                                    <div class="card border-success">
+                                        <div class="card-header bg-success text-white text-center py-2">
                                             <h5 class="mb-0">Shehrullah <?= $hijri_year ?>H</h5>
                                         </div>
-                                        <div class="card-body">
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <div class="border-start border-success border-3 ps-3">
-                                                        <small class="text-muted text-uppercase fw-bold">Name</small>
-                                                        <div class="fw-bold"><?= h($att->full_name) ?></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="border-start border-success border-3 ps-3">
-                                                        <small class="text-muted text-uppercase fw-bold">Area</small>
-                                                        <div class="fw-bold"><?= h($area_name) ?></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="border-start border-success border-3 ps-3">
-                                                        <small class="text-muted text-uppercase fw-bold">Seat</small>
-                                                        <div class="fw-bold"><?= h($seat_number) ?></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="border-start border-success border-3 ps-3">
-                                                        <small class="text-muted text-uppercase fw-bold">ITS ID</small>
-                                                        <div class="fw-bold"><?= h($att->its_id) ?></div>
-                                                    </div>
-                                                </div>
+                                        <div class="card-body p-3">
+                                            <div class="mb-2">
+                                                <small class="text-muted d-block">Name</small>
+                                                <strong><?= h($att->full_name) ?></strong>
                                             </div>
-                                            <div class="text-center text-muted mt-3 pt-3 border-top">
+                                            <div class="mb-2">
+                                                <small class="text-muted d-block">Area</small>
+                                                <strong><?= h($area_name) ?></strong>
+                                            </div>
+                                            <div class="mb-2">
+                                                <small class="text-muted d-block">Seat</small>
+                                                <strong><?= h($seat_number) ?></strong>
+                                            </div>
+                                            <div class="mb-2">
+                                                <small class="text-muted d-block">ITS ID</small>
+                                                <strong><?= h($att->its_id) ?></strong>
+                                            </div>
+                                            <div class="text-center text-muted mt-3 pt-2 border-top">
                                                 <small>Please carry this seat for your convenience</small>
                                             </div>
                                         </div>
@@ -309,11 +289,8 @@ function content_display()
                         }
                         ?>
                     </div>
-                    <div class="modal-footer no-print">
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success" onclick="printSeats();">
-                            <i class="fas fa-print"></i> Print
-                        </button>
                     </div>
                 </div>
             </div>
@@ -351,10 +328,6 @@ function content_display()
                 var modal = new bootstrap.Modal(printModal);
                 modal.show();
             }
-        }
-        
-        function printSeats() {
-            window.print();
         }
     </script>
     <?php
