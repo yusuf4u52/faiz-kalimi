@@ -23,8 +23,7 @@ function content_display()
         </div>
         <div class="card-body">
             <div class="alert alert-info" role="alert">
-                <strong>Note:</strong> Seat selection is available only after full payment of takhmeen.
-                <br>Seat selection is on <strong>first come first serve</strong> basis.
+                <strong>Note:</strong> Seat selection is on <strong>first come first serve</strong> basis.
             </div>
             <form method="post" action="" class="forms-sample">
                 <input type="hidden" name="action" value="seat_selection_search"/>
