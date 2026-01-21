@@ -1171,12 +1171,12 @@ function get_available_blocked_seats($area_code) {
 /**
  * Update seating area configuration
  */
-function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active) {
+function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family = null) {
     $hijri_year = get_current_hijri_year();
     $query = 'UPDATE kl_shehrullah_seating_areas 
-              SET area_name = ?, seat_start = ?, seat_end = ?, is_active = ?
+              SET area_name = ?, seat_start = ?, seat_end = ?, is_active = ?, max_seats_per_family = ?
               WHERE area_code = ? AND hijri_year = ?';
-    $result = run_statement($query, $area_name, $seat_start, $seat_end, $is_active, $area_code, $hijri_year);
+    $result = run_statement($query, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family, $area_code, $hijri_year);
     return $result->success;
 }
 
