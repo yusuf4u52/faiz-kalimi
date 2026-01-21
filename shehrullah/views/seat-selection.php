@@ -39,6 +39,31 @@ function _handle_form_submit()
 {
     $action = $_POST['action'] ?? '';
     
+    // Handle AJAX request for getting eligible areas
+    if ($action === 'get_eligible_areas_ajax') {
+        header('Content-Type: application/json');
+        $its_id = $_POST['its_id'] ?? '';
+        // Try to get hof_id from POST first, then from app data
+        $hof_id = $_POST['hof_id'] ?? getAppData('hof_id');
+        
+        if (empty($its_id) || empty($hof_id)) {
+            echo json_encode(['success' => false, 'error' => 'Missing parameters']);
+            exit;
+        }
+        
+        $eligible_areas = get_eligible_areas_for_attendee($its_id, $hof_id);
+        $options = [];
+        foreach ($eligible_areas as $area) {
+            $options[] = [
+                'area_code' => $area->area_code,
+                'area_name' => $area->area_name
+            ];
+        }
+        
+        echo json_encode(['success' => true, 'areas' => $options]);
+        exit;
+    }
+    
     if ($action === 'save_seat') {
         $its_id = $_POST['its_id'] ?? '';
         $area_code = $_POST['area_code'] ?? '';
@@ -196,10 +221,12 @@ function content_display()
                 // If selection is complete but this attendee doesn't have area yet, disable dropdown
                 $disabled_attr = $selection_complete ? 'disabled' : '';
                 $select_html = ui_select('area_code', $opts, $allocated_area);
+                // Add data attributes for AJAX refresh functionality
+                $select_html = str_replace('<select', '<select data-its-id="' . h($its_id) . '" data-hof-id="' . h($hof_id) . '" id="area_select_' . h($its_id) . '" ' . $disabled_attr, $select_html);
                 $area_cell = "<form method=\"post\" class=\"d-inline\" id=\"form_{$its_id}\">"
                     . "<input type=\"hidden\" name=\"action\" value=\"save_seat\">"
                     . "<input type=\"hidden\" name=\"its_id\" value=\"{$its_id}\">"
-                    . str_replace('<select', '<select ' . $disabled_attr, $select_html)
+                    . $select_html
                     . "</form>";
             }
         }
@@ -357,7 +384,145 @@ function content_display()
                 var modal = new bootstrap.Modal(errorModal);
                 modal.show();
             }
+            
+            // Refresh area dropdowns periodically to handle rush times
+            var refreshInterval = setInterval(refreshAllAreaDropdowns, 5000); // Refresh every 5 seconds
+            
+            // Also refresh before form submission
+            var forms = document.querySelectorAll('form[id^="form_"]');
+            forms.forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    var itsIdInput = form.querySelector('input[name="its_id"]');
+                    if (itsIdInput) {
+                        var itsId = itsIdInput.value;
+                        refreshAreaDropdown(itsId, function() {
+                            // Continue with form submission after refresh
+                            // Don't prevent default - let form submit normally
+                        });
+                    }
+                });
+            });
+            
+            // Clean up interval when page unloads
+            window.addEventListener('beforeunload', function() {
+                clearInterval(refreshInterval);
+            });
         });
+        
+        function refreshAllAreaDropdowns() {
+            var dropdowns = document.querySelectorAll('select[data-its-id]:not([disabled])');
+            dropdowns.forEach(function(dropdown) {
+                // Skip if dropdown is disabled or form is being submitted
+                if (dropdown.disabled) {
+                    return;
+                }
+                
+                var itsId = dropdown.getAttribute('data-its-id');
+                var currentValue = dropdown.value;
+                refreshAreaDropdown(itsId, function(updated) {
+                    if (updated && currentValue && !dropdown.querySelector('option[value="' + currentValue + '"]')) {
+                        // If current selection is no longer available, clear it
+                        dropdown.value = '';
+                        // Show a subtle notification
+                        showAreaUnavailableNotification(itsId);
+                    }
+                });
+            });
+        }
+        
+        function refreshAreaDropdown(itsId, callback) {
+            var dropdown = document.getElementById('area_select_' + itsId);
+            if (!dropdown) {
+                if (callback) callback(false);
+                return;
+            }
+            
+            var hofId = dropdown.getAttribute('data-hof-id');
+            var currentValue = dropdown.value;
+            
+            // Create form data
+            var formData = new FormData();
+            formData.append('action', 'get_eligible_areas_ajax');
+            formData.append('its_id', itsId);
+            formData.append('hof_id', hofId);
+            
+            // Fetch updated areas
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success && data.areas) {
+                    // Store current selection
+                    var selectedValue = dropdown.value;
+                    
+                    // Clear existing options (except the first empty option if exists)
+                    var firstOption = dropdown.options[0];
+                    var isEmptyOption = firstOption && firstOption.value === '';
+                    dropdown.innerHTML = '';
+                    
+                    // Add empty option if it existed before
+                    if (isEmptyOption) {
+                        var emptyOpt = document.createElement('option');
+                        emptyOpt.value = '';
+                        emptyOpt.textContent = '-- Select --';
+                        dropdown.appendChild(emptyOpt);
+                    }
+                    
+                    // Add updated options
+                    var hasCurrentSelection = false;
+                    data.areas.forEach(function(area) {
+                        var option = document.createElement('option');
+                        option.value = area.area_code;
+                        option.textContent = area.area_name;
+                        if (selectedValue === area.area_code) {
+                            option.selected = true;
+                            hasCurrentSelection = true;
+                        }
+                        dropdown.appendChild(option);
+                    });
+                    
+                    // If no areas available, add "Limit reached" option
+                    if (data.areas.length === 0) {
+                        var limitOpt = document.createElement('option');
+                        limitOpt.value = '';
+                        limitOpt.textContent = 'Limit reached';
+                        dropdown.appendChild(limitOpt);
+                    }
+                    
+                    // Restore selection if it still exists
+                    if (hasCurrentSelection) {
+                        dropdown.value = selectedValue;
+                    }
+                    
+                    if (callback) callback(true);
+                } else {
+                    if (callback) callback(false);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error refreshing area dropdown:', error);
+                if (callback) callback(false);
+            });
+        }
+        
+        function showAreaUnavailableNotification(itsId) {
+            // Create a subtle notification that the selected area is no longer available
+            var dropdown = document.getElementById('area_select_' + itsId);
+            if (dropdown) {
+                var form = dropdown.closest('form');
+                if (form) {
+                    // Add a small visual indicator
+                    dropdown.style.borderColor = '#dc3545';
+                    setTimeout(function() {
+                        dropdown.style.borderColor = '';
+                    }, 2000);
+                }
+            }
+        }
         
         function showPrintModal(itsId) {
             // Hide all seats first
