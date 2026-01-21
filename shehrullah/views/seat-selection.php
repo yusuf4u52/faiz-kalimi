@@ -203,8 +203,8 @@ function content_display()
         } else if (!$misaq_done) {
             $area_cell = ui_muted('Misaq not Done');
         } else {
-            // If selection is complete, show badge instead of dropdown
-            if ($selection_complete && !empty($allocated_area)) {
+            // Show badge if this attendee has selected an area, otherwise show dropdown
+            if (!empty($allocated_area)) {
                 $area_cell = ui_badge($att->allocated_area_name ?? $allocated_area, 'primary');
             } else {
                 $opts = [];
