@@ -16,12 +16,14 @@ function _handle_post()
         $seat_start = $_POST['seat_start'] ?? null;
         $seat_end = $_POST['seat_end'] ?? null;
         $is_active = $_POST['is_active'] ?? 'Y';
+        $max_seats_per_family = $_POST['max_seats_per_family'] ?? null;
         $blocked_seats_json = $_POST['blocked_seats'] ?? '[]';
         
         if (empty($seat_start)) $seat_start = null;
         if (empty($seat_end)) $seat_end = null;
+        if (empty($max_seats_per_family)) $max_seats_per_family = null;
         
-        $success = update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active);
+        $success = update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family);
         
         if ($success) {
             $blocked_seats = json_decode($blocked_seats_json, true);
@@ -116,6 +118,13 @@ function show_edit_area_page($area_code, $url)
             <div class="col-md-3">
                 <label class="form-label small">Status</label>
                 <?= ui_select('is_active', ['Y' => 'Active', 'N' => 'Inactive'], $area->is_active) ?>
+            </div>
+        </div>
+        
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label class="form-label small">Max Seats Per Family</label>
+                <?= ui_input('max_seats_per_family', $area->max_seats_per_family, '∞', 'number') ?>
             </div>
         </div>
         
