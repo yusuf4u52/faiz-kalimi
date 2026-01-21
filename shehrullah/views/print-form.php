@@ -254,7 +254,7 @@ function content_display()
                         convenience.</th>
                 </tr>
                 <tr>
-                    <th style='font-size: 12px; width: 25%'>Prev. Takhmeen / Niyaz</th>
+                    <th style='font-size: 12px; width: 25%'>Niyaz Amount</th>
                     <td style='font-size: 12px; width: 25%'><?=$prev_or_family_niyaz?></td>
                     <th style='font-size: 12px; width: 25%'>Committed Hub Amount</th>
                     <td style='font-size: 12px; width: 25%'></td>
