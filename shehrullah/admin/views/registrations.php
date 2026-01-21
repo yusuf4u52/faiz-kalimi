@@ -27,6 +27,12 @@ function content_display()
 
 function __display_table($records, $registration_summary)
 {
+    // Calculate pending amount for each record
+    foreach ($records as &$record) {
+        $record->pending = $record->takhmeen - $record->paid_amount;
+    }
+    unset($record); // Break the reference
+    
     $cols = [
         '__show_row_sequence' => 'Sr#',
         'hof_id' => 'HOF ID',
@@ -40,7 +46,8 @@ function __display_table($records, $registration_summary)
         'pirsa_count' => 'Pirsa',
         'zabihat_count' => 'Zabihat',
         'takhmeen' => 'Takhmeen',
-        'paid_amount' => 'Paid'
+        'paid_amount' => 'Paid',
+        'pending' => 'Pending'
     ];
 
     $colKeys = [];
@@ -71,6 +78,7 @@ function __display_table($records, $registration_summary)
                     <td><?=$registration_summary->zabihat?></td>
                     <td><?=$registration_summary->takhmeen?></td>
                     <td><?=$registration_summary->paid?></td>
+                    <td><?=$registration_summary->takhmeen - $registration_summary->paid?></td>
                 </tr>
                 <?php } ?>
             </tbody>
