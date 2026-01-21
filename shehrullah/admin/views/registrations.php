@@ -61,7 +61,7 @@ function __display_table($records, $registration_summary)
                 if( !is_null($registration_summary) ) {
                 ?>
                 <tr>
-                    <td colspan="3">TOTAL ==></td>
+                    <td colspan="4">TOTAL ==></td>
                     <td><?=$registration_summary->males?></td>
                     <td><?=$registration_summary->females?></td>
                     <td><?=$registration_summary->kids?></td>
