@@ -871,15 +871,11 @@ function get_eligible_areas_for_attendee($its_id, $hof_id) {
             continue;
         }
         
-        // Max seats per family check (only for Ladies First Floor, not for males)
-        if ($area->max_seats_per_family > 0 && $area->gender !== 'Male') {
+        // Max seats per family check
+        if ($area->max_seats_per_family > 0) {
             $count = count_family_seats_in_area($hof_id, $area->area_code);
             
-            // Check if this attendee already has this area (allow re-selection)
-            $current_alloc = get_seat_allocation_for_member($its_id);
-            $is_same_area = ($current_alloc && $current_alloc->area_code == $area->area_code);
-            
-            if ($count >= $area->max_seats_per_family && !$is_same_area) {
+            if ($count >= $area->max_seats_per_family) {
                 continue;
             }
         }
