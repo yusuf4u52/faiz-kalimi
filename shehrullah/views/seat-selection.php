@@ -240,7 +240,7 @@ function content_display()
                 <div class="modal-content">
                     <div class="modal-header bg-success text-white">
                         <h5 class="modal-title" id="printModalLabel">
-                            <i class="fas fa-ticket-alt"></i> Seat Card - Shehrullah <?= $hijri_year ?>H
+                            Shehrullah <?= $hijri_year ?>
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -258,8 +258,7 @@ function content_display()
                                 ?>
                                 <div class="seat-card" data-its-id="<?= h($seat_its_id) ?>" style="display: none;">
                                     <div class="card border-success">
-                                        <div class="card-header bg-success text-white text-center py-2">
-                                            <h5 class="mb-0">Shehrullah <?= $hijri_year ?>H</h5>
+                                        <div class="card-header bg-success text-white text-center py-2" style="display: none;">
                                         </div>
                                         <div class="card-body p-3">
                                             <div class="mb-2">
