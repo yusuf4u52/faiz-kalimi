@@ -7,7 +7,10 @@ $footer = getAppData('FOOTER') ?? true;
 $heading = getAppData('HEADING') ?? true;
 
 $message = getSessionData(TRANSIT_DATA);
-removeSessionData(TRANSIT_DATA);
+$suppress_message = getAppData('SUPPRESS_TRANSIT_MESSAGE');
+if (!$suppress_message) {
+    removeSessionData(TRANSIT_DATA);
+}
 
 //$url = getAppData('APP_BASE_URI');
 $url = getAppData('APP_BASE_URI');
@@ -85,7 +88,7 @@ $hijri = get_current_hijri_year() ?? 0;
                     </div>
                 <?php } ?>
 
-                <?php if (isset($message)) { ?>
+                <?php if (isset($message) && !$suppress_message) { ?>
                     <div class="alert alert-primary alert-dismissible fade show" role="alert">
                         <strong><?= $message ?></strong>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
