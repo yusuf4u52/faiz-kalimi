@@ -86,8 +86,33 @@ function content_display()
         removeSessionData(TRANSIT_DATA);
     }
     
+    // Check if selection is complete from already-fetched attendees data
+    $selection_complete = true;
+    $has_eligible = false;
+    foreach ($attendees as $att) {
+        $misaq_done = ($att->misaq ?? '') === 'Done';
+        if ($misaq_done) {
+            $has_eligible = true;
+            $allocated_area = $att->allocated_area ?? '';
+            $seat_number = $att->seat_number ?? '';
+            if (empty($allocated_area) || empty($seat_number)) {
+                $selection_complete = false;
+                break;
+            }
+        }
+    }
+    // If no eligible attendees, selection cannot be complete
+    if (!$has_eligible) {
+        $selection_complete = false;
+    }
+    
     ui_card("Seat Selection - Shehrullah {$hijri_year}H");
-    ui_alert('<strong>Important:</strong> Seat selection is on <strong>first come first serve</strong> basis. Please complete your selection promptly.', 'warning');
+    
+    if ($selection_complete) {
+        ui_alert('<strong>Selection Complete!</strong> Your seat selection has been finalized. Click Print to view your tickets.', 'success');
+    } else {
+        ui_alert('<strong>Important:</strong> Seat selection is on <strong>first come first serve</strong> basis. Please complete your selection promptly.', 'warning');
+    }
     ?>
     <table class="table table-sm table-bordered mb-4" style="max-width:500px">
         <tr><th style="width:100px">HOF</th><td><?= ui_code($hof_id) ?> <?= h($name) ?></td></tr>
@@ -117,22 +142,30 @@ function content_display()
         } else if (!$misaq_done) {
             $area_cell = ui_muted('Misaq not Done');
         } else {
-            $opts = [];
-            if (empty($allocated_area)) $opts[''] = '-- Select --';
-            
-            foreach ($eligible_areas as $a) {
-                $opts[$a->area_code] = $a->area_name;
+            // If selection is complete, show badge instead of dropdown
+            if ($selection_complete && !empty($allocated_area)) {
+                $area_cell = ui_badge($att->allocated_area_name ?? $allocated_area, 'primary');
+            } else {
+                $opts = [];
+                if (empty($allocated_area)) $opts[''] = '-- Select --';
+                
+                foreach ($eligible_areas as $a) {
+                    $opts[$a->area_code] = $a->area_name;
+                }
+                
+                if (empty($eligible_areas)) {
+                    $opts[''] = 'Limit reached';
+                }
+                
+                // If selection is complete but this attendee doesn't have area yet, disable dropdown
+                $disabled_attr = $selection_complete ? 'disabled' : '';
+                $select_html = ui_select('area_code', $opts, $allocated_area);
+                $area_cell = "<form method=\"post\" class=\"d-inline\" id=\"form_{$its_id}\">"
+                    . "<input type=\"hidden\" name=\"action\" value=\"save_seat\">"
+                    . "<input type=\"hidden\" name=\"its_id\" value=\"{$its_id}\">"
+                    . str_replace('<select', '<select ' . $disabled_attr, $select_html)
+                    . "</form>";
             }
-            
-            if (empty($eligible_areas)) {
-                $opts[''] = 'Limit reached';
-            }
-            
-            $area_cell = "<form method=\"post\" class=\"d-inline\" id=\"form_{$its_id}\">"
-                . "<input type=\"hidden\" name=\"action\" value=\"save_seat\">"
-                . "<input type=\"hidden\" name=\"its_id\" value=\"{$its_id}\">"
-                . ui_select('area_code', $opts, $allocated_area)
-                . "</form>";
         }
         
         // Seat cell
@@ -148,7 +181,12 @@ function content_display()
         } else if (!$misaq_done) {
             $action_cell = ui_muted('--');
         } else {
-            $action_cell = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
+            if ($selection_complete) {
+                // Show Print button instead of Save when selection is complete
+                $action_cell = "<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"showPrintModal();\">Print</button>";
+            } else {
+                $action_cell = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
+            }
         }
         
         ui_tr([
@@ -193,6 +231,92 @@ function content_display()
         </div>
         <?php
     }
+    
+    // Print Modal with Ticket Structure
+    if ($selection_complete) {
+        ?>
+        <div class="modal fade" id="printModal" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="printModalLabel">
+                            <i class="fas fa-ticket-alt"></i> Seat Tickets - Shehrullah <?= $hijri_year ?>H
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="printableTickets">
+                        <style>
+                            @media print {
+                                body * { visibility: hidden; }
+                                #printModal, #printModal * { visibility: visible; }
+                                #printModal { position: absolute; left: 0; top: 0; width: 100%; }
+                                .modal-header, .modal-footer, .no-print { display: none !important; }
+                                .modal-dialog { max-width: 100%; margin: 0; }
+                                .modal-content { border: none; box-shadow: none; }
+                            }
+                        </style>
+                        <?php
+                        foreach ($attendees as $att) {
+                            $misaq_done = ($att->misaq ?? '') === 'Done';
+                            $allocated_area = $att->allocated_area ?? '';
+                            $seat_number = $att->seat_number ?? '';
+                            
+                            // Only show tickets for attendees with allocated seats
+                            if ($misaq_done && !empty($allocated_area) && !empty($seat_number)) {
+                                $area_name = $att->allocated_area_name ?? $allocated_area;
+                                ?>
+                                <div class="card border-success mb-3">
+                                    <div class="card-header bg-success text-white text-center">
+                                        <h5 class="mb-0">Shehrullah <?= $hijri_year ?>H</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="border-start border-success border-3 ps-3">
+                                                    <small class="text-muted text-uppercase fw-bold">Name</small>
+                                                    <div class="fw-bold"><?= h($att->full_name) ?></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="border-start border-success border-3 ps-3">
+                                                    <small class="text-muted text-uppercase fw-bold">Area</small>
+                                                    <div class="fw-bold"><?= h($area_name) ?></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="border-start border-success border-3 ps-3">
+                                                    <small class="text-muted text-uppercase fw-bold">Seat</small>
+                                                    <div class="fw-bold"><?= h($seat_number) ?></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="border-start border-success border-3 ps-3">
+                                                    <small class="text-muted text-uppercase fw-bold">ITS ID</small>
+                                                    <div class="fw-bold"><?= h($att->its_id) ?></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center text-muted mt-3 pt-3 border-top">
+                                            <small>Please carry this ticket for your convenience</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </div>
+                    <div class="modal-footer no-print">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" onclick="printTickets();">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
     ?>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -203,6 +327,18 @@ function content_display()
                 modal.show();
             }
         });
+        
+        function showPrintModal() {
+            var printModal = document.getElementById('printModal');
+            if (printModal) {
+                var modal = new bootstrap.Modal(printModal);
+                modal.show();
+            }
+        }
+        
+        function printTickets() {
+            window.print();
+        }
     </script>
     <?php
 }
