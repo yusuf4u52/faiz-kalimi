@@ -166,7 +166,7 @@ function content_display()
     ui_card("Seat Selection - Shehrullah {$hijri_year}H");
     
     if ($selection_complete) {
-        ui_alert('<strong>Selection Complete!</strong> Your seat selection has been finalized. Click View to see your seat card.', 'success');
+        ui_alert('<strong>Selection Complete!</strong> Your seat selection has been finalized. Click Print to see your seat card.', 'success');
     } else {
         ui_alert('<strong>Important:</strong> Seat selection is on <strong>first come first serve</strong> basis. Please complete your selection promptly.', 'warning');
     }
@@ -244,9 +244,9 @@ function content_display()
             $action_buttons = [];
             
             if ($has_allocation) {
-                // Show View button when selection is complete - pass ITS ID to show only this person's seat
+                // Show Print button when selection is complete - pass ITS ID to show only this person's seat
                 if ($selection_complete) {
-                    $action_buttons[] = "<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"showPrintModal('{$its_id}');\">View</button>";
+                    $action_buttons[] = "<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"showPrintModal('{$its_id}');\">Print</button>";
                 }
                 
                 // Show Delete button for user-allocated seats
