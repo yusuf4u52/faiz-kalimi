@@ -10,8 +10,12 @@ include('navbar.php');
 	  <thead>
 		<tr>
 		  <th>Receipt No</th>
-		  <th>Amount</th>
 		  <th>Date</th>
+		  <th>Name</th>
+		  <th>Amount</th>
+		  <th>Payment Mode</th>
+		  <th>Transaction Id</th>
+		  <th>Takhmeen Year</th>
 		</tr>
 	  </thead>
 	  <tbody>
@@ -24,8 +28,12 @@ include('navbar.php');
 		  }
 		  echo "<tr>";
 		  echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-		  echo "<td>" . nl2br($row['Amount']) . "</td>";
 		  echo "<td data-sort=" . strtotime($row['Date']) . ">" . date('d M Y', strtotime($row['Date'])) . "</td>";
+		  echo "<td>" . nl2br($row['name']) . "</td>";
+		  echo "<td>" . nl2br($row['Amount']) . "</td>";
+		  echo "<td>" . nl2br($row['payment_type']) . "</td>";
+		  echo "<td>" . nl2br($row['transaction_id']) . "</td>";
+		  echo "<td>" . nl2br($row['takmeem_year']) . "</td>";
 		  echo "</tr>";
 		}
 		?>
