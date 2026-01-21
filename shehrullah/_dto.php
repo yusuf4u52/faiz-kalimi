@@ -588,7 +588,7 @@ function get_registration_summary($hijri) {
 
 function get_registration_data($hijri)
 {
-    $query = 'SELECT a.hof_id, i.full_name,
+    $query = 'SELECT a.hof_id, hof.full_name,
     count(CASE WHEN a.attendance_type = "Y" and i.gender="Male" and i.age > 11 THEN 1 ELSE NULL END) as male,
     count(CASE WHEN a.attendance_type = "Y" and i.gender="Female" and i.age > 11 THEN 1 ELSE NULL END) as female,
     count(CASE WHEN a.attendance_type = "Y" and i.age < 12 and i.age > 4 THEN 1 ELSE NULL END) as kids,
@@ -598,7 +598,8 @@ function get_registration_data($hijri)
     ,t.pirsa_count,t.takhmeen, t.whatsapp, t.paid_amount, t.zabihat_count
     FROM kl_shehrullah_attendees a
     JOIN its_data i ON i.its_id = a.its_id
-    JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id 
+    JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id
+    JOIN its_data hof ON hof.its_id = a.hof_id
     WHERE t.year=? and a.year=? and t.takhmeen >= 0 GROUP BY a.hof_id;';    
 
     $result = run_statement($query, $hijri, $hijri);

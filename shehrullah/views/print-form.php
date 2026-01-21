@@ -77,7 +77,10 @@ function content_display()
     $last_year_takhmeen = getAppData('last_year_takhmeen');
     $hof_id = getAppData('hof_id');
 
-    $name = $thalidata->NAME ?? $thalidata->full_name;
+    // Always get the HOF's actual name from its_data based on hof_id
+    $hof_data = get_hof_data($hof_id);
+    $name = $hof_data->full_name;
+    
     $sabeel = $thalidata->Thali ?? 'NONE';
     $email = $thalidata->Email_ID ?? '';
     $address = $thalidata->Full_Address ?? '';
