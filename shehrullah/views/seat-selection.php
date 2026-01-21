@@ -28,9 +28,9 @@ function initial_processing()
         do_redirect_with_message('/input-sabeel', 'You are not eligible for seat selection. Please complete payment first.');
     }
 
-    $attendees = get_attendees_for_seat_selection($hof_id);
+    $attendees = get_all_attendees_for_display($hof_id);
     if (empty($attendees)) {
-        do_redirect_with_message('/input-sabeel', 'No eligible family members found for seat selection.');
+        do_redirect_with_message('/input-sabeel', 'No family members found for seat selection.');
     }
     setAppData('attendees', $attendees);
 }
@@ -61,7 +61,7 @@ function _handle_form_submit()
         }
         
         // Refresh attendees data
-        $attendees = get_attendees_for_seat_selection($hof_id);
+        $attendees = get_all_attendees_for_display($hof_id);
         setAppData('attendees', $attendees);
     }
 }
@@ -106,13 +106,16 @@ function content_display()
         $allocated_area = $att->allocated_area ?? '';
         $seat_number = $att->seat_number ?? '';
         $is_admin = !empty($att->allocated_by);
+        $misaq_done = ($att->misaq ?? '') === 'Done';
         
-        // Get eligible areas
-        $eligible_areas = get_eligible_areas_for_attendee($its_id, $hof_id);
+        // Get eligible areas (only if Misaq is Done)
+        $eligible_areas = $misaq_done ? get_eligible_areas_for_attendee($its_id, $hof_id) : [];
         
         // Area cell
         if ($is_admin) {
             $area_cell = ui_badge($att->allocated_area_name ?? '', 'info') . "<br>" . ui_muted('Assigned by Admin');
+        } else if (!$misaq_done) {
+            $area_cell = ui_muted('Misaq not Done');
         } else {
             $opts = [];
             if (empty($allocated_area)) $opts[''] = '-- Select --';
@@ -141,6 +144,8 @@ function content_display()
         
         // Action cell
         if ($is_admin) {
+            $action_cell = ui_muted('--');
+        } else if (!$misaq_done) {
             $action_cell = ui_muted('--');
         } else {
             $action_cell = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";

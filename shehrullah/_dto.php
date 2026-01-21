@@ -836,6 +836,26 @@ function get_attendees_for_seat_selection($hof_id) {
 }
 
 /**
+ * Get all attendees for display (including those with Misaq not Done)
+ */
+function get_all_attendees_for_display($hof_id) {
+    $hijri_year = get_current_hijri_year();
+    $query = 'SELECT sa.its_id, sa.chair_preference, m.full_name, m.age, m.gender, m.misaq,
+              alloc.area_code as allocated_area, alloc.seat_number, alloc.allocated_by,
+              areas.area_name as allocated_area_name, ab.full_name as allocated_by_name
+              FROM kl_shehrullah_attendees sa
+              JOIN its_data m ON m.its_id = sa.its_id
+              LEFT JOIN kl_shehrullah_seat_allocation alloc ON alloc.its_id = sa.its_id AND alloc.hijri_year = ?
+              LEFT JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = ?
+              LEFT JOIN its_data ab ON ab.its_id = alloc.allocated_by
+              WHERE sa.hof_id = ? AND sa.year = ? 
+              AND sa.attendance_type = "Y"
+              ORDER BY m.age DESC';
+    $result = run_statement($query, $hijri_year, $hijri_year, $hof_id, $hijri_year);
+    return $result->success && $result->count > 0 ? $result->data : [];
+}
+
+/**
  * Get eligible seating areas for an attendee based on rules
  */
 function get_eligible_areas_for_attendee($its_id, $hof_id) {
