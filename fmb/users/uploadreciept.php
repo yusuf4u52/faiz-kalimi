@@ -48,11 +48,11 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                             $receipts = mysqli_query($link, "SELECT * FROM receipts WHERE `Receipt_No` = '" . $Receipt_No . "' LIMIT 1");
                             if ($receipts->num_rows > 0) {
                                 $rec = mysqli_fetch_assoc($receipts);  
-                                $sql = "UPDATE receipts SET `Thali_No` = '" . $thali['Thali'] . "', `userid` = '" . $thali['id'] . "', `name` = '" . $thali['NAME'] . "', `Amount` = '" . $row[6] . "', `Date` = '" . $date . "', `received_by` = 'saminabarnagarwala2812@gmail.com', `payment_type` = '" . $row[9] . "' WHERE `Receipt_No ` = '".$rec['Receipt_No']."'";
+                                $sql = "UPDATE receipts SET `Thali_No` = '" . $thali['Thali'] . "', `userid` = '" . $thali['id'] . "', `name` = '" . $row[4] . "', `Amount` = '" . $row[6] . "', `Date` = '" . $date . "', `received_by` = 'saminabarnagarwala2812@gmail.com', `payment_type` = '" . $row[9] . "', , `transaction_id` = '" . $row[14] . "', , `takmeem_year` = '" . $row[15] . "' WHERE `Receipt_No ` = '".$rec['Receipt_No']."'";
                                 mysqli_query($link,$sql) or die(mysqli_error($link));
                                 echo '<h4>'.$its.' reciept updated successfully</h4>';
                             } else {
-                                $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid`, `name`, `Amount`, `Date`, `received_by`, `payment_type`) VALUES ('" . $Receipt_No . "', '" . $thali['Thali'] . "', '" . $thali['id'] . "', '" . $thali['NAME'] . "', '" . $row[6] . "', '" . $date . "', 'saminabarnagarwala2812@gmail.com', '" . $row[9] . "')";
+                                $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid`, `name`, `Amount`, `Date`, `received_by`, `payment_type`, `transaction_id`, `takmeem_year`) VALUES ('" . $Receipt_No . "', '" . $thali['Thali'] . "', '" . $thali['id'] . "', '" . $row[4] . "', '" . $row[6] . "', '" . $date . "', 'saminabarnagarwala2812@gmail.com', '" . $row[9] . "', , '" . $row[14] . "', , '" . $row[15] . "')";
                                 mysqli_query($link,$sql) or die(mysqli_error($link));
                                 echo '<h4>'.$its.' reciept inserted successfully</h4>';
                             }
