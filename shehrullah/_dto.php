@@ -356,7 +356,10 @@ function get_attendees_data_for($hof_id, $hijri_year, $attends = false)
     m.its_id,m.full_name,m.age,m.gender,m.sector,m.subsector,m.mohallah
     FROM its_data m
     LEFT JOIN  kl_shehrullah_attendees sa ON m.its_id = sa.its_id and sa.year = ?
-    WHERE m.hof_id = ? and (m.mohallah = "Kalimi" OR m.shehrullah="Y") ';
+    WHERE m.hof_id = ?';
+	
+	//Removed this condition to avoid Seems other mohalla error.
+    //and (m.mohallah = "Kalimi" OR m.shehrullah="Y") 
 
     $params = [];
     if ($attends) {
