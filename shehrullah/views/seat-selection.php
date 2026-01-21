@@ -182,8 +182,8 @@ function content_display()
             $action_cell = ui_muted('--');
         } else {
             if ($selection_complete) {
-                // Show Print button instead of Save when selection is complete
-                $action_cell = "<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"showPrintModal();\">Print</button>";
+                // Show Print button instead of Save when selection is complete - pass ITS ID to show only this person's ticket
+                $action_cell = "<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"showPrintModal('{$its_id}');\">Print</button>";
             } else {
                 $action_cell = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
             }
@@ -264,40 +264,43 @@ function content_display()
                             // Only show tickets for attendees with allocated seats
                             if ($misaq_done && !empty($allocated_area) && !empty($seat_number)) {
                                 $area_name = $att->allocated_area_name ?? $allocated_area;
+                                $ticket_its_id = $att->its_id;
                                 ?>
-                                <div class="card border-success mb-3">
-                                    <div class="card-header bg-success text-white text-center">
-                                        <h5 class="mb-0">Shehrullah <?= $hijri_year ?>H</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <div class="border-start border-success border-3 ps-3">
-                                                    <small class="text-muted text-uppercase fw-bold">Name</small>
-                                                    <div class="fw-bold"><?= h($att->full_name) ?></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="border-start border-success border-3 ps-3">
-                                                    <small class="text-muted text-uppercase fw-bold">Area</small>
-                                                    <div class="fw-bold"><?= h($area_name) ?></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="border-start border-success border-3 ps-3">
-                                                    <small class="text-muted text-uppercase fw-bold">Seat</small>
-                                                    <div class="fw-bold"><?= h($seat_number) ?></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="border-start border-success border-3 ps-3">
-                                                    <small class="text-muted text-uppercase fw-bold">ITS ID</small>
-                                                    <div class="fw-bold"><?= h($att->its_id) ?></div>
-                                                </div>
-                                            </div>
+                                <div class="ticket-card" data-its-id="<?= h($ticket_its_id) ?>" style="display: none;">
+                                    <div class="card border-success mb-3">
+                                        <div class="card-header bg-success text-white text-center">
+                                            <h5 class="mb-0">Shehrullah <?= $hijri_year ?>H</h5>
                                         </div>
-                                        <div class="text-center text-muted mt-3 pt-3 border-top">
-                                            <small>Please carry this ticket for your convenience</small>
+                                        <div class="card-body">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <div class="border-start border-success border-3 ps-3">
+                                                        <small class="text-muted text-uppercase fw-bold">Name</small>
+                                                        <div class="fw-bold"><?= h($att->full_name) ?></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="border-start border-success border-3 ps-3">
+                                                        <small class="text-muted text-uppercase fw-bold">Area</small>
+                                                        <div class="fw-bold"><?= h($area_name) ?></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="border-start border-success border-3 ps-3">
+                                                        <small class="text-muted text-uppercase fw-bold">Seat</small>
+                                                        <div class="fw-bold"><?= h($seat_number) ?></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="border-start border-success border-3 ps-3">
+                                                        <small class="text-muted text-uppercase fw-bold">ITS ID</small>
+                                                        <div class="fw-bold"><?= h($att->its_id) ?></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="text-center text-muted mt-3 pt-3 border-top">
+                                                <small>Please carry this ticket for your convenience</small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -328,7 +331,21 @@ function content_display()
             }
         });
         
-        function showPrintModal() {
+        function showPrintModal(itsId) {
+            // Hide all tickets first
+            var allTickets = document.querySelectorAll('.ticket-card');
+            allTickets.forEach(function(ticket) {
+                ticket.style.display = 'none';
+            });
+            
+            // Show only the ticket for the selected attendee
+            if (itsId) {
+                var selectedTicket = document.querySelector('.ticket-card[data-its-id="' + itsId + '"]');
+                if (selectedTicket) {
+                    selectedTicket.style.display = 'block';
+                }
+            }
+            
             var printModal = document.getElementById('printModal');
             if (printModal) {
                 var modal = new bootstrap.Modal(printModal);
