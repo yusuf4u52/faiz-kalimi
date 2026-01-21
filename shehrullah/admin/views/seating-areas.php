@@ -65,15 +65,17 @@ function content_display()
     }
     
     ui_card("Seating Areas - {$hijri_year}H", '', "$url/seat-management");
-    ui_table(['Name', 'Gender', 'Seats', 'Status', '']);
+    ui_table(['Name', 'Gender', 'Max Per Family', 'Seats', 'Status', '']);
     
     foreach ($areas as $area) {
         $seats = ($area->seat_start && $area->seat_end) 
             ? ui_muted("{$area->seat_start}-{$area->seat_end}") 
             : ui_muted('—');
+        $max_family = $area->max_seats_per_family ?: '∞';
         ui_tr([
             h($area->area_name),
             ui_muted($area->gender),
+            ui_muted($max_family),
             $seats,
             ui_dot($area->is_active == 'Y'),
             ui_link('Edit', "?edit={$area->area_code}", 'link')
