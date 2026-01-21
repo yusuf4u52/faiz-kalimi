@@ -64,13 +64,17 @@ function _handle_form_submit()
         exit;
     }
     
+    // Get encrypted sabeel for redirect URL (POST-Redirect-GET pattern)
+    $en_sabeel = getAppData('arg1');
+    $redirect_url = '/seat-selection/' . $en_sabeel;
+    
     if ($action === 'save_seat') {
         $its_id = $_POST['its_id'] ?? '';
         $area_code = $_POST['area_code'] ?? '';
         $hof_id = getAppData('hof_id');
         
         if (empty($its_id) || empty($area_code)) {
-            setSessionData(TRANSIT_DATA, 'Invalid selection.');
+            do_redirect_with_message($redirect_url, 'Invalid selection.');
             return;
         }
         
@@ -80,20 +84,16 @@ function _handle_form_submit()
         // Success if seat is allocated, failure if not
         if ($result) {
             $message = is_string($result) ? "Seat allocated successfully! Seat #{$result}" : 'Seat allocated successfully!';
-            setSessionData(TRANSIT_DATA, $message);
+            do_redirect_with_message($redirect_url, $message);
         } else {
-            setSessionData(TRANSIT_DATA, 'Seat allocation failed. Area may be full or unavailable.');
+            do_redirect_with_message($redirect_url, 'Seat allocation failed. Area may be full or unavailable.');
         }
-        
-        // Refresh attendees data
-        $attendees = get_all_attendees_for_display($hof_id);
-        setAppData('attendees', $attendees);
     } else if ($action === 'delete_allocation') {
         $its_id = $_POST['its_id'] ?? '';
         $hof_id = getAppData('hof_id');
         
         if (empty($its_id)) {
-            setSessionData(TRANSIT_DATA, 'Invalid selection.');
+            do_redirect_with_message($redirect_url, 'Invalid selection.');
             return;
         }
         
@@ -108,7 +108,7 @@ function _handle_form_submit()
         }
         
         if (!$attendee || !empty($attendee->allocated_by)) {
-            setSessionData(TRANSIT_DATA, 'Cannot delete admin-assigned allocation.');
+            do_redirect_with_message($redirect_url, 'Cannot delete admin-assigned allocation.');
             return;
         }
         
@@ -116,14 +116,10 @@ function _handle_form_submit()
         $success = delete_seat_allocation($its_id);
         
         if ($success) {
-            setSessionData(TRANSIT_DATA, 'Seat allocation deleted successfully!');
+            do_redirect_with_message($redirect_url, 'Seat allocation deleted successfully!');
         } else {
-            setSessionData(TRANSIT_DATA, 'Failed to delete seat allocation.');
+            do_redirect_with_message($redirect_url, 'Failed to delete seat allocation.');
         }
-        
-        // Refresh attendees data
-        $attendees = get_all_attendees_for_display($hof_id);
-        setAppData('attendees', $attendees);
     }
 }
 
