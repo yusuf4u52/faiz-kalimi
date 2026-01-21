@@ -5,6 +5,9 @@ do_for_post('_handle_form_submit');
 
 function initial_processing()
 {
+    // Suppress template message display - we'll handle it with modal
+    setAppData('SUPPRESS_TRANSIT_MESSAGE', true);
+    
     $en_sabeel = getAppData('arg1');
     $sabeel = do_decrypt($en_sabeel);
 
@@ -65,9 +68,6 @@ function _handle_form_submit()
 
 function content_display()
 {
-    // Suppress template message display - we'll handle it with modal
-    setAppData('SUPPRESS_TRANSIT_MESSAGE', true);
-    
     $sabeel_data = getAppData('sabeel_data');
     $hof_id = getAppData('hof_id');
     $hijri_year = getAppData('hijri_year');
