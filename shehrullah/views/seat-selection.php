@@ -74,6 +74,15 @@ function content_display()
     $name = $sabeel_data->NAME ?? '';
     $sabeel = $sabeel_data->Thali ?? '';
     
+    // Get transit message if any
+    $transit_message = getSessionData(TRANSIT_DATA);
+    $is_error = !empty($transit_message) && (strpos($transit_message, 'failed') !== false || strpos($transit_message, 'Invalid') !== false);
+    $is_success = !empty($transit_message) && strpos($transit_message, 'success') !== false;
+    
+    if (!empty($transit_message)) {
+        clearSessionData(TRANSIT_DATA);
+    }
+    
     ui_card("Seat Selection - Shehrullah {$hijri_year}H");
     ui_alert('<strong>Important:</strong> Seat selection is on <strong>first come first serve</strong> basis. Please complete your selection promptly.', 'warning');
     ?>
@@ -152,7 +161,40 @@ function content_display()
     </div>
     <?php 
     ui_card_end();
+    
+    // Bootstrap Modal for Error Messages
+    if ($is_error && !empty($transit_message)) {
+        ?>
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-danger" style="border-width: 3px;">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="errorModalLabel">
+                            <i class="fas fa-exclamation-triangle"></i> Seat Allocation Error
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center" style="font-size: 1.1rem;">
+                        <p class="mb-0"><strong><?= h($transit_message) ?></strong></p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">I Understand</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
     ?>
-    <script>function the_script() {}</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show Bootstrap modal for errors
+            var errorModal = document.getElementById('errorModal');
+            if (errorModal) {
+                var modal = new bootstrap.Modal(errorModal);
+                modal.show();
+            }
+        });
+    </script>
     <?php
 }
