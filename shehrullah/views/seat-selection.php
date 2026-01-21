@@ -83,7 +83,7 @@ function content_display()
     $is_success = !empty($transit_message) && strpos($transit_message, 'success') !== false;
     
     if (!empty($transit_message)) {
-        clearSessionData(TRANSIT_DATA);
+        removeSessionData(TRANSIT_DATA);
     }
     
     ui_card("Seat Selection - Shehrullah {$hijri_year}H");
