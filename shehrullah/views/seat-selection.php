@@ -145,13 +145,17 @@ function content_display()
         ui_alert('<strong>Important:</strong> Seat selection is on <strong>first come first serve</strong> basis. Please complete your selection promptly.', 'warning');
     }
     ?>
-    <table class="table table-sm table-bordered mb-4" style="max-width:500px">
-        <tr><th style="width:100px">HOF</th><td><?= ui_code($hof_id) ?> <?= h($name) ?></td></tr>
-        <tr><th>Sabeel</th><td><?= h($sabeel) ?></td></tr>
-    </table>
+    <div class="table-responsive mb-4">
+        <table class="table table-sm table-bordered mb-0 w-100" style="max-width:500px">
+            <tr><th class="w-25">HOF</th><td><?= ui_code($hof_id) ?> <?= h($name) ?></td></tr>
+            <tr><th class="w-25">Sabeel</th><td><?= h($sabeel) ?></td></tr>
+        </table>
+    </div>
     
     <h6 class="mb-3">Select Seating Area for Family Members</h6>
     <?php
+    // Desktop table view (hidden on mobile)
+    echo '<div class="d-none d-md-block">';
     ui_table(['#', 'Name', 'G/Age', 'Chair', 'Select Area', 'Seat #', 'Action']);
     
     $index = 0;
@@ -242,6 +246,111 @@ function content_display()
     }
     
     ui_table_end();
+    echo '</div>';
+    ?>
+    
+    <!-- Mobile card view (hidden on desktop) -->
+    <div class="d-md-none">
+        <?php
+        $index = 0;
+        foreach ($attendees as $att) {
+            $index++;
+            $its_id = $att->its_id;
+            $chair = $att->chair_preference == 'Y' ? 'Yes' : 'No';
+            $allocated_area = $att->allocated_area ?? '';
+            $seat_number = $att->seat_number ?? '';
+            $is_admin = !empty($att->allocated_by);
+            $misaq_done = ($att->misaq ?? '') === 'Done';
+            
+            // Get eligible areas (only if Misaq is Done)
+            $eligible_areas = $misaq_done ? get_eligible_areas_for_attendee($its_id, $hof_id) : [];
+            ?>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row g-2 mb-2">
+                        <div class="col-4"><small class="text-muted fw-bold">Name</small></div>
+                        <div class="col-8"><strong><?= h($att->full_name) ?></strong></div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-4"><small class="text-muted fw-bold">G/Age</small></div>
+                        <div class="col-8"><?= ui_ga($att->gender, $att->age) ?></div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-4"><small class="text-muted fw-bold">Chair</small></div>
+                        <div class="col-8"><?= h($chair) ?></div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-4"><small class="text-muted fw-bold">Select Area</small></div>
+                        <div class="col-8">
+                            <?php
+                            if ($is_admin) {
+                                echo ui_badge($att->allocated_area_name ?? '', 'info') . "<br><small class=\"text-muted\">Assigned by Admin</small>";
+                            } else if (!$misaq_done) {
+                                echo '<span class="text-muted">Misaq not Done</span>';
+                            } else {
+                                if (!empty($allocated_area)) {
+                                    echo ui_badge($att->allocated_area_name ?? $allocated_area, 'primary');
+                                } else {
+                                    $opts = [];
+                                    if (empty($allocated_area)) $opts[''] = '-- Select --';
+                                    
+                                    foreach ($eligible_areas as $a) {
+                                        $opts[$a->area_code] = $a->area_name;
+                                    }
+                                    
+                                    if (empty($eligible_areas)) {
+                                        $opts[''] = 'Limit reached';
+                                    }
+                                    
+                                    $disabled_attr = $selection_complete ? 'disabled' : '';
+                                    $select_html = ui_select('area_code', $opts, $allocated_area);
+                                    $select_html = str_replace('<select', '<select data-its-id="' . h($its_id) . '" data-hof-id="' . h($hof_id) . '" id="area_select_mobile_' . h($its_id) . '" class="form-select" ' . $disabled_attr, $select_html);
+                                    echo "<form method=\"post\" id=\"form_mobile_{$its_id}\">"
+                                        . "<input type=\"hidden\" name=\"action\" value=\"save_seat\">"
+                                        . "<input type=\"hidden\" name=\"its_id\" value=\"{$its_id}\">"
+                                        . $select_html
+                                        . "</form>";
+                                }
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-4"><small class="text-muted fw-bold">Seat #</small></div>
+                        <div class="col-8">
+                            <?php
+                            if (!empty($seat_number)) {
+                                echo ui_badge($seat_number, 'success');
+                            } else {
+                                echo '<span class="text-muted">--</span>';
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <?php
+                    if (!$is_admin && $misaq_done) {
+                        $has_allocation = !empty($allocated_area) && !empty($seat_number);
+                        ?>
+                        <div class="row g-2 mt-3">
+                            <div class="col-12">
+                                <?php
+                                if ($has_allocation && $selection_complete) {
+                                    echo "<button type=\"button\" class=\"btn btn-success w-100\" onclick=\"showPrintModal('{$its_id}');\">Print</button>";
+                                } else if (!$has_allocation) {
+                                    echo "<button type=\"button\" class=\"btn btn-primary w-100\" onclick=\"document.getElementById('form_mobile_{$its_id}').submit();\">Save</button>";
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                    ?>
+                </div>
+            </div>
+            <?php
+        }
+        ?>
+    </div>
     ?>
     <div class="mt-4">
         <?= ui_link('Back', "$url/input-seat-selection", 'secondary') ?>
@@ -277,7 +386,7 @@ function content_display()
     if ($selection_complete) {
         ?>
         <div class="modal fade" id="printModal" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header bg-success text-white">
                         <h5 class="modal-title" id="printModalLabel">
@@ -357,10 +466,13 @@ function content_display()
                     var itsIdInput = form.querySelector('input[name="its_id"]');
                     if (itsIdInput) {
                         var itsId = itsIdInput.value;
-                        refreshAreaDropdown(itsId, function() {
-                            // Continue with form submission after refresh
-                            // Don't prevent default - let form submit normally
-                        });
+                        var dropdown = form.querySelector('select[data-its-id]');
+                        if (dropdown) {
+                            refreshAreaDropdown(itsId, dropdown.id, function() {
+                                // Continue with form submission after refresh
+                                // Don't prevent default - let form submit normally
+                            });
+                        }
                     }
                 });
             });
@@ -381,7 +493,7 @@ function content_display()
                 
                 var itsId = dropdown.getAttribute('data-its-id');
                 var currentValue = dropdown.value;
-                refreshAreaDropdown(itsId, function(updated) {
+                refreshAreaDropdown(itsId, dropdown.id, function(updated) {
                     if (updated && currentValue && !dropdown.querySelector('option[value="' + currentValue + '"]')) {
                         // If current selection is no longer available, clear it
                         dropdown.value = '';
@@ -392,8 +504,12 @@ function content_display()
             });
         }
         
-        function refreshAreaDropdown(itsId, callback) {
-            var dropdown = document.getElementById('area_select_' + itsId);
+        function refreshAreaDropdown(itsId, dropdownId, callback) {
+            var dropdown = document.getElementById(dropdownId);
+            if (!dropdown) {
+                // Try alternative ID (desktop/mobile)
+                dropdown = document.getElementById('area_select_' + itsId) || document.getElementById('area_select_mobile_' + itsId);
+            }
             if (!dropdown) {
                 if (callback) callback(false);
                 return;
@@ -460,6 +576,40 @@ function content_display()
                         dropdown.value = selectedValue;
                     }
                     
+                    // Also update the other dropdown (desktop/mobile) if it exists
+                    var otherDropdownId = dropdownId === 'area_select_' + itsId ? 'area_select_mobile_' + itsId : 'area_select_' + itsId;
+                    var otherDropdown = document.getElementById(otherDropdownId);
+                    if (otherDropdown) {
+                        var otherSelectedValue = otherDropdown.value;
+                        otherDropdown.innerHTML = '';
+                        if (isEmptyOption) {
+                            var emptyOpt2 = document.createElement('option');
+                            emptyOpt2.value = '';
+                            emptyOpt2.textContent = '-- Select --';
+                            otherDropdown.appendChild(emptyOpt2);
+                        }
+                        var hasOtherSelection = false;
+                        data.areas.forEach(function(area) {
+                            var option = document.createElement('option');
+                            option.value = area.area_code;
+                            option.textContent = area.area_name;
+                            if (otherSelectedValue === area.area_code) {
+                                option.selected = true;
+                                hasOtherSelection = true;
+                            }
+                            otherDropdown.appendChild(option);
+                        });
+                        if (data.areas.length === 0) {
+                            var limitOpt2 = document.createElement('option');
+                            limitOpt2.value = '';
+                            limitOpt2.textContent = 'Limit reached';
+                            otherDropdown.appendChild(limitOpt2);
+                        }
+                        if (hasOtherSelection) {
+                            otherDropdown.value = otherSelectedValue;
+                        }
+                    }
+                    
                     if (callback) callback(true);
                 } else {
                     if (callback) callback(false);
@@ -473,16 +623,13 @@ function content_display()
         
         function showAreaUnavailableNotification(itsId) {
             // Create a subtle notification that the selected area is no longer available
-            var dropdown = document.getElementById('area_select_' + itsId);
+            var dropdown = document.getElementById('area_select_' + itsId) || document.getElementById('area_select_mobile_' + itsId);
             if (dropdown) {
-                var form = dropdown.closest('form');
-                if (form) {
-                    // Add a small visual indicator
-                    dropdown.style.borderColor = '#dc3545';
-                    setTimeout(function() {
-                        dropdown.style.borderColor = '';
-                    }, 2000);
-                }
+                // Add Bootstrap danger border class temporarily
+                dropdown.classList.add('border-danger');
+                setTimeout(function() {
+                    dropdown.classList.remove('border-danger');
+                }, 2000);
             }
         }
         
