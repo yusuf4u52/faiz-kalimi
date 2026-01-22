@@ -351,7 +351,6 @@ function content_display()
         }
         ?>
     </div>
-    ?>
     <div class="mt-4">
         <?= ui_link('Back', "$url/input-seat-selection", 'secondary') ?>
     </div>
