@@ -85,7 +85,7 @@ function _handle_form_submit()
         }
         
         // Try to allocate seat - returns seat number/true on success, false on failure
-        $result = allocate_seat($its_id, $hof_id, $area_code);
+        $result = allocate_seat_safe($its_id, $hof_id, $area_code);
         
         // Success if seat is allocated, failure if not
         if ($result) {
