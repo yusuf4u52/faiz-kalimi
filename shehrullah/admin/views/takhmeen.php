@@ -1,5 +1,4 @@
 <?php
-// Allow GET requests with hof_id parameter, otherwise redirect if not POST
 if (!is_post() && !isset($_GET['hof_id'])) {
     do_redirect('/home');
 }
@@ -8,47 +7,45 @@ if (!is_user_a(SUPER_ADMIN, TAKHMEENER)) {
     do_redirect_with_message('/home', 'Redirected as tried to access unauthorized area.');
 }
 
-// Handle GET request - load data for display
-if (is_get() && isset($_GET['hof_id'])) {
-    $hof_id = $_GET['hof_id'];
+// Helper function to load and set data
+function load_takhmeen_data($hof_id) {
     $hijri_year = get_current_hijri_year();
     $hub_data = get_shehrullah_data_for($hijri_year);
-
     $hof_data = get_hof_data($hof_id);
-    setAppData('hof_data', $hof_data);
-
     $takhmeen_data = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
+    
     if (is_null($takhmeen_data)) {
         do_redirect_with_message('/home', 'Oops! data not found.');
     }
-
+    
     $receipt_data = get_receipt_data_for($hijri_year, $hof_id);
-    setAppData('receipt_data', $receipt_data);
-    setAppData('takhmeen_data', $takhmeen_data);
-    setAppData('hub_data', $hub_data);
+    
     setAppData('hof_id', $hof_id);
+    setAppData('hof_data', $hof_data);
+    setAppData('hub_data', $hub_data);
+    setAppData('takhmeen_data', $takhmeen_data);
+    setAppData('receipt_data', $receipt_data);
+}
+
+// Handle GET request
+if (is_get() && isset($_GET['hof_id'])) {
+    load_takhmeen_data($_GET['hof_id']);
 }
 
 do_for_post('__handle_post');
 
-function __handle_post()
-{
+function __handle_post() {
     $action = $_POST['action'];
     $hof_id = $_POST['hof_id'];
-    $hijri_year = get_current_hijri_year();
-    $hub_data = get_shehrullah_data_for($hijri_year);
-
-    $hof_data = get_hof_data($hof_id);
-    setAppData('hof_data', $hof_data);
-
-    $takhmeen_data = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
-    if (is_null($takhmeen_data)) {
-        do_redirect_with_message('/home', 'Oops! data not found.');
-    }
-
-    $receipt_data = get_receipt_data_for($hijri_year, $hof_id);
-
+    
+    load_takhmeen_data($hof_id);
+    
+    $hub_data = getAppData('hub_data');
+    $takhmeen_data = getAppData('takhmeen_data');
+    $receipt_data = getAppData('receipt_data');
+    
     if ($action === 'register') {
+        $hijri_year = get_current_hijri_year();
         $niyaz_hub = $_POST['niyaz_hub'];
         $iftar_count = $_POST['iftar_count'];
         $zabihat_count = $_POST['zabihat_count'];
@@ -56,61 +53,39 @@ function __handle_post()
         $khajoor_count = $_POST['khajoor_count'];
         $pirsa_count = $_POST['pirsa_count'];
         $chair_count = $_POST['chair_count'];
-        $takhmeen = 0;
-
+        
         $takhmeen = $niyaz_hub + ($iftar_count * $hub_data->iftar)
             + ($zabihat_count * $hub_data->zabihat)
             + ($fateha_count * $hub_data->fateha)
             + ($khajoor_count * $hub_data->khajoor)
             + ($pirsa_count * $hub_data->pirsu)
             + ($chair_count * $hub_data->chair);
-
-        $update_takhmeen = true;
-        //If any receipt is created
-        if (is_array($receipt_data) && count($receipt_data) > 0) {
-            if ($takhmeen_data->takhmeen > $takhmeen) {
-                $update_takhmeen = false;
-                setSessionData(TRANSIT_DATA , 'Oops! No you can not decrease the takhmeen amount. One or more recipt is created.');
-            }
+        
+        // Check if can decrease takhmeen when receipts exist
+        if (is_array($receipt_data) && count($receipt_data) > 0 && $takhmeen_data->takhmeen > $takhmeen) {
+            setSessionData(TRANSIT_DATA, 'Oops! No you can not decrease the takhmeen amount. One or more recipt is created.');
+        } else {
+            add_shehrullah_takh_hub($hijri_year, $hof_id, $niyaz_hub, $iftar_count, 
+                $zabihat_count, $fateha_count, $khajoor_count, $pirsa_count, $chair_count, $takhmeen);
         }
-
-        if ($update_takhmeen) {
-            add_shehrullah_takh_hub(
-                $hijri_year,
-                $hof_id,
-                $niyaz_hub,
-                $iftar_count,
-                $zabihat_count,
-                $fateha_count,
-                $khajoor_count,
-                $pirsa_count,
-                $chair_count,
-                $takhmeen
-            );
-        }
-
-        //To get the latest data again
-        $takhmeen_data = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
-        // if (is_null($takhmeen_data)) {
-        //     do_redirect_with_message('/home', 'Oops! data not found.');
-        // }
-        $receipt_data = get_receipt_data_for($hijri_year, $hof_id);    
+        
+        // Reload data and redirect with saved=1
+        load_takhmeen_data($hof_id);
+        do_redirect('/takhmeen?hof_id=' . urlencode($hof_id) . '&saved=1');
+        exit();
     }
-
-    // Post-Redirect-Get: Redirect to GET request to prevent resubmission
-    // Redirect to same page with GET parameters
-    $redirect_url = '/takhmeen?hof_id=' . urlencode($hof_id) . '&saved=1';
-    do_redirect($redirect_url);
+    
+    // For SEARCH and other actions, redirect to GET without saved parameter
+    do_redirect('/takhmeen?hof_id=' . urlencode($hof_id));
     exit();
 }
 
 function content_display()
 {
-    $takhmeen_data = getAppData('takhmeen_data');
-    // Get hof_id from GET or POST (GET takes precedence after redirect)
-    $hof_id = isset($_GET['hof_id']) ? $_GET['hof_id'] : (isset($_POST['hof_id']) ? $_POST['hof_id'] : getAppData('hof_id'));
+    $hof_id = getAppData('hof_id');
     $hof_data = getAppData('hof_data');
     $hub_data = getAppData('hub_data');
+    $takhmeen_data = getAppData('takhmeen_data');
     $receipt_data = getAppData('receipt_data');
     ?>
     <form method="post">
@@ -221,18 +196,13 @@ function content_display()
                 $('#paynow_link').hide();
             });
             
-            // Scroll to Pay button after form submission (check for saved GET parameter)
+            // Scroll to Pay button after save
             <?php if (isset($_GET['saved']) && $_GET['saved'] == '1') { ?>
                 setTimeout(function() {
                     var payButton = document.getElementById('paynow_link');
-                    if (payButton) {
-                        payButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    } else {
-                        // If Pay button doesn't exist, scroll to bottom of form
-                        var form = document.querySelector('form');
-                        if (form) {
-                            form.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                        }
+                    var target = payButton || document.querySelector('form');
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: payButton ? 'center' : 'end' });
                     }
                 }, 100);
             <?php } ?>
