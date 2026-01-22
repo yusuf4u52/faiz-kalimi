@@ -1239,19 +1239,20 @@ function get_available_blocked_seats($area_code) {
 }
 
 /**
- * Validate if seat range reduction is allowed
- * Checks if any reserved seats exist beyond the new seat_end
+ * Validate if any reserved seats exist outside the seat range
  * 
  * @param string $area_code Area code
  * @param int $hijri_year Hijri year
- * @param int $new_seat_end New seat_end value
+ * @param int $seat_start Seat range start
+ * @param int $seat_end Seat range end
  * @return array ['valid' => bool, 'conflicting_seats' => array, 'message' => string]
  */
-function validate_seat_range_reduction($area_code, $hijri_year, $new_seat_end) {
+function validate_reserved_seats_in_range($area_code, $hijri_year, $seat_start, $seat_end) {
     $query = 'SELECT seat_number FROM kl_shehrullah_seat_allocation 
-              WHERE area_code = ? AND hijri_year = ? AND status = "reserved" AND seat_number > ? 
+              WHERE area_code = ? AND hijri_year = ? AND status = "reserved" 
+              AND (seat_number < ? OR seat_number > ?)
               ORDER BY seat_number';
-    $result = run_statement($query, $area_code, $hijri_year, $new_seat_end);
+    $result = run_statement($query, $area_code, $hijri_year, $seat_start, $seat_end);
     
     if ($result->success && $result->count > 0) {
         $conflicting_seats = array_map(function($row) {
@@ -1262,7 +1263,7 @@ function validate_seat_range_reduction($area_code, $hijri_year, $new_seat_end) {
         return [
             'valid' => false,
             'conflicting_seats' => $conflicting_seats,
-            'message' => "Cannot reduce seat range. Seats [{$seat_list}] are already allocated beyond the new range."
+            'message' => "Cannot sync seats. Reserved seats [{$seat_list}] are outside the configured range ({$seat_start}-{$seat_end})."
         ];
     }
     
@@ -1271,13 +1272,11 @@ function validate_seat_range_reduction($area_code, $hijri_year, $new_seat_end) {
 
 /**
  * Sync seats in kl_shehrullah_seat_allocation to match seat range in kl_shehrullah_seating_areas
- * This is the SINGLE function that syncs between the two tables
  * 
- * - Gets area configuration from kl_shehrullah_seating_areas
- * - Syncs seats in kl_shehrullah_seat_allocation to match seat_start/seat_end range
- * - Adds new seats if range expanded (creates as "available")
- * - Removes available seats if range reduced (preserves blocked/reserved seats)
- * - PRESERVES blocked seats and reserved seats - only affects available seats
+ * - Validates that no reserved seats exist outside the range (errors if found)
+ * - Deletes all seats (blocked + available) outside the range
+ * - For seats inside range: preserves reserved seats, makes all others available
+ * - Blocked seats inside range are converted to available (will be re-applied by sync_blocked_seats_for_area)
  * 
  * @param string $area_code Area code
  * @param int|null $hijri_year Hijri year (if null, uses current year)
@@ -1307,37 +1306,40 @@ function sync_seats_for_area($area_code, $hijri_year = null) {
     try {
         $conn->beginTransaction();
         
-        // Validate range reduction if needed (check if any reserved seats exist beyond new range)
-        $old_max_result = run_statement(
-            'SELECT MAX(seat_number) as max_seat FROM kl_shehrullah_seat_allocation WHERE area_code = ? AND hijri_year = ?',
-            $area_code, $hijri_year
-        );
-        $old_seat_end = $old_max_result->success && $old_max_result->count > 0 && $old_max_result->data[0]->max_seat
-            ? intval($old_max_result->data[0]->max_seat) : null;
-        
-        if ($old_seat_end !== null && $seat_end < $old_seat_end) {
-            $validation = validate_seat_range_reduction($area_code, $hijri_year, $seat_end);
-            if (!$validation['valid']) {
-                $conn->rollBack();
-                return ['success' => false, 'message' => $validation['message']];
-            }
-            // Remove available seats beyond new range (preserves blocked/reserved)
-            run_statement(
-                'DELETE FROM kl_shehrullah_seat_allocation WHERE area_code = ? AND hijri_year = ? AND seat_number > ? AND status = "available"',
-                $area_code, $hijri_year, $seat_end
-            );
+        // Step 1: Validate that no reserved seats exist outside the range
+        $validation = validate_reserved_seats_in_range($area_code, $hijri_year, $seat_start, $seat_end);
+        if (!$validation['valid']) {
+            $conn->rollBack();
+            return ['success' => false, 'message' => $validation['message']];
         }
         
-        // Insert missing seats or preserve existing ones (including blocked/reserved)
-        // ON DUPLICATE KEY UPDATE preserves existing seats via no-op update
-        $insert_stmt = $conn->prepare(
-            'INSERT INTO kl_shehrullah_seat_allocation (area_code, seat_number, hijri_year, status, its_id, hof_id) 
-             VALUES (?, ?, ?, "available", NULL, NULL)
-             ON DUPLICATE KEY UPDATE area_code = area_code'
+        // Step 2: Delete all seats (blocked + available) outside the range
+        $delete_stmt = $conn->prepare(
+            'DELETE FROM kl_shehrullah_seat_allocation 
+             WHERE area_code = ? AND hijri_year = ? 
+             AND (seat_number < ? OR seat_number > ?)'
+        );
+        $delete_stmt->execute([$area_code, $hijri_year, $seat_start, $seat_end]);
+        
+        // Step 3: For seats inside range: preserve reserved, make everything else available
+        // Insert missing seats as available, or update existing non-reserved seats to available
+        // Note: Blocked seats are handled separately by sync_blocked_seats_for_area(), so we always clear blocked fields here
+        // Note: In ON DUPLICATE KEY UPDATE, 'status' refers to the existing (old) value
+        $sync_stmt = $conn->prepare(
+            'INSERT INTO kl_shehrullah_seat_allocation 
+             (area_code, seat_number, hijri_year, status, its_id, hof_id, blocked_reason, blocked_by, blocked_at) 
+             VALUES (?, ?, ?, "available", NULL, NULL, NULL, NULL, NULL)
+             ON DUPLICATE KEY UPDATE 
+             status = CASE WHEN status = "reserved" THEN "reserved" ELSE "available" END,
+             its_id = CASE WHEN status = "reserved" THEN its_id ELSE NULL END,
+             hof_id = CASE WHEN status = "reserved" THEN hof_id ELSE NULL END,
+             blocked_reason = NULL,
+             blocked_by = NULL,
+             blocked_at = NULL'
         );
         
         for ($seat_num = $seat_start; $seat_num <= $seat_end; $seat_num++) {
-            $insert_stmt->execute([$area_code, $seat_num, $hijri_year]);
+            $sync_stmt->execute([$area_code, $seat_num, $hijri_year]);
         }
         
         $conn->commit();
@@ -1347,6 +1349,78 @@ function sync_seats_for_area($area_code, $hijri_year = null) {
             $conn->rollBack();
         }
         return ['success' => false, 'message' => 'Failed to sync seats: ' . $e->getMessage()];
+    }
+}
+
+/**
+ * Sync blocked seats for an area (efficiently handles add/remove in one transaction)
+ * 
+ * @param string $area_code Area code
+ * @param array $blocked_seats Array of ['seat_number' => int, 'reason' => string]
+ * @param string $blocked_by User ID who is blocking
+ * @param int|null $hijri_year Hijri year (if null, uses current year)
+ * @return array ['success' => bool, 'message' => string]
+ */
+function sync_blocked_seats_for_area($area_code, $blocked_seats, $blocked_by, $hijri_year = null) {
+    if (empty($area_code)) {
+        return ['success' => false, 'message' => 'Area code is required'];
+    }
+    
+    $hijri_year = $hijri_year ?? get_current_hijri_year();
+    
+    // Note: sync_seats_for_area() runs first and converts all blocked seats to available,
+    // so we only need to block the desired seats (no need to check current blocked or unblock)
+    
+    if (empty($blocked_seats)) {
+        // No seats to block - nothing to do (all seats are already available from sync_seats_for_area)
+        return ['success' => true, 'message' => 'Blocked seats synced successfully'];
+    }
+    
+    $conn = get_database_connection(1);
+    if (!$conn) {
+        return ['success' => false, 'message' => 'Database connection failed'];
+    }
+    
+    try {
+        $conn->beginTransaction();
+        
+        // Block desired seats (only if not reserved, preserve reserved seats)
+        $check_stmt = $conn->prepare(
+            'SELECT status FROM kl_shehrullah_seat_allocation 
+             WHERE area_code = ? AND seat_number = ? AND hijri_year = ?'
+        );
+        $block_stmt = $conn->prepare(
+            'INSERT INTO kl_shehrullah_seat_allocation 
+             (area_code, seat_number, hijri_year, status, blocked_reason, blocked_by, blocked_at, its_id, hof_id)
+             VALUES (?, ?, ?, "blocked", ?, ?, NOW(), NULL, NULL)
+             ON DUPLICATE KEY UPDATE 
+             status = "blocked", blocked_reason = ?, blocked_by = ?, blocked_at = NOW(), its_id = NULL, hof_id = NULL'
+        );
+        
+        foreach ($blocked_seats as $seat) {
+            $seat_num = intval($seat['seat_number'] ?? $seat);
+            $reason = $seat['reason'] ?? '';
+            
+            // Check if seat exists and is reserved
+            $check_stmt->execute([$area_code, $seat_num, $hijri_year]);
+            $existing = $check_stmt->fetch(PDO::FETCH_OBJ);
+            
+            // Skip if seat is reserved
+            if ($existing && $existing->status === 'reserved') {
+                continue;
+            }
+            
+            // Block the seat (only affects available seats, never reserved)
+            $block_stmt->execute([$area_code, $seat_num, $hijri_year, $reason, $blocked_by, $reason, $blocked_by]);
+        }
+        
+        $conn->commit();
+        return ['success' => true, 'message' => 'Blocked seats synced successfully'];
+    } catch (Exception $e) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+        return ['success' => false, 'message' => 'Failed to sync blocked seats: ' . $e->getMessage()];
     }
 }
 

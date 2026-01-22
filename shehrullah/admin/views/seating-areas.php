@@ -23,38 +23,22 @@ function _handle_post()
         if (empty($seat_end)) $seat_end = null;
         if (empty($max_seats_per_family)) $max_seats_per_family = null;
         
-        // Validate seat range reduction if needed
-        if ($seat_start !== null && $seat_end !== null) {
-            $current_area = get_seating_area($area_code, false);
-            if ($current_area && $current_area->seat_end !== null && $seat_end < intval($current_area->seat_end)) {
-                $validation = validate_seat_range_reduction($area_code, get_current_hijri_year(), $seat_end);
-                if (!$validation['valid']) {
-                    setSessionData(TRANSIT_DATA, $validation['message']);
-                    do_redirect('/seating-areas');
-                    return;
-                }
-            }
-        }
-        
+        // Update area configuration (sync_seats_for_area handles validation internally)
         $success = update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family);
         
         if ($success) {
+            // Sync blocked seats efficiently using unified function
             $blocked_seats = json_decode($blocked_seats_json, true);
             $userData = getSessionData(THE_SESSION_ID);
             $blocked_by = $userData->itsid ?? '';
             
-            $current_blocked = get_blocked_seats($area_code);
-            $current_blocked_numbers = array_map(function($b) { return $b->seat_number; }, $current_blocked);
-            $new_blocked_numbers = array_map(function($b) { return $b['seat_number']; }, $blocked_seats);
-            
-            foreach ($current_blocked_numbers as $seat_num) {
-                if (!in_array($seat_num, $new_blocked_numbers)) {
-                    unblock_seat($area_code, $seat_num);
-                }
-            }
-            
-            foreach ($blocked_seats as $seat) {
-                block_seat($area_code, $seat['seat_number'], $seat['reason'], $blocked_by);
+            // Always sync blocked seats (handles both adding and removing)
+            // Empty array will unblock all seats, non-empty will sync to match
+            $sync_result = sync_blocked_seats_for_area($area_code, $blocked_seats, $blocked_by);
+            if (!$sync_result['success']) {
+                setSessionData(TRANSIT_DATA, $sync_result['message']);
+                do_redirect('/seating-areas');
+                return;
             }
             
             setSessionData(TRANSIT_DATA, 'Changes saved successfully');
