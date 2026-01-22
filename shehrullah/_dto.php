@@ -1270,71 +1270,27 @@ function validate_seat_range_reduction($area_code, $hijri_year, $new_seat_end) {
 }
 
 /**
- * Initialize seats for a seating area
- * Creates all seats in the range seat_start to seat_end with status='available'
- * Only creates seats that don't already exist
+ * Sync seats in kl_shehrullah_seat_allocation to match seat range in kl_shehrullah_seating_areas
+ * This is the SINGLE function that syncs between the two tables
+ * 
+ * - Gets area configuration from kl_shehrullah_seating_areas
+ * - Syncs seats in kl_shehrullah_seat_allocation to match seat_start/seat_end range
+ * - Adds new seats if range expanded (creates as "available")
+ * - Removes available seats if range reduced (preserves blocked/reserved seats)
+ * - PRESERVES blocked seats and reserved seats - only affects available seats
  * 
  * @param string $area_code Area code
- * @param int $hijri_year Hijri year
- * @param int $seat_start Start seat number
- * @param int $seat_end End seat number
- * @return bool Success
- */
-function initialize_seats_for_area($area_code, $hijri_year, $seat_start, $seat_end) {
-    if ($seat_start === null || $seat_end === null || $seat_start > $seat_end) {
-        return false;
-    }
-    
-    $conn = get_database_connection(1);
-    if (!$conn) return false;
-    
-    try {
-        $conn->beginTransaction();
-        
-        // Get existing seats to avoid duplicates
-        $existing_query = 'SELECT seat_number FROM kl_shehrullah_seat_allocation 
-                          WHERE area_code = ? AND hijri_year = ? AND seat_number BETWEEN ? AND ?';
-        $existing_stmt = $conn->prepare($existing_query);
-        $existing_stmt->execute([$area_code, $hijri_year, $seat_start, $seat_end]);
-        $existing_seats = [];
-        while ($row = $existing_stmt->fetch(PDO::FETCH_ASSOC)) {
-            $existing_seats[intval($row['seat_number'])] = true;
-        }
-        
-        // Insert missing seats
-        $insert_query = 'INSERT INTO kl_shehrullah_seat_allocation 
-                        (area_code, seat_number, hijri_year, status, its_id, hof_id) 
-                        VALUES (?, ?, ?, "available", NULL, NULL)';
-        $insert_stmt = $conn->prepare($insert_query);
-        
-        $inserted = 0;
-        for ($seat_num = $seat_start; $seat_num <= $seat_end; $seat_num++) {
-            if (!isset($existing_seats[$seat_num])) {
-                $insert_stmt->execute([$area_code, $seat_num, $hijri_year]);
-                $inserted++;
-            }
-        }
-        
-        $conn->commit();
-        return true;
-    } catch (Exception $e) {
-        if ($conn->inTransaction()) {
-            $conn->rollBack();
-        }
-        return false;
-    }
-}
-
-/**
- * Sync seats for an area to match current seat_start/seat_end range
- * Adds new seats if range expanded, removes available seats if range reduced
- * 
- * @param string $area_code Area code
- * @param int $hijri_year Hijri year
+ * @param int|null $hijri_year Hijri year (if null, uses current year)
  * @return array ['success' => bool, 'message' => string]
  */
-function sync_seats_for_area($area_code, $hijri_year) {
-    // Get current area configuration
+function sync_seats_for_area($area_code, $hijri_year = null) {
+    if (empty($area_code)) {
+        return ['success' => false, 'message' => 'Area code is required'];
+    }
+    
+    $hijri_year = $hijri_year ?? get_current_hijri_year();
+    
+    // Get area configuration from kl_shehrullah_seating_areas
     $area = get_seating_area($area_code, false);
     if (!$area || $area->seat_start === null || $area->seat_end === null) {
         return ['success' => false, 'message' => 'Area not found or seat range not configured'];
@@ -1343,33 +1299,54 @@ function sync_seats_for_area($area_code, $hijri_year) {
     $seat_start = intval($area->seat_start);
     $seat_end = intval($area->seat_end);
     
-    // Get old seat_end from existing seats
-    $old_max_query = 'SELECT MAX(seat_number) as max_seat FROM kl_shehrullah_seat_allocation 
-                      WHERE area_code = ? AND hijri_year = ?';
-    $old_max_result = run_statement($old_max_query, $area_code, $hijri_year);
-    $old_seat_end = $old_max_result->success && $old_max_result->count > 0 && $old_max_result->data[0]->max_seat 
-                    ? intval($old_max_result->data[0]->max_seat) : null;
-    
-    // If range is being reduced, validate first
-    if ($old_seat_end !== null && $seat_end < $old_seat_end) {
-        $validation = validate_seat_range_reduction($area_code, $hijri_year, $seat_end);
-        if (!$validation['valid']) {
-            return ['success' => false, 'message' => $validation['message']];
-        }
-        
-        // Remove available seats beyond new range
-        $delete_query = 'DELETE FROM kl_shehrullah_seat_allocation 
-                        WHERE area_code = ? AND hijri_year = ? AND seat_number > ? AND status = "available"';
-        run_statement($delete_query, $area_code, $hijri_year, $seat_end);
+    $conn = get_database_connection(1);
+    if (!$conn) {
+        return ['success' => false, 'message' => 'Database connection failed'];
     }
     
-    // Initialize/update seats for the current range
-    $init_success = initialize_seats_for_area($area_code, $hijri_year, $seat_start, $seat_end);
-    
-    if ($init_success) {
+    try {
+        $conn->beginTransaction();
+        
+        // Validate range reduction if needed (check if any reserved seats exist beyond new range)
+        $old_max_result = run_statement(
+            'SELECT MAX(seat_number) as max_seat FROM kl_shehrullah_seat_allocation WHERE area_code = ? AND hijri_year = ?',
+            $area_code, $hijri_year
+        );
+        $old_seat_end = $old_max_result->success && $old_max_result->count > 0 && $old_max_result->data[0]->max_seat
+            ? intval($old_max_result->data[0]->max_seat) : null;
+        
+        if ($old_seat_end !== null && $seat_end < $old_seat_end) {
+            $validation = validate_seat_range_reduction($area_code, $hijri_year, $seat_end);
+            if (!$validation['valid']) {
+                $conn->rollBack();
+                return ['success' => false, 'message' => $validation['message']];
+            }
+            // Remove available seats beyond new range (preserves blocked/reserved)
+            run_statement(
+                'DELETE FROM kl_shehrullah_seat_allocation WHERE area_code = ? AND hijri_year = ? AND seat_number > ? AND status = "available"',
+                $area_code, $hijri_year, $seat_end
+            );
+        }
+        
+        // Insert missing seats or preserve existing ones (including blocked/reserved)
+        // ON DUPLICATE KEY UPDATE preserves existing seats via no-op update
+        $insert_stmt = $conn->prepare(
+            'INSERT INTO kl_shehrullah_seat_allocation (area_code, seat_number, hijri_year, status, its_id, hof_id) 
+             VALUES (?, ?, ?, "available", NULL, NULL)
+             ON DUPLICATE KEY UPDATE area_code = area_code'
+        );
+        
+        for ($seat_num = $seat_start; $seat_num <= $seat_end; $seat_num++) {
+            $insert_stmt->execute([$area_code, $seat_num, $hijri_year]);
+        }
+        
+        $conn->commit();
         return ['success' => true, 'message' => 'Seats synced successfully'];
-    } else {
-        return ['success' => false, 'message' => 'Failed to sync seats'];
+    } catch (Exception $e) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+        return ['success' => false, 'message' => 'Failed to sync seats: ' . $e->getMessage()];
     }
 }
 
@@ -1377,27 +1354,23 @@ function sync_seats_for_area($area_code, $hijri_year) {
  * Update seating area configuration
  */
 function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family = null) {
-    $hijri_year = get_current_hijri_year();
-    
-    // If seat_end is being reduced, validate first
-    if ($seat_start !== null && $seat_end !== null) {
-        $current_area = get_seating_area($area_code, false);
-        if ($current_area && $current_area->seat_end !== null && $seat_end < intval($current_area->seat_end)) {
-            $validation = validate_seat_range_reduction($area_code, $hijri_year, $seat_end);
-            if (!$validation['valid']) {
-                return false; // Validation failed - don't update
-            }
-        }
+    if (empty($area_code)) {
+        return false;
     }
     
-    $query = 'UPDATE kl_shehrullah_seating_areas 
-              SET area_name = ?, seat_start = ?, seat_end = ?, is_active = ?, max_seats_per_family = ?
-              WHERE area_code = ? AND hijri_year = ?';
-    $result = run_statement($query, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family, $area_code, $hijri_year);
+    // Update area configuration in kl_shehrullah_seating_areas
+    $result = run_statement(
+        'UPDATE kl_shehrullah_seating_areas 
+         SET area_name = ?, seat_start = ?, seat_end = ?, is_active = ?, max_seats_per_family = ?
+         WHERE area_code = ? AND hijri_year = ?',
+        $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family, 
+        $area_code, get_current_hijri_year()
+    );
     
-    if ($result->success && ($seat_start !== null && $seat_end !== null)) {
-        // Sync seats after area update
-        sync_seats_for_area($area_code, $hijri_year);
+    // Sync seats if update successful and seat range is configured
+    // sync_seats_for_area() handles all validation and syncing
+    if ($result->success && $seat_start !== null && $seat_end !== null) {
+        sync_seats_for_area($area_code);
     }
     
     return $result->success;

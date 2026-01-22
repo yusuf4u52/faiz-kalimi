@@ -34,15 +34,15 @@ function initialize_all_seating_areas() {
         $seat_end = intval($area->seat_end);
         $seat_count = $seat_end - $seat_start + 1;
         
-        echo "Initializing seats for area: {$area_code} (seats {$seat_start}-{$seat_end})... ";
+        echo "Syncing seats for area: {$area_code} (seats {$seat_start}-{$seat_end})... ";
         
-        $success = initialize_seats_for_area($area_code, $hijri_year, $seat_start, $seat_end);
+        $result = sync_seats_for_area($area_code, $hijri_year);
         
-        if ($success) {
+        if ($result['success']) {
             echo "OK ({$seat_count} seats)\n";
             $total_seats += $seat_count;
         } else {
-            echo "FAILED\n";
+            echo "FAILED: {$result['message']}\n";
         }
     }
     
