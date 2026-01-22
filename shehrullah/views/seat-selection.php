@@ -9,11 +9,17 @@ function initial_processing()
     setAppData('SUPPRESS_TRANSIT_MESSAGE', true);
     
     $en_sabeel = getAppData('arg1');
-    $sabeel = do_decrypt($en_sabeel);
+    $hof_id = do_decrypt($en_sabeel);
 
-    $sabeel_data = get_thaalilist_data($sabeel);
+    // Search only by HOF ID (ITS_No)
+    $query = 'SELECT Thali, NAME, CONTACT, sabeelType, ITS_No, 
+    Email_ID,Full_Address,WhatsApp, sector
+    FROM thalilist WHERE ITS_No=?;';
+    $result = run_statement($query, $hof_id);
+    $sabeel_data = ($result->success && $result->count > 0) ? $result->data[0] : null;
+    
     if (is_null($sabeel_data)) {
-        do_redirect_with_message('/input-sabeel', 'No records found. Please enter correct sabeel number or HOF ITS.');
+        do_redirect_with_message('/input-seat-selection', 'No records found for HOF ID ' . $hof_id . '. Enter correct HOF ID.');
     }
 
     $hof_id = $sabeel_data->ITS_No;

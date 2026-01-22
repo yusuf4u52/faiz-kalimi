@@ -19,7 +19,7 @@ function content_display()
     <div class="card">
         <div class="card-header">
             <h4 class="card-title">Seat Selection</h4>
-            <p class="card-description">Enter your Sabeel number or HOF ID to select seats</p>
+            <p class="card-description">Enter your HOF ID to select seats</p>
         </div>
         <div class="card-body">
             <div class="alert alert-info" role="alert">
@@ -28,10 +28,10 @@ function content_display()
             <form method="post" action="" class="forms-sample">
                 <input type="hidden" name="action" value="seat_selection_search"/>
                 <div class="form-group">
-                    <label class="col-sm-3 col-form-label">Sabeel ID / HOF ID (Numbers only)</label>
+                    <label class="col-sm-3 col-form-label">HOF ID (Numbers only)</label>
                     <div class="input-group col-xs-12">
-                        <input type="text" class="form-control" placeholder="Sabeel Number or HOF ID" pattern="^[0-9]{1,8}$"
-                            id="sabeel" name="sabeel" aria-label="Sabeel number" aria-describedby="button-addon2" required>
+                        <input type="text" class="form-control" placeholder="HOF ID" pattern="^[0-9]{1,8}$"
+                            id="sabeel" name="sabeel" aria-label="HOF ID" aria-describedby="button-addon2" required>
                         <button class="btn btn-outline-primary" type="submit" id="button-addon2">Search</button>
                     </div>
                 </div>
@@ -52,15 +52,18 @@ function _handle_form_submission()
 }
 
 function seat_selection_search() {
-    $sabeel = $_POST['sabeel'];
+    $hof_id = $_POST['sabeel'];
     
-    // Try to find by sabeel or HOF ID
-    $thaali_data = get_thaalilist_data($sabeel);
+    // Search only by HOF ID (ITS_No)
+    $query = 'SELECT Thali, NAME, CONTACT, sabeelType, ITS_No, 
+    Email_ID,Full_Address,WhatsApp, sector
+    FROM thalilist WHERE ITS_No=?;';
+    $result = run_statement($query, $hof_id);
+    $thaali_data = ($result->success && $result->count > 0) ? $result->data[0] : null;
+    
     if (is_null($thaali_data)) {
-        do_redirect_with_message('/input-seat-selection', 'No records found for input ' . $sabeel . '. Enter correct sabeel number or HOF ITS.');
+        do_redirect_with_message('/input-seat-selection', 'No records found for HOF ID ' . $hof_id . '. Enter correct HOF ID.');
     }
-    
-    $hof_id = $thaali_data->ITS_No;
     $hijri_year = get_current_hijri_year();
     
     // Check if takhmeen is done
@@ -84,6 +87,6 @@ function seat_selection_search() {
         do_redirect_with_message('/input-seat-selection', 'No eligible family members found for seat selection. Only Misaq Done members who are attending can select seats.');
     }
     
-    $enc_sabeel = do_encrypt($sabeel);
-    do_redirect('/seat-selection/' . $enc_sabeel);
+    $enc_hof_id = do_encrypt($hof_id);
+    do_redirect('/seat-selection/' . $enc_hof_id);
 }
