@@ -88,38 +88,6 @@ function _handle_form_submit()
         } else {
             do_redirect_with_message($redirect_url, 'Seat allocation failed. Area may be full or unavailable.');
         }
-    } else if ($action === 'delete_allocation') {
-        $its_id = $_POST['its_id'] ?? '';
-        $hof_id = getAppData('hof_id');
-        
-        if (empty($its_id)) {
-            do_redirect_with_message($redirect_url, 'Invalid selection.');
-            return;
-        }
-        
-        // Check if allocation exists and is not admin-assigned
-        $attendees = get_all_attendees_for_display($hof_id);
-        $attendee = null;
-        foreach ($attendees as $att) {
-            if ($att->its_id === $its_id) {
-                $attendee = $att;
-                break;
-            }
-        }
-        
-        if (!$attendee || !empty($attendee->allocated_by)) {
-            do_redirect_with_message($redirect_url, 'Cannot delete admin-assigned allocation.');
-            return;
-        }
-        
-        // Delete the allocation
-        $success = delete_seat_allocation($its_id);
-        
-        if ($success) {
-            do_redirect_with_message($redirect_url, 'Seat allocation deleted successfully!');
-        } else {
-            do_redirect_with_message($redirect_url, 'Failed to delete seat allocation.');
-        }
     }
 }
 
@@ -248,14 +216,6 @@ function content_display()
                 if ($selection_complete) {
                     $action_buttons[] = "<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"showPrintModal('{$its_id}');\">Print</button>";
                 }
-                
-                // Show Delete button for user-allocated seats
-                $delete_form = "<form method=\"post\" class=\"d-inline\" onsubmit=\"return confirm('Are you sure you want to delete the seat allocation for " . h($att->full_name) . "?');\">"
-                    . "<input type=\"hidden\" name=\"action\" value=\"delete_allocation\">"
-                    . "<input type=\"hidden\" name=\"its_id\" value=\"{$its_id}\">"
-                    . "<button type=\"submit\" class=\"btn btn-danger btn-sm" . ($selection_complete ? " ms-1" : "") . "\">Delete</button>"
-                    . "</form>";
-                $action_buttons[] = $delete_form;
             } else {
                 // Show Save button when no allocation exists
                 $action_buttons[] = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
