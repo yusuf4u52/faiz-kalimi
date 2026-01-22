@@ -319,7 +319,7 @@ function content_display()
                                                 <strong><?= h($att->its_id) ?></strong>
                                             </div>
                                             <div class="text-center text-muted mt-3 pt-2 border-top">
-                                                <small>Please carry this seat for your convenience</small>
+                                                <small>Please carry this card for your convenience</small>
                                             </div>
                                         </div>
                                     </div>
