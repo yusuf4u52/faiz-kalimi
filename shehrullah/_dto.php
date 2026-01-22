@@ -1093,42 +1093,61 @@ function allocate_seat($its_id, $hof_id, $area_code) {
             return false; // No seat range defined
         }
         
-        // Find first available seat: check from start to end, stop at first available
-        // Use a loop with SQL EXISTS checks (more efficient than loading all seats)
-        $seat_number = null;
+        // Atomically find and allocate next available seat using INSERT-SELECT pattern
+        // This is similar to the UPDATE pattern but works with current schema (INSERT instead of UPDATE)
+        // The subquery finds the first available seat, and INSERT allocates it atomically
         $max_check = min($seat_end, $seat_start + 100); // Limit search to first 100 seats for performance
-        for ($seat_num = $seat_start; $seat_num <= $max_check; $seat_num++) {
-            // Check if seat is available (not allocated and not blocked)
-            $check_query = 'SELECT 1 FROM kl_shehrullah_seat_allocation 
-                           WHERE area_code = ? AND seat_number = ? AND hijri_year = ?
-                           UNION ALL
-                           SELECT 1 FROM kl_shehrullah_blocked_seats 
-                           WHERE area_code = ? AND seat_number = ? AND hijri_year = ?
-                           LIMIT 1';
-            $check_stmt = $conn->prepare($check_query);
-            $check_stmt->execute([$area_code, $seat_num, $hijri_year, $area_code, $seat_num, $hijri_year]);
-            
-            if ($check_stmt->rowCount() == 0) {
-                $seat_number = $seat_num;
-                break; // Found available seat
-            }
-        }
         
-        // If no seat found in first 100, area is likely full
-        if ($seat_number === null) {
+        // Use INSERT-SELECT to atomically find and allocate a seat
+        $insert_query = 'INSERT INTO kl_shehrullah_seat_allocation 
+                        (its_id, hof_id, area_code, seat_number, hijri_year, allocated_at)
+                        SELECT ?, ?, ?, seat_num, ?, NOW()
+                        FROM (
+                            SELECT seat_num FROM (
+                                SELECT ? + (@row_number := @row_number + 1) - 1 AS seat_num
+                                FROM kl_shehrullah_seating_areas
+                                CROSS JOIN (SELECT @row_number := 0) AS r
+                                LIMIT ?
+                            ) AS seat_range
+                            WHERE seat_num <= ?
+                            AND seat_num NOT IN (
+                                SELECT COALESCE(seat_number, -1) FROM kl_shehrullah_seat_allocation 
+                                WHERE area_code = ? AND hijri_year = ?
+                            )
+                            AND seat_num NOT IN (
+                                SELECT COALESCE(seat_number, -1) FROM kl_shehrullah_blocked_seats 
+                                WHERE area_code = ? AND hijri_year = ?
+                            )
+                            ORDER BY seat_num
+                            LIMIT 1
+                            FOR UPDATE
+                        ) AS available_seat
+                        ON DUPLICATE KEY UPDATE 
+                        area_code = VALUES(area_code), 
+                        seat_number = VALUES(seat_number), 
+                        allocated_at = NOW()';
+        
+        $insert_stmt = $conn->prepare($insert_query);
+        $insert_result = $insert_stmt->execute([
+            $its_id, $hof_id, $area_code, $hijri_year,
+            $seat_start, $max_check, $seat_end,
+            $area_code, $hijri_year,
+            $area_code, $hijri_year
+        ]);
+        
+        // Check if a seat was actually allocated
+        if (!$insert_result || $insert_stmt->rowCount() == 0) {
             $conn->rollBack();
             return false; // No seats available
         }
         
-        // Insert allocation
-        $insert_query = 'INSERT INTO kl_shehrullah_seat_allocation 
-                        (its_id, hof_id, area_code, seat_number, hijri_year, allocated_at)
-                        VALUES (?, ?, ?, ?, ?, NOW())
-                        ON DUPLICATE KEY UPDATE 
-                        area_code = ?, seat_number = ?, allocated_at = NOW(), allocated_by = NULL';
-        $insert_stmt = $conn->prepare($insert_query);
-        $insert_stmt->execute([$its_id, $hof_id, $area_code, $seat_number, $hijri_year, 
-                              $area_code, $seat_number]);
+        // Get the allocated seat number
+        $seat_query = 'SELECT seat_number FROM kl_shehrullah_seat_allocation 
+                      WHERE its_id = ? AND area_code = ? AND hijri_year = ?';
+        $seat_stmt = $conn->prepare($seat_query);
+        $seat_stmt->execute([$its_id, $area_code, $hijri_year]);
+        $seat_result = $seat_stmt->fetch(PDO::FETCH_ASSOC);
+        $seat_number = $seat_result ? intval($seat_result['seat_number']) : null;
         
         $conn->commit();
         return $seat_number;
