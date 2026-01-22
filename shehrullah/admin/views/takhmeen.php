@@ -1,10 +1,33 @@
 <?php
-if_not_post_redirect('/home');
+// Allow GET requests with hof_id parameter, otherwise redirect if not POST
+if (!is_post() && !isset($_GET['hof_id'])) {
+    do_redirect('/home');
+}
 
 if (!is_user_a(SUPER_ADMIN, TAKHMEENER)) {
     do_redirect_with_message('/home', 'Redirected as tried to access unauthorized area.');
 }
 
+// Handle GET request - load data for display
+if (is_get() && isset($_GET['hof_id'])) {
+    $hof_id = $_GET['hof_id'];
+    $hijri_year = get_current_hijri_year();
+    $hub_data = get_shehrullah_data_for($hijri_year);
+
+    $hof_data = get_hof_data($hof_id);
+    setAppData('hof_data', $hof_data);
+
+    $takhmeen_data = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
+    if (is_null($takhmeen_data)) {
+        do_redirect_with_message('/home', 'Oops! data not found.');
+    }
+
+    $receipt_data = get_receipt_data_for($hijri_year, $hof_id);
+    setAppData('receipt_data', $receipt_data);
+    setAppData('takhmeen_data', $takhmeen_data);
+    setAppData('hub_data', $hub_data);
+    setAppData('hof_id', $hof_id);
+}
 
 do_for_post('__handle_post');
 
@@ -74,15 +97,18 @@ function __handle_post()
         $receipt_data = get_receipt_data_for($hijri_year, $hof_id);    
     }
 
-    setAppData('receipt_data', $receipt_data);
-    setAppData('takhmeen_data', $takhmeen_data);
-    setAppData('hub_data', $hub_data);
+    // Post-Redirect-Get: Redirect to GET request to prevent resubmission
+    // Redirect to same page with GET parameters
+    $redirect_url = '/takhmeen?hof_id=' . urlencode($hof_id) . '&saved=1';
+    do_redirect($redirect_url);
+    exit();
 }
 
 function content_display()
 {
     $takhmeen_data = getAppData('takhmeen_data');
-    $hof_id = $_POST['hof_id'];
+    // Get hof_id from GET or POST (GET takes precedence after redirect)
+    $hof_id = isset($_GET['hof_id']) ? $_GET['hof_id'] : (isset($_POST['hof_id']) ? $_POST['hof_id'] : getAppData('hof_id'));
     $hof_data = getAppData('hof_data');
     $hub_data = getAppData('hub_data');
     $receipt_data = getAppData('receipt_data');
@@ -195,8 +221,8 @@ function content_display()
                 $('#paynow_link').hide();
             });
             
-            // Scroll to Pay button after form submission
-            <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'register') { ?>
+            // Scroll to Pay button after form submission (check for saved GET parameter)
+            <?php if (isset($_GET['saved']) && $_GET['saved'] == '1') { ?>
                 setTimeout(function() {
                     var payButton = document.getElementById('paynow_link');
                     if (payButton) {
