@@ -194,6 +194,22 @@ function content_display()
                 on_change_dropdown();
                 $('#paynow_link').hide();
             });
+            
+            // Scroll to Pay button after form submission
+            <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'register') { ?>
+                setTimeout(function() {
+                    var payButton = document.getElementById('paynow_link');
+                    if (payButton) {
+                        payButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        // If Pay button doesn't exist, scroll to bottom of form
+                        var form = document.querySelector('form');
+                        if (form) {
+                            form.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                        }
+                    }
+                }, 100);
+            <?php } ?>
         }
     </script>
     <?php
