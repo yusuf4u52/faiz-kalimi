@@ -825,7 +825,7 @@ function get_attendees_for_seat_selection($hof_id) {
               areas.area_name as allocated_area_name, ab.full_name as allocated_by_name
               FROM kl_shehrullah_attendees sa
               JOIN its_data m ON m.its_id = sa.its_id
-              LEFT JOIN kl_shehrullah_seat_allocation alloc ON alloc.its_id = sa.its_id AND alloc.hijri_year = ?
+              LEFT JOIN kl_shehrullah_seat_allocation alloc ON alloc.its_id = sa.its_id AND alloc.hijri_year = ? AND alloc.status = "reserved"
               LEFT JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = ?
               LEFT JOIN its_data ab ON ab.its_id = alloc.allocated_by
               WHERE sa.hof_id = ? AND sa.year = ? 
@@ -845,7 +845,7 @@ function get_all_attendees_for_display($hof_id) {
               areas.area_name as allocated_area_name, ab.full_name as allocated_by_name
               FROM kl_shehrullah_attendees sa
               JOIN its_data m ON m.its_id = sa.its_id
-              LEFT JOIN kl_shehrullah_seat_allocation alloc ON alloc.its_id = sa.its_id AND alloc.hijri_year = ?
+              LEFT JOIN kl_shehrullah_seat_allocation alloc ON alloc.its_id = sa.its_id AND alloc.hijri_year = ? AND alloc.status = "reserved"
               LEFT JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = ?
               LEFT JOIN its_data ab ON ab.its_id = alloc.allocated_by
               WHERE sa.hof_id = ? AND sa.year = ? 
@@ -917,71 +917,11 @@ function get_eligible_areas_for_attendee($its_id, $hof_id) {
 function count_family_seats_in_area($hof_id, $area_code) {
     $hijri_year = get_current_hijri_year();
     $query = 'SELECT COUNT(*) as cnt FROM kl_shehrullah_seat_allocation 
-              WHERE hof_id = ? AND area_code = ? AND hijri_year = ?';
+              WHERE hof_id = ? AND area_code = ? AND hijri_year = ? AND status = "reserved"';
     $result = run_statement($query, $hof_id, $area_code, $hijri_year);
     return $result->success && $result->count > 0 ? intval($result->data[0]->cnt) : 0;
 }
 
-/**
- * Find next available seat in area (finds gaps)
- * Returns seat number or null if no seats available
- * 
- * @param string $area_code Area code
- * @param int $hijri_year Hijri year
- * @param array $exclude_seats Array of seat numbers to exclude from search
- * @return int|null Seat number or null if no seats available
- */
-function find_next_available_seat($area_code, $hijri_year, $exclude_seats = []) {
-    $area_query = 'SELECT seat_start, seat_end FROM kl_shehrullah_seating_areas 
-                   WHERE area_code = ? AND hijri_year = ? AND is_active = "Y"';
-    $area_result = run_statement($area_query, $area_code, $hijri_year);
-    
-    if (!$area_result->success || $area_result->count == 0) {
-        return null;
-    }
-    
-    $area = $area_result->data[0];
-    $seat_start = intval($area->seat_start);
-    $seat_end = intval($area->seat_end);
-    
-    if ($seat_start === null || $seat_end === null) {
-        return null;
-    }
-    
-    // Build exclude list (allocated + blocked + explicitly excluded)
-    $exclude_list = $exclude_seats;
-    
-    // Get allocated seats
-    $alloc_query = 'SELECT seat_number FROM kl_shehrullah_seat_allocation 
-                    WHERE area_code = ? AND hijri_year = ? AND seat_number IS NOT NULL';
-    $alloc_result = run_statement($alloc_query, $area_code, $hijri_year);
-    if ($alloc_result->success && $alloc_result->count > 0) {
-        foreach ($alloc_result->data as $row) {
-            $exclude_list[] = intval($row->seat_number);
-        }
-    }
-    
-    // Get blocked seats
-    $blocked_query = 'SELECT seat_number FROM kl_shehrullah_blocked_seats 
-                      WHERE area_code = ? AND hijri_year = ?';
-    $blocked_result = run_statement($blocked_query, $area_code, $hijri_year);
-    if ($blocked_result->success && $blocked_result->count > 0) {
-        foreach ($blocked_result->data as $row) {
-            $exclude_list[] = intval($row->seat_number);
-        }
-    }
-    
-    $exclude_list = array_unique($exclude_list);
-    
-    // Find first available seat in range
-    for ($seat_num = $seat_start; $seat_num <= $seat_end; $seat_num++) {
-        if (!in_array($seat_num, $exclude_list)) {
-            return $seat_num;
-        }
-    }
-    
-    return null; // No seats available
-}
 
 /**
  * Get seat allocation for a specific member
@@ -991,7 +931,7 @@ function get_seat_allocation_for_member($its_id) {
     $query = 'SELECT alloc.*, areas.area_name 
               FROM kl_shehrullah_seat_allocation alloc
               JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = alloc.hijri_year
-              WHERE alloc.its_id = ? AND alloc.hijri_year = ?';
+              WHERE alloc.its_id = ? AND alloc.hijri_year = ? AND alloc.status = "reserved"';
     $result = run_statement($query, $its_id, $hijri_year);
     return $result->success && $result->count > 0 ? $result->data[0] : null;
 }
@@ -1004,27 +944,27 @@ function get_seat_allocations_for_family($hof_id) {
     $query = 'SELECT alloc.*, areas.area_name, m.full_name, ab.name as allocated_by_name
               FROM kl_shehrullah_seat_allocation alloc
               JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = alloc.hijri_year
-              JOIN its_data m ON m.its_id = alloc.its_id
+              LEFT JOIN its_data m ON m.its_id = alloc.its_id
               LEFT JOIN kl_shehrullah_roles ab ON ab.itsid = alloc.allocated_by
-              WHERE alloc.hof_id = ? AND alloc.hijri_year = ?
+              WHERE alloc.hof_id = ? AND alloc.hijri_year = ? AND alloc.status = "reserved"
               ORDER BY alloc.allocated_at';
     $result = run_statement($query, $hof_id, $hijri_year);
     return $result->success && $result->count > 0 ? $result->data : [];
 }
 
 /**
- * Safe seat allocation with advisory locks and retry logic
- * Prevents race conditions using MySQL advisory locks combined with transaction-level locking
+ * Atomic seat allocation using single UPDATE query
+ * Prevents race conditions using atomic UPDATE operations
  * 
  * @param string $its_id Member ITS ID
  * @param string $hof_id Head of Family ID
  * @param string $area_code Seating area code
  * @return int|false Seat number on success, false on failure
  */
-function allocate_seat_safe($its_id, $hof_id, $area_code) {
+function allocate_seat_atomic($its_id, $hof_id, $area_code) {
     $hijri_year = get_current_hijri_year();
     
-    // Step 1: Pre-validate eligibility (fast path)
+    // Step 1: Pre-validation (fast path)
     $eligible_areas = get_eligible_areas_for_attendee($its_id, $hof_id);
     $is_pre_eligible = false;
     foreach ($eligible_areas as $area) {
@@ -1037,139 +977,77 @@ function allocate_seat_safe($its_id, $hof_id, $area_code) {
         return false;
     }
     
-    // Get area configuration
-    $area_query = 'SELECT max_seats_per_family, seat_start, seat_end FROM kl_shehrullah_seating_areas 
+    // Step 2: Get area configuration
+    $area_query = 'SELECT max_seats_per_family FROM kl_shehrullah_seating_areas 
                    WHERE area_code = ? AND hijri_year = ? AND is_active = "Y"';
     $area_result = run_statement($area_query, $area_code, $hijri_year);
     if (!$area_result->success || $area_result->count == 0) {
         return false;
     }
-    $area_data = $area_result->data[0];
+    $max_seats_per_family = intval($area_result->data[0]->max_seats_per_family);
     
+    // Step 3: Atomic UPDATE with family limit check
     $conn = get_database_connection(1);
     if (!$conn) return false;
     
-    $max_retries = 3;
-    $retry_count = 0;
-    $tried_seats = [];
-    
-    while ($retry_count < $max_retries) {
-        // Step 2: Find next available seat (excluding previously tried)
-        $seat_number = find_next_available_seat($area_code, $hijri_year, $tried_seats);
-        
-        if ($seat_number === null) {
-            return false; // No seats available
-        }
-        
-        // Step 3: Acquire advisory lock on this specific seat
-        $lock_name = "seat_{$area_code}_{$seat_number}_{$hijri_year}";
-        $lock_timeout = 5; // seconds
-        
-        $lock_query = "SELECT GET_LOCK(?, ?)";
-        $lock_stmt = $conn->prepare($lock_query);
-        $lock_result = $lock_stmt->execute([$lock_name, $lock_timeout]);
-        
-        if (!$lock_result) {
-            $tried_seats[] = $seat_number;
-            $retry_count++;
-            continue; // Try next seat
-        }
-        
-        $lock_acquired = $lock_stmt->fetchColumn();
-        if ($lock_acquired != 1) {
-            // Lock acquisition failed (timeout)
-            $tried_seats[] = $seat_number;
-            $retry_count++;
-            continue; // Try next seat
-        }
-        
-        // Lock acquired successfully
-        try {
-            // Step 4: Begin transaction
-            $conn->exec("SET innodb_lock_wait_timeout = 5");
-            $conn->beginTransaction();
-            
-            // Lock family allocations for this area
-            $lock_query = 'SELECT COUNT(*) as cnt FROM kl_shehrullah_seat_allocation 
-                           WHERE hof_id = ? AND area_code = ? AND hijri_year = ? FOR UPDATE';
-            $lock_stmt = $conn->prepare($lock_query);
-            $lock_stmt->execute([$hof_id, $area_code, $hijri_year]);
-            $current_count = intval($lock_stmt->fetch(PDO::FETCH_ASSOC)['cnt']);
-            
-            // Check family limit
-            if ($area_data->max_seats_per_family > 0) {
-                if ($current_count >= intval($area_data->max_seats_per_family)) {
-                    $conn->rollBack();
-                    // Release lock before returning
-                    $conn->query("SELECT RELEASE_LOCK('$lock_name')");
-                    return false; // Family limit reached
-                }
-            }
-            
-            // Re-validate eligibility with locked data
-            if ($current_count > 0) {
-                $eligible_areas = get_eligible_areas_for_attendee($its_id, $hof_id);
-                $is_eligible = false;
-                foreach ($eligible_areas as $area) {
-                    if ($area->area_code === $area_code) {
-                        $is_eligible = true;
-                        break;
-                    }
-                }
-                if (!$is_eligible) {
-                    $conn->rollBack();
-                    $conn->query("SELECT RELEASE_LOCK('$lock_name')");
-                    return false; // Not eligible after lock
-                }
-            }
-            
-            // Insert seat allocation
-            $insert_query = 'INSERT INTO kl_shehrullah_seat_allocation 
-                            (its_id, hof_id, area_code, seat_number, hijri_year, allocated_at)
-                            VALUES (?, ?, ?, ?, ?, NOW())';
-            $insert_stmt = $conn->prepare($insert_query);
-            $insert_result = $insert_stmt->execute([
-                $its_id, $hof_id, $area_code, $seat_number, $hijri_year
+    try {
+        if ($max_seats_per_family > 0) {
+            // Limited seats per family - include family limit check
+            $update_query = 'UPDATE kl_shehrullah_seat_allocation 
+                            SET status = "reserved", its_id = ?, hof_id = ?, allocated_at = NOW() 
+                            WHERE id = (
+                                SELECT id FROM (
+                                    SELECT s.id FROM kl_shehrullah_seat_allocation s
+                                    WHERE s.area_code = ? AND s.hijri_year = ? AND s.status = "available"
+                                    AND (
+                                        SELECT COUNT(*) FROM kl_shehrullah_seat_allocation 
+                                        WHERE hof_id = ? AND area_code = ? AND hijri_year = ? AND status = "reserved"
+                                    ) < ?
+                                    ORDER BY s.seat_number LIMIT 1
+                                ) AS subquery
+                            )';
+            $stmt = $conn->prepare($update_query);
+            $stmt->execute([
+                $its_id, $hof_id,
+                $area_code, $hijri_year,
+                $hof_id, $area_code, $hijri_year, $max_seats_per_family
             ]);
-            
-            if (!$insert_result) {
-                $conn->rollBack();
-                $conn->query("SELECT RELEASE_LOCK('$lock_name')");
-                $tried_seats[] = $seat_number;
-                $retry_count++;
-                continue; // Try next seat
-            }
-            
-            // Check for duplicate key (shouldn't happen with advisory lock, but safety check)
-            if ($insert_stmt->rowCount() == 0) {
-                $conn->rollBack();
-                $conn->query("SELECT RELEASE_LOCK('$lock_name')");
-                $tried_seats[] = $seat_number;
-                $retry_count++;
-                continue; // Try next seat
-            }
-            
-            // Success - commit transaction
-            $conn->commit();
-            // Release advisory lock
-            $conn->query("SELECT RELEASE_LOCK('$lock_name')");
-            return $seat_number;
-            
-        } catch (Exception $e) {
-            if ($conn->inTransaction()) {
-                $conn->rollBack();
-            }
-            // Release lock on error
-            $conn->query("SELECT RELEASE_LOCK('$lock_name')");
-            $tried_seats[] = $seat_number;
-            $retry_count++;
-            continue; // Try next seat
+        } else {
+            // Unlimited seats per family - simpler query
+            $update_query = 'UPDATE kl_shehrullah_seat_allocation 
+                            SET status = "reserved", its_id = ?, hof_id = ?, allocated_at = NOW() 
+                            WHERE id = (
+                                SELECT id FROM (
+                                    SELECT s.id FROM kl_shehrullah_seat_allocation s
+                                    WHERE s.area_code = ? AND s.hijri_year = ? AND s.status = "available"
+                                    ORDER BY s.seat_number LIMIT 1
+                                ) AS subquery
+                            )';
+            $stmt = $conn->prepare($update_query);
+            $stmt->execute([$its_id, $hof_id, $area_code, $hijri_year]);
         }
+        
+        // Step 4: Check if UPDATE succeeded
+        if ($stmt->rowCount() == 0) {
+            return false; // No seats available or family limit reached
+        }
+        
+        // Get seat_number from updated row
+        $seat_query = 'SELECT seat_number FROM kl_shehrullah_seat_allocation 
+                      WHERE its_id = ? AND hof_id = ? AND area_code = ? AND hijri_year = ? AND status = "reserved" 
+                      ORDER BY allocated_at DESC LIMIT 1';
+        $seat_result = run_statement($seat_query, $its_id, $hof_id, $area_code, $hijri_year);
+        
+        if ($seat_result->success && $seat_result->count > 0) {
+            return intval($seat_result->data[0]->seat_number);
+        }
+        
+        return false;
+    } catch (Exception $e) {
+        return false;
     }
-    
-    // Max retries exceeded
-    return false;
 }
+
 
 /**
  * SUPER_ADMIN pre-allocate seat (bypasses all rules)
@@ -1196,23 +1074,47 @@ function admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $al
                 'area_gender' => $area_gender, 'member_gender' => $member_gender];
     }
     
-    // Validation 2: Check if seat is already allocated to someone else
     if ($seat_number) {
+        // Specific seat number provided - update that seat
+        // Validation: Check if seat is already reserved by someone else
         $check_query = 'SELECT its_id FROM kl_shehrullah_seat_allocation 
-                        WHERE area_code = ? AND seat_number = ? AND hijri_year = ? AND its_id != ?';
+                        WHERE area_code = ? AND seat_number = ? AND hijri_year = ? AND status = "reserved" AND its_id != ?';
         $check_result = run_statement($check_query, $area_code, $seat_number, $hijri_year, $its_id);
         if ($check_result->success && $check_result->count > 0) {
             return ['success' => false, 'error' => 'SEAT_TAKEN'];
         }
+        
+        // Ensure seat exists, then update it
+        $check_seat_query = 'SELECT id FROM kl_shehrullah_seat_allocation 
+                            WHERE area_code = ? AND seat_number = ? AND hijri_year = ?';
+        $check_seat_result = run_statement($check_seat_query, $area_code, $seat_number, $hijri_year);
+        
+        if ($check_seat_result->success && $check_seat_result->count > 0) {
+            // Seat exists, update it
+            $query = 'UPDATE kl_shehrullah_seat_allocation 
+                      SET status = "reserved", its_id = ?, hof_id = ?, allocated_by = ?, allocated_at = NOW()
+                      WHERE area_code = ? AND seat_number = ? AND hijri_year = ?';
+            $result = run_statement($query, $its_id, $hof_id, $allocated_by, $area_code, $seat_number, $hijri_year);
+        } else {
+            // Seat doesn't exist, insert it
+            $query = 'INSERT INTO kl_shehrullah_seat_allocation 
+                      (its_id, hof_id, area_code, seat_number, allocated_by, hijri_year, status, allocated_at)
+                      VALUES (?, ?, ?, ?, ?, ?, "reserved", NOW())';
+            $result = run_statement($query, $its_id, $hof_id, $area_code, $seat_number, $allocated_by, $hijri_year);
+        }
+    } else {
+        // No specific seat number - use atomic allocation (same as user flow)
+        $seat_number = allocate_seat_atomic($its_id, $hof_id, $area_code);
+        if ($seat_number === false) {
+            return ['success' => false, 'error' => 'NO_SEATS_AVAILABLE'];
+        }
+        
+        // Update allocated_by field
+        $update_query = 'UPDATE kl_shehrullah_seat_allocation 
+                        SET allocated_by = ?
+                        WHERE its_id = ? AND hof_id = ? AND area_code = ? AND hijri_year = ? AND seat_number = ?';
+        $result = run_statement($update_query, $allocated_by, $its_id, $hof_id, $area_code, $hijri_year, $seat_number);
     }
-    
-    $query = 'INSERT INTO kl_shehrullah_seat_allocation 
-              (its_id, hof_id, area_code, seat_number, allocated_by, hijri_year, allocated_at)
-              VALUES (?, ?, ?, ?, ?, ?, NOW())
-              ON DUPLICATE KEY UPDATE 
-              area_code = ?, seat_number = ?, allocated_by = ?, allocated_at = NOW()';
-    $result = run_statement($query, $its_id, $hof_id, $area_code, $seat_number, $allocated_by, 
-                            $hijri_year, $area_code, $seat_number, $allocated_by);
     
     return $result->success ? ['success' => true] : ['success' => false, 'error' => 'DB_ERROR'];
 }
@@ -1223,7 +1125,7 @@ function admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $al
 function is_admin_allocated($its_id) {
     $hijri_year = get_current_hijri_year();
     $query = 'SELECT allocated_by FROM kl_shehrullah_seat_allocation 
-              WHERE its_id = ? AND hijri_year = ? AND allocated_by IS NOT NULL';
+              WHERE its_id = ? AND hijri_year = ? AND status = "reserved" AND allocated_by IS NOT NULL';
     $result = run_statement($query, $its_id, $hijri_year);
     return $result->success && $result->count > 0;
 }
@@ -1237,10 +1139,10 @@ function get_all_seat_allocations() {
               hof.full_name as hof_name, ab.name as allocated_by_name
               FROM kl_shehrullah_seat_allocation alloc
               JOIN kl_shehrullah_seating_areas areas ON areas.area_code = alloc.area_code AND areas.hijri_year = alloc.hijri_year
-              JOIN its_data m ON m.its_id = alloc.its_id
-              JOIN its_data hof ON hof.its_id = alloc.hof_id
+              LEFT JOIN its_data m ON m.its_id = alloc.its_id
+              LEFT JOIN its_data hof ON hof.its_id = alloc.hof_id
               LEFT JOIN kl_shehrullah_roles ab ON ab.itsid = alloc.allocated_by
-              WHERE alloc.hijri_year = ?
+              WHERE alloc.hijri_year = ? AND alloc.status = "reserved"
               ORDER BY areas.area_name, alloc.seat_number, alloc.allocated_at';
     $result = run_statement($query, $hijri_year);
     return $result->success && $result->count > 0 ? $result->data : [];
@@ -1248,10 +1150,12 @@ function get_all_seat_allocations() {
 
 /**
  * Delete seat allocation (SUPER_ADMIN)
+ * Sets seat back to available status instead of deleting
  */
 function delete_seat_allocation($its_id) {
     $hijri_year = get_current_hijri_year();
-    $query = 'DELETE FROM kl_shehrullah_seat_allocation 
+    $query = 'UPDATE kl_shehrullah_seat_allocation 
+              SET status = "available", its_id = NULL, hof_id = NULL, allocated_by = NULL, allocated_at = NULL
               WHERE its_id = ? AND hijri_year = ?';
     $result = run_statement($query, $its_id, $hijri_year);
     return $result->success;
@@ -1262,11 +1166,26 @@ function delete_seat_allocation($its_id) {
  */
 function block_seat($area_code, $seat_number, $reason, $blocked_by) {
     $hijri_year = get_current_hijri_year();
-    $query = 'INSERT INTO kl_shehrullah_blocked_seats 
-              (area_code, seat_number, reason, blocked_by, hijri_year)
-              VALUES (?, ?, ?, ?, ?)
-              ON DUPLICATE KEY UPDATE reason = ?, blocked_by = ?, blocked_at = NOW()';
-    $result = run_statement($query, $area_code, $seat_number, $reason, $blocked_by, $hijri_year, $reason, $blocked_by);
+    
+    // First ensure the seat exists in the table
+    $check_query = 'SELECT id FROM kl_shehrullah_seat_allocation 
+                    WHERE area_code = ? AND seat_number = ? AND hijri_year = ?';
+    $check_result = run_statement($check_query, $area_code, $seat_number, $hijri_year);
+    
+    if (!$check_result->success || $check_result->count == 0) {
+        // Seat doesn't exist, insert it as blocked
+        $insert_query = 'INSERT INTO kl_shehrullah_seat_allocation 
+                        (area_code, seat_number, hijri_year, status, blocked_reason, blocked_by, blocked_at, its_id, hof_id)
+                        VALUES (?, ?, ?, "blocked", ?, ?, NOW(), NULL, NULL)';
+        $result = run_statement($insert_query, $area_code, $seat_number, $hijri_year, $reason, $blocked_by);
+    } else {
+        // Seat exists, update it to blocked
+        $query = 'UPDATE kl_shehrullah_seat_allocation 
+                  SET status = "blocked", blocked_reason = ?, blocked_by = ?, blocked_at = NOW(), its_id = NULL, hof_id = NULL
+                  WHERE area_code = ? AND seat_number = ? AND hijri_year = ?';
+        $result = run_statement($query, $reason, $blocked_by, $area_code, $seat_number, $hijri_year);
+    }
+    
     return $result->success;
 }
 
@@ -1275,7 +1194,8 @@ function block_seat($area_code, $seat_number, $reason, $blocked_by) {
  */
 function unblock_seat($area_code, $seat_number) {
     $hijri_year = get_current_hijri_year();
-    $query = 'DELETE FROM kl_shehrullah_blocked_seats 
+    $query = 'UPDATE kl_shehrullah_seat_allocation 
+              SET status = "available", blocked_reason = NULL, blocked_by = NULL, blocked_at = NULL
               WHERE area_code = ? AND seat_number = ? AND hijri_year = ?';
     $result = run_statement($query, $area_code, $seat_number, $hijri_year);
     return $result->success;
@@ -1286,8 +1206,10 @@ function unblock_seat($area_code, $seat_number) {
  */
 function get_blocked_seats($area_code) {
     $hijri_year = get_current_hijri_year();
-    $query = 'SELECT * FROM kl_shehrullah_blocked_seats 
-              WHERE area_code = ? AND hijri_year = ? ORDER BY seat_number';
+    $query = 'SELECT area_code, seat_number, hijri_year, blocked_reason, blocked_by, blocked_at 
+              FROM kl_shehrullah_seat_allocation 
+              WHERE area_code = ? AND hijri_year = ? AND status = "blocked" 
+              ORDER BY seat_number';
     $result = run_statement($query, $area_code, $hijri_year);
     return $result->success && $result->count > 0 ? $result->data : [];
 }
@@ -1297,8 +1219,8 @@ function get_blocked_seats($area_code) {
  */
 function is_seat_blocked($area_code, $seat_number) {
     $hijri_year = get_current_hijri_year();
-    $query = 'SELECT id FROM kl_shehrullah_blocked_seats 
-              WHERE area_code = ? AND seat_number = ? AND hijri_year = ?';
+    $query = 'SELECT id FROM kl_shehrullah_seat_allocation 
+              WHERE area_code = ? AND seat_number = ? AND hijri_year = ? AND status = "blocked"';
     $result = run_statement($query, $area_code, $seat_number, $hijri_year);
     return $result->success && $result->count > 0;
 }
@@ -1308,18 +1230,147 @@ function is_seat_blocked($area_code, $seat_number) {
  */
 function get_available_blocked_seats($area_code) {
     $hijri_year = get_current_hijri_year();
-    $query = 'SELECT bs.* 
-              FROM kl_shehrullah_blocked_seats bs
-              LEFT JOIN kl_shehrullah_seat_allocation sa 
-                ON bs.area_code = sa.area_code 
-                AND bs.seat_number = sa.seat_number 
-                AND sa.hijri_year = bs.hijri_year
-              WHERE bs.area_code = ? 
-                AND bs.hijri_year = ? 
-                AND sa.seat_number IS NULL
-              ORDER BY bs.seat_number';
+    $query = 'SELECT area_code, seat_number, hijri_year, blocked_reason, blocked_by, blocked_at 
+              FROM kl_shehrullah_seat_allocation 
+              WHERE area_code = ? AND hijri_year = ? AND status = "blocked" 
+              ORDER BY seat_number';
     $result = run_statement($query, $area_code, $hijri_year);
     return $result->success && $result->count > 0 ? $result->data : [];
+}
+
+/**
+ * Validate if seat range reduction is allowed
+ * Checks if any reserved seats exist beyond the new seat_end
+ * 
+ * @param string $area_code Area code
+ * @param int $hijri_year Hijri year
+ * @param int $new_seat_end New seat_end value
+ * @return array ['valid' => bool, 'conflicting_seats' => array, 'message' => string]
+ */
+function validate_seat_range_reduction($area_code, $hijri_year, $new_seat_end) {
+    $query = 'SELECT seat_number FROM kl_shehrullah_seat_allocation 
+              WHERE area_code = ? AND hijri_year = ? AND status = "reserved" AND seat_number > ? 
+              ORDER BY seat_number';
+    $result = run_statement($query, $area_code, $hijri_year, $new_seat_end);
+    
+    if ($result->success && $result->count > 0) {
+        $conflicting_seats = array_map(function($row) {
+            return intval($row->seat_number);
+        }, $result->data);
+        
+        $seat_list = implode(', ', $conflicting_seats);
+        return [
+            'valid' => false,
+            'conflicting_seats' => $conflicting_seats,
+            'message' => "Cannot reduce seat range. Seats [{$seat_list}] are already allocated beyond the new range."
+        ];
+    }
+    
+    return ['valid' => true, 'conflicting_seats' => [], 'message' => ''];
+}
+
+/**
+ * Initialize seats for a seating area
+ * Creates all seats in the range seat_start to seat_end with status='available'
+ * Only creates seats that don't already exist
+ * 
+ * @param string $area_code Area code
+ * @param int $hijri_year Hijri year
+ * @param int $seat_start Start seat number
+ * @param int $seat_end End seat number
+ * @return bool Success
+ */
+function initialize_seats_for_area($area_code, $hijri_year, $seat_start, $seat_end) {
+    if ($seat_start === null || $seat_end === null || $seat_start > $seat_end) {
+        return false;
+    }
+    
+    $conn = get_database_connection(1);
+    if (!$conn) return false;
+    
+    try {
+        $conn->beginTransaction();
+        
+        // Get existing seats to avoid duplicates
+        $existing_query = 'SELECT seat_number FROM kl_shehrullah_seat_allocation 
+                          WHERE area_code = ? AND hijri_year = ? AND seat_number BETWEEN ? AND ?';
+        $existing_stmt = $conn->prepare($existing_query);
+        $existing_stmt->execute([$area_code, $hijri_year, $seat_start, $seat_end]);
+        $existing_seats = [];
+        while ($row = $existing_stmt->fetch(PDO::FETCH_ASSOC)) {
+            $existing_seats[intval($row['seat_number'])] = true;
+        }
+        
+        // Insert missing seats
+        $insert_query = 'INSERT INTO kl_shehrullah_seat_allocation 
+                        (area_code, seat_number, hijri_year, status, its_id, hof_id) 
+                        VALUES (?, ?, ?, "available", NULL, NULL)';
+        $insert_stmt = $conn->prepare($insert_query);
+        
+        $inserted = 0;
+        for ($seat_num = $seat_start; $seat_num <= $seat_end; $seat_num++) {
+            if (!isset($existing_seats[$seat_num])) {
+                $insert_stmt->execute([$area_code, $seat_num, $hijri_year]);
+                $inserted++;
+            }
+        }
+        
+        $conn->commit();
+        return true;
+    } catch (Exception $e) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+        return false;
+    }
+}
+
+/**
+ * Sync seats for an area to match current seat_start/seat_end range
+ * Adds new seats if range expanded, removes available seats if range reduced
+ * 
+ * @param string $area_code Area code
+ * @param int $hijri_year Hijri year
+ * @return array ['success' => bool, 'message' => string]
+ */
+function sync_seats_for_area($area_code, $hijri_year) {
+    // Get current area configuration
+    $area = get_seating_area($area_code, false);
+    if (!$area || $area->seat_start === null || $area->seat_end === null) {
+        return ['success' => false, 'message' => 'Area not found or seat range not configured'];
+    }
+    
+    $seat_start = intval($area->seat_start);
+    $seat_end = intval($area->seat_end);
+    
+    // Get old seat_end from existing seats
+    $old_max_query = 'SELECT MAX(seat_number) as max_seat FROM kl_shehrullah_seat_allocation 
+                      WHERE area_code = ? AND hijri_year = ?';
+    $old_max_result = run_statement($old_max_query, $area_code, $hijri_year);
+    $old_seat_end = $old_max_result->success && $old_max_result->count > 0 && $old_max_result->data[0]->max_seat 
+                    ? intval($old_max_result->data[0]->max_seat) : null;
+    
+    // If range is being reduced, validate first
+    if ($old_seat_end !== null && $seat_end < $old_seat_end) {
+        $validation = validate_seat_range_reduction($area_code, $hijri_year, $seat_end);
+        if (!$validation['valid']) {
+            return ['success' => false, 'message' => $validation['message']];
+        }
+        
+        // Remove available seats beyond new range
+        $delete_query = 'DELETE FROM kl_shehrullah_seat_allocation 
+                        WHERE area_code = ? AND hijri_year = ? AND seat_number > ? AND status = "available"';
+        run_statement($delete_query, $area_code, $hijri_year, $seat_end);
+    }
+    
+    // Initialize/update seats for the current range
+    $init_success = initialize_seats_for_area($area_code, $hijri_year, $seat_start, $seat_end);
+    
+    if ($init_success) {
+        return ['success' => true, 'message' => 'Seats synced successfully'];
+    } else {
+        return ['success' => false, 'message' => 'Failed to sync seats'];
+    }
 }
 
 /**
@@ -1327,10 +1378,28 @@ function get_available_blocked_seats($area_code) {
  */
 function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family = null) {
     $hijri_year = get_current_hijri_year();
+    
+    // If seat_end is being reduced, validate first
+    if ($seat_start !== null && $seat_end !== null) {
+        $current_area = get_seating_area($area_code, false);
+        if ($current_area && $current_area->seat_end !== null && $seat_end < intval($current_area->seat_end)) {
+            $validation = validate_seat_range_reduction($area_code, $hijri_year, $seat_end);
+            if (!$validation['valid']) {
+                return false; // Validation failed - don't update
+            }
+        }
+    }
+    
     $query = 'UPDATE kl_shehrullah_seating_areas 
               SET area_name = ?, seat_start = ?, seat_end = ?, is_active = ?, max_seats_per_family = ?
               WHERE area_code = ? AND hijri_year = ?';
     $result = run_statement($query, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family, $area_code, $hijri_year);
+    
+    if ($result->success && ($seat_start !== null && $seat_end !== null)) {
+        // Sync seats after area update
+        sync_seats_for_area($area_code, $hijri_year);
+    }
+    
     return $result->success;
 }
 

@@ -23,6 +23,19 @@ function _handle_post()
         if (empty($seat_end)) $seat_end = null;
         if (empty($max_seats_per_family)) $max_seats_per_family = null;
         
+        // Validate seat range reduction if needed
+        if ($seat_start !== null && $seat_end !== null) {
+            $current_area = get_seating_area($area_code, false);
+            if ($current_area && $current_area->seat_end !== null && $seat_end < intval($current_area->seat_end)) {
+                $validation = validate_seat_range_reduction($area_code, get_current_hijri_year(), $seat_end);
+                if (!$validation['valid']) {
+                    setSessionData(TRANSIT_DATA, $validation['message']);
+                    do_redirect('/seating-areas');
+                    return;
+                }
+            }
+        }
+        
         $success = update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family);
         
         if ($success) {
