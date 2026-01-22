@@ -31,12 +31,12 @@ function initial_processing()
 
     // Verify eligibility
     if (!can_select_seats($hof_id)) {
-        do_redirect_with_message('/input-sabeel', 'You are not eligible for seat selection. Please complete payment first.');
+        do_redirect_with_message('/input-seat-selection', 'You are not eligible for seat selection. Please complete payment first.');
     }
 
     $attendees = get_all_attendees_for_display($hof_id);
     if (empty($attendees)) {
-        do_redirect_with_message('/input-sabeel', 'No family members found for seat selection.');
+        do_redirect_with_message('/input-seat-selection', 'No family members found for seat selection.');
     }
     setAppData('attendees', $attendees);
 }
