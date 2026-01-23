@@ -25,29 +25,83 @@ function content_display()
             </form>            
         </div>
     </div> -->
-    <div class="row">
-        <div class="col-md-12 mb-3">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h4 class="card-title">Shehrullah Registration</h4>
-                    <p class="card-description">Enter sabeel number to register</p>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title mb-1">Shehrullah Registration</h4>
+            <p class="card-description mb-0 text-muted">Enter sabeel number to register</p>
+        </div>
+        <div class="card-body">
+            <form method="post" action="" class="forms-sample">
+                <input type="hidden" name="action" value="sabeel_search"/>
+                <div class="form-group mb-3">
+                    <label class="form-label fw-semibold mb-2">Sabeel ID / HOF ID (Numbers only)</label>
+                    <div class="input-group input-group-lg">
+                        <input type="text" class="form-control" placeholder="Enter Sabeel Number or HOF ID" pattern="^[0-9]{1,8}$"
+                            id="sabeel" name="sabeel" aria-label="Sabeel number" aria-describedby="button-addon2" required>
+                        <button class="btn btn-primary" type="submit" id="button-addon2">
+                            <i class="fas fa-search me-1"></i>Search
+                        </button>
+                    </div>
+                    <small class="form-text text-muted mt-1">Enter your 8-digit HOF ID or sabeel number</small>
                 </div>
-                <div class="card-body">
-                    <form method="post" action="" class="forms-sample">
-                        <input type="hidden" name="action" value="sabeel_search"/>
-                        <div class="form-group">
-                            <label class="col-form-label">Sabeel ID / HOF ID (Numbers only)</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Sabeel Number" pattern="^[0-9]{1,8}$"
-                                    id="sabeel" name="sabeel" aria-label="Sabeel number" aria-describedby="button-addon2" required>
-                                <button class="btn btn-outline-primary" type="submit" id="button-addon2">Search</button>
-                            </div>
-                        </div>
-                    </form>            
-                </div>
-            </div>
+            </form>            
         </div>
     </div>
+    
+    <style>
+        /* Mobile-first optimizations */
+        @media (max-width: 767.98px) {
+            .content-wrapper {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+            
+            .card {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                border-radius: 0.5rem;
+            }
+            
+            .card-body {
+                padding: 1.25rem 1rem !important;
+            }
+            
+            .card-header {
+                padding: 1rem !important;
+            }
+            
+            .input-group-lg .form-control {
+                font-size: 1rem;
+                min-height: 48px;
+            }
+            
+            .input-group-lg .btn {
+                min-height: 48px;
+                padding: 0.625rem 1rem;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .card-body {
+                padding: 1.5rem !important;
+            }
+            
+            .input-group-lg .form-control {
+                font-size: 1.125rem;
+            }
+        }
+        
+        .form-label {
+            font-size: 0.9375rem;
+        }
+        
+        .input-group-lg .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+    </style>
 
     <!-- <br/>
     <hr/>
