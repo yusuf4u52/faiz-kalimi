@@ -64,21 +64,10 @@ function seat_selection_search() {
     if (is_null($thaali_data)) {
         do_redirect_with_message('/input-seat-selection', 'No records found for HOF ID ' . $hof_id . '. Enter correct HOF ID.');
     }
-    $hijri_year = get_current_hijri_year();
     
-    // Check if takhmeen is done
-    $takhmeen_data = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
-    if (is_null($takhmeen_data) || $takhmeen_data->takhmeen <= 0) {
-        do_redirect_with_message('/input-seat-selection', 'Takhmeen is not done yet. Please complete registration and takhmeen first.');
-    }
-    
-    // Check payment status
-    $is_paid = $takhmeen_data->paid_amount >= $takhmeen_data->takhmeen;
-    $has_exception = has_seat_exception($hof_id, $hijri_year);
-    
-    if (!$is_paid && !$has_exception) {
-        $pending = $takhmeen_data->takhmeen - $takhmeen_data->paid_amount;
-        do_redirect_with_message('/input-seat-selection', 'Payment pending. Please complete payment of Rs. ' . number_format($pending) . ' to select seats.');
+    // Verify eligibility
+    if (!can_select_seats($hof_id)) {
+        do_redirect_with_message('/input-seat-selection', 'You are not eligible for seat selection. Please complete payment first.');
     }
     
     // Check if there are any attendees eligible for seat selection

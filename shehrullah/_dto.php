@@ -701,25 +701,28 @@ function toggle_seat_selection($open) {
  * Check if a family can select seats (selection open + full payment or exception)
  */
 function can_select_seats($hof_id) {
+    // TEMPORARILY DISABLED: Bypass takhmeen and payment checks
+    return true;
+    
     // First check if seat selection is globally open
-    if (!is_seat_selection_open()) {
-        return false;
-    }
-    
-    $hijri_year = get_current_hijri_year();
-    $takhmeen = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
-    
-    if (is_null($takhmeen) || $takhmeen->takhmeen <= 0) {
-        return false;
-    }
-    
-    // Check if full payment done
-    if ($takhmeen->paid_amount >= $takhmeen->takhmeen) {
-        return true;
-    }
-    
-    // Check if SUPER_ADMIN has granted an exception
-    return has_seat_exception($hof_id, $hijri_year);
+    // if (!is_seat_selection_open()) {
+    //     return false;
+    // }
+    // 
+    // $hijri_year = get_current_hijri_year();
+    // $takhmeen = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
+    // 
+    // if (is_null($takhmeen) || $takhmeen->takhmeen <= 0) {
+    //     return false;
+    // }
+    // 
+    // // Check if full payment done
+    // if ($takhmeen->paid_amount >= $takhmeen->takhmeen) {
+    //     return true;
+    // }
+    // 
+    // // Check if SUPER_ADMIN has granted an exception
+    // return has_seat_exception($hof_id, $hijri_year);
 }
 
 /**
