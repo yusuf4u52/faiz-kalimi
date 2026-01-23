@@ -1055,6 +1055,12 @@ function allocate_seat_atomic($its_id, $hof_id, $area_code) {
 function admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $allocated_by) {
     $hijri_year = get_current_hijri_year();
     
+    // Step 0: Free up any existing seat allocation for this member
+    $existing_seat_query = 'UPDATE kl_shehrullah_seat_allocation 
+                           SET status = "available", its_id = NULL, hof_id = NULL, allocated_by = NULL, allocated_at = NULL
+                           WHERE its_id = ? AND hijri_year = ? AND status = "reserved"';
+    run_statement($existing_seat_query, $its_id, $hijri_year);
+    
     // Validation 1: Check gender compatibility
     $gender_query = 'SELECT m.gender, a.gender as area_gender, a.area_name
                      FROM its_data m, kl_shehrullah_seating_areas a
