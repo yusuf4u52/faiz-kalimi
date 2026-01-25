@@ -165,7 +165,7 @@ function content_display()
         <?php } ?>
     </style>
     <?php if(!$print) { ?>
-        <div class="alert alert-primary" role="alert">
+        <div class="alert alert-info" role="alert">
             <strong><h2>Shukran! Please visit the jamaat office for form collection.</h2></strong>
         </div>
     <?php } ?>

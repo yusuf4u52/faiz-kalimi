@@ -24,20 +24,14 @@ function content_display()
     $hof_id = getAppData('hof_id');
     $uri = getAppData('BASE_URI');
     ?>
-    <div class="row">
-        <div class="col-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Shukran! Your data is submitted. You may get the form print during Takhmeen.</h4>
-                </div>
-                <div class="card-body">
-                    <form class="forms-sample" action="" method="POST">
-                        <div class="form-group row">
-                            <?php __display_family_list([$mumineen_data]) ?>
-                        </div>                        
-                    </form>
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="mb-3">Shukran! Your data is submitted. You may get the form print during Takhmeen.</h2>
+            <form class="forms-sample" action="" method="POST">
+                <div class="row mb-3">
+                    <?php __display_family_list([$mumineen_data]) ?>
+                </div>                        
+            </form>
         </div>
     </div>
     <?php

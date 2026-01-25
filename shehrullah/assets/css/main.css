@@ -1,0 +1,265 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  color: #000;
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 1.7;
+  background-color: #e1e0df;
+}
+
+.header {
+  background-color: #ffffff;
+}
+
+hr {
+  border-color: #cdcbc9;
+  border-width: 2px;
+}
+
+.navbar {
+  background-color: #E99C46;
+  color: #ffffff;
+}
+
+.navbar-brand {
+  font-family: "Playfair Display", serif;
+  color: #ffffff;
+}
+
+.navbar-brand:focus,
+.navbar-brand:hover {
+  color: #ffffff;
+}
+
+.navbar-toggler {
+  background-color: transparent;
+  border-color: #ffffff;
+  color: #ffffff;
+  padding: 0.5rem;
+  border-width: 2px;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar .nav-item {
+  margin-top: 0.5rem;
+}
+
+.navbar-nav .nav-link {
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.5rem;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus,
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link.show {
+  color: #E99C46;
+  background-color: #fff;
+  border-radius: 0.375rem;
+}
+
+.nav-underline .nav-link,
+a {
+  color: #95918D;
+}
+
+.nav-tabs {
+  border-color: #95918D;
+}
+
+.nav-tabs .nav-link {
+  color: #95918D;
+}
+
+.nav-tabs .nav-link:focus,
+.nav-tabs .nav-link:hover {
+  border-color: #95918D;
+}
+
+.nav-tabs .nav-item.show .nav-link,
+.nav-tabs .nav-link.active {
+  background-color: #95918D;
+  border-color: #95918D;
+  color: #ffffff;
+}
+
+.navbar-nav .dropdown-menu {
+  background-color: transparent;
+  border: 0;
+}
+
+.navbar-nav .dropdown-item {
+  color: #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.navbar-nav .dropdown-item:hover,
+.navbar-nav .dropdown-item:focus {
+  color: #E99C46;
+  background-color: #fff;
+}
+
+.btn-light {
+  background-color: #95918D;
+  border-color: #95918D;
+  color: #fff;
+}
+
+.btn-light:hover,
+.btn-light:focus {
+  background-color: #cdcbc9;
+  border-color: #95918D;
+  color: #95918D;
+}
+
+.btn.disabled,
+.btn:disabled,
+fieldset:disabled .btn {
+  background-color: #95918D;
+  border-color: #95918D;
+  color: #ffffff;
+}
+
+.card {
+  border-color: #E99C46;
+}
+
+.accordion-item {
+  border-color: #95918D;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #E99C46;
+  color: #fff;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Playfair Display", serif;
+  font-style: normal;
+  color: #E99C46;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+#calendar .btn-primary {
+  background-color: #cdcbc9;
+  border-color: #95918D;
+  color: #95918D;
+}
+
+#calendar .btn-primary.active {
+  background-color: #95918D;
+  color: #ffffff;
+}
+
+.fc .fc-toolbar-title {
+  text-align: center;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: rgba(195, 109, 41, 0.5);
+}
+
+.fc-theme-bootstrap5 .fc-list,
+.fc-theme-bootstrap5 .fc-scrollgrid,
+.fc-theme-bootstrap5 td,
+.fc-theme-bootstrap5 th {
+  border-color: #95918D;
+}
+
+.fc-theme-bootstrap5 th.fc-col-header-cell {
+  background-color: #cdcbc9;
+  color: #95918D;
+}
+
+.fc-h-event .fc-event-main {
+  color: #E99C46;
+  overflow: hidden;
+}
+
+table.table.dataTable thead > tr > th,
+table.table.table-striped thead > tr > th {
+  background-color: #cdcbc9;
+  color: #95918D;
+}
+
+.form-control,
+.form-select,
+.form-check-input {
+  border-color: #95918D;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: #95918D;
+  box-shadow: none;
+}
+
+.form-check-input:checked {
+  background-color: #95918D;
+  border-color: #95918D;
+}
+
+.page-link {
+  color: #95918D;
+  border-color: #95918D;
+}
+
+.page-link:focus {
+  box-shadow: none;
+}
+
+.active > .page-link,
+.page-link.active,
+.page-link:hover {
+  background-color: #cdcbc9;
+  border-color: #95918D;
+  color: #95918D;
+}
+
+.disabled > .page-link,
+.page-link.disabled {
+  border-color: #95918D;
+  color: #95918D;
+}
+
+.modal-header {
+  background-color: transparent;
+  color: #E99C46;
+}
+
+.badge {
+  background-color: #E99C46;
+  color: #ffffff;
+}
+
+.input-group-text {
+  background-color: #95918D;
+  color: #ffffff;
+  border-color: #95918D;
+}
+
+.list-group-flush > .list-group-item {
+  border-color: #cdcbc9;
+}
+
+.footer a {
+  color: #fff;
+}

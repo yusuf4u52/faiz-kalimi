@@ -7,32 +7,36 @@ function content_display()
     // Check if seat selection is open
     if (!is_seat_selection_open()) {
         ?>
-        <div class="alert alert-warning" role="alert">
-            <strong>Seat Selection is Currently CLOSED</strong><br>
-            Please wait for the announcement when seat selection opens.
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-warning" role="alert">
+                    <strong>Seat Selection is Currently CLOSED</strong><br>
+                    Please wait for the announcement when seat selection opens.
+                </div>
+                <a href="<?= getAppData('BASE_URI') ?>" class="btn btn-light">Go Back to Home</a>
+            </div>
         </div>
-        <a href="<?= getAppData('BASE_URI') ?>" class="btn btn-primary">Go Back to Home</a>
         <?php
         return;
     }
     ?>
     <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Seat Selection</h4>
-            <p class="card-description">Enter your HOF ID to select seats</p>
-        </div>
         <div class="card-body">
+            <h2 class="mb-2">Seat Selection</h2>
+            <p class="mb-3"><small>Enter your HOF ID to select seats</small></p>
             <div class="alert alert-info" role="alert">
                 <strong>Note:</strong> Seat selection is on <strong>first come first serve</strong> basis.
             </div>
             <form method="post" action="" class="forms-sample">
                 <input type="hidden" name="action" value="seat_selection_search"/>
-                <div class="form-group">
-                    <label class="col-sm-3 col-form-label">HOF ID (Numbers only)</label>
-                    <div class="input-group col-xs-12">
-                        <input type="text" class="form-control" placeholder="HOF ID" pattern="^[0-9]{1,8}$"
-                            id="sabeel" name="sabeel" aria-label="HOF ID" aria-describedby="button-addon2" required>
-                        <button class="btn btn-outline-primary" type="submit" id="button-addon2">Search</button>
+                <div class="row mb-3">
+                    <label class="col-4 form-label">HOF ID (Numbers only)</label>
+                    <div class="col-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="HOF ID" pattern="^[0-9]{1,8}$"
+                                id="sabeel" name="sabeel" aria-label="HOF ID" aria-describedby="button-addon2" required>
+                            <button class="btn btn-light" type="submit" id="button-addon2">Search</button>
+                        </div>
                     </div>
                 </div>
             </form>
