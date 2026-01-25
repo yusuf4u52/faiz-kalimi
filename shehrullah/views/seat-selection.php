@@ -178,7 +178,7 @@ function content_display()
         } else {
             // Show badge if this attendee has selected an area, otherwise show dropdown
             if (!empty($allocated_area)) {
-                $area_cell = ui_badge($att->allocated_area_name ?? $allocated_area, 'primary');
+                $area_cell = ui_badge($att->allocated_area_name ?? $allocated_area, 'info');
             } else {
                 $opts = [];
                 if (empty($allocated_area)) $opts[''] = '-- Select --';
@@ -287,7 +287,7 @@ function content_display()
                                 echo '<span class="text-muted">Misaq not Done</span>';
                             } else {
                                 if (!empty($allocated_area)) {
-                                    echo ui_badge($att->allocated_area_name ?? $allocated_area, 'primary');
+                                    echo ui_badge($att->allocated_area_name ?? $allocated_area, 'info');
                                 } else {
                                     $opts = [];
                                     if (empty($allocated_area)) $opts[''] = '-- Select --';
@@ -360,18 +360,16 @@ function content_display()
         ?>
         <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-danger" style="border-width: 3px;">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="errorModalLabel">
-                            <i class="fas fa-exclamation-triangle"></i> Seat Allocation Error
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Seat Allocation Error</h4>
+					    <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
                     </div>
-                    <div class="modal-body text-center" style="font-size: 1.1rem;">
-                        <p class="mb-0"><strong><?= h($transit_message) ?></strong></p>
+                    <div class="modal-body text-center">
+                        <p class="mb-0"><?= h($transit_message) ?></p>
                     </div>
-                    <div class="modal-footer justify-content-center">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">I Understand</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">I Understand</button>
                     </div>
                 </div>
             </div>
@@ -385,13 +383,11 @@ function content_display()
         <div class="modal fade" id="printModal" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title" id="printModalLabel">
-                            Shehrullah <?= $hijri_year ?>
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Shehrullah <?= $hijri_year ?></h4>
+					    <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
                     </div>
-                    <div class="modal-body p-0">
+                    <div class="modal-body">
                         <?php
                         foreach ($attendees as $att) {
                             $misaq_done = ($att->misaq ?? '') === 'Done';
@@ -404,30 +400,32 @@ function content_display()
                                 $seat_its_id = $att->its_id;
                                 ?>
                                 <div class="seat-card" data-its-id="<?= h($seat_its_id) ?>" style="display: none;">
-                                    <div class="card border-success">
-                                        <div class="card-header bg-success text-white text-center py-2" style="display: none;">
-                                        </div>
-                                        <div class="card-body p-3">
-                                            <div class="mb-2">
-                                                <small class="text-muted d-block">Name</small>
-                                                <strong><?= h($att->full_name) ?></strong>
-                                            </div>
-                                            <div class="mb-2">
-                                                <small class="text-muted d-block">Area</small>
-                                                <strong><?= h($area_name) ?></strong>
-                                            </div>
-                                            <div class="mb-2">
-                                                <small class="text-muted d-block">Seat</small>
-                                                <strong><?= h($seat_number) ?></strong>
-                                            </div>
-                                            <div class="mb-2">
-                                                <small class="text-muted d-block">ITS ID</small>
-                                                <strong><?= h($att->its_id) ?></strong>
-                                            </div>
-                                            <div class="text-center text-muted mt-3 pt-2 border-top">
-                                                <small>Please carry this card for your convenience</small>
-                                            </div>
-                                        </div>
+                                    <div class="row mb-3">
+                                        <div class="col-3"><p class="mb-0">ITS ID:</p></div>
+                                        <p class="col-9 mb-0"><strong><?= h($att->its_id) ?></strong>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-3"><p class="mb-0">Name:</p></div>
+                                        <p class="col-9 mb-0"><strong><?= h($att->full_name) ?></strong>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-3"><p class="mb-0">Gender:</p></div>
+                                        <p class="col-9 mb-0"><strong><?= h($att->gender) ?></strong>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-3"><p class="mb-0">Age:</p></div>
+                                        <p class="col-9 mb-0"><strong><?= h($att->age) ?></strong>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-3"><p class="mb-0">Area:</p></div>
+                                        <p class="col-9 mb-0"><strong><?= h($area_name) ?></strong>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-3"><p class="mb-0">Seat:</p></div>
+                                        <p class="col-9 mb-0"><strong><?= h($seat_number) ?></strong>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <p class="col-12 mb-0"><small>Please carry this card for your convenience</small></p>
                                     </div>
                                 </div>
                                 <?php
@@ -436,7 +434,7 @@ function content_display()
                         ?>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

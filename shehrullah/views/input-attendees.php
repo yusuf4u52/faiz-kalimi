@@ -185,7 +185,7 @@ function content_display()
 					<button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
 				</div>
                 <div class="modal-body">
-                    <p><strong>Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID</strong></p>
+                    <p>Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal" onclick="closeChairModal()">OK</button>
