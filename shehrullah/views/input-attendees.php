@@ -156,7 +156,7 @@ function content_display()
                         <div class="row mb-3">
                             <?php __display_family_list([$attendees_data]) ?>
                         </div>
-                        <div class="row mb-3">
+                        <div class="mb-3">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" name="pirsa" value='Y' <?= $pirsa == 'Y' ? 'checked' : '' ?>> 
                                 <label class="form-check-label">Select for Pirsa</label>
@@ -178,14 +178,12 @@ function content_display()
 
     <!-- Modal for Chair Information -->
     <div class="modal fade" id="chairInfoModal" tabindex="-1" role="dialog" aria-labelledby="chairInfoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="chairInfoModalLabel">Chair Arrangement Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close" onclick="closeChairModal()">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+        <div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Chair Arrangement Information</h4>
+					<button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+				</div>
                 <div class="modal-body">
                     <p><strong>Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID</strong></p>
                 </div>

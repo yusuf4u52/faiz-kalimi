@@ -60,7 +60,7 @@ function seat_selection_search() {
     
     // Search only by HOF ID (ITS_No)
     $query = 'SELECT Thali, NAME, CONTACT, sabeelType, ITS_No, 
-    Email_ID,Full_Address,WhatsApp, sector
+    Email_ID,wingflat,society,Full_Address,WhatsApp, sector
     FROM thalilist WHERE ITS_No=?;';
     $result = run_statement($query, $hof_id);
     $thaali_data = ($result->success && $result->count > 0) ? $result->data[0] : null;

@@ -23,6 +23,10 @@ hr {
   border-width: 2px;
 }
 
+code {
+  color: #E99C46;
+}
+
 .navbar {
   background-color: #E99C46;
   color: #ffffff;
@@ -120,7 +124,7 @@ a {
 .btn-light:focus {
   background-color: #cdcbc9;
   border-color: #95918D;
-  color: #95918D;
+  color: #000;
 }
 
 .btn.disabled,
@@ -157,46 +161,10 @@ h4 {
   box-shadow: none;
 }
 
-#calendar .btn-primary {
-  background-color: #cdcbc9;
-  border-color: #95918D;
-  color: #95918D;
-}
-
-#calendar .btn-primary.active {
-  background-color: #95918D;
-  color: #ffffff;
-}
-
-.fc .fc-toolbar-title {
-  text-align: center;
-}
-
-.fc .fc-daygrid-day.fc-day-today {
-  background-color: rgba(195, 109, 41, 0.5);
-}
-
-.fc-theme-bootstrap5 .fc-list,
-.fc-theme-bootstrap5 .fc-scrollgrid,
-.fc-theme-bootstrap5 td,
-.fc-theme-bootstrap5 th {
-  border-color: #95918D;
-}
-
-.fc-theme-bootstrap5 th.fc-col-header-cell {
-  background-color: #cdcbc9;
-  color: #95918D;
-}
-
-.fc-h-event .fc-event-main {
-  color: #E99C46;
-  overflow: hidden;
-}
-
 table.table.dataTable thead > tr > th,
-table.table.table-striped thead > tr > th {
-  background-color: #cdcbc9;
-  color: #95918D;
+table.table thead > tr > th {
+  background-color: #E99C46;
+  color: #FFF;
 }
 
 .form-control,
@@ -262,4 +230,17 @@ table.table.table-striped thead > tr > th {
 
 .footer a {
   color: #fff;
+}
+
+@media print {
+  img {
+    display: block !important;
+    /* Also consider adding explicit width and height if needed */
+    width: auto;
+    height: auto;
+  }
+  body {
+    -webkit-print-color-adjust: exact !important; /* For webkit browsers */
+    color-adjust: exact !important;
+  }
 }

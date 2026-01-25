@@ -13,7 +13,7 @@ function initial_processing()
 
     // Search only by HOF ID (ITS_No)
     $query = 'SELECT Thali, NAME, CONTACT, sabeelType, ITS_No, 
-    Email_ID,Full_Address,WhatsApp, sector
+    Email_ID,wingflat,society,Full_Address,WhatsApp, sector
     FROM thalilist WHERE ITS_No=?;';
     $result = run_statement($query, $hof_id);
     $sabeel_data = ($result->success && $result->count > 0) ? $result->data[0] : null;
@@ -146,16 +146,15 @@ function content_display()
     }
     ?>
     <div class="table-responsive mb-4">
-        <table class="table table-sm table-bordered mb-0 w-100" style="max-width:500px">
+        <table class="table table-sm table-bordered">
             <tr><th class="w-25">HOF</th><td><?= ui_code($hof_id) ?> <?= h($name) ?></td></tr>
             <tr><th class="w-25">Sabeel</th><td><?= h($sabeel) ?></td></tr>
         </table>
     </div>
     
-    <h6 class="mb-3">Select Seating Area for Family Members</h6>
+    <h4 class="mb-3">Select Seating Area for Family Members</h4>
+    
     <?php
-    // Desktop table view (hidden on mobile)
-    echo '<div class="d-none d-md-block">';
     ui_table(['#', 'Name', 'G/Age', 'Chair', 'Select Area', 'Seat #', 'Action']);
     
     $index = 0;
@@ -224,11 +223,11 @@ function content_display()
             if ($has_allocation) {
                 // Show Print button when selection is complete - pass ITS ID to show only this person's seat
                 if ($selection_complete) {
-                    $action_buttons[] = "<button type=\"button\" class=\"btn btn-success btn-sm\" onclick=\"showPrintModal('{$its_id}');\">Print</button>";
+                    $action_buttons[] = "<button type=\"button\" class=\"btn btn-light btn-sm\" onclick=\"showPrintModal('{$its_id}');\">Print</button>";
                 }
             } else {
                 // Show Save button when no allocation exists
-                $action_buttons[] = "<button type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
+                $action_buttons[] = "<button type=\"button\" class=\"btn btn-light btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
             }
             
             $action_cell = implode(' ', $action_buttons);
@@ -246,10 +245,9 @@ function content_display()
     }
     
     ui_table_end();
-    echo '</div>';
     ?>
     
-    <!-- Mobile card view (hidden on desktop) -->
+    <!-- Mobile card view (hidden on desktop)
     <div class="d-md-none">
         <?php
         $index = 0;
@@ -350,9 +348,9 @@ function content_display()
             <?php
         }
         ?>
-    </div>
+    </div>-->
     <div class="mt-4">
-        <?= ui_link('Back', "$url/input-seat-selection", 'secondary') ?>
+        <?= ui_link('Back', "$url/input-seat-selection", 'light') ?>
     </div>
     <?php 
     ui_card_end();

@@ -83,6 +83,8 @@ function content_display()
     
     $sabeel = $thalidata->Thali ?? 'NONE';
     $email = $thalidata->Email_ID ?? '';
+    $wingflat = $thalidata->wingflat ?? '';
+    $society = $thalidata->society ?? '';
     $address = $thalidata->Full_Address ?? '';
 
     $get_only_attends = true;
@@ -166,7 +168,7 @@ function content_display()
     </style>
     <?php if(!$print) { ?>
         <div class="alert alert-info" role="alert">
-            <strong><h2>Shukran! Please visit the jamaat office for form collection.</h2></strong>
+            <h4>Shukran! Please visit the jamaat office for form collection.</h4>
         </div>
     <?php } ?>
     <div class="card" id="printableArea">
@@ -176,17 +178,9 @@ function content_display()
         <div class="card-body">
             <table class='table table-bordered'>
                 <tr>
-                    <td><img src="<?= $uri ?>/_assets/images/anjuman_e_kalimi.png" /></td>
-                    <td>
-                        <table class='table table-bordered'>
-                            <tr>
-                                <th style='font-size: 12px'>SHEHRULLAH <?= $hijri_year ?>H / Kalimi Masjid, KALIMI MOHALLAH
-                                </th>
-                                <td><?=$date?></td>
-                            </tr>                            
-                        </table>
-                    </td>
-
+                    <th><img class="img-fluid" src="<?= $uri ?>/assets/img/logo.png" alt="Shehrullah <?=$hijri_year?>H (Kalimi Mohalla - Poona)" width="153" height="153" /></th>
+                    <th style='width: 50%'>Shehrullah <?= $hijri_year ?>H <br/> Kalimi Masjid, KALIMI MOHALLAH</th>
+                    <th style='width: 25%'><?=$date?></th>
                 </tr>
             </table>
 
@@ -198,12 +192,12 @@ function content_display()
                 <tr>
                     <th style='font-size: 12px; width: 25%'>Sabil</th>
                     <td style='font-size: 12px; width: 25%'><?= $sabeel ?></td>
-                    <th style='font-size: 12px; width: 25%'>WApp</th>
+                    <th style='font-size: 12px; width: 25%'>Whatsapp</th>
                     <td style='font-size: 12px; width: 25%'><?= $takhmeen_data->whatsapp ?></td>
                 </tr>
                 <tr>
-                    <th style='font-size: 12px'>Addr:</th>
-                    <td style='font-size: 12px' colspan="5"><?= $address ?></td>
+                    <th style='font-size: 12px'>Address</th>
+                    <td style='font-size: 12px' colspan="5"><?= $wingflat ?>, <?= $society; ?>, <?= $address; ?></td>
                 </tr>
             </table>
 
@@ -278,35 +272,30 @@ function content_display()
         </div>
     </div>
     <?php if($print) { ?>
-    <div class="card">
-        <div class='card-footer row' id='print_button_section'>
+        <div class='row mt-3 text-center' id='print_button_section'>
             <div class='col-12'>
-                <button class='btn btn-primary' id='Print'>Print</button>
+                <button class='btn btn-light' id='Print'>Print</button>
             </div>            
         </div>
-    </div>
-    <script>
-        function the_script() {
-            $('#Print').click(function () {
-                var printContents = document.getElementById('printableArea').innerHTML;
-                var originalContents = document.body.innerHTML;
+        <script>
+            function the_script() {
+                $('#Print').click(function () {
+                    var printContents = document.getElementById('printableArea').innerHTML;
+                    var originalContents = document.body.innerHTML;
 
-                var htmlToPrint = '' +
-        '<style type="text/css">' +
-        'table th, table tr, table td {' +
-        'border:1px solid #000;' +
-        'padding:0.5em;' +
-        '}' +
-        '</style>';
-    htmlToPrint += printContents;
+                    var htmlToPrint = '<style>table th, table tr, table td { border:1px solid #000; padding:0.5em; }</style>' + printContents;
+                    
+                    document.body.innerHTML = htmlToPrint;
 
-
-                document.body.innerHTML = htmlToPrint;
-                window.print();
-                document.body.innerHTML = originalContents;
-            });
-        }
-    </script>    
+                    // Use a timeout to ensure the browser renders the images first
+                    setTimeout(function() {
+                        window.print();
+                        document.body.innerHTML = originalContents;
+                        // Re-bind your events here if they stop working after printing
+                    }, 250); 
+                });
+            }
+        </script>    
     <?php
     } else {
         ?>
