@@ -171,10 +171,7 @@ function content_display()
             <h4>Shukran! Please visit the jamaat office for form collection.</h4>
         </div>
     <?php } ?>
-    <div class="card" id="printableArea">
-        <?php if(!$print) { ?>
-        <div class="watermark-layer"></div>
-        <?php } ?>
+    <div class="card <?php if(!$print) { ?> watermark-layer <?php } ?>" id="printableArea">
         <div class="card-body">
             <table class='table table-bordered'>
                 <tr>

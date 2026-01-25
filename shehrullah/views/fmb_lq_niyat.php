@@ -51,45 +51,43 @@ function content_display() {
     $hof_data = getAppData('hof_data');
     $hof_id = getAppData('hof_id');
     ?>
-<div class="card">
-        <div class="card-header">
-            <h4>FMB</h4>
-            <h6>Enter the niyat payment on Lailatul Qadr.</h6>
-        </div>
+    <div class="card">
         <div class="card-body">
+            <h2 class="mb-2">FMB</h4>
+            <h6 class="mb-3">Enter the niyat payment on Lailatul Qadr.</h6>
             <form action="fmb_lq_result" method="post">
             <input type="hidden" name="action" value="fmb_lq_niyat_input">
             <input type="hidden" name='hof_id' value="<?= $hof_id ?>">            
-                <div class="form-group row">
-                    <label for="itsid" class="col-sm-4 col-form-label">HOF ID</label>
-                    <div class="col-sm-8">                                                    
-                            <input type='text' class='form-control' name='niyat' value="<?= $hof_id ?>" readonly />
+                <div class="row mb-3">
+                    <label for="itsid" class="col-sm-4 form-label">HOF ID</label>
+                    <div class="col-8">                                                    
+                        <input type='text' class='form-control' name='niyat' value="<?= $hof_id ?>" readonly />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="itsid" class="col-sm-4 col-form-label">Name</label>
-                    <div class="col-sm-8">                                                    
-                            <input type='text' class='form-control' name='niyat' value="<?= $hof_data->name ?>" readonly />
+                <div class="row mb-3">
+                    <label for="itsid" class="col-sm-4 form-label">Name</label>
+                    <div class="col-8">                                                    
+                        <input type='text' class='form-control' name='niyat' value="<?= $hof_data->name ?>" readonly />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="itsid" class="col-sm-4 col-form-label">FMB Takhmeen (1446-1447)</label>
-                    <div class="col-sm-8">                                                    
-                            <input type='text' class='form-control' name='niyat' value="<?= $hof_data->takhmeen ?>" readonly />
+                <div class="row mb-3">
+                    <label for="itsid" class="col-4 form-label">FMB Takhmeen (1446-1447)</label>
+                    <div class="col-8">                                                    
+                        <input type='text' class='form-control' name='niyat' value="<?= $hof_data->takhmeen ?>" readonly />
                     </div>
                 </div>                  
-                <div class="form-group row">
-                    <label for="roles" class="col-sm-12 col-form-label">Lailat-ul-Qadr ma FMB ma je raqam si shamil thaso, ye enter kariye.</label>
+                <div class="row mb-3">
+                    <label for="roles" class="col-sm-12 form-label">Lailat-ul-Qadr ma FMB ma je raqam si shamil thaso, ye enter kariye.</label>
                 </div>
-                <div class="form-group row">
-                    <label for="roles" class="col-sm-4 col-form-label">Niyat for LQ</label>
-                    <div class="col-sm-8">
+                <div class="row mb-3">
+                    <label for="roles" class="col-sm-4 form-label">Niyat for LQ</label>
+                    <div class="col-8">
                         <input type='text' class='form-control' name='niyat' value="<?=$hof_data->lq_niyat??''?>" required />
                     </div>
                 </div>                
-                <div class="form-group row">
-                    <div class="col-sm-10">
-                        <button type="submit" class="btn btn-gradient-success btn-rounded btn-fw">Submit</button>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-light">Submit</button>
                     </div>
                 </div>
             </form>
