@@ -6,19 +6,19 @@ function content_display()
 {
     ?>
     <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Vajebaat Slot Registration</h4>
-            <p class="card-description">Please enter HOF ID to proceed for vajebaat slots booking</p>
-        </div>
         <div class="card-body">
+            <h2 class="mb-2">Vajebaat Slot Registration</h2>
+            <p class="mb-3"><small>Please enter HOF ID to proceed for vajebaat slots booking</small></p>
             <form method="post" action="" class="forms-sample">
                 <input type="hidden" name="action" value="nonsab_register"/>
-                <div class="form-group">
-                    <label class="col-sm-3 col-form-label">HOF ID (Numbers only)</label>
-                    <div class="input-group col-xs-12">
-                        <input type="text" class="form-control" placeholder="HOF ID" pattern="^[0-9]{8}$"
-                            id="hof_id" name="hof_id" aria-label="Sabeel number" aria-describedby="button-addon2" required>
-                        <button class="btn btn-outline-primary" type="submit" id="button-addon2">Search</button>
+                <div class="row mb-3">
+                    <label class="col-4 form-label">HOF ID (Numbers only)</label>
+                    <div class="col-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="HOF ID" pattern="^[0-9]{8}$"
+                                id="hof_id" name="hof_id" aria-label="Sabeel number" aria-describedby="button-addon2" required>
+                            <button class="btn btn-light" type="submit" id="button-addon2">Search</button>
+                        </div>
                     </div>
                 </div>
             </form>            

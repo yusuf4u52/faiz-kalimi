@@ -50,12 +50,9 @@ function content_display()
     $niyat = $_POST['niyat'] ?? 0;
     ?>
     <div class="card">
-        <div class="card-header">
-            <h4>FMB</h4>
-            <h6>Online transfer details.</h6>
-        </div>
         <div class="card-body">
-
+            <h2 class="mb-2">FMB</h4>
+            <h6 class="mb-3">Online transfer details.</h6>
             <div class="alert alert-success" role="alert">
                 Shukran! Your niyat of Rs. <?= $niyat ?>/- is recorded. Please submit in cash, cheque OR online at below
                 details.
@@ -75,21 +72,16 @@ function content_display()
             </div>
             <img src="<?= getAppData('BASE_URI') ?>/_assets/images/only_qr.png" class="img-fluid" alt="Responsive image">
         </div>
-        <div class="card-footer">
-            <div class="row">
-                <div class="col-6">
-                    <a class="btn btn-success"
-                            href="upi://pay?pa=dawoodibohrajamattru.62428145@hdfcbank&pn=KALIMI MOHALLAH FMB&cu=INR&amount=<?= $niyat ?>&am=<?= $niyat ?>&note=<?=$hof_id?>&tr=<?=$hof_id?>">Pay
-                            Now (Mobile)</a>
-                </div>
-                <div class="col-6">
-                    <a href="<?= getAppData('BASE_URI') ?>/input-sabeel" class="btn btn-warning">Back to search</a>
-                </div>
+        <div class="row">
+            <div class="col-6">
+                <a class="btn btn-light"
+                        href="upi://pay?pa=dawoodibohrajamattru.62428145@hdfcbank&pn=KALIMI MOHALLAH FMB&cu=INR&amount=<?= $niyat ?>&am=<?= $niyat ?>&note=<?=$hof_id?>&tr=<?=$hof_id?>">Pay
+                        Now (Mobile)</a>
             </div>
-
+            <div class="col-6">
+                <a href="<?= getAppData('BASE_URI') ?>/input-sabeel" class="btn btn-light">Back to search</a>
+            </div>
         </div>
     </div>
-
-
     <?php
 }
