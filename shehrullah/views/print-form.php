@@ -115,55 +115,55 @@ function content_display()
             font-size: 11px;
         }
         <?php if(!$print) { ?>
-        #printableArea {
-            position: relative;
-        }
-        #printableArea::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: repeating-linear-gradient(
-                -45deg,
-                transparent,
-                transparent 10px,
-                rgba(220, 53, 69, 0.02) 10px,
-                rgba(220, 53, 69, 0.02) 20px
-            );
-            pointer-events: none;
-            z-index: 1;
-        }
-        .watermark-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 2;
-            overflow: hidden;
-        }
-        .watermark-layer::after {
-            content: 'ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 36px;
-            font-weight: 900;
-            color: rgba(220, 53, 69, 0.12);
-            white-space: nowrap;
-            width: 300%;
-            text-align: center;
-            line-height: 150px;
-            letter-spacing: 3px;
-        }
-        #printableArea .card-body {
-            position: relative;
-            z-index: 3;
-        }
+			#printableArea {
+				position: relative;
+			}
+
+			/* Subtle background pattern */
+			#printableArea::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background-image: repeating-linear-gradient(
+					-45deg,
+					transparent,
+					transparent 10px,
+					rgba(220, 53, 69, 0.02) 10px,
+					rgba(220, 53, 69, 0.02) 20px
+				);
+				z-index: 1;
+				pointer-events: none;
+			}
+
+			/* Watermark text overlay */
+			.watermark-layer {
+				position: absolute;
+				inset: 0;
+				z-index: 3;
+				pointer-events: none;
+				overflow: hidden;
+			}
+
+			.watermark-layer::after {
+				content: 'ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%) rotate(-45deg);
+				font-size: 36px;
+				font-weight: 900;
+				color: rgba(220, 53, 69, 0.15);
+				white-space: nowrap;
+				width: 300%;
+				text-align: center;
+				letter-spacing: 3px;
+			}
+
+			/* Table/content layer */
+			#printableArea .card-body {
+				position: relative;
+				z-index: 2;
+			}
         <?php } ?>
     </style>
     <?php if(!$print) { ?>
@@ -171,7 +171,10 @@ function content_display()
             <h4>Shukran! Please visit the jamaat office for form collection.</h4>
         </div>
     <?php } ?>
-    <div class="card <?php if(!$print) { ?> watermark-layer <?php } ?>" id="printableArea">
+    <div class="card" id="printableArea">
+		<?php if(!$print) { ?>
+			<div class="watermark-layer"></div>
+		<?php } ?>
         <div class="card-body">
             <table class='table table-bordered'>
                 <tr>
@@ -289,7 +292,7 @@ function content_display()
                         window.print();
                         document.body.innerHTML = originalContents;
                         // Re-bind your events here if they stop working after printing
-                    }, 250); 
+                    }, 100); 
                 });
             }
         </script>    

@@ -233,7 +233,7 @@ table.table thead > tr > th {
 }
 
 @media print {
-  img {
+    img {
     display: block !important;
     /* Also consider adding explicit width and height if needed */
     width: auto;

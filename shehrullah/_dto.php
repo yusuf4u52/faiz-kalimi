@@ -215,7 +215,7 @@ function get_thaalilist_data($sabeel_hof)
 {
 
     $query = 'SELECT Thali, NAME, CONTACT, sabeelType, ITS_No, 
-    Email_ID,Full_Address,WhatsApp, sector
+    Email_ID,wingflat,society,Full_Address,WhatsApp, sector
     FROM thalilist WHERE ITS_No=? or Thali=?;';
     $result = run_statement($query, $sabeel_hof, $sabeel_hof);
     return $result->success && $result->count > 0 ? $result->data[0] : null;
