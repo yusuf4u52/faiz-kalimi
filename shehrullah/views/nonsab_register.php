@@ -40,40 +40,38 @@ function content_display()
     $enc_hof_id = getAppData('arg1');
 
     ?>
-    <div class="row">
-        <div class="col-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Create Family</h4>
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-8">
+                    <h2 class="mb-1">Create Family</h4>
+                    <p><small>Add all your family member using 'Add Member' then submit this page</small></p>
                 </div>
-                <div class="card-body">
-                    <p class="card-description"> Add all your family member using 'Add Member' then submit this page</p>
-                    <a href="<?= $uri ?>/nonsab_register_2/<?= $enc_hof_id ?>" class="btn btn-gradient-danger me-2">Add Member</a>
-                    <p class="card-description"> Select the member and submit to proceed</p>
-                    <form class="forms-sample" action="" method="POST">
-                        <div class="form-group row">
-                            <?php __display_family_list([$mumineen_data]) ?>
-                        </div>
-                        <?php if ($hof_id > 0) { ?>
-                            <div class="form-check form-check-flat form-check-primary">
-                                <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input" name="pirsa" value='Y' <?= ($pirsa == 'Y' ? 'checked' : '') ?>> Select if pirsa
-                                    required</label>
-                            </div>
-                            <div class="form-group row">
-                                <label for="whatsapp" class="col-sm-3 col-form-label">Whatsapp Number</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" pattern="^[0-9]{10,13}$" id="whatsapp"
-                                        name="whatsapp" placeholder="WhatsApp Number" required value="<?=$whatsapp?>">
-                                </div>
-                            </div>
-                            <input type="hidden" name="action" value="register_for_shehrullah">
-                            <input type="hidden" name="hof_id" value="<?= $hof_id ?>">
-                            <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
-                        <?php } ?>
-                    </form>
+                <div class="col-4 text-end">
+                    <a href="<?= $uri ?>/nonsab_register_2/<?= $enc_hof_id ?>" class="btn btn-light">Add Member</a>
                 </div>
             </div>
+            <h5 class="mb-3"> Select the member and submit to proceed</h5>
+            <form class="forms-sample" action="" method="POST">
+                <div class="row mb-3">
+                    <?php __display_family_list([$mumineen_data]) ?>
+                </div>
+                <?php if ($hof_id > 0) { ?>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="pirsa" value='Y' <?= ($pirsa == 'Y' ? 'checked' : '') ?>> 
+                        <label class="form-check-label"></label>Select if pirsa required</label>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="whatsapp" class="col-3 form-label">Whatsapp Number</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" pattern="^[0-9]{10,13}$" id="whatsapp" name="whatsapp" placeholder="WhatsApp Number" required value="<?=$whatsapp?>">
+                        </div>
+                    </div>
+                    <input type="hidden" name="action" value="register_for_shehrullah">
+                    <input type="hidden" name="hof_id" value="<?= $hof_id ?>">
+                    <button type="submit" class="btn btn-light">Submit</button>
+                <?php } ?>
+            </form>
         </div>
     </div>
     <?php
@@ -96,9 +94,8 @@ function __show_attends_checkbox($row, $index)
     $itsid = $row->its_id;
     $attendance_type = $row->attendance_type ?? '';
 
-    return "<div class='form-check form-check-flat form-check-primary'>                            
-    <label class='form-check-label'><input class='form-check-input' type='checkbox' 
-    name='attendance_type_for_$itsid' value='Y' " . ($attendance_type == 'Y' ? 'checked' : '') . "></label>
+    return "<div class='form-check'>                            
+        <input class='form-check-input' type='checkbox' name='attendance_type_for_$itsid' value='Y' " . ($attendance_type == 'Y' ? 'checked' : '') . ">
     </div>";
 }
 
@@ -107,9 +104,8 @@ function __show_chair_checkbox($row, $index)
     $itsid = $row->its_id;
     $chair_preference = $row->chair_preference ?? '';
 
-    return "<div class='form-check form-check-flat form-check-primary'>                            
-    <label class='form-check-label'><input class='form-check-input' type='checkbox' 
-    name='chair_preference_for_$itsid' value='Y' " . ($chair_preference == 'Y' ? 'checked' : '') . "></label>
+    return "<div class='form-check'>                            
+        <input class='form-check-input' type='checkbox' name='chair_preference_for_$itsid' value='Y' " . ($chair_preference == 'Y' ? 'checked' : '') . ">
     </div>";
 }
 

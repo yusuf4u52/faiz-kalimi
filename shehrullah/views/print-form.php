@@ -83,6 +83,8 @@ function content_display()
     
     $sabeel = $thalidata->Thali ?? 'NONE';
     $email = $thalidata->Email_ID ?? '';
+    $wingflat = $thalidata->wingflat ?? '';
+    $society = $thalidata->society ?? '';
     $address = $thalidata->Full_Address ?? '';
 
     $get_only_attends = true;
@@ -113,80 +115,72 @@ function content_display()
             font-size: 11px;
         }
         <?php if(!$print) { ?>
-        #printableArea {
-            position: relative;
-        }
-        #printableArea::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: repeating-linear-gradient(
-                -45deg,
-                transparent,
-                transparent 10px,
-                rgba(220, 53, 69, 0.02) 10px,
-                rgba(220, 53, 69, 0.02) 20px
-            );
-            pointer-events: none;
-            z-index: 1;
-        }
-        .watermark-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 2;
-            overflow: hidden;
-        }
-        .watermark-layer::after {
-            content: 'ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 36px;
-            font-weight: 900;
-            color: rgba(220, 53, 69, 0.12);
-            white-space: nowrap;
-            width: 300%;
-            text-align: center;
-            line-height: 150px;
-            letter-spacing: 3px;
-        }
-        #printableArea .card-body {
-            position: relative;
-            z-index: 3;
-        }
+			#printableArea {
+				position: relative;
+			}
+
+			/* Subtle background pattern */
+			#printableArea::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background-image: repeating-linear-gradient(
+					-45deg,
+					transparent,
+					transparent 10px,
+					rgba(220, 53, 69, 0.02) 10px,
+					rgba(220, 53, 69, 0.02) 20px
+				);
+				z-index: 1;
+				pointer-events: none;
+			}
+
+			/* Watermark text overlay */
+			.watermark-layer {
+				position: absolute;
+				inset: 0;
+				z-index: 3;
+				pointer-events: none;
+				overflow: hidden;
+			}
+
+			.watermark-layer::after {
+				content: 'ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •   ADMIN PRINT ONLY   •   NOT FOR SELF PRINTING   •';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%) rotate(-45deg);
+				font-size: 36px;
+				font-weight: 900;
+				color: rgba(220, 53, 69, 0.15);
+				white-space: nowrap;
+				width: 300%;
+				text-align: center;
+				letter-spacing: 3px;
+			}
+
+			/* Table/content layer */
+			#printableArea .card-body {
+				position: relative;
+				z-index: 2;
+			}
         <?php } ?>
     </style>
     <?php if(!$print) { ?>
-        <div class="alert alert-primary" role="alert">
-            <strong><h2>Shukran! Please visit the jamaat office for form collection.</h2></strong>
+        <div class="alert alert-info" role="alert">
+            <h4>Shukran! Please visit the jamaat office for form collection.</h4>
         </div>
     <?php } ?>
     <div class="card" id="printableArea">
-        <?php if(!$print) { ?>
-        <div class="watermark-layer"></div>
-        <?php } ?>
+		<?php if(!$print) { ?>
+			<div class="watermark-layer"></div>
+		<?php } ?>
         <div class="card-body">
             <table class='table table-bordered'>
                 <tr>
-                    <td><img src="<?= $uri ?>/_assets/images/anjuman_e_kalimi.png" /></td>
-                    <td>
-                        <table class='table table-bordered'>
-                            <tr>
-                                <th style='font-size: 12px'>SHEHRULLAH <?= $hijri_year ?>H / Kalimi Masjid, KALIMI MOHALLAH
-                                </th>
-                                <td><?=$date?></td>
-                            </tr>                            
-                        </table>
-                    </td>
-
+                    <th><img class="img-fluid" src="<?= $uri ?>/assets/img/logo.png" alt="Shehrullah <?=$hijri_year?>H (Kalimi Mohalla - Poona)" width="153" height="153" /></th>
+                    <th style='width: 50%'>Shehrullah <?= $hijri_year ?>H <br/> Kalimi Masjid, KALIMI MOHALLAH</th>
+                    <th style='width: 25%'><?=$date?></th>
                 </tr>
             </table>
 
@@ -198,12 +192,12 @@ function content_display()
                 <tr>
                     <th style='font-size: 12px; width: 25%'>Sabil</th>
                     <td style='font-size: 12px; width: 25%'><?= $sabeel ?></td>
-                    <th style='font-size: 12px; width: 25%'>WApp</th>
+                    <th style='font-size: 12px; width: 25%'>Whatsapp</th>
                     <td style='font-size: 12px; width: 25%'><?= $takhmeen_data->whatsapp ?></td>
                 </tr>
                 <tr>
-                    <th style='font-size: 12px'>Addr:</th>
-                    <td style='font-size: 12px' colspan="5"><?= $address ?></td>
+                    <th style='font-size: 12px'>Address</th>
+                    <td style='font-size: 12px' colspan="5"><?= $wingflat ?>, <?= $society; ?>, <?= $address; ?></td>
                 </tr>
             </table>
 
@@ -278,8 +272,7 @@ function content_display()
         </div>
     </div>
     <?php if($print) { ?>
-    <div class="card">
-        <div class='card-footer row' id='print_button_section'>
+        <div class='row mt-3 text-center' id='print_button_section'>
             <div class='col-12'>
                 <button class='btn btn-primary' id='Print'>Print</button>
             </div>            

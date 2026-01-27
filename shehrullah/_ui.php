@@ -20,7 +20,7 @@ function ui_card($title, $subtitle = '', $back_url = '', $actions = []) {
         $actions_html = $back . ($actions_html ? ' ' . $actions_html : '');
     }
     
-    echo "<div class=\"card mb-3\"><div class=\"card-header\"><div class=\"d-flex justify-content-between align-items-center\"><div><h5 class=\"mb-0\">$title</h5>$sub</div><div class=\"d-flex gap-2 align-items-center\">$actions_html</div></div></div><div class=\"card-body\">";
+    echo "<div class=\"card mb-3\"><div class=\"card-body\"><h2 class=\"mb-2\">$title</h2><p class=\"mb-3\">$sub</p><div class=\"d-flex gap-2 align-items-center\">$actions_html</div>";
 }
 
 function ui_card_end() {
@@ -73,7 +73,7 @@ function ui_btn($text, $type = 'primary') {
     return "<button type=\"submit\" class=\"btn btn-sm btn-$type\">$text</button>";
 }
 
-function ui_link($text, $url, $type = 'primary') {
+function ui_link($text, $url, $type = 'light') {
     return "<a href=\"$url\" class=\"btn btn-sm btn-$type\">$text</a>";
 }
 

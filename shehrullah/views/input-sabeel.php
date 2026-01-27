@@ -7,55 +7,48 @@ function content_display()
     $url = getAppData('BASE_URI');
     ?>
     <!-- <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">FMB - Lailatul Qadr Niyat</h4>
-            <p class="card-description">Enter HOF ID and Search</p>
-        </div>
         <div class="card-body">
+            <h2 class="mb-2">FMB - Lailatul Qadr Niyat</h2>
+            <p class="mb-3"><small>Enter HOF ID and Search</small></p>
             <form method="post" action="fmb_lq_niyat" class="forms-sample">
                 <input type="hidden" name="action" value="hof_for_fmb"/>
-                <div class="form-group">
-                    <label class="col-sm-3 col-form-label">HOF ID</label>
-                    <div class="input-group col-xs-12">
-                        <input type="text" class="form-control" placeholder="HOF ID" pattern="^[0-9]{8}$"
-                            id="hof_id" name="hof_id" aria-label="HOF ID" aria-describedby="button-addon2" required>
-                        <button class="btn btn-outline-primary" type="submit" id="button-addon2">Search</button>
+                <div class="row mb-3">
+                    <label class="col-4 form-label">HOF ID</label>
+                    <div class="col-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="HOF ID" pattern="^[0-9]{8}$"
+                                id="hof_id" name="hof_id" aria-label="HOF ID" aria-describedby="button-addon2" required>
+                            <button class="btn btn-light" type="submit" id="button-addon2">Search</button>
+                        </div>
                     </div>
                 </div>
             </form>            
         </div>
     </div> -->
-    <div class="row">
-        <div class="col-md-12 mb-3">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h4 class="card-title">Shehrullah Registration</h4>
-                    <p class="card-description">Enter sabeel number to register</p>
-                </div>
-                <div class="card-body">
-                    <form method="post" action="" class="forms-sample">
-                        <input type="hidden" name="action" value="sabeel_search"/>
-                        <div class="form-group">
-                            <label class="col-form-label">Sabeel ID / HOF ID (Numbers only)</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Sabeel Number" pattern="^[0-9]{1,8}$"
-                                    id="sabeel" name="sabeel" aria-label="Sabeel number" aria-describedby="button-addon2" required>
-                                <button class="btn btn-outline-primary" type="submit" id="button-addon2">Search</button>
-                            </div>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="mb-2">Shehrullah Registration</h2>
+            <p class="mb-3"><small>Enter sabeel number to register</small></p>
+            <form method="post" action="" class="forms-sample">
+                <input type="hidden" name="action" value="sabeel_search"/>
+                <div class="row mb-3">
+                    <label class="form-label col-4">Sabeel ID / HOF ID (Numbers only)</label>
+                    <div class="col-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Sabeel Number" pattern="^[0-9]{1,8}$"
+                                id="sabeel" name="sabeel" aria-label="Sabeel number" aria-describedby="button-addon2" required>
+                            <button class="btn btn-light" type="submit" id="button-addon2">Search</button>
                         </div>
-                    </form>            
+                    </div>
                 </div>
-            </div>
+            </form>            
         </div>
     </div>
 
-    <!-- <br/>
-    <hr/>
-    <br/>
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Vajebaat Slot Registration</h4>
-            <a href="<?=$url?>/vajebaat" class="btn btn-outline-primary" type="submit" id="button-addon2">Vajebaat Area</a>
+    <!-- <div class="card">
+        <div class="card-body">
+            <h2 class="mb-3">Vajebaat Slot Registration</h2>
+            <a href="<?=$url?>/vajebaat" class="btn btn-light" type="submit" id="button-addon2">Vajebaat Area</a>
         </div>
     </div> -->
     <?php

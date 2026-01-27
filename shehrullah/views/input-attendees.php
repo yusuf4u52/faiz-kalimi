@@ -144,32 +144,32 @@ function content_display()
         $pirsa = $takhmeen_data->pirsa_count > 0 ? 'Y' : 'N';
     }
     ?>
-    <div class="row">
-        <div class="col-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Shehrullah Registration</h4>
-                    <p class="card-description"> Select the attendess and enter the required details. </p>
+                    <h2 class="mb-2">Shehrullah Registration</h2>
+                    <p class="mb-3"><small>Select the attendess and enter the required details. </small></p>
                     <form class="forms-sample" method="POST">
                         <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
                         <input type="hidden" name="hof_id" value="<?= $hof_id ?>">
                         <input type="hidden" name="action" value="save_now">
 
-                        <div class="form-group row">
+                        <div class="row mb-3">
                             <?php __display_family_list([$attendees_data]) ?>
                         </div>
-                        <div class="form-check form-check-flat form-check-primary">
-                            <label class="form-check-label">
-                                <input type="checkbox" class="form-check-input" name="pirsa" value='Y' <?= $pirsa == 'Y' ? 'checked' : '' ?>> Select for pirsa </label>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="pirsa" value='Y' <?= $pirsa == 'Y' ? 'checked' : '' ?>> 
+                                <label class="form-check-label">Select for Pirsa</label>
+                            </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="whatsapp" class="col-sm-3 col-form-label">Whatsapp Number</label>
-                            <div class="col-sm-9">
+                        <div class="row mb-3">
+                            <label for="whatsapp" class="col-4 form-label">Whatsapp Number</label>
+                            <div class="col-8">
                                 <input type="text" class="form-control" pattern="^[0-9]{10,13}$" id="whatsapp"
                                     name="whatsapp" placeholder="WhatsApp Number" value='<?= $whatsapp ?>' required>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+                        <button type="submit" class="btn btn-light">Submit</button>
                     </form>
                 </div>
             </div>
@@ -178,19 +178,17 @@ function content_display()
 
     <!-- Modal for Chair Information -->
     <div class="modal fade" id="chairInfoModal" tabindex="-1" role="dialog" aria-labelledby="chairInfoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="chairInfoModalLabel">Chair Arrangement Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close" onclick="closeChairModal()">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+        <div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Chair Arrangement Information</h4>
+					<button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+				</div>
                 <div class="modal-body">
-                    <p><strong>Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID</strong></p>
+                    <p>Chairs will not be allowed in Masjid, Rahat block for gents is in SEHEN and for ladies in MAWAID</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-bs-dismiss="modal" onclick="closeChairModal()">OK</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal" onclick="closeChairModal()">OK</button>
                 </div>
             </div>
         </div>
@@ -265,8 +263,8 @@ function __show_attends_checkbox($row, $index)
     $attendance_type = $row->attendance_type ?? '';
 
     return "
-        <div class='form-check form-check-flat form-check-primary'>                            
-                <label class='form-check-label'><input class='form-check-input' type='checkbox' name='attendance_type_for_$itsid' value='Y' " . ($attendance_type == 'Y' ? 'checked' : '') . "></label>
+        <div class='form-check'>                            
+            <input class='form-check-input' type='checkbox' name='attendance_type_for_$itsid' value='Y' " . ($attendance_type == 'Y' ? 'checked' : '') . ">
         </div>
     ";
 
@@ -280,9 +278,9 @@ function __show_chair_checkbox($row, $index)
     $itsid = $row->its_id;
     $chair_preference = $row->chair_preference ?? '';
 
-    return "<div class='form-check form-check-flat form-check-primary'>                            
-    <label class='form-check-label'><input class='form-check-input' type='checkbox' name='chair_preference_for_$itsid' value='Y' " . ($chair_preference == 'Y' ? 'checked' : '') . "></label>
-</div>";
+    return "<div class='form-check'>                            
+		<input class='form-check-input' type='checkbox' name='chair_preference_for_$itsid' value='Y' " . ($chair_preference == 'Y' ? 'checked' : '') . ">
+	</div>";
 
     //return "<input class='form-check-input' type='checkbox' name='chair_preference_for_$itsid' value='Y' " . ($chair_preference == 'Y' ? 'checked' : '') . ">";
 }

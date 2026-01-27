@@ -65,18 +65,16 @@ function content_display()
     $slots = get_slot_for_registration();
     ?>
     <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Vajebaat Slots</h4>
-            <p class="card-description"> Select the vajebaat slot and proceed </p>
-        </div>
         <div class="card-body">
+            <h2 class="mb-2">Vajebaat Slots</h2>
+            <p class="mb-3"><small>Select the vajebaat slot and proceed</small></p>
             <form method="post" action="" class="forms-sample">
                 <input type="hidden" name="hof_id" value="<?=$hof_id?>" />
                 <input type="hidden" name="action" value="register" />
-                <div class="form-group row">
-                    <label for="whatsapp" class="col-sm-3 col-form-label">Slot</label>
-                    <div class="col-sm-9">
-                        <select class="form-control form-control-lg" name="slot_id" required>
+                <div class="row mb-3">
+                    <label for="whatsapp" class="col-3 form-label">Slot</label>
+                    <div class="col-9">
+                        <select class="form-select" name="slot_id" required>
                             <option value="">Select Slot....</option>
                             <?php foreach ($slots as $slot) { ?>
                                 <option value="<?= $slot->id ?>"><?= $slot->title ?></option>
@@ -84,35 +82,31 @@ function content_display()
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+                <button type="submit" class="btn btn-light">Submit</button>
             </form>            
         </div>        
     </div>
     <?php
-    } else {
-        ?>
+    } else { ?>
     <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Vajebaat Slots</h4>
-            <p class="card-description"> You vajebaat slot booking is</p>
-        </div>
         <div class="card-body">
+            <h2 class="mb-2">Vajebaat Slots</h2>
+            <p class="mb-3"><small>You vajebaat slot booking is</small></p>
             <form method="post" action="" class="forms-sample">
                 <input type="hidden" name="hof_id" value="<?=$hof_id?>" />
                 <input type="hidden" name="action" value="delete_slot" />
-                
-                <div class="form-group row">
-                    <label for="whatsapp" class="col-sm-3 col-form-label">Vajebaat Slot</label>
-                    <div class="col-sm-9">
+                <div class="row mb-3">
+                    <label for="whatsapp" class="col-3 form-label">Vajebaat Slot</label>
+                    <div class="col-9">
                         <?=$booking_details->title?>
                     </div>
                 </div>
                 <!-- <p>Delete my slot</p>
-                <button type="submit" class="btn btn-gradient-primary me-2">Delete</button> -->
+                <button type="submit" class="btn btn-light">Delete</button> -->
             </form>
         </div>
         <!-- <div class="card-footer">
-            <a href="<?=$url?>/vjb.vajebaat_input/<?=$enc_hof_id?>" class="btn btn-gradient-primary me-2">Go to Vajebaat form</a>
+            <a href="<?=$url?>/vjb.vajebaat_input/<?=$enc_hof_id?>" class="btn btn-light">Go to Vajebaat form</a>
         </div> -->
     </div>
     <?php

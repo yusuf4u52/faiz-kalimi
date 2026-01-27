@@ -69,7 +69,7 @@ function util_show_data_table(array $records, array $cols)
 
     ?>
     <div class="table-responsive">
-        <table class="table table-bordered">
+        <table class="table table-bordered" width="100%">
             <thead>
                 <?= util_table_header_row($colLabels) ?>
             </thead>
@@ -102,20 +102,18 @@ function show_section_content_with_footer($title, $footer_callback, $callback, .
 {
     ?>
     <section class="content">
-        <div class="container-fluid">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <?= $title ?>
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <?= $callback($data) ?>
-                </div>
-                <div class="card-footer">
-                    <?= $footer_callback($data) ?>
-                </div>
-            </div>
+		<div class="card">
+			<div class="card-header">
+				<h3 class="card-title">
+					<?= $title ?>
+				</h3>
+			</div>
+			<div class="card-body">
+				<?= $callback($data) ?>
+			</div>
+			<div class="card-footer">
+				<?= $footer_callback($data) ?>
+			</div>
         </div>
     </section>
     <?php
@@ -125,18 +123,16 @@ function show_section_content($title, $callback, ...$data)
 {
     ?>
     <section class="content">
-        <div class="container-fluid">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <?= $title ?>
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <?= $callback($data) ?>
-                </div>
-            </div>
-        </div>
+		<div class="card">
+			<div class="card-header">
+				<h3 class="card-title">
+					<?= $title ?>
+				</h3>
+			</div>
+			<div class="card-body">
+				<?= $callback($data) ?>
+			</div>
+		</div>
     </section>
     <?php
 }
@@ -175,9 +171,9 @@ function get_text_field($name, $title, $value, $type='text', $is_required = true
 {
     $required = $is_required ? 'required' : '';
     ?>
-    <div class='form-group row'>
-        <label for='full_niyaz' class='col-sm-2 col-form-label'><?=$title?></label>
-        <div class='col-sm-10'>
+    <div class='row mb-3'>
+        <label for='full_niyaz' class='col-2 form-label'><?=$title?></label>
+        <div class='col-10'>
             <input type='<?=$type?>' class='form-control' name='<?=$name?>' 
             id='<?=$name?>' value='<?=$value?>' <?=$required?> />
         </div>
