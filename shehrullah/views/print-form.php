@@ -282,58 +282,21 @@ function content_display()
         function the_script() {
             $('#Print').click(function () {
                 var printContents = document.getElementById('printableArea').innerHTML;
-                
-                // Create a hidden iframe for printing (much faster than replacing body HTML)
-                var iframe = document.createElement('iframe');
-                iframe.style.position = 'absolute';
-                iframe.style.width = '0';
-                iframe.style.height = '0';
-                iframe.style.border = 'none';
-                iframe.style.left = '-9999px';
-                iframe.style.top = '-9999px';
-                
-                document.body.appendChild(iframe);
-                
-                var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                
-                // Build the HTML content with styles
-                var htmlToPrint = '<!DOCTYPE html><html><head><title>Print</title>' +
-                    '<style type="text/css">' +
-                    'body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }' +
-                    'table { width: 100%; border-collapse: collapse; }' +
-                    'table th, table tr, table td {' +
-                    'border: 1px solid #000;' +
-                    'padding: 0.5em;' +
-                    '}' +
-                    'img { max-width: 100%; height: auto; }' +
-                    '</style>' +
-                    '</head><body>' + printContents + '</body></html>';
-                
-                // Write content to iframe
-                iframeDoc.open();
-                iframeDoc.write(htmlToPrint);
-                iframeDoc.close();
-                
-                // Trigger print immediately - iframe content is already available
-                // Use requestAnimationFrame to ensure DOM is ready
-                requestAnimationFrame(function() {
-                    requestAnimationFrame(function() {
-                        try {
-                            iframe.contentWindow.focus();
-                            iframe.contentWindow.print();
-                        } catch(e) {
-                            // Fallback: if iframe print fails, use window.print with CSS media query
-                            window.print();
-                        }
-                        
-                        // Clean up iframe after a short delay
-                        setTimeout(function() {
-                            if (iframe.parentNode) {
-                                document.body.removeChild(iframe);
-                            }
-                        }, 1000);
-                    });
-                });
+                var originalContents = document.body.innerHTML;
+
+                var htmlToPrint = '' +
+        '<style type="text/css">' +
+        'table th, table tr, table td {' +
+        'border:1px solid #000;' +
+        'padding:0.5em;' +
+        '}' +
+        '</style>';
+    htmlToPrint += printContents;
+
+
+                document.body.innerHTML = htmlToPrint;
+                window.print();
+                document.body.innerHTML = originalContents;
             });
         }
     </script>    
