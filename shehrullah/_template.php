@@ -29,7 +29,7 @@ $hijri = get_current_hijri_year() ?? 0;
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="<?= $homepage ?>/assets/img/logo.png" />
+    <link rel="shortcut icon" href="/shehrullah/assets/img/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
@@ -43,7 +43,7 @@ $hijri = get_current_hijri_year() ?? 0;
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col-4">
-                        <a href="<?= $homepage ?>"><img class="img-fluid" src="<?= $homepage ?>/assets/img/logo.png" alt="Shehrullah <?=$hijri?>H (Kalimi Mohalla - Poona)" width="153" height="153" /></a>
+                        <a href="<?= $homepage ?>"><img class="img-fluid" src="/shehrullah/assets/img/logo.png" alt="Shehrullah <?=$hijri?>H (Kalimi Mohalla - Poona)" width="153" height="153" /></a>
                     </div>
                     <div class="col-8 text-end">
                         <h4><a href="<?= $homepage ?>">Shehrullah <?=$hijri?>H <br/> (Kalimi Mohalla - Poona)</a></h4>

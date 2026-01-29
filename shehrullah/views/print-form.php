@@ -178,7 +178,7 @@ function content_display()
         <div class="card-body">
             <table class='table table-bordered'>
                 <tr>
-                    <th><img class="img-fluid" src="<?= $uri ?>/assets/img/logo.png" alt="Shehrullah <?=$hijri_year?>H (Kalimi Mohalla - Poona)" width="153" height="153" /></th>
+                    <th><img class="img-fluid" src="/shehrullah/assets/img/logo.png" alt="Shehrullah <?=$hijri_year?>H (Kalimi Mohalla - Poona)" width="153" height="153" /></th>
                     <th style='width: 50%'>Shehrullah <?= $hijri_year ?>H <br/> Kalimi Masjid, KALIMI MOHALLAH</th>
                     <th style='width: 25%'><?=$date?></th>
                 </tr>
