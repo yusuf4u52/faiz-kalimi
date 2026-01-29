@@ -7,53 +7,67 @@
 body {
     font-family: Arial, sans-serif;
     background: #fff;
-    padding: 20px;
+    padding: 10px;
+    overflow-x: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.receipt-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    max-height: 100vh;
 }
 
 .receipt-container {
     max-width: 148mm;
-    margin: 15mm auto 0;
+    width: 100%;
     background: white;
     border: 2px solid #000;
-    padding: 15mm 12mm;
+    padding: 10mm 12mm;
     position: relative;
+    flex-shrink: 0;
 }
 
 .receipt-header {
     text-align: center;
-    margin-bottom: 10mm;
+    margin-bottom: 6mm;
 }
 
 .receipt-header h1 {
-    font-size: 20pt;
+    font-size: 18pt;
     font-weight: bold;
-    margin-bottom: 3mm;
+    margin-bottom: 2mm;
 }
 
 .receipt-info {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8mm;
-    font-size: 10pt;
+    margin-bottom: 6mm;
+    font-size: 9pt;
     text-align: center;
 }
 
 .receipt-content {
-    font-size: 10pt;
-    line-height: 1.6;
-    margin-bottom: 10mm;
+    font-size: 9pt;
+    line-height: 1.4;
+    margin-bottom: 6mm;
     text-align: center;
 }
 
 .receipt-content p {
-    margin-bottom: 4mm;
+    margin-bottom: 3mm;
     text-align: center;
 }
 
 .receipt-name {
     border-bottom: 1px solid #000;
-    min-height: 6mm;
-    margin-bottom: 4mm;
+    min-height: 5mm;
+    margin-bottom: 3mm;
     padding-bottom: 1mm;
     text-align: center;
 }
@@ -65,8 +79,8 @@ body {
 .receipt-signatures {
     display: flex;
     justify-content: space-between;
-    margin-top: 12mm;
-    font-size: 9pt;
+    margin-top: 8mm;
+    font-size: 8pt;
     text-align: center;
 }
 
@@ -76,7 +90,7 @@ body {
 
 .signature-line {
     border-top: 1px solid #000;
-    margin-top: 8mm;
+    margin-top: 6mm;
     padding-top: 1mm;
 }
 
@@ -85,6 +99,13 @@ body {
     body {
         padding: 0;
         margin: 0;
+        height: auto;
+        display: block;
+    }
+
+    .receipt-wrapper {
+        min-height: auto;
+        max-height: none;
     }
 
     .receipt-container {
@@ -104,17 +125,18 @@ body {
 @media screen {
     .print-button {
         text-align: center;
-        margin: 30px auto 20px;
+        margin: 10px auto;
         max-width: 148mm;
         display: flex;
-        gap: 15px;
+        gap: 10px;
         justify-content: center;
         flex-wrap: wrap;
+        flex-shrink: 0;
     }
 
     .print-button button {
-        padding: 10px 30px;
-        font-size: 16px;
+        padding: 8px 20px;
+        font-size: 14px;
         background: #007bff;
         color: white;
         border: none;
@@ -127,8 +149,8 @@ body {
     }
 
     .btn-back-home {
-        padding: 10px 30px;
-        font-size: 16px;
+        padding: 8px 20px;
+        font-size: 14px;
         background: #6c757d;
         color: white;
         text-decoration: none;

@@ -95,7 +95,7 @@ function content_display()
     <?php ui_card("Takhmeen Entry", "Enter takhmeen details for HOF: <strong>" . htmlspecialchars($hof_data->full_name) . "</strong>"); ?>
     
     <?php if ($saved) { ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show py-2 mb-2" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i><strong>Success!</strong> Takhmeen has been saved successfully.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -105,186 +105,187 @@ function content_display()
         <input type="hidden" name="hof_id" value="<?= $hof_id ?>">
         <input type="hidden" name="action" value="register">
         
-        <!-- HOF Information Card -->
-        <div class="card mb-4 border-primary">
-            <div class="card-header bg-primary text-white">
-                <i class="bi bi-person-circle me-2"></i>HOF Information
-            </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <label class="col-sm-3 col-form-label fw-bold">HOF Name</label>
-                    <div class="col-sm-9">
-                        <input type="text" readonly class="form-control-plaintext fw-semibold" value="<?= htmlspecialchars($hof_data->full_name) ?>">
+        <div class="row g-2">
+            <!-- Left Column: HOF Info and Takhmeen Details -->
+            <div class="col-md-7">
+                <!-- HOF Information Card -->
+                <div class="card mb-2 border-primary">
+                    <div class="card-header bg-primary text-white py-1">
+                        <i class="bi bi-person-circle me-2"></i>HOF Information
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Takhmeen Details Card -->
-        <div class="card mb-4">
-            <div class="card-header bg-light">
-                <i class="bi bi-calculator me-2"></i>Takhmeen Details
-            </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <label for="niyaz_hub" class="col-sm-3 col-form-label fw-semibold">
-                        <i class="bi bi-currency-rupee me-1"></i>Niyaz Hub
-                    </label>
-                    <div class="col-sm-9">
-                        <input type="text" pattern="^[0-9]{1,9}$" required 
-                            class="form-control" id="niyaz_hub" name="niyaz_hub"
-                            value="<?= $takhmeen_data->niyaz_hub ?? 0 ?>">
-                        <small class="text-muted">Enter the base niyaz hub amount</small>
-                    </div>
-                </div>
-                
-                <hr class="my-3">
-                
-                <div class="row mb-3">
-                    <label for="iftar_count" class="col-sm-3 col-form-label fw-semibold">
-                        <i class="bi bi-egg-fried me-1"></i>Iftar Count
-                    </label>
-                    <div class="col-sm-6">
-                        <select class="form-select" name="iftar_count" id="iftar_count">
-                            <?= getCountDropdown(0, 5, $takhmeen_data->iftar_count ?? 0) ?>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->iftar ?></small>
-                        <small class="text-info fw-semibold" id="iftar_total">Total: Rs. 0</small>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <label for="zabihat_count" class="col-sm-3 col-form-label fw-semibold">
-                        <i class="bi bi-droplet me-1"></i>Zabihat Count
-                    </label>
-                    <div class="col-sm-6">
-                        <select class="form-select" name="zabihat_count" id="zabihat_count">
-                            <?= getCountDropdown(0, 5, $takhmeen_data->zabihat_count ?? 0) ?>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->zabihat ?></small>
-                        <small class="text-info fw-semibold" id="zabihat_total">Total: Rs. 0</small>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <label for="fateha_count" class="col-sm-3 col-form-label fw-semibold">
-                        <i class="bi bi-book me-1"></i>Fateha Count
-                    </label>
-                    <div class="col-sm-6">
-                        <select class="form-select" name="fateha_count" id="fateha_count">
-                            <?= getCountDropdown(0, 5, $takhmeen_data->fateha_count ?? 0) ?>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->fateha ?></small>
-                        <small class="text-info fw-semibold" id="fateha_total">Total: Rs. 0</small>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <label for="khajoor_count" class="col-sm-3 col-form-label fw-semibold">
-                        <i class="bi bi-circle me-1"></i>Khajoor Count
-                    </label>
-                    <div class="col-sm-6">
-                        <select class="form-select" name="khajoor_count" id="khajoor_count">
-                            <?= getCountDropdown(0, 5, $takhmeen_data->khajoor_count ?? 0) ?>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->khajoor ?></small>
-                        <small class="text-info fw-semibold" id="khajoor_total">Total: Rs. 0</small>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <label for="pirsa_count" class="col-sm-3 col-form-label fw-semibold">
-                        <i class="bi bi-circle-fill me-1"></i>Pirsa Count
-                    </label>
-                    <div class="col-sm-6">
-                        <select class="form-select" name="pirsa_count" id="pirsa_count">
-                            <?= getCountDropdown(0, 5, $takhmeen_data->pirsa_count ?? 0) ?>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->pirsu ?></small>
-                        <small class="text-info fw-semibold" id="pirsa_total">Total: Rs. 0</small>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <label for="chair_count" class="col-sm-3 col-form-label fw-semibold">
-                        <i class="bi bi-chair me-1"></i>Chair Count
-                    </label>
-                    <div class="col-sm-6">
-                        <select class="form-select" name="chair_count" id="chair_count">
-                            <?= getCountDropdown(0, 5, $takhmeen_data->chair_count ?? 0) ?>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->chair ?></small>
-                        <small class="text-info fw-semibold" id="chair_total">Total: Rs. 0</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Final Takhmeen Summary Card -->
-        <div class="card mb-4 border-success">
-            <div class="card-header bg-success text-white">
-                <i class="bi bi-cash-stack me-2"></i>Final Takhmeen Amount
-            </div>
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <label for="takhmeen" class="col-sm-3 col-form-label fw-bold fs-5">Total Amount</label>
-                    <div class="col-sm-9">
-                        <div class="input-group input-group-lg">
-                            <span class="input-group-text bg-success text-white fw-bold">Rs.</span>
-                            <input type="text" readonly required 
-                                class="form-control form-control-lg fw-bold text-success" 
-                                id="takhmeen" name="takhmeen" 
-                                value="<?= $takhmeen_data->takhmeen ?? 0 ?>"
-                                style="font-size: 1.5rem;">
+                    <div class="card-body py-2">
+                        <div class="row">
+                            <label class="col-sm-4 col-form-label fw-bold small">HOF Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" readonly class="form-control-plaintext fw-semibold small" value="<?= htmlspecialchars($hof_data->full_name) ?>">
+                            </div>
                         </div>
-                        <small class="text-muted mt-2 d-block">
-                            <i class="bi bi-info-circle me-1"></i>This amount is calculated automatically based on your selections above.
-                        </small>
+                    </div>
+                </div>
+                
+                <!-- Takhmeen Details Card -->
+                <div class="card mb-2">
+                    <div class="card-header bg-light py-1">
+                        <i class="bi bi-calculator me-2"></i>Takhmeen Details
+                    </div>
+                    <div class="card-body py-2">
+                        <div class="row g-1 mb-1">
+                            <label for="niyaz_hub" class="col-sm-4 col-form-label fw-semibold small">
+                                <i class="bi bi-currency-rupee me-1"></i>Niyaz Hub
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" pattern="^[0-9]{1,9}$" required 
+                                    class="form-control form-control-sm" id="niyaz_hub" name="niyaz_hub"
+                                    value="<?= $takhmeen_data->niyaz_hub ?? 0 ?>">
+                            </div>
+                        </div>
+                        
+                        <div class="row g-1 mb-1">
+                            <label for="iftar_count" class="col-sm-4 col-form-label fw-semibold small">
+                                <i class="bi bi-egg-fried me-1"></i>Iftar
+                            </label>
+                            <div class="col-sm-4">
+                                <select class="form-select form-select-sm" name="iftar_count" id="iftar_count">
+                                    <?= getCountDropdown(0, 5, $takhmeen_data->iftar_count ?? 0) ?>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <small class="text-muted d-block small">Rate: Rs. <?= $hub_data->iftar ?></small>
+                                <small class="text-info fw-semibold small" id="iftar_total">Total: Rs. 0</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-1 mb-1">
+                            <label for="zabihat_count" class="col-sm-4 col-form-label fw-semibold small">
+                                <i class="bi bi-droplet me-1"></i>Zabihat
+                            </label>
+                            <div class="col-sm-4">
+                                <select class="form-select form-select-sm" name="zabihat_count" id="zabihat_count">
+                                    <?= getCountDropdown(0, 5, $takhmeen_data->zabihat_count ?? 0) ?>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <small class="text-muted d-block small">Rate: Rs. <?= $hub_data->zabihat ?></small>
+                                <small class="text-info fw-semibold small" id="zabihat_total">Total: Rs. 0</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-1 mb-1">
+                            <label for="fateha_count" class="col-sm-4 col-form-label fw-semibold small">
+                                <i class="bi bi-book me-1"></i>Fateha
+                            </label>
+                            <div class="col-sm-4">
+                                <select class="form-select form-select-sm" name="fateha_count" id="fateha_count">
+                                    <?= getCountDropdown(0, 5, $takhmeen_data->fateha_count ?? 0) ?>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <small class="text-muted d-block small">Rate: Rs. <?= $hub_data->fateha ?></small>
+                                <small class="text-info fw-semibold small" id="fateha_total">Total: Rs. 0</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-1 mb-1">
+                            <label for="khajoor_count" class="col-sm-4 col-form-label fw-semibold small">
+                                <i class="bi bi-circle me-1"></i>Khajoor
+                            </label>
+                            <div class="col-sm-4">
+                                <select class="form-select form-select-sm" name="khajoor_count" id="khajoor_count">
+                                    <?= getCountDropdown(0, 5, $takhmeen_data->khajoor_count ?? 0) ?>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <small class="text-muted d-block small">Rate: Rs. <?= $hub_data->khajoor ?></small>
+                                <small class="text-info fw-semibold small" id="khajoor_total">Total: Rs. 0</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-1 mb-1">
+                            <label for="pirsa_count" class="col-sm-4 col-form-label fw-semibold small">
+                                <i class="bi bi-circle-fill me-1"></i>Pirsa
+                            </label>
+                            <div class="col-sm-4">
+                                <select class="form-select form-select-sm" name="pirsa_count" id="pirsa_count">
+                                    <?= getCountDropdown(0, 5, $takhmeen_data->pirsa_count ?? 0) ?>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <small class="text-muted d-block small">Rate: Rs. <?= $hub_data->pirsu ?></small>
+                                <small class="text-info fw-semibold small" id="pirsa_total">Total: Rs. 0</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-1 mb-1">
+                            <label for="chair_count" class="col-sm-4 col-form-label fw-semibold small">
+                                <i class="bi bi-chair me-1"></i>Chair
+                            </label>
+                            <div class="col-sm-4">
+                                <select class="form-select form-select-sm" name="chair_count" id="chair_count">
+                                    <?= getCountDropdown(0, 5, $takhmeen_data->chair_count ?? 0) ?>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <small class="text-muted d-block small">Rate: Rs. <?= $hub_data->chair ?></small>
+                                <small class="text-info fw-semibold small" id="chair_total">Total: Rs. 0</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Action Buttons -->
-        <div class="d-flex gap-2 mb-4">
-            <button type="submit" class="btn btn-success btn-lg">
-                <i class="bi bi-save me-2"></i>Save Takhmeen
-            </button>
-            <?php if ($takhmeen_data->takhmeen > 0) { ?>
-                <button type="button" id='paynow_link' class="btn btn-primary btn-lg" onclick="submitToCollection(<?= $hof_id ?>)">
-                    <i class="bi bi-credit-card me-2"></i>Proceed to Payment
-                </button>
-            <?php } ?>
-            <a href="<?= getAppData('BASE_URI') ?>/home" class="btn btn-outline-secondary btn-lg">
-                <i class="bi bi-arrow-left me-2"></i>Back to Home
-            </a>
-        </div>
-        
-        <!-- Receipt History -->
-        <?php if (is_array($receipt_data) && count($receipt_data) > 0) { ?>
-            <div class="card mt-4">
-                <div class="card-header bg-info text-white">
-                    <i class="bi bi-receipt me-2"></i>Receipt History
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <?php __display_table_records([$receipt_data]) ?>
+            
+            <!-- Right Column: Summary and Actions -->
+            <div class="col-md-5">
+                <!-- Final Takhmeen Summary Card -->
+                <div class="card mb-2 border-success">
+                    <div class="card-header bg-success text-white py-1">
+                        <i class="bi bi-cash-stack me-2"></i>Final Takhmeen Amount
+                    </div>
+                    <div class="card-body py-2">
+                        <div class="row align-items-center">
+                            <label for="takhmeen" class="col-sm-4 col-form-label fw-bold">Total Amount</label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-success text-white fw-bold">Rs.</span>
+                                    <input type="text" readonly required 
+                                        class="form-control fw-bold text-success" 
+                                        id="takhmeen" name="takhmeen" 
+                                        value="<?= $takhmeen_data->takhmeen ?? 0 ?>">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-grid gap-1 mb-2">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save me-2"></i>Save Takhmeen
+                    </button>
+                    <?php if ($takhmeen_data->takhmeen > 0) { ?>
+                        <button type="button" id='paynow_link' class="btn btn-primary" onclick="submitToCollection(<?= $hof_id ?>)">
+                            <i class="bi bi-credit-card me-2"></i>Proceed to Payment
+                        </button>
+                    <?php } ?>
+                    <a href="<?= getAppData('BASE_URI') ?>/home" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Home
+                    </a>
+                </div>
+                
+                <!-- Receipt History -->
+                <?php if (is_array($receipt_data) && count($receipt_data) > 0) { ?>
+                    <div class="card">
+                        <div class="card-header bg-info text-white py-1">
+                            <i class="bi bi-receipt me-2"></i>Receipt History
+                        </div>
+                        <div class="card-body py-2">
+                            <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                                <?php __display_table_records([$receipt_data]) ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
             </div>
-        <?php } ?>
+        </div>
     </form>
     
     <?php ui_card_end(); ?>
@@ -398,10 +399,23 @@ function content_display()
         }
         .card-header {
             font-weight: 600;
+            font-size: 0.9rem;
         }
         .form-select:focus, .form-control:focus {
             border-color: #86b7fe;
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .small {
+            font-size: 0.875rem;
+        }
+        #takhmeen-form .card-body {
+            padding: 0.5rem;
+        }
+        #takhmeen-form .row {
+            margin-bottom: 0.25rem;
+        }
+        body {
+            overflow-x: hidden;
         }
     </style>
     <?php

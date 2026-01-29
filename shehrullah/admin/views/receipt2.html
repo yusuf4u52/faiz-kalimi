@@ -7,40 +7,42 @@
     <link rel="stylesheet" href="../../_assets/css/receipt.css">
 </head>
 <body>
-    <div class="receipt-container">
-        <div class="receipt-header">
-            <h1>Shehrullah <?= htmlspecialchars($hijri_year) ?>H</h1>
-        </div>
-
-        <div class="receipt-info">
-            <span>Receipt No : <?= htmlspecialchars($receipt_id) ?></span>
-            <span>Date : <?= htmlspecialchars($date_format) ?></span>
-        </div>
-
-        <div class="receipt-content">
-            <p>Received with thanks from</p>
-            <div class="receipt-name">
-                <?= htmlspecialchars($full_name) ?>
+    <div class="receipt-wrapper">
+        <div class="receipt-container">
+            <div class="receipt-header">
+                <h1>Shehrullah <?= htmlspecialchars($hijri_year) ?>H</h1>
             </div>
-            <p>
-                a voluntary contribution of Rs.<span class="receipt-amount"><?= htmlspecialchars($receipt_amount) ?>/-</span>
-            </p>
-            <p>on account of Shehrullah</p>
+
+            <div class="receipt-info">
+                <span>Receipt No : <?= htmlspecialchars($receipt_id) ?></span>
+                <span>Date : <?= htmlspecialchars($date_format) ?></span>
+            </div>
+
+            <div class="receipt-content">
+                <p>Received with thanks from</p>
+                <div class="receipt-name">
+                    <?= htmlspecialchars($full_name) ?>
+                </div>
+                <p>
+                    a voluntary contribution of Rs.<span class="receipt-amount"><?= htmlspecialchars($receipt_amount) ?>/-</span>
+                </p>
+                <p>on account of Shehrullah</p>
+            </div>
+
+            <div class="receipt-signatures">
+                <div class="signature-box">
+                    <div class="signature-line">Auth Signature</div>
+                </div>
+                <div class="signature-box">
+                    <div class="signature-line">HOF Signature</div>
+                </div>
+            </div>
         </div>
 
-        <div class="receipt-signatures">
-            <div class="signature-box">
-                <div class="signature-line">Auth Signature</div>
-            </div>
-            <div class="signature-box">
-                <div class="signature-line">HOF Signature</div>
-            </div>
+        <div class="print-button">
+            <button onclick="window.print()">Print Receipt</button>
+            <a href="<?= $base_uri ?>/home" class="btn-back-home">Back to Home</a>
         </div>
-    </div>
-
-    <div class="print-button">
-        <button onclick="window.print()">Print Receipt</button>
-        <a href="<?= $base_uri ?>/home" class="btn-back-home">Back to Home</a>
     </div>
 
     <script>
