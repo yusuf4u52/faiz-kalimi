@@ -256,6 +256,31 @@ function get_all_receipt_data_for($year) {
     return [];
 }
 
+/**
+ * Calculate total paid amount from receipts for a given year and optionally hof_id
+ * @param int $year Hijri year
+ * @param string|null $hof_id Head of Family ID (optional - if null, returns total for all families)
+ * @return float Total paid amount
+ */
+function get_paid_amount_from_receipts($year, $hof_id = null) {
+    if ($hof_id !== null) {
+        $query = 'SELECT COALESCE(SUM(amount), 0) as total_paid 
+                  FROM kl_shehrullah_collection_record 
+                  WHERE year=? AND hof_id=?';
+        $result = run_statement($query, $year, $hof_id);
+    } else {
+        $query = 'SELECT COALESCE(SUM(amount), 0) as total_paid 
+                  FROM kl_shehrullah_collection_record 
+                  WHERE year=?';
+        $result = run_statement($query, $year);
+    }
+    
+    if ($result->success && $result->count > 0) {
+        return floatval($result->data[0]->total_paid);
+    }
+    return 0.0;
+}
+
 function save_collection_record($year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks) {
     // Calculate the next receipt ID for this year (MAX(id) + 1)
     $query_max_id = 'SELECT COALESCE(MAX(id), 0) + 1 as next_id FROM kl_shehrullah_collection_record WHERE year = ?';
@@ -268,10 +293,11 @@ function save_collection_record($year, $hof_id, $amount, $payment_mode, $transac
     $next_id = $result_max->data[0]->next_id;
     
     // Insert the receipt with the calculated ID
+    // Note: paid_amount is now calculated dynamically from receipts, so no UPDATE needed
     $query = 'INSERT INTO kl_shehrullah_collection_record (id, year, hof_id, amount, payment_mode, transaction_ref, remarks, created)
-    VALUES (?,?,?,?,?,?,?,now()); UPDATE kl_shehrullah_takhmeen SET paid_amount = paid_amount + ? WHERE year=? and hof_id=?;';
+    VALUES (?,?,?,?,?,?,?,now());';
 
-    $result = run_statement($query, $next_id, $year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks, $amount, $year, $hof_id);
+    $result = run_statement($query, $next_id, $year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks);
 
     if ($result->success && $result->count > 0) {
         return $next_id;
@@ -282,18 +308,19 @@ function save_collection_record($year, $hof_id, $amount, $payment_mode, $transac
 
 function get_collection_record($id, $year) {
     $query = 'select cr.id,cr.hof_id, cr.amount,cr.payment_mode, cr.transaction_ref, cr.created, cr.remarks,t.takhmeen,
-    t.paid_amount,m.full_name
+    m.full_name
     FROM kl_shehrullah_collection_record cr 
-    JOIN kl_shehrullah_takhmeen t ON t.hof_id = cr.hof_id
+    JOIN kl_shehrullah_takhmeen t ON t.hof_id = cr.hof_id AND t.year = cr.year
     JOIN its_data m  ON t.hof_id = m.its_id
     where cr.id = ? and cr.year=?';
-    
-    //$query = 'SELECT * FROM  kl_shehrullah_collection_record WHERE id=?;';
 
     $result = run_statement($query, $id, $year);
 
     if ($result->success && $result->count > 0) {
-        return $result->data[0];
+        $record = $result->data[0];
+        // Calculate paid_amount from receipts
+        $record->paid_amount = get_paid_amount_from_receipts($year, $record->hof_id);
+        return $record;
     }
     return null;
 }
@@ -495,7 +522,13 @@ function get_shehrullah_takhmeen_for($hof_id, $hijri_year)
 {
     $query = 'SELECT * FROM kl_shehrullah_takhmeen  WHERE hof_id=? and year=?';
     $result = run_statement($query, $hof_id, $hijri_year);
-    return $result->success && $result->count > 0 ? $result->data[0] : null;
+    if ($result->success && $result->count > 0) {
+        $takhmeen = $result->data[0];
+        // Calculate paid_amount from receipts instead of using stored value
+        $takhmeen->paid_amount = get_paid_amount_from_receipts($hijri_year, $hof_id);
+        return $takhmeen;
+    }
+    return null;
 }
 
 function get_niyaz_amount_for($type, $family_hub, $markaz_data)
@@ -573,7 +606,7 @@ function add_family_member($hof_id, $sabeel, $its_id, $full_name, $gender, $age,
 function get_registration_summary($hijri) {
     $query = 'SELECT SUM(male) males, SUM(female) females, SUM(kids) kids, sum(infant) infants, 
     sum(attendees) attendees, sum(chairs) chairs, sum(pirsa_count) pirsas, sum(zabihat_count) zabihat,
-    sum(takhmeen) takhmeen, sum(paid_amount) paid
+    sum(takhmeen) takhmeen
     FROM (
     SELECT a.hof_id, i.full_name,
     count(CASE WHEN a.attendance_type = "Y" and i.gender="Male" and i.age > 11 THEN 1 ELSE NULL END) as male,
@@ -582,7 +615,7 @@ function get_registration_summary($hijri) {
     count(CASE WHEN a.attendance_type = "Y" and i.age < 5 THEN 1 ELSE NULL END) as infant,
     count(CASE WHEN a.attendance_type = "Y" THEN 1 ELSE NULL END) as attendees, 
     count(CASE WHEN a.chair_preference = "Y" THEN 1 ELSE NULL END) as chairs,
-    t.pirsa_count,t.takhmeen, t.paid_amount, t.zabihat_count
+    t.pirsa_count,t.takhmeen, t.zabihat_count
     FROM kl_shehrullah_attendees a
     JOIN its_data i ON i.its_id = a.its_id
     JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id
@@ -592,7 +625,10 @@ function get_registration_summary($hijri) {
 
     $result = run_statement($query, $hijri, $hijri);
     if ($result->success && $result->count > 0) {
-        return $result->data[0];
+        $summary = $result->data[0];
+        // Calculate total paid from receipts (for all families in this year)
+        $summary->paid = get_paid_amount_from_receipts($hijri);
+        return $summary;
     }
     return null;
 }
@@ -606,7 +642,7 @@ function get_registration_data($hijri)
     count(CASE WHEN a.attendance_type = "Y" and i.age < 5 THEN 1 ELSE NULL END) as infant,
     count(CASE WHEN a.attendance_type = "Y" THEN 1 ELSE NULL END) as attendees, 
     count(CASE WHEN a.chair_preference = "Y" THEN 1 ELSE NULL END) as chairs
-    ,t.pirsa_count,t.takhmeen, t.whatsapp, t.paid_amount, t.zabihat_count
+    ,t.pirsa_count,t.takhmeen, t.whatsapp, t.zabihat_count
     FROM kl_shehrullah_attendees a
     JOIN its_data i ON i.its_id = a.its_id
     JOIN kl_shehrullah_takhmeen t ON t.hof_id = a.hof_id
@@ -615,6 +651,11 @@ function get_registration_data($hijri)
 
     $result = run_statement($query, $hijri, $hijri);
     if ($result->success && $result->count > 0) {
+        // Calculate paid_amount for each record from receipts
+        foreach ($result->data as &$record) {
+            $record->paid_amount = get_paid_amount_from_receipts($hijri, $record->hof_id);
+        }
+        unset($record); // Break the reference
         return $result->data;
     }
     return [];
@@ -784,7 +825,7 @@ function revoke_seat_exception($hof_id) {
  */
 function get_all_seat_exceptions() {
     $hijri_year = get_current_hijri_year();
-    $query = 'SELECT e.*, m.full_name, t.takhmeen, t.paid_amount, gb.name as granted_by_name
+    $query = 'SELECT e.*, m.full_name, t.takhmeen, gb.name as granted_by_name
               FROM kl_shehrullah_seat_exceptions e
               LEFT JOIN its_data m ON m.its_id = e.hof_id
               LEFT JOIN kl_shehrullah_takhmeen t ON t.hof_id = e.hof_id AND t.year = e.hijri_year
@@ -792,7 +833,15 @@ function get_all_seat_exceptions() {
               WHERE e.hijri_year = ? AND e.is_active = "Y"
               ORDER BY e.hoob_clearance_date ASC, e.granted_at DESC';
     $result = run_statement($query, $hijri_year);
-    return $result->success && $result->count > 0 ? $result->data : [];
+    if ($result->success && $result->count > 0) {
+        // Calculate paid_amount for each record from receipts
+        foreach ($result->data as &$record) {
+            $record->paid_amount = get_paid_amount_from_receipts($hijri_year, $record->hof_id);
+        }
+        unset($record); // Break the reference
+        return $result->data;
+    }
+    return [];
 }
 
 /**
