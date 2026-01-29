@@ -92,7 +92,7 @@ function content_display()
     $saved = isset($_GET['saved']) && $_GET['saved'] == '1';
     ?>
     
-    <?php ui_card("Takhmeen Entry", "Enter takhmeen details for HOF: <strong>" . htmlspecialchars($hof_data->full_name) . "</strong>"); ?>
+    <?php ui_card("Takhmeen Entry"); ?>
     
     <?php if ($saved) { ?>
         <div class="alert alert-success alert-dismissible fade show py-2 mb-2" role="alert">
