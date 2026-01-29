@@ -164,7 +164,7 @@ function content_display()
                 <button type="submit" class="btn btn-success">Save</button>
 
                 <?php if ($takhmeen_data->takhmeen > 0) { ?>
-                    <a id='paynow_link' href="get2post?url=/collection&hof_id=<?= $hof_id ?>" class="btn btn-primary">Pay</a>
+                    <button type="button" id='paynow_link' class="btn btn-primary" onclick="submitToCollection(<?= $hof_id ?>)">Pay</button>
                 <?php } ?>
             </div>
             <?php if (is_array($receipt_data) && count($receipt_data) > 0) { ?>
@@ -188,6 +188,21 @@ function content_display()
             var takhmeen = niyaz_hub + iftar_hub + zabihat_hub + fateha_hub + khajoor_hub + pirsa_hub + chair_hub;
 
             $('#takhmeen').val(takhmeen);
+        }
+
+        function submitToCollection(hof_id) {
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '<?= getAppData("BASE_URI") ?>/collection';
+            
+            var hofInput = document.createElement('input');
+            hofInput.type = 'hidden';
+            hofInput.name = 'hof_id';
+            hofInput.value = hof_id;
+            form.appendChild(hofInput);
+            
+            document.body.appendChild(form);
+            form.submit();
         }
 
         function the_script() {
