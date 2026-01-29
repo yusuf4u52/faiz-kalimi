@@ -16,8 +16,7 @@ if (is_null($receipt_data)) {
 
 $receipt_record = $receipt_data;
 $payment_mode = $receipt_record->payment_mode;
-$receipt_id = substr(strtoupper($payment_mode), 0, 1)
-    . "-" . $receipt_record->id;
+$receipt_id = $receipt_record->id;
 
 $hofid = $receipt_record->hof_id;
 $name = $receipt_record->full_name;
