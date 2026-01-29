@@ -20,6 +20,13 @@ function __handle_post()
         $transaction_ref = $_POST['transaction_ref'] ?? null;
         $remarks = $_POST['remarks'] ?? null;
         
+        // Validate amount is greater than 0
+        if (empty($amount) || floatval($amount) <= 0) {
+            setSessionData(TRANSIT_DATA, 'Payment amount must be greater than 0.');
+            do_redirect('/collection?hof_id=' . urlencode($hof_id));
+            return;
+        }
+        
         $receipt_num = save_collection_record($hijri_year, $hof_id, $amount, $payment_mode, 
         $transaction_ref, $remarks);
 
@@ -184,15 +191,15 @@ function content_display()
                 </div>
                 
                 <!-- Action Buttons -->
-                <div class="d-grid gap-1">
-                    <button type="submit" class="btn btn-success">
+                <div class="d-flex flex-column align-items-center gap-2">
+                    <button type="submit" class="btn btn-success btn-sm">
                         <i class="bi bi-save me-2"></i>Save Payment
                     </button>
-                    <div class="d-flex gap-1">
-                        <a href="<?= getAppData('BASE_URI') ?>/takhmeen?hof_id=<?= urlencode($hof_id) ?>" class="btn btn-outline-secondary flex-fill">
+                    <div class="d-flex gap-2">
+                        <a href="<?= getAppData('BASE_URI') ?>/takhmeen?hof_id=<?= urlencode($hof_id) ?>" class="btn btn-outline-secondary btn-sm">
                             <i class="bi bi-arrow-left me-2"></i>Back to Takhmeen
                         </a>
-                        <a href="<?= getAppData('BASE_URI') ?>/home" class="btn btn-outline-secondary flex-fill">
+                        <a href="<?= getAppData('BASE_URI') ?>/home" class="btn btn-outline-secondary btn-sm">
                             <i class="bi bi-house me-2"></i>Home
                         </a>
                     </div>

@@ -346,10 +346,6 @@ function content_display()
         }
 
         function submitToCollection(hof_id) {
-            if (!confirm('Do you want to proceed to payment collection?')) {
-                return;
-            }
-            
             var form = document.createElement('form');
             form.method = 'POST';
             form.action = '<?= getAppData("BASE_URI") ?>/collection';

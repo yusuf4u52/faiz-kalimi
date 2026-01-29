@@ -282,6 +282,11 @@ function get_paid_amount_from_receipts($year, $hof_id = null) {
 }
 
 function save_collection_record($year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks) {
+    // Validate amount is greater than 0
+    if (empty($amount) || floatval($amount) <= 0) {
+        return -1;
+    }
+    
     // Calculate the next receipt ID for this year (MAX(id) + 1)
     $query_max_id = 'SELECT COALESCE(MAX(id), 0) + 1 as next_id FROM kl_shehrullah_collection_record WHERE year = ?';
     $result_max = run_statement($query_max_id, $year);
