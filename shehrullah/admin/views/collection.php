@@ -63,21 +63,14 @@ function content_display()
                 </div>
             </div>
             <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Takhmeen</label>
+                <label for="hof_id" class="col-sm-3 col-form-label">Pending Amount</label>
                 <div class="col-sm-9">
                     <input type="text" readonly class="form-control" 
-                        value="<?= $takhmeen_data->takhmeen ?>">
+                        value="<?= $takhmeen_data->takhmeen - $takhmeen_data->paid_amount ?>">
                 </div>
             </div>
             <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Paid</label>
-                <div class="col-sm-9">
-                    <input type="text" readonly class="form-control" 
-                        value="<?= $takhmeen_data->paid_amount ?>">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Payable</label>
+                <label for="hof_id" class="col-sm-3 col-form-label">Amount</label>
                 <div class="col-sm-9">
                     <input type="text" pattern="^[0-9]{1,9}$" required class="form-control" id="amount" name="amount"
                         value="">
