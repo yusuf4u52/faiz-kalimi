@@ -257,16 +257,16 @@ function content_display()
                 </div>
                 
                 <!-- Action Buttons -->
-                <div class="d-grid gap-1 mb-2">
-                    <button type="submit" class="btn btn-success">
+                <div class="d-flex flex-column gap-2 mb-2">
+                    <button type="submit" class="btn btn-success btn-sm">
                         <i class="bi bi-save me-2"></i>Save Takhmeen
                     </button>
                     <?php if ($takhmeen_data->takhmeen > 0) { ?>
-                        <button type="button" id='paynow_link' class="btn btn-primary" onclick="submitToCollection(<?= $hof_id ?>)">
+                        <button type="button" id='paynow_link' class="btn btn-primary btn-sm" onclick="submitToCollection(<?= $hof_id ?>)">
                             <i class="bi bi-credit-card me-2"></i>Proceed to Payment
                         </button>
                     <?php } ?>
-                    <a href="<?= getAppData('BASE_URI') ?>/home" class="btn btn-outline-secondary">
+                    <a href="<?= getAppData('BASE_URI') ?>/home" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-arrow-left me-2"></i>Back to Home
                     </a>
                 </div>
@@ -440,5 +440,5 @@ function __display_table_records($data)
 function __print_link($row, $index) {
     $receipt_num = $row->id;
     $uri = getAppData('BASE_URI');
-    return "<a target='receipt' class='btn btn-primary' href='$uri/receipt2/$receipt_num'>Print</a>";
+    return "<a target='receipt' class='btn btn-primary btn-sm' href='$uri/receipt2/$receipt_num'>Print</a>";
 }
