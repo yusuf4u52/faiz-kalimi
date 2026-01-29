@@ -257,13 +257,24 @@ function get_all_receipt_data_for($year) {
 }
 
 function save_collection_record($year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks) {
-    $query = 'INSERT INTO kl_shehrullah_collection_record (year, hof_id, amount, payment_mode, transaction_ref, remarks, created)
-    VALUES (?,?,?,?,?,?,now()); UPDATE kl_shehrullah_takhmeen SET paid_amount = paid_amount + ? WHERE year=? and hof_id=?;';
+    // Calculate the next receipt ID for this year (MAX(id) + 1)
+    $query_max_id = 'SELECT COALESCE(MAX(id), 0) + 1 as next_id FROM kl_shehrullah_collection_record WHERE year = ?';
+    $result_max = run_statement($query_max_id, $year);
+    
+    if (!$result_max->success || !isset($result_max->data[0]->next_id)) {
+        return -1;
+    }
+    
+    $next_id = $result_max->data[0]->next_id;
+    
+    // Insert the receipt with the calculated ID
+    $query = 'INSERT INTO kl_shehrullah_collection_record (id, year, hof_id, amount, payment_mode, transaction_ref, remarks, created)
+    VALUES (?,?,?,?,?,?,?,now()); UPDATE kl_shehrullah_takhmeen SET paid_amount = paid_amount + ? WHERE year=? and hof_id=?;';
 
-    $result = run_statement($query,$year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks, $amount, $year, $hof_id);
+    $result = run_statement($query, $next_id, $year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks, $amount, $year, $hof_id);
 
     if ($result->success && $result->count > 0) {
-        return $result->insertedID;
+        return $next_id;
     }
     return -1;
 }
