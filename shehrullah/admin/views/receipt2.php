@@ -83,5 +83,14 @@ include_once '../fpdf/fpdf.php';
 $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->Image('1.jpg', 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0);
-$pdf->Output();
+
+$pdf_content = $pdf->Output('S');
+$pdf_base64 = base64_encode($pdf_content);
 unlink("1.jpg");
+?>
+<!DOCTYPE html>
+<html><head><title>Receipt</title></head>
+<body style="margin:0"><iframe src="data:application/pdf;base64,<?= $pdf_base64 ?>" style="width:100%;height:100vh;border:none"></iframe>
+<script>setTimeout(function(){window.print()},500)</script>
+</body></html>
+<?php

@@ -26,8 +26,7 @@ function __handle_post()
         if( $receipt_num == -1 ) {
             setSessionData(TRANSIT_DATA , 'Oops! Could not save that.');
         } else {            
-            do_redirect_with_message('/home', "Receipt created : <a target='receipt' href='$uri/receipt2/$receipt_num'>Click here for receipt print.</a>");
-            //do_redirect('/receipt/'.$receipt_num);
+            do_redirect('/receipt2/'.$receipt_num);
         }
 
     }
