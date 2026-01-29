@@ -58,15 +58,13 @@ function content_display()
             <div class="mb-3 row">
                 <label for="hof_id" class="col-sm-3 col-form-label">HOF Name</label>
                 <div class="col-sm-9">
-                    <input type="text" readonly class="form-control" 
-                        value="<?= $hof_data->full_name ?>">
+                    <div class="form-control-plaintext"><?= $hof_data->full_name ?></div>
                 </div>
             </div>
             <div class="mb-3 row">
                 <label for="hof_id" class="col-sm-3 col-form-label">Pending Amount</label>
                 <div class="col-sm-9">
-                    <input type="text" readonly class="form-control" 
-                        value="<?= $takhmeen_data->takhmeen - $takhmeen_data->paid_amount ?>">
+                    <div class="form-control-plaintext"><?= $takhmeen_data->takhmeen - $takhmeen_data->paid_amount ?></div>
                 </div>
             </div>
             <div class="mb-3 row">
