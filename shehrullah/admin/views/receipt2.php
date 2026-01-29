@@ -85,12 +85,8 @@ $pdf->AddPage();
 $pdf->Image('1.jpg', 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0);
 
 $pdf_content = $pdf->Output('S');
-$pdf_base64 = base64_encode($pdf_content);
 unlink("1.jpg");
 ?>
-<!DOCTYPE html>
-<html><head><title>Receipt</title></head>
-<body style="margin:0"><iframe src="data:application/pdf;base64,<?= $pdf_base64 ?>" style="width:100%;height:100vh;border:none"></iframe>
-<script>setTimeout(function(){window.print()},500)</script>
-</body></html>
+<iframe id="p" src="data:application/pdf;base64,<?= base64_encode($pdf_content) ?>" style="width:100%;height:100vh;border:none"></iframe>
+<script>setTimeout(function(){document.getElementById('p').contentWindow.print()},1000)</script>
 <?php
