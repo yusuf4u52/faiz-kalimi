@@ -84,9 +84,14 @@ $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->Image('1.jpg', 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0);
 
-$pdf_content = $pdf->Output('S');
+$pdf_base64 = base64_encode($pdf->Output('S'));
 unlink("1.jpg");
 ?>
-<iframe id="p" src="data:application/pdf;base64,<?= base64_encode($pdf_content) ?>" style="width:100%;height:100vh;border:none"></iframe>
-<script>setTimeout(function(){document.getElementById('p').contentWindow.print()},1000)</script>
+<iframe id="p" style="width:100%;height:100vh;border:none"></iframe>
+<script>
+var b=atob('<?= $pdf_base64 ?>'),a=new Uint8Array(b.length);
+for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);
+document.getElementById('p').src=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));
+setTimeout(function(){try{document.getElementById('p').contentWindow.print()}catch(e){window.print()}},1000);
+</script>
 <?php

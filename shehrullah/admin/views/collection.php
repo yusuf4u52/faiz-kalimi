@@ -9,16 +9,16 @@ do_for_post('__handle_post');
 
 function __handle_post()
 {
-    $action = $_POST['action'];
-    $hof_id = $_POST['hof_id'];
+    $action = $_POST['action'] ?? null;
+    $hof_id = $_POST['hof_id'] ?? null;
     $hijri_year = get_current_hijri_year();
     $uri = getAppData('BASE_URI');
     if ($action === 'register') {
 
-        $amount = $_POST['amount'];
-        $payment_mode = $_POST['payment_mode'];
-        $transaction_ref = $_POST['transaction_ref'];
-        $remarks = $_POST['remarks'];
+        $amount = $_POST['amount'] ?? null;
+        $payment_mode = $_POST['payment_mode'] ?? null;
+        $transaction_ref = $_POST['transaction_ref'] ?? null;
+        $remarks = $_POST['remarks'] ?? null;
         
         $receipt_num = save_collection_record($hijri_year, $hof_id, $amount, $payment_mode, 
         $transaction_ref, $remarks);
@@ -48,7 +48,7 @@ function __handle_post()
 function content_display()
 {
     $takhmeen_data = getAppData('takhmeen_data');
-    $hof_id = $_POST['hof_id'];
+    $hof_id = $_POST['hof_id'] ?? null;
     $hof_data = getAppData('hof_data');   
     ?>
     <form method="post">
