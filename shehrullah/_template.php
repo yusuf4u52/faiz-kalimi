@@ -39,33 +39,30 @@ $hijri = get_current_hijri_year() ?? 0;
 </head>
 <body>
     <?php if ($header) { ?>
-        <header class="header">
-            <div class="container-fluid py-1">
-                <div class="row align-items-center">
-                    <div class="col-3">
-                        <a href="<?= $homepage ?>"><img class="img-fluid" src="/shehrullah/assets/img/logo.png" alt="Shehrullah <?=$hijri?>H (Kalimi Mohalla - Poona)" width="50" height="50" /></a>
-                    </div>
-                    <div class="col-9 text-end">
-                        <h6 class="mb-0"><a href="<?= $homepage ?>">Shehrullah <?=$hijri?>H <br/> (Kalimi Mohalla - Poona)</a></h6>
-                    </div>
-                </div>
-            </div>
-        </header>
-    <?php } ?>
-    <?php if($is_auth) { ?>
         <nav class="navbar">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/fmb/users/index.php">FMB (Kalimi Mohalla)</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headernavbar"
-                    aria-controls="headernavbar" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="bi bi-list"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="headernavbar">
-                    <ul class="navbar-nav me-auto mx-xl-auto">
-                        <li class="nav-item"><a class="nav-link" href="#"><?=$udata->name??''?></li>
-                        <li class="nav-item"><a class="nav-link" href="<?= $homepage ?>/login">Sign Out</a></li>
-                    </ul>
+                <div class="d-flex align-items-center w-100">
+                    <a href="<?= $homepage ?>" class="d-flex align-items-center text-decoration-none me-3">
+                        <img class="img-fluid" src="/shehrullah/assets/img/logo.png" alt="Shehrullah <?=$hijri?>H (Kalimi Mohalla - Poona)" width="50" height="50" />
+                    </a>
+                    <a href="<?= $homepage ?>" class="navbar-brand mb-0 me-auto">
+                        Shehrullah <?=$hijri?>H (Kalimi Mohalla - Poona)
+                    </a>
+                    <?php if($is_auth) { ?>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headernavbar"
+                            aria-controls="headernavbar" aria-expanded="false" aria-label="Toggle navigation">
+                            <i class="bi bi-list"></i>
+                        </button>
+                    <?php } ?>
                 </div>
+                <?php if($is_auth) { ?>
+                    <div class="collapse navbar-collapse" id="headernavbar">
+                        <ul class="navbar-nav me-auto mx-xl-auto">
+                            <li class="nav-item"><a class="nav-link" href="#"><?=$udata->name??''?></li>
+                            <li class="nav-item"><a class="nav-link" href="<?= $homepage ?>/login">Sign Out</a></li>
+                        </ul>
+                    </div>
+                <?php } ?>
             </div>
         </nav>
     <?php } ?>

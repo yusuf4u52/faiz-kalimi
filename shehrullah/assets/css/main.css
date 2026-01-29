@@ -40,11 +40,27 @@ code {
 .navbar {
   background-color: #E99C46;
   color: #ffffff;
+  padding: 0.5rem 1rem;
+  min-height: auto;
+}
+
+.navbar .container-fluid {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.navbar img {
+  max-height: 50px;
+  width: auto;
+  margin-right: 0.75rem;
 }
 
 .navbar-brand {
   font-family: "Playfair Display", serif;
   color: #ffffff;
+  font-size: 1rem;
+  white-space: nowrap;
+  padding: 0;
 }
 
 .navbar-brand:focus,
