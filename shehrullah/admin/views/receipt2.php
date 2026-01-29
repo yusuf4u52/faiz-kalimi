@@ -28,6 +28,7 @@ $date_cr = date_create($date_created);
 $date_format = date_format($date_cr, "j/F/Y");
 $pending = $takhmeen - $paid;
 $transaction_ref = $receipt_record->transaction_ref;
+$base_uri = getAppData('BASE_URI') ?? '/shehrullah/admin';
 
 // Include the HTML template
 include __DIR__ . '/receipt2.html';

@@ -106,6 +106,10 @@ body {
         text-align: center;
         margin: 30px auto 20px;
         max-width: 148mm;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
     }
 
     .print-button button {
@@ -120,6 +124,23 @@ body {
 
     .print-button button:hover {
         background: #0056b3;
+    }
+
+    .btn-back-home {
+        padding: 10px 30px;
+        font-size: 16px;
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background-color 0.3s;
+    }
+
+    .btn-back-home:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
     }
 }
 
