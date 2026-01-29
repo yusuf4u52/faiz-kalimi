@@ -257,7 +257,7 @@ function content_display()
                 </div>
                 
                 <!-- Action Buttons -->
-                <div class="d-flex flex-column gap-2 mb-2">
+                <div class="d-flex flex-column align-items-start gap-2 mb-2">
                     <button type="submit" class="btn btn-success btn-sm">
                         <i class="bi bi-save me-2"></i>Save Takhmeen
                     </button>
