@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt <?= htmlspecialchars($receipt_id) ?></title>
+    <link rel="stylesheet" href="../../_assets/css/receipt.css">
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="receipt-header">
+            <h1>Shehrullah <?= htmlspecialchars($hijri_year) ?>H</h1>
+        </div>
+
+        <div class="receipt-info">
+            <span>Receipt No : <?= htmlspecialchars($receipt_id) ?></span>
+            <span>Date : <?= htmlspecialchars($date_format) ?></span>
+        </div>
+
+        <div class="receipt-content">
+            <p>Received with thanks from</p>
+            <div class="receipt-name">
+                <?= htmlspecialchars($full_name) ?>
+            </div>
+            <p>
+                a voluntary contribution of Rs.<span class="receipt-amount"><?= htmlspecialchars($receipt_amount) ?>/-</span>
+            </p>
+            <p>on account of Shehrullah</p>
+        </div>
+
+        <div class="receipt-signatures">
+            <div class="signature-box">
+                <div class="signature-line">Auth Signature</div>
+            </div>
+            <div class="signature-box">
+                <div class="signature-line">HOF Signature</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="print-button">
+        <button onclick="window.print()">Print Receipt</button>
+    </div>
+
+    <script>
+        // Auto-trigger print dialog after page loads
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

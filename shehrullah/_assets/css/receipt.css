@@ -1,0 +1,130 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    padding: 20px;
+}
+
+.receipt-container {
+    max-width: 148mm;
+    margin: 15mm auto 0;
+    background: white;
+    border: 2px solid #000;
+    padding: 15mm 12mm;
+    position: relative;
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 10mm;
+}
+
+.receipt-header h1 {
+    font-size: 20pt;
+    font-weight: bold;
+    margin-bottom: 3mm;
+}
+
+.receipt-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8mm;
+    font-size: 10pt;
+    text-align: center;
+}
+
+.receipt-content {
+    font-size: 10pt;
+    line-height: 1.6;
+    margin-bottom: 10mm;
+    text-align: center;
+}
+
+.receipt-content p {
+    margin-bottom: 4mm;
+    text-align: center;
+}
+
+.receipt-name {
+    border-bottom: 1px solid #000;
+    min-height: 6mm;
+    margin-bottom: 4mm;
+    padding-bottom: 1mm;
+    text-align: center;
+}
+
+.receipt-amount {
+    margin-left: 5mm;
+}
+
+.receipt-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12mm;
+    font-size: 9pt;
+    text-align: center;
+}
+
+.signature-box {
+    width: 45%;
+}
+
+.signature-line {
+    border-top: 1px solid #000;
+    margin-top: 8mm;
+    padding-top: 1mm;
+}
+
+/* Print Styles */
+@media print {
+    body {
+        padding: 0;
+        margin: 0;
+    }
+
+    .receipt-container {
+        margin: 15mm auto 0;
+        padding: 15mm 12mm;
+        border: 2px solid #000;
+        page-break-after: avoid;
+    }
+
+    @page {
+        size: A5;
+        margin: 0;
+    }
+}
+
+/* Screen view - hide print button when printing */
+@media screen {
+    .print-button {
+        text-align: center;
+        margin: 30px auto 20px;
+        max-width: 148mm;
+    }
+
+    .print-button button {
+        padding: 10px 30px;
+        font-size: 16px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .print-button button:hover {
+        background: #0056b3;
+    }
+}
+
+@media print {
+    .print-button {
+        display: none;
+    }
+}
