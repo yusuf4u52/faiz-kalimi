@@ -40,13 +40,13 @@ $hijri = get_current_hijri_year() ?? 0;
 <body>
     <?php if ($header) { ?>
         <header class="header">
-            <div class="container-fluid">
+            <div class="container-fluid py-1">
                 <div class="row align-items-center">
-                    <div class="col-4">
-                        <a href="<?= $homepage ?>"><img class="img-fluid" src="/shehrullah/assets/img/logo.png" alt="Shehrullah <?=$hijri?>H (Kalimi Mohalla - Poona)" width="153" height="153" /></a>
+                    <div class="col-3">
+                        <a href="<?= $homepage ?>"><img class="img-fluid" src="/shehrullah/assets/img/logo.png" alt="Shehrullah <?=$hijri?>H (Kalimi Mohalla - Poona)" width="50" height="50" /></a>
                     </div>
-                    <div class="col-8 text-end">
-                        <h4><a href="<?= $homepage ?>">Shehrullah <?=$hijri?>H <br/> (Kalimi Mohalla - Poona)</a></h4>
+                    <div class="col-9 text-end">
+                        <h6 class="mb-0"><a href="<?= $homepage ?>">Shehrullah <?=$hijri?>H <br/> (Kalimi Mohalla - Poona)</a></h6>
                     </div>
                 </div>
             </div>
