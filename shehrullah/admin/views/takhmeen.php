@@ -87,110 +87,268 @@ function content_display()
     $hub_data = getAppData('hub_data');
     $takhmeen_data = getAppData('takhmeen_data');
     $receipt_data = getAppData('receipt_data');
+    
+    // Check for success message
+    $saved = isset($_GET['saved']) && $_GET['saved'] == '1';
     ?>
-    <form method="post">
+    
+    <?php ui_card("Takhmeen Entry", "Enter takhmeen details for HOF: <strong>" . htmlspecialchars($hof_data->full_name) . "</strong>"); ?>
+    
+    <?php if ($saved) { ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i><strong>Success!</strong> Takhmeen has been saved successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php } ?>
+    
+    <form method="post" id="takhmeen-form">
         <input type="hidden" name="hof_id" value="<?= $hof_id ?>">
         <input type="hidden" name="action" value="register">
-        <div class='col-xs-12'>
-            <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">HOF Name</label>
-                <div class="col-sm-9">
-                    <input type="text" readonly class="form-control" value="<?= $hof_data->full_name ?>">
+        
+        <!-- HOF Information Card -->
+        <div class="card mb-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-person-circle me-2"></i>HOF Information
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label fw-bold">HOF Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" readonly class="form-control-plaintext fw-semibold" value="<?= htmlspecialchars($hof_data->full_name) ?>">
+                    </div>
                 </div>
             </div>
-            <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Niyaz Hub</label>
-                <div class="col-sm-9">
-                    <input type="text" pattern="^[0-9]{1,9}$" required class="form-control" id="niyaz_hub" name="niyaz_hub"
-                        value="<?= $takhmeen_data->niyaz_hub ?? 0 ?>">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Iftar count (<?= $hub_data->iftar ?>)</label>
-                <div class="col-sm-9">
-                    <select class="form-control form-control-lg" name="iftar_count" id="iftar_count">
-                        <?= getCountDropdown(0, 5, $takhmeen_data->iftar_count ?? 0) ?>
-                    </select>
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Zabihat count (<?= $hub_data->zabihat ?>)</label>
-                <div class="col-sm-9">
-                    <select class="form-control form-control-lg" name="zabihat_count" id="zabihat_count">
-                        <?= getCountDropdown(0, 5, $takhmeen_data->zabihat_count ?? 0) ?>
-                    </select>
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Fateha count (<?= $hub_data->fateha ?>)</label>
-                <div class="col-sm-9">
-                    <select class="form-control form-control-lg" name="fateha_count" id="fateha_count">
-                        <?= getCountDropdown(0, 5, $takhmeen_data->fateha_count ?? 0) ?>
-                    </select>
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Khajoor count (<?= $hub_data->khajoor ?>)</label>
-                <div class="col-sm-9">
-                    <select class="form-control form-control-lg" name="khajoor_count" id="khajoor_count">
-                        <?= getCountDropdown(0, 5, $takhmeen_data->khajoor_count ?? 0) ?>
-                    </select>
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Pirsa count (<?= $hub_data->pirsu ?>)</label>
-                <div class="col-sm-9">
-                    <select class="form-control form-control-lg" name="pirsa_count" id="pirsa_count">
-                        <?= getCountDropdown(0, 5, $takhmeen_data->pirsa_count ?? 0) ?>
-                    </select>
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Chair count (<?= $hub_data->chair ?>)</label>
-                <div class="col-sm-9">
-                    <select class="form-control form-control-lg" name="chair_count" id="chair_count">
-                        <?= getCountDropdown(0, 5, $takhmeen_data->chair_count ?? 0) ?>
-                    </select>
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="hof_id" class="col-sm-3 col-form-label">Final Takhmeen</label>
-                <div class="col-sm-9">
-                    <input type="text" readonly pattern="^[0-9]{1,9}$" required class="form-control" id="takhmeen"
-                        name="takhmeen" value="<?= $takhmeen_data->takhmeen ?? 0 ?>">
-                </div>
-            </div>
-            <div class="form-group" style="font-weight:20px;margin-top: 25px;">
-                <button type="submit" class="btn btn-success">Save</button>
-
-                <?php if ($takhmeen_data->takhmeen > 0) { ?>
-                    <button type="button" id='paynow_link' class="btn btn-primary" onclick="submitToCollection(<?= $hof_id ?>)">Pay</button>
-                <?php } ?>
-            </div>
-            <?php if (is_array($receipt_data) && count($receipt_data) > 0) { ?>
-                <p>Receipt History</p>
-                <div class="form-group row">
-                    <?php __display_table_records([$receipt_data]) ?>
-                </div>
-            <?php } ?>
         </div>
+        
+        <!-- Takhmeen Details Card -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <i class="bi bi-calculator me-2"></i>Takhmeen Details
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <label for="niyaz_hub" class="col-sm-3 col-form-label fw-semibold">
+                        <i class="bi bi-currency-rupee me-1"></i>Niyaz Hub
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="text" pattern="^[0-9]{1,9}$" required 
+                            class="form-control" id="niyaz_hub" name="niyaz_hub"
+                            value="<?= $takhmeen_data->niyaz_hub ?? 0 ?>">
+                        <small class="text-muted">Enter the base niyaz hub amount</small>
+                    </div>
+                </div>
+                
+                <hr class="my-3">
+                
+                <div class="row mb-3">
+                    <label for="iftar_count" class="col-sm-3 col-form-label fw-semibold">
+                        <i class="bi bi-egg-fried me-1"></i>Iftar Count
+                    </label>
+                    <div class="col-sm-6">
+                        <select class="form-select" name="iftar_count" id="iftar_count">
+                            <?= getCountDropdown(0, 5, $takhmeen_data->iftar_count ?? 0) ?>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->iftar ?></small>
+                        <small class="text-info fw-semibold" id="iftar_total">Total: Rs. 0</small>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <label for="zabihat_count" class="col-sm-3 col-form-label fw-semibold">
+                        <i class="bi bi-droplet me-1"></i>Zabihat Count
+                    </label>
+                    <div class="col-sm-6">
+                        <select class="form-select" name="zabihat_count" id="zabihat_count">
+                            <?= getCountDropdown(0, 5, $takhmeen_data->zabihat_count ?? 0) ?>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->zabihat ?></small>
+                        <small class="text-info fw-semibold" id="zabihat_total">Total: Rs. 0</small>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <label for="fateha_count" class="col-sm-3 col-form-label fw-semibold">
+                        <i class="bi bi-book me-1"></i>Fateha Count
+                    </label>
+                    <div class="col-sm-6">
+                        <select class="form-select" name="fateha_count" id="fateha_count">
+                            <?= getCountDropdown(0, 5, $takhmeen_data->fateha_count ?? 0) ?>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->fateha ?></small>
+                        <small class="text-info fw-semibold" id="fateha_total">Total: Rs. 0</small>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <label for="khajoor_count" class="col-sm-3 col-form-label fw-semibold">
+                        <i class="bi bi-circle me-1"></i>Khajoor Count
+                    </label>
+                    <div class="col-sm-6">
+                        <select class="form-select" name="khajoor_count" id="khajoor_count">
+                            <?= getCountDropdown(0, 5, $takhmeen_data->khajoor_count ?? 0) ?>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->khajoor ?></small>
+                        <small class="text-info fw-semibold" id="khajoor_total">Total: Rs. 0</small>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <label for="pirsa_count" class="col-sm-3 col-form-label fw-semibold">
+                        <i class="bi bi-circle-fill me-1"></i>Pirsa Count
+                    </label>
+                    <div class="col-sm-6">
+                        <select class="form-select" name="pirsa_count" id="pirsa_count">
+                            <?= getCountDropdown(0, 5, $takhmeen_data->pirsa_count ?? 0) ?>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->pirsu ?></small>
+                        <small class="text-info fw-semibold" id="pirsa_total">Total: Rs. 0</small>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <label for="chair_count" class="col-sm-3 col-form-label fw-semibold">
+                        <i class="bi bi-chair me-1"></i>Chair Count
+                    </label>
+                    <div class="col-sm-6">
+                        <select class="form-select" name="chair_count" id="chair_count">
+                            <?= getCountDropdown(0, 5, $takhmeen_data->chair_count ?? 0) ?>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <small class="text-muted d-block">Rate: Rs. <?= $hub_data->chair ?></small>
+                        <small class="text-info fw-semibold" id="chair_total">Total: Rs. 0</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Final Takhmeen Summary Card -->
+        <div class="card mb-4 border-success">
+            <div class="card-header bg-success text-white">
+                <i class="bi bi-cash-stack me-2"></i>Final Takhmeen Amount
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <label for="takhmeen" class="col-sm-3 col-form-label fw-bold fs-5">Total Amount</label>
+                    <div class="col-sm-9">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-success text-white fw-bold">Rs.</span>
+                            <input type="text" readonly required 
+                                class="form-control form-control-lg fw-bold text-success" 
+                                id="takhmeen" name="takhmeen" 
+                                value="<?= $takhmeen_data->takhmeen ?? 0 ?>"
+                                style="font-size: 1.5rem;">
+                        </div>
+                        <small class="text-muted mt-2 d-block">
+                            <i class="bi bi-info-circle me-1"></i>This amount is calculated automatically based on your selections above.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2 mb-4">
+            <button type="submit" class="btn btn-success btn-lg">
+                <i class="bi bi-save me-2"></i>Save Takhmeen
+            </button>
+            <?php if ($takhmeen_data->takhmeen > 0) { ?>
+                <button type="button" id='paynow_link' class="btn btn-primary btn-lg" onclick="submitToCollection(<?= $hof_id ?>)">
+                    <i class="bi bi-credit-card me-2"></i>Proceed to Payment
+                </button>
+            <?php } ?>
+            <a href="<?= getAppData('BASE_URI') ?>/home" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-arrow-left me-2"></i>Back to Home
+            </a>
+        </div>
+        
+        <!-- Receipt History -->
+        <?php if (is_array($receipt_data) && count($receipt_data) > 0) { ?>
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <i class="bi bi-receipt me-2"></i>Receipt History
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <?php __display_table_records([$receipt_data]) ?>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
     </form>
+    
+    <?php ui_card_end(); ?>
     <script>
+        const rates = {
+            iftar: <?= $hub_data->iftar ?>,
+            zabihat: <?= $hub_data->zabihat ?>,
+            fateha: <?= $hub_data->fateha ?>,
+            khajoor: <?= $hub_data->khajoor ?>,
+            pirsu: <?= $hub_data->pirsu ?>,
+            chair: <?= $hub_data->chair ?>
+        };
+        
+        function formatCurrency(amount) {
+            return 'Rs. ' + amount.toLocaleString('en-IN');
+        }
+        
+        function updateItemTotal(item, count, rate) {
+            const total = count * rate;
+            $('#' + item + '_total').text('Total: ' + formatCurrency(total));
+        }
+        
         function on_change_dropdown() {
-            var niyaz_hub = Number($('#niyaz_hub').val());
-            var iftar_hub = Number($('#iftar_count').val()) * <?= $hub_data->iftar ?>;
-            var zabihat_hub = Number($('#zabihat_count').val()) * <?= $hub_data->zabihat ?>;
-            var fateha_hub = Number($('#fateha_count').val()) * <?= $hub_data->fateha ?>;
-            var khajoor_hub = Number($('#khajoor_count').val()) * <?= $hub_data->khajoor ?>;
-            var pirsa_hub = Number($('#pirsa_count').val()) * <?= $hub_data->pirsu ?>;
-            var chair_hub = Number($('#chair_count').val()) * <?= $hub_data->chair ?>;
+            var niyaz_hub = Number($('#niyaz_hub').val()) || 0;
+            var iftar_count = Number($('#iftar_count').val()) || 0;
+            var zabihat_count = Number($('#zabihat_count').val()) || 0;
+            var fateha_count = Number($('#fateha_count').val()) || 0;
+            var khajoor_count = Number($('#khajoor_count').val()) || 0;
+            var pirsa_count = Number($('#pirsa_count').val()) || 0;
+            var chair_count = Number($('#chair_count').val()) || 0;
+            
+            var iftar_hub = iftar_count * rates.iftar;
+            var zabihat_hub = zabihat_count * rates.zabihat;
+            var fateha_hub = fateha_count * rates.fateha;
+            var khajoor_hub = khajoor_count * rates.khajoor;
+            var pirsa_hub = pirsa_count * rates.pirsu;
+            var chair_hub = chair_count * rates.chair;
 
             var takhmeen = niyaz_hub + iftar_hub + zabihat_hub + fateha_hub + khajoor_hub + pirsa_hub + chair_hub;
 
+            // Update individual totals
+            updateItemTotal('iftar', iftar_count, rates.iftar);
+            updateItemTotal('zabihat', zabihat_count, rates.zabihat);
+            updateItemTotal('fateha', fateha_count, rates.fateha);
+            updateItemTotal('khajoor', khajoor_count, rates.khajoor);
+            updateItemTotal('pirsa', pirsa_count, rates.pirsu);
+            updateItemTotal('chair', chair_count, rates.chair);
+            
+            // Update final takhmeen
             $('#takhmeen').val(takhmeen);
+            
+            // Show/hide Pay button based on takhmeen amount
+            if (takhmeen > 0) {
+                $('#paynow_link').show();
+            } else {
+                $('#paynow_link').hide();
+            }
         }
 
         function submitToCollection(hof_id) {
+            if (!confirm('Do you want to proceed to payment collection?')) {
+                return;
+            }
+            
             var form = document.createElement('form');
             form.method = 'POST';
             form.action = '<?= getAppData("BASE_URI") ?>/collection';
@@ -206,23 +364,46 @@ function content_display()
         }
 
         function the_script() {
-            $(".form-control").on("change paste keyup", function () {
+            // Initialize totals on page load
+            on_change_dropdown();
+            
+            // Update on any change
+            $('#niyaz_hub, #iftar_count, #zabihat_count, #fateha_count, #khajoor_count, #pirsa_count, #chair_count').on("change paste keyup", function () {
                 on_change_dropdown();
-                $('#paynow_link').hide();
             });
             
             // Scroll to Pay button after save
             <?php if (isset($_GET['saved']) && $_GET['saved'] == '1') { ?>
                 setTimeout(function() {
                     var payButton = document.getElementById('paynow_link');
-                    var target = payButton || document.querySelector('form');
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: payButton ? 'center' : 'end' });
+                    if (payButton) {
+                        payButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Highlight the button briefly
+                        payButton.classList.add('pulse');
+                        setTimeout(function() {
+                            payButton.classList.remove('pulse');
+                        }, 2000);
                     }
-                }, 100);
+                }, 300);
             <?php } ?>
         }
     </script>
+    <style>
+        .pulse {
+            animation: pulse 1s ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .card-header {
+            font-weight: 600;
+        }
+        .form-select:focus, .form-control:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+    </style>
     <?php
 }
 
