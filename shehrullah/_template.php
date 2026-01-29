@@ -66,7 +66,7 @@ $hijri = get_current_hijri_year() ?? 0;
             </div>
         </nav>
     <?php } ?>
-    <div class="content mt-4">
+    <div class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
