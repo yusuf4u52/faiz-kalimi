@@ -222,6 +222,13 @@ function __display_table_records($data)
         '__show_row_sequence' => 'SN#',
         'id' => 'Receipt ID',
         'payment_mode' => 'Mode',
-        'amount' => 'amount'
+        'amount' => 'amount',
+        '__print_link' => 'Print'
     ]);
+}
+
+function __print_link($row, $index) {
+    $receipt_num = $row->id;
+    $uri = getAppData('BASE_URI');
+    return "<a target='receipt' class='btn btn-primary' href='$uri/receipt2/$receipt_num'>Print</a>";
 }
