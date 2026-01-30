@@ -133,11 +133,15 @@ function registered_users() {
         do_redirect_with_message('/home', 'You are not authorized to view this page');
     }
 
-    $query = 'SELECT its_id, full_name, age 
-              FROM its_data 
-              ORDER BY its_id ASC';
+    $hijri_year = get_current_hijri_year();
+    
+    $query = 'SELECT DISTINCT i.its_id, i.full_name, i.age, i.gender
+              FROM its_data i
+              INNER JOIN kl_shehrullah_attendees a ON i.its_id = a.its_id
+              WHERE a.year = ?
+              ORDER BY i.its_id ASC';
 
-    $result = run_statement($query);
+    $result = run_statement($query, $hijri_year);
     $records = $result->data;
     
     $uri = getAppData('BASE_URI');
@@ -146,7 +150,7 @@ function registered_users() {
         <div class="col-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-header row">
-                    <div class="col-12">Registered Users Report</div>                    
+                    <div class="col-12">Registered Users Report (Shehrullah Form Filled)</div>                    
                 </div>
                 <div class="card-body">
                     <p><a href="<?=$uri?>/report.registered_users_download" class="btn btn-gradient-primary btn-rounded btn-fw">Download Excel</a></p>
@@ -154,6 +158,7 @@ function registered_users() {
                         '__show_row_sequence' => 'Sr#',        
                         'its_id' => 'ITS ID',
                         'full_name' => 'Name',
+                        'gender' => 'Gender',
                         'age' => 'Age'
                     ]); ?>
                 </div>
