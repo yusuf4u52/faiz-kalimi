@@ -133,9 +133,14 @@ function registered_users() {
         do_redirect_with_message('/home', 'You are not authorized to view this page');
     }
 
+    function __chair_preference($row, $index) {
+        $chair_preference = $row->chair_preference ?? 'N';
+        return $chair_preference == 'Y' ? 'Yes' : 'No';
+    }
+
     $hijri_year = get_current_hijri_year();
     
-    $query = 'SELECT DISTINCT i.its_id, i.full_name, i.age, i.gender, i.misaq
+    $query = 'SELECT DISTINCT i.its_id, i.full_name, i.age, i.gender, i.misaq, a.chair_preference
               FROM its_data i
               INNER JOIN kl_shehrullah_attendees a ON i.its_id = a.its_id
               WHERE a.year = ? AND a.attendance_type = "Y"
@@ -160,7 +165,8 @@ function registered_users() {
                         'full_name' => 'Name',
                         'gender' => 'Gender',
                         'age' => 'Age',
-                        'misaq' => 'Misaq'
+                        'misaq' => 'Misaq',
+                        '__chair_preference' => 'Chair'
                     ]); ?>
                 </div>
             </div>
