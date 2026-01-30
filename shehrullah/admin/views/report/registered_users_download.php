@@ -14,7 +14,7 @@ $hijri_year = get_current_hijri_year();
 $query = 'SELECT DISTINCT i.its_id, i.full_name, i.age, i.gender
           FROM its_data i
           INNER JOIN kl_shehrullah_attendees a ON i.its_id = a.its_id
-          WHERE a.year = ?
+          WHERE a.year = ? AND a.attendance_type = "Y"
           ORDER BY i.its_id ASC';
 
 $result = run_statement($query, $hijri_year);
