@@ -1,9 +1,5 @@
 <?php
-// Allow GET requests if hof_id is provided, otherwise redirect to home
-$hof_id = $_GET['hof_id'] ?? $_POST['hof_id'] ?? null;
-if (!is_post() && empty($hof_id)) {
-    do_redirect('/home');
-}
+if_not_post_redirect('/home');
 
 if (!is_user_a(SUPER_ADMIN, TAKHMEENER)) {
     do_redirect_with_message('/home', 'Redirected as tried to access unauthorized area.');
@@ -36,11 +32,8 @@ function __handle_post()
 
         if( $receipt_num == -1 ) {
             setSessionData(TRANSIT_DATA , 'Oops! Could not save that.');
-            do_redirect('/collection?hof_id=' . urlencode($hof_id));
-            return;
         } else {            
             do_redirect('/receipt2/'.$receipt_num);
-            return;
         }
 
     }
@@ -59,27 +52,10 @@ function __handle_post()
     setAppData('takhmeen_data', $takhmeen_data);
 }
 
-// Handle GET requests - load data for display
-if (is_get() && !empty($hof_id)) {
-    $hof_data = get_hof_data($hof_id);
-    setAppData('hof_data', $hof_data);
-
-    $hijri_year = get_current_hijri_year();
-    $takhmeen_data = get_shehrullah_takhmeen_for($hof_id, $hijri_year);
-    if (is_null($takhmeen_data)) {
-        do_redirect_with_message('/home', 'Oops! data not found.');
-    }
-    if( $takhmeen_data->takhmeen == 0 ) {
-        do_redirect_with_message('/home', 'Oops! takhmeen entry not done.');
-    }
-
-    setAppData('takhmeen_data', $takhmeen_data);
-}
-
 function content_display()
 {
     $takhmeen_data = getAppData('takhmeen_data');
-    $hof_id = $_GET['hof_id'] ?? $_POST['hof_id'] ?? null;
+    $hof_id = $_POST['hof_id'] ?? null;
     $hof_data = getAppData('hof_data');
     
     $pending_amount = $takhmeen_data->takhmeen - $takhmeen_data->paid_amount;
