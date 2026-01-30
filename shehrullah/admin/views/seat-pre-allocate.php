@@ -42,12 +42,14 @@ function _handle_post()
         $area_code = $_POST['area_code'] ?? '';
         $seat_number = $_POST['seat_number'] ?? null;
         
-        if (empty($seat_number)) {
-            $seat_number = null;
+        if (empty($its_id) || empty($hof_id) || empty($area_code) || empty($seat_number)) {
+            setSessionData(TRANSIT_DATA, 'Please fill all required fields including seat number.');
+            return;
         }
         
-        if (empty($its_id) || empty($hof_id) || empty($area_code)) {
-            setSessionData(TRANSIT_DATA, 'Please fill all required fields.');
+        $seat_number = intval($seat_number);
+        if ($seat_number <= 0) {
+            setSessionData(TRANSIT_DATA, 'Invalid seat number provided.');
             return;
         }
         
@@ -68,8 +70,10 @@ function _handle_post()
                 setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat. Seat is already taken by someone else.');
             } else if ($error === 'INVALID_AREA') {
                 setSessionData(TRANSIT_DATA, 'Invalid area selected.');
-            } else if ($error === 'NO_SEATS_AVAILABLE') {
-                setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat. No seats available in the selected area.');
+            } else if ($error === 'SEAT_NUMBER_REQUIRED') {
+                setSessionData(TRANSIT_DATA, 'Seat number is required.');
+            } else if ($error === 'INVALID_SEAT_NUMBER') {
+                setSessionData(TRANSIT_DATA, 'Invalid seat number provided.');
             } else if ($error === 'DB_ERROR') {
                 setSessionData(TRANSIT_DATA, 'Failed to pre-allocate seat. Database error occurred. Please try again.');
             } else {
@@ -209,7 +213,7 @@ function content_display()
                     <td><?= ui_muted($chair) ?></td>
                     <td><?= ui_muted($current_area) . $seat_display . $allocated_by_display ?></td>
                     <td><?= ui_select('area_code', $compatible_areas, $att->allocated_area ?? '', 'Select...') ?></td>
-                    <td><?= ui_input('seat_number', $current_seat, 'Auto', 'number', 'width:70px') ?></td>
+                    <td><?= ui_input('seat_number', $current_seat, 'Seat #', 'number', 'width:70px', 'required') ?></td>
                     <td><?= ui_btn('Assign', 'primary') ?></td>
                 </form>
             </tr>
