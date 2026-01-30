@@ -183,6 +183,8 @@ function content_display()
         // Get eligible areas (only if Misaq is Done)
         $eligible_areas = $misaq_done ? get_eligible_areas_for_attendee($its_id, $hof_id) : [];
         
+        $disabled_attr = $selection_complete ? 'disabled' : '';
+        
         // Area cell
         if ($is_admin) {
             $area_cell = ui_badge($att->allocated_area_name ?? '', 'info') . "<br>" . ui_muted('Assigned by Admin');
@@ -204,31 +206,26 @@ function content_display()
                     $opts[''] = 'Limit reached';
                 }
                 
-                // If selection is complete but this attendee doesn't have area yet, disable dropdown
-                $disabled_attr = $selection_complete ? 'disabled' : '';
                 $select_html = ui_select('area_code', $opts, $allocated_area);
                 // Add data attributes for AJAX refresh functionality
                 $select_html = str_replace('<select', '<select data-its-id="' . h($its_id) . '" data-hof-id="' . h($hof_id) . '" id="area_select_' . h($its_id) . '" ' . $disabled_attr, $select_html);
                 
-                // Add seat number input field (required)
-                $seat_input = '<input type="number" name="seat_number" id="seat_number_' . h($its_id) . '" class="form-control form-control-sm d-inline-block" style="width: 100px; margin-left: 5px;" placeholder="Seat #" min="1" required ' . $disabled_attr . '>';
-                
-                $area_cell = "<form method=\"post\" class=\"d-inline\" id=\"form_{$its_id}\">"
-                    . "<input type=\"hidden\" name=\"action\" value=\"save_seat\">"
-                    . "<input type=\"hidden\" name=\"its_id\" value=\"{$its_id}\">"
-                    . "<div class=\"d-inline-flex align-items-center\">"
-                    . $select_html
-                    . $seat_input
-                    . "</div>"
-                    . "</form>";
+                $area_cell = $select_html;
             }
         }
         
-        // Seat cell
-        if (!empty($seat_number)) {
-            $seat_cell = ui_badge($seat_number, 'success');
-        } else {
+        // Seat cell - show input if no seat allocated, badge if allocated
+        if ($is_admin) {
+            $seat_cell = !empty($seat_number) ? ui_badge($seat_number, 'success') : '--';
+        } else if (!$misaq_done) {
             $seat_cell = '--';
+        } else {
+            if (!empty($seat_number)) {
+                $seat_cell = ui_badge($seat_number, 'success');
+            } else {
+                // Show seat input field in seat cell when no seat allocated
+                $seat_cell = '<input type="number" id="seat_number_' . h($its_id) . '" class="form-control form-control-sm" style="width: 100px;" placeholder="Seat #" min="1" required ' . $disabled_attr . '>';
+            }
         }
         
         // Action cell
@@ -246,8 +243,10 @@ function content_display()
                     $action_buttons[] = "<button type=\"button\" class=\"btn btn-light btn-sm\" onclick=\"showPrintModal('{$its_id}');\">Print</button>";
                 }
             } else {
-                // Show Save button when no allocation exists
-                $action_buttons[] = "<button type=\"button\" class=\"btn btn-light btn-sm\" onclick=\"document.getElementById('form_{$its_id}').submit();\">Save</button>";
+                // Show Save button when no allocation exists - use JavaScript to collect values
+                if (!$selection_complete) {
+                    $action_buttons[] = "<button type=\"button\" class=\"btn btn-light btn-sm\" onclick=\"submitSeatForm('{$its_id}');\">Save</button>";
+                }
             }
             
             $action_cell = implode(' ', $action_buttons);
@@ -463,6 +462,62 @@ function content_display()
     }
     ?>
     <script>
+        function submitSeatForm(itsId) {
+            // Get values from area select and seat input
+            var areaSelect = document.getElementById('area_select_' + itsId);
+            var seatInput = document.getElementById('seat_number_' + itsId);
+            
+            if (!areaSelect || !seatInput) {
+                alert('Please select both area and seat number.');
+                return;
+            }
+            
+            var areaCode = areaSelect.value;
+            var seatNumber = seatInput.value;
+            
+            if (!areaCode || areaCode === '') {
+                alert('Please select an area.');
+                return;
+            }
+            
+            if (!seatNumber || seatNumber === '' || parseInt(seatNumber) <= 0) {
+                alert('Please enter a valid seat number.');
+                return;
+            }
+            
+            // Create and submit form
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = window.location.href;
+            
+            var actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'save_seat';
+            form.appendChild(actionInput);
+            
+            var itsIdInput = document.createElement('input');
+            itsIdInput.type = 'hidden';
+            itsIdInput.name = 'its_id';
+            itsIdInput.value = itsId;
+            form.appendChild(itsIdInput);
+            
+            var areaInput = document.createElement('input');
+            areaInput.type = 'hidden';
+            areaInput.name = 'area_code';
+            areaInput.value = areaCode;
+            form.appendChild(areaInput);
+            
+            var seatInputHidden = document.createElement('input');
+            seatInputHidden.type = 'hidden';
+            seatInputHidden.name = 'seat_number';
+            seatInputHidden.value = seatNumber;
+            form.appendChild(seatInputHidden);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Show Bootstrap modal for errors
             var errorModal = document.getElementById('errorModal');
