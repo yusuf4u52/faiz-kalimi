@@ -128,4 +128,39 @@ function fmb_lq_niyat() {
     <?php
 }
 
+function registered_users() {
+    if( !(is_user_role(SUPER_ADMIN)) ) {
+        do_redirect_with_message('/home', 'You are not authorized to view this page');
+    }
+
+    $query = 'SELECT its_id, full_name, age 
+              FROM its_data 
+              ORDER BY its_id ASC';
+
+    $result = run_statement($query);
+    $records = $result->data;
+    
+    $uri = getAppData('BASE_URI');
+    ?>
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-header row">
+                    <div class="col-12">Registered Users Report</div>                    
+                </div>
+                <div class="card-body">
+                    <p><a href="<?=$uri?>/report.registered_users_download" class="btn btn-gradient-primary btn-rounded btn-fw">Download Excel</a></p>
+                    <?php util_show_data_table($records, [
+                        '__show_row_sequence' => 'Sr#',        
+                        'its_id' => 'ITS ID',
+                        'full_name' => 'Name',
+                        'age' => 'Age'
+                    ]); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
 

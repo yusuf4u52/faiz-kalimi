@@ -136,6 +136,15 @@ function content_display()
                 </div>
             </div>
             <div class="col-md-4 col-sm-6 col-12">
+                <div class="card bg-gradient-info">
+                    <div class="card-body">
+                        <h5 class="card-title">Report</h5>
+                        <p class="card-text">All Registered Users</p>
+                        <a href="<?= $url ?>/report/registered_users" class="btn btn-primary">GO >></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-12">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Shehrullah Year</h5>
