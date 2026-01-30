@@ -135,7 +135,7 @@ function registered_users() {
 
     $hijri_year = get_current_hijri_year();
     
-    $query = 'SELECT DISTINCT i.its_id, i.full_name, i.age, i.gender
+    $query = 'SELECT DISTINCT i.its_id, i.full_name, i.age, i.gender, i.misaq
               FROM its_data i
               INNER JOIN kl_shehrullah_attendees a ON i.its_id = a.its_id
               WHERE a.year = ? AND a.attendance_type = "Y"
@@ -159,7 +159,8 @@ function registered_users() {
                         'its_id' => 'ITS ID',
                         'full_name' => 'Name',
                         'gender' => 'Gender',
-                        'age' => 'Age'
+                        'age' => 'Age',
+                        'misaq' => 'Misaq'
                     ]); ?>
                 </div>
             </div>
