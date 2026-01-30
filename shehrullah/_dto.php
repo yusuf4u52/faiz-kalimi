@@ -1512,7 +1512,7 @@ function sync_blocked_seats_for_area($area_code, $blocked_seats, $blocked_by, $h
 /**
  * Update seating area configuration
  */
-function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family = null) {
+function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family = null, $min_age = null) {
     if (empty($area_code)) {
         return false;
     }
@@ -1520,9 +1520,9 @@ function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is
     // Update area configuration in kl_shehrullah_seating_areas
     $result = run_statement(
         'UPDATE kl_shehrullah_seating_areas 
-         SET area_name = ?, seat_start = ?, seat_end = ?, is_active = ?, max_seats_per_family = ?
+         SET area_name = ?, seat_start = ?, seat_end = ?, is_active = ?, max_seats_per_family = ?, min_age = ?
          WHERE area_code = ? AND hijri_year = ?',
-        $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family, 
+        $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family, $min_age, 
         $area_code, get_current_hijri_year()
     );
     

@@ -17,14 +17,16 @@ function _handle_post()
         $seat_end = $_POST['seat_end'] ?? null;
         $is_active = $_POST['is_active'] ?? 'Y';
         $max_seats_per_family = $_POST['max_seats_per_family'] ?? null;
+        $min_age = $_POST['min_age'] ?? null;
         $blocked_seats_json = $_POST['blocked_seats'] ?? '[]';
         
         if (empty($seat_start)) $seat_start = null;
         if (empty($seat_end)) $seat_end = null;
         if (empty($max_seats_per_family)) $max_seats_per_family = null;
+        if (empty($min_age)) $min_age = null;
         
         // Update area configuration (sync_seats_for_area handles validation internally)
-        $success = update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family);
+        $success = update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is_active, $max_seats_per_family, $min_age);
         
         if ($success) {
             // Sync blocked seats efficiently using unified function
@@ -62,16 +64,18 @@ function content_display()
     }
     
     ui_card("Seating Areas - {$hijri_year}H", '', "$url/seat-management");
-    ui_table(['Name', 'Gender', 'Max Per Family', 'Seats', 'Status', '']);
+    ui_table(['Name', 'Gender', 'Age Limit', 'Max Per Family', 'Seats', 'Status', '']);
     
     foreach ($areas as $area) {
         $seats = ($area->seat_start && $area->seat_end) 
             ? ui_muted("{$area->seat_start}-{$area->seat_end}") 
             : ui_muted('—');
         $max_family = $area->max_seats_per_family ?: '∞';
+        $age_limit = $area->min_age > 0 ? ui_muted("{$area->min_age}+") : ui_muted('—');
         ui_tr([
             h($area->area_name),
             ui_muted($area->gender),
+            $age_limit,
             ui_muted($max_family),
             $seats,
             ui_dot($area->is_active == 'Y'),
@@ -124,6 +128,10 @@ function show_edit_area_page($area_code, $url)
             <div class="col-md-4">
                 <label class="form-label small">Max Seats Per Family</label>
                 <?= ui_input('max_seats_per_family', $area->max_seats_per_family, '∞', 'number') ?>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small">Age Limit (Minimum Age)</label>
+                <?= ui_input('min_age', $area->min_age, '—', 'number') ?>
             </div>
         </div>
         
