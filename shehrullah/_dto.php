@@ -1027,23 +1027,10 @@ function get_seat_allocations_for_family($hof_id) {
  * @param string $its_id Member ITS ID
  * @param string $hof_id Head of Family ID
  * @param string $area_code Seating area code
- * @param int|null $seat_number Specific seat number to allocate (required unless $allow_auto_allocate is true)
- * @param bool $allow_auto_allocate Allow automatic allocation if seat_number not provided (admin use only)
  * @return int|false Seat number on success, false on failure
  */
-function allocate_seat_atomic($its_id, $hof_id, $area_code, $seat_number = null, $allow_auto_allocate = false) {
+function allocate_seat_atomic($its_id, $hof_id, $area_code) {
     $hijri_year = get_current_hijri_year();
-    
-    // Seat number is required unless auto-allocation is explicitly allowed
-    $has_seat_number = ($seat_number !== null && $seat_number !== '' && intval($seat_number) > 0);
-    
-    if (!$has_seat_number && !$allow_auto_allocate) {
-        return false;
-    }
-    
-    if ($has_seat_number) {
-        $seat_number = intval($seat_number);
-    }
     
     // Step 1: Pre-validation (fast path)
     $eligible_areas = get_eligible_areas_for_attendee($its_id, $hof_id);
@@ -1067,79 +1054,7 @@ function allocate_seat_atomic($its_id, $hof_id, $area_code, $seat_number = null,
     }
     $max_seats_per_family = intval($area_result->data[0]->max_seats_per_family);
     
-    // Step 3: Handle specific seat number allocation
-        $seat_number = intval($seat_number);
-        
-        // Check if seat is already reserved by someone else
-        $check_query = 'SELECT its_id FROM kl_shehrullah_seat_allocation 
-                        WHERE area_code = ? AND seat_number = ? AND hijri_year = ? AND status = "reserved" AND its_id != ?';
-        $check_result = run_statement($check_query, $area_code, $seat_number, $hijri_year, $its_id);
-        if ($check_result->success && $check_result->count > 0) {
-            return false; // Seat already taken
-        }
-        
-        // Check family limit if applicable
-        if ($max_seats_per_family > 0) {
-            // Check if this specific seat is already allocated to this family member (re-allocation case)
-            $current_seat_query = 'SELECT its_id FROM kl_shehrullah_seat_allocation 
-                                  WHERE area_code = ? AND seat_number = ? AND hijri_year = ? AND hof_id = ? AND its_id = ? AND status = "reserved"';
-            $current_seat_result = run_statement($current_seat_query, $area_code, $seat_number, $hijri_year, $hof_id, $its_id);
-            $is_reallocation = $current_seat_result->success && $current_seat_result->count > 0;
-            
-            if (!$is_reallocation) {
-                // Only check family limit if this is a new allocation (not re-allocating same seat)
-                $family_count_query = 'SELECT COUNT(*) as count FROM kl_shehrullah_seat_allocation 
-                                      WHERE hof_id = ? AND area_code = ? AND hijri_year = ? AND status = "reserved"';
-                $family_count_result = run_statement($family_count_query, $hof_id, $area_code, $hijri_year);
-                if ($family_count_result->success && $family_count_result->count > 0) {
-                    $current_count = intval($family_count_result->data[0]->count);
-                    if ($current_count >= $max_seats_per_family) {
-                        return false; // Family limit reached
-                    }
-                }
-            }
-        }
-        
-        // Check if seat exists and is available
-        $check_seat_query = 'SELECT id, status FROM kl_shehrullah_seat_allocation 
-                            WHERE area_code = ? AND seat_number = ? AND hijri_year = ?';
-        $check_seat_result = run_statement($check_seat_query, $area_code, $seat_number, $hijri_year);
-        
-        if ($check_seat_result->success && $check_seat_result->count > 0) {
-            // Seat exists - update it if available
-            $seat_data = $check_seat_result->data[0];
-            if ($seat_data->status === 'reserved' && $seat_data->its_id !== $its_id) {
-                return false; // Seat already reserved by someone else
-            }
-            
-            $update_query = 'UPDATE kl_shehrullah_seat_allocation 
-                            SET status = "reserved", its_id = ?, hof_id = ?, allocated_at = NOW()
-                            WHERE area_code = ? AND seat_number = ? AND hijri_year = ?';
-            $result = run_statement($update_query, $its_id, $hof_id, $area_code, $seat_number, $hijri_year);
-            
-            if ($result->success) {
-                return $seat_number;
-            }
-            return false;
-        } else {
-            // Seat doesn't exist - insert it
-            $insert_query = 'INSERT INTO kl_shehrullah_seat_allocation 
-                            (its_id, hof_id, area_code, seat_number, hijri_year, status, allocated_at)
-                            VALUES (?, ?, ?, ?, ?, "reserved", NOW())';
-            $result = run_statement($insert_query, $its_id, $hof_id, $area_code, $seat_number, $hijri_year);
-            
-            if ($result->success) {
-                return $seat_number;
-            }
-            return false;
-        }
-    }
-    
-    // Step 4: Automatic seat allocation (only if allowed)
-    if (!$allow_auto_allocate) {
-        return false;
-    }
-    
+    // Step 3: Atomic UPDATE with family limit check
     $conn = get_database_connection(1);
     if (!$conn) return false;
     
@@ -1180,7 +1095,7 @@ function allocate_seat_atomic($its_id, $hof_id, $area_code, $seat_number = null,
             $stmt->execute([$its_id, $hof_id, $area_code, $hijri_year]);
         }
         
-        // Step 5: Check if UPDATE succeeded
+        // Step 4: Check if UPDATE succeeded
         if ($stmt->rowCount() == 0) {
             return false; // No seats available or family limit reached
         }
@@ -1262,8 +1177,8 @@ function admin_pre_allocate_seat($its_id, $hof_id, $area_code, $seat_number, $al
             $result = run_statement($query, $its_id, $hof_id, $area_code, $seat_number, $allocated_by, $hijri_year);
         }
     } else {
-        // No specific seat number - use atomic allocation with auto-allocation enabled (admin only)
-        $seat_number = allocate_seat_atomic($its_id, $hof_id, $area_code, null, true);
+        // No specific seat number - use atomic allocation (same as user flow)
+        $seat_number = allocate_seat_atomic($its_id, $hof_id, $area_code);
         if ($seat_number === false) {
             return ['success' => false, 'error' => 'NO_SEATS_AVAILABLE'];
         }

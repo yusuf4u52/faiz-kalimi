@@ -77,7 +77,6 @@ function _handle_form_submit()
     if ($action === 'save_seat') {
         $its_id = $_POST['its_id'] ?? '';
         $area_code = $_POST['area_code'] ?? '';
-        $seat_number = $_POST['seat_number'] ?? null;
         $hof_id = getAppData('hof_id');
         
         if (empty($its_id) || empty($area_code)) {
@@ -85,27 +84,15 @@ function _handle_form_submit()
             return;
         }
         
-        // Seat number is required - no automatic allocation
-        if (empty($seat_number) || $seat_number === null || $seat_number === '') {
-            do_redirect_with_message($redirect_url, 'Please provide a seat number.');
-            return;
-        }
-        
-        $seat_number = intval($seat_number);
-        if ($seat_number <= 0) {
-            do_redirect_with_message($redirect_url, 'Invalid seat number.');
-            return;
-        }
-        
-        // Try to allocate seat - returns seat number on success, false on failure
-        $result = allocate_seat_atomic($its_id, $hof_id, $area_code, $seat_number);
+        // Try to allocate seat - returns seat number/true on success, false on failure
+        $result = allocate_seat_atomic($its_id, $hof_id, $area_code);
         
         // Success if seat is allocated, failure if not
         if ($result) {
-            $message = is_numeric($result) ? "Seat allocated successfully! Seat #{$result}" : 'Seat allocated successfully!';
+            $message = is_string($result) ? "Seat allocated successfully! Seat #{$result}" : 'Seat allocated successfully!';
             do_redirect_with_message($redirect_url, $message);
         } else {
-            do_redirect_with_message($redirect_url, 'Seat allocation failed. Seat may be already taken or unavailable.');
+            do_redirect_with_message($redirect_url, 'Seat allocation failed. Area may be full or unavailable.');
         }
     }
 }
@@ -209,17 +196,10 @@ function content_display()
                 $select_html = ui_select('area_code', $opts, $allocated_area);
                 // Add data attributes for AJAX refresh functionality
                 $select_html = str_replace('<select', '<select data-its-id="' . h($its_id) . '" data-hof-id="' . h($hof_id) . '" id="area_select_' . h($its_id) . '" ' . $disabled_attr, $select_html);
-                
-                // Add seat number input field (required)
-                $seat_input = '<input type="number" name="seat_number" id="seat_number_' . h($its_id) . '" class="form-control form-control-sm d-inline-block" style="width: 100px; margin-left: 5px;" placeholder="Seat #" min="1" required ' . $disabled_attr . '>';
-                
                 $area_cell = "<form method=\"post\" class=\"d-inline\" id=\"form_{$its_id}\">"
                     . "<input type=\"hidden\" name=\"action\" value=\"save_seat\">"
                     . "<input type=\"hidden\" name=\"its_id\" value=\"{$its_id}\">"
-                    . "<div class=\"d-inline-flex align-items-center\">"
                     . $select_html
-                    . $seat_input
-                    . "</div>"
                     . "</form>";
             }
         }
