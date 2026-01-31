@@ -24,7 +24,7 @@ body {
 }
 
 .receipt-container {
-    max-width: 148mm;
+    max-width: 200mm;
     width: 100%;
     background: white;
     border: 2px solid #000;
@@ -109,14 +109,15 @@ body {
     }
 
     .receipt-container {
-        margin: 15mm auto 0;
-        padding: 15mm 12mm;
+        margin: 5mm auto 0;
+        padding: 10mm 12mm;
         border: 2px solid #000;
         page-break-after: avoid;
+        max-width: 200mm;
     }
 
     @page {
-        size: A5;
+        size: A3;
         margin: 0;
     }
 }
@@ -126,7 +127,7 @@ body {
     .print-button {
         text-align: center;
         margin: 10px auto;
-        max-width: 148mm;
+        max-width: 200mm;
         display: flex;
         gap: 10px;
         justify-content: center;
