@@ -281,7 +281,7 @@ function get_paid_amount_from_receipts($year, $hof_id = null) {
     return 0.0;
 }
 
-function save_collection_record($year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks) {
+function save_collection_record($year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks, $createdby = null) {
     // Validate amount is greater than 0
     if (empty($amount) || floatval($amount) <= 0) {
         return -1;
@@ -299,10 +299,10 @@ function save_collection_record($year, $hof_id, $amount, $payment_mode, $transac
     
     // Insert the receipt with the calculated ID
     // Note: paid_amount is now calculated dynamically from receipts, so no UPDATE needed
-    $query = 'INSERT INTO kl_shehrullah_collection_record (id, year, hof_id, amount, payment_mode, transaction_ref, remarks, created)
-    VALUES (?,?,?,?,?,?,?,now());';
+    $query = 'INSERT INTO kl_shehrullah_collection_record (id, year, hof_id, amount, payment_mode, transaction_ref, remarks, createdby, created)
+    VALUES (?,?,?,?,?,?,?,?,now());';
 
-    $result = run_statement($query, $next_id, $year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks);
+    $result = run_statement($query, $next_id, $year, $hof_id, $amount, $payment_mode, $transaction_ref, $remarks, $createdby);
 
     if ($result->success && $result->count > 0) {
         return $next_id;
@@ -312,11 +312,12 @@ function save_collection_record($year, $hof_id, $amount, $payment_mode, $transac
 
 
 function get_collection_record($id, $year) {
-    $query = 'select cr.id,cr.hof_id, cr.amount,cr.payment_mode, cr.transaction_ref, cr.created, cr.remarks,t.takhmeen,
-    m.full_name
+    $query = 'select cr.id,cr.hof_id, cr.amount,cr.payment_mode, cr.transaction_ref, cr.created, cr.remarks, cr.createdby, t.takhmeen,
+    m.full_name, u.name as createdby_name
     FROM kl_shehrullah_collection_record cr 
     JOIN kl_shehrullah_takhmeen t ON t.hof_id = cr.hof_id AND t.year = cr.year
     JOIN its_data m  ON t.hof_id = m.its_id
+    LEFT JOIN kl_shehrullah_roles u ON u.itsid = cr.createdby
     where cr.id = ? and cr.year=?';
 
     $result = run_statement($query, $id, $year);

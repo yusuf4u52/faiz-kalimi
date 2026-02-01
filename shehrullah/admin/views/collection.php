@@ -20,6 +20,10 @@ function __handle_post()
         $transaction_ref = $_POST['transaction_ref'] ?? null;
         $remarks = $_POST['remarks'] ?? null;
         
+        // Get logged in user ITS ID
+        $udata = getSessionData(THE_SESSION_ID);
+        $createdby = $udata->itsid ?? null;
+        
         // Validate amount is greater than 0
         if (empty($amount) || floatval($amount) <= 0) {
             setSessionData(TRANSIT_DATA, 'Payment amount must be greater than 0.');
@@ -28,7 +32,7 @@ function __handle_post()
         }
         
         $receipt_num = save_collection_record($hijri_year, $hof_id, $amount, $payment_mode, 
-        $transaction_ref, $remarks);
+        $transaction_ref, $remarks, $createdby);
 
         if( $receipt_num == -1 ) {
             setSessionData(TRANSIT_DATA , 'Oops! Could not save that.');

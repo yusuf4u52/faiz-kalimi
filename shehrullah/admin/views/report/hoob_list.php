@@ -6,9 +6,10 @@ function content_display() {
     $query = 'SELECT i.its_id as ITSNo, "Sherullah Niyaz" as Hoobname, 
     r.id as ReceiptNo, DATE_FORMAT(r.created, "%d/%m/%Y") as ReceiptDate, r.year, i.full_name as ReceiptName, 
     r.amount as Amount, r.payment_mode as PayType, r.transaction_ref as ChequeNo, 
-    r.remarks 
+    r.remarks, u.name as CreatedBy 
     FROM kl_shehrullah_collection_record r 
     JOIN its_data i ON i.its_id = r.hof_id 
+    LEFT JOIN kl_shehrullah_roles u ON u.itsid = r.createdby
     WHERE r.year=?;';
     
     $result = run_statement($query, $hijri_year);
@@ -45,6 +46,7 @@ function __display_table_records($data)
         'Amount' => 'Amount',
         'PayType' => 'PayType',
         'ChequeNo' => 'ChequeNo',
-        'remarks' => 'Remarks'
+        'remarks' => 'Remarks',
+        'CreatedBy' => 'Created By'
     ]);
 }
