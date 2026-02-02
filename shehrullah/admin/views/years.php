@@ -44,9 +44,9 @@ function show_input_year()
         <div class="card-body">
             <form action="" method="post">
                 <input type='hidden' name='req_year' value="<?= $year ?>" />
-                <div class="form-group row">
-                    <label for="year" class="col-sm-2 col-form-label">HIJRI YEAR</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="year" class="col-4 form-label">HIJRI YEAR</label>
+                    <div class="col-8">
                         <?php if ($year > 0) { ?>
                             <input type='hidden' name='year' value="<?= $hijri_data->year ?>" />
                             <?= $hijri_data->year ?>
@@ -56,100 +56,98 @@ function show_input_year()
                         <?php } ?>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="start_eng_date" class="col-sm-2 col-form-label">Hijri English Start Date</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="start_eng_date" class="col-4 form-label">Hijri English Start Date</label>
+                    <div class="col-8">
                         <input type='date' class='form-control' name='start_eng_date'  value="<?=$hijri_data->start_eng_date??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Full Niyaz Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Full Niyaz Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='full_niyaz' value="<?=$hijri_data->full_niyaz??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Half Niyaz Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Half Niyaz Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='half_niyaz' value="<?=$hijri_data->half_niyaz??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Per Head Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Per Head Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='per_person_niyaz' value="<?=$hijri_data->family_niyaz??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="per_kid_niyaz" class="col-sm-2 col-form-label">Kids Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="per_kid_niyaz" class="col-4 form-label">Kids Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='per_kid_niyaz' value="<?=$hijri_data->per_kid_niyaz??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="half_hub_age" class="col-sm-2 col-form-label">Kids Hub Max Age</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="half_hub_age" class="col-4 form-label">Kids Hub Max Age</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,2}$" class='form-control' name='half_hub_age' value="<?=$hijri_data->half_hub_age??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="zero_hub_age" class="col-sm-2 col-form-label">Zero Hub Age</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="zero_hub_age" class="col-4 form-label">Zero Hub Age</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,2}$" class='form-control' name='zero_hub_age' value="<?=$hijri_data->zero_hub_age??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Sehori Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Sehori Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='sehori' value="<?=$hijri_data->sehori??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Iftari Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Iftari Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='iftar' value="<?=$hijri_data->iftar??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Zabihat Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Zabihat Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='zabihat' value="<?=$hijri_data->zabihat??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Fateha Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Fateha Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='fateha' value="<?=$hijri_data->fateha??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Khajoor Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Khajoor Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='khajoor' value="<?=$hijri_data->khajoor??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Chair Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Chair Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='chair' value="<?=$hijri_data->chair??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Parking Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Parking Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='parking' value="<?=$hijri_data->parking??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Pirsu Hub</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Pirsu Hub</label>
+                    <div class="col-8">
                         <input type='text' pattern="^[0-9]{1,8}$" class='form-control' name='pirsa' value="<?=$hijri_data->pirsu??''?>" required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <div class="col-sm-10">
-                        <button type="submit" class="btn btn-gradient-success btn-rounded btn-fw">Save</button>
-                    </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-light">Save</button>
                 </div>
             </form>
         </div>
@@ -162,13 +160,16 @@ function show_year_list()
     $url = getAppData('BASE_URI');
     ?>
     <div class="card">
-        <div class="card-header row">
-            <div class="col-6">Hijri Data</div>
-            <div class="col-6"><a href="<?= $url ?>/years/0" class="btn btn-gradient-success btn-rounded btn-fw">Add New</a></div>
-            </di>
-            <div class="card-body">
-                <?= __display_hijri_list([$hijri_data]) ?>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h2 class="mb-3">Hijri Data</h2>
+                </div>
+                <div class="col-6 text-end">
+                    <a href="<?= $url ?>/years/0" class="btn btn-light mb-3">Add New</a>
+                </div>
             </div>
+            <?= __display_hijri_list([$hijri_data]) ?>
         </div>
     </div>
     <?php
@@ -196,7 +197,7 @@ function __show_link2markaz_list($row, $index)
 {
     $year = $row->year;
     $uri = getAppData('BASE_URI');
-    return "<a href='$uri/years/$year' class='btn btn-gradient-success btn-rounded btn-fw'>Edit</a>";
+    return "<a href='$uri/years/$year' class='btn btn-light'><i class='bi bi-pencil-square'></i></a>";
 }
 
 

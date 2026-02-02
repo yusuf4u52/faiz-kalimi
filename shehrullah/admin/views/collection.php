@@ -73,18 +73,18 @@ function content_display()
         <input type="hidden" name="hof_id" value="<?=$hof_id?>">
         <input type="hidden" name="action" value="register">
         
-        <div class="row g-2">
+        <div class="row">
             <!-- Left Column: HOF Info and Payment Summary -->
-            <div class="col-md-5">
+            <div class="col-12 col-md-6 mb-3">
                 <!-- HOF Information Card -->
-                <div class="card mb-2 border-primary">
-                    <div class="card-header bg-primary text-white py-1">
+                <div class="card mb-3">
+                    <div class="card-header py-1">
                         <i class="bi bi-person-circle me-2"></i>HOF Information
                     </div>
                     <div class="card-body py-2">
                         <div class="row">
-                            <label class="col-sm-4 col-form-label fw-bold small">HOF Name</label>
-                            <div class="col-sm-8">
+                            <label class="col-4 form-label">HOF Name</label>
+                            <div class="col-8">
                                 <div class="form-control-plaintext fw-semibold small"><?= htmlspecialchars($hof_data->full_name) ?></div>
                             </div>
                         </div>
@@ -92,36 +92,36 @@ function content_display()
                 </div>
                 
                 <!-- Payment Summary Card -->
-                <div class="card mb-2 border-info">
-                    <div class="card-header bg-info text-white py-1">
+                <div class="card mb-3">
+                    <div class="card-header py-1">
                         <i class="bi bi-cash-coin me-2"></i>Payment Summary
                     </div>
                     <div class="card-body py-2">
-                        <div class="row mb-2">
-                            <label class="col-sm-5 col-form-label fw-semibold small">Total Takhmeen</label>
-                            <div class="col-sm-7">
-                                <div class="form-control-plaintext fw-bold text-primary small">
+                        <div class="row mb-3">
+                            <label class="col-4 form-label fw-semibold small">Total Takhmeen</label>
+                            <div class="col-8">
+                                <div class="form-control-plaintext fw-bold small">
                                     <i class="bi bi-currency-rupee me-1"></i><?= number_format($total_takhmeen) ?>
                                 </div>
                             </div>
                         </div>
-                        <div class="row mb-2">
-                            <label class="col-sm-5 col-form-label fw-semibold small">Paid Amount</label>
-                            <div class="col-sm-7">
+                        <div class="row mb-3">
+                            <label class="col-4 form-label fw-semibold small">Paid Amount</label>
+                            <div class="col-8">
                                 <div class="form-control-plaintext text-success fw-semibold small">
-                                    <i class="bi bi-check-circle me-1"></i>Rs. <?= number_format($paid_amount) ?>
+                                    <i class="bi bi-check-circle me-1"></i><i class="bi bi-currency-rupee me-1"></i> <?= number_format($paid_amount) ?>
                                 </div>
                             </div>
                         </div>
                         <hr class="my-2">
                         <div class="row">
-                            <label class="col-sm-5 col-form-label fw-bold small">Pending Amount</label>
-                            <div class="col-sm-7">
+                            <label class="col-4 form-label fw-semibold small">Pending Amount</label>
+                            <div class="col-8">
                                 <div class="alert alert-warning mb-0 py-2">
                                     <div class="d-flex align-items-center">
                                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                         <span class="fw-bold">
-                                            Rs. <?= number_format($pending_amount) ?>
+                                            <i class="bi bi-currency-rupee me-1"></i><?= number_format($pending_amount) ?>
                                         </span>
                                     </div>
                                 </div>
@@ -132,24 +132,24 @@ function content_display()
             </div>
             
             <!-- Right Column: Payment Details and Actions -->
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <!-- Payment Details Card -->
                 <div class="card mb-2">
                     <div class="card-header bg-light py-1">
                         <i class="bi bi-credit-card me-2"></i>Payment Details
                     </div>
                     <div class="card-body py-2">
-                        <div class="row mb-2">
-                            <label for="amount" class="col-sm-4 col-form-label fw-semibold small">
+                        <div class="row mb-3">
+                            <label for="amount" class="col-4 form-label fw-semibold small">
                                 <i class="bi bi-currency-rupee me-1"></i>Payment Amount
                             </label>
-                            <div class="col-sm-8">
+                            <div class="col-8">
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text">Rs.</span>
                                     <input type="text" pattern="^[0-9]{1,9}$" required 
                                         class="form-control" id="amount" name="amount"
                                         value="" placeholder="Enter payment amount">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="fill-pending-btn" 
+                                    <button type="button" class="btn btn-outline-light btn-sm" id="fill-pending-btn" 
                                         onclick="fillPendingAmount()" title="Fill pending amount">
                                         <i class="bi bi-arrow-down-circle"></i> Fill
                                     </button>
@@ -157,11 +157,11 @@ function content_display()
                             </div>
                         </div>
                         
-                        <div class="row mb-2">
-                            <label for="payment_mode" class="col-sm-4 col-form-label fw-semibold small">
+                        <div class="row mb-3">
+                            <label for="payment_mode" class="col-4 form-label fw-semibold small">
                                 <i class="bi bi-wallet2 me-1"></i>Payment Mode
                             </label>
-                            <div class="col-sm-8">
+                            <div class="col-8">
                                 <select class="form-select form-select-sm" required name="payment_mode" id="payment_mode">
                                     <option value="">Select payment mode...</option>
                                     <option value="cash">Cash</option>
@@ -171,22 +171,22 @@ function content_display()
                             </div>
                         </div>
                         
-                        <div class="row mb-2" id="transaction_ref_section" style="display: none;">
-                            <label for="transaction_ref" class="col-sm-4 col-form-label fw-semibold small">
+                        <div class="row mb-3" id="transaction_ref_section" style="display: none;">
+                            <label for="transaction_ref" class="col-4 form-label fw-semibold small">
                                 <i class="bi bi-receipt me-1"></i>Reference Number
                             </label>
-                            <div class="col-sm-8">
+                            <div class="col-8">
                                 <input type="text" class="form-control form-control-sm" 
                                     id="transaction_ref" name="transaction_ref" value=""
                                     placeholder="Enter transaction/cheque reference number">
                             </div>
                         </div>
                         
-                        <div class="row mb-2">
-                            <label for="remarks" class="col-sm-4 col-form-label fw-semibold small">
+                        <div class="row mb-3">
+                            <label for="remarks" class="col-4 form-label fw-semibold small">
                                 <i class="bi bi-chat-left-text me-1"></i>Remarks
                             </label>
-                            <div class="col-sm-8">
+                            <div class="col-8">
                                 <input type="text" class="form-control form-control-sm" id="remarks" name="remarks"
                                     placeholder="Optional remarks or notes">
                             </div>
@@ -196,14 +196,14 @@ function content_display()
                 
                 <!-- Action Buttons -->
                 <div class="d-flex flex-column align-items-center gap-2">
-                    <button type="submit" class="btn btn-success btn-sm">
+                    <button type="submit" class="btn btn-light btn-sm">
                         <i class="bi bi-save me-2"></i>Save Payment
                     </button>
                     <div class="d-flex gap-2">
-                        <a href="<?= getAppData('BASE_URI') ?>/takhmeen?hof_id=<?= urlencode($hof_id) ?>" class="btn btn-outline-secondary btn-sm">
+                        <a href="<?= getAppData('BASE_URI') ?>/takhmeen?hof_id=<?= urlencode($hof_id) ?>" class="btn btn-outline-light btn-sm">
                             <i class="bi bi-arrow-left me-2"></i>Back to Takhmeen
                         </a>
-                        <a href="<?= getAppData('BASE_URI') ?>/home" class="btn btn-outline-secondary btn-sm">
+                        <a href="<?= getAppData('BASE_URI') ?>/home" class="btn btn-outline-light btn-sm">
                             <i class="bi bi-house me-2"></i>Home
                         </a>
                     </div>

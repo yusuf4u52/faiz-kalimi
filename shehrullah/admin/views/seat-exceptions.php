@@ -107,13 +107,13 @@ function content_display()
     // Main search card
     ui_card("Seat Exceptions - {$hijri_year}H", 'Allow seat selection without full payment', "$url/seat-management");
     ?>
-    <form method="post" class="mb-3">
-        <input type="hidden" name="action" value="search">
-        <div class="input-group input-group-sm" style="max-width: 400px;">
-            <?= ui_input('sabeel', '', 'Sabeel or HOF ID') ?>
-            <?= ui_btn('Search', 'primary') ?>
-        </div>
-    </form>
+        <form method="post" class="my-3">
+            <input type="hidden" name="action" value="search">
+            <div class="input-group input-group-sm" style="max-width: 400px;">
+                <?= ui_input('sabeel', '', 'Sabeel or HOF ID') ?>
+                <?= ui_btn('Search', 'light') ?>
+            </div>
+        </form>
     
     <?php if ($search_thaali_data) { 
         ui_hr();
@@ -140,34 +140,34 @@ function content_display()
             </table>
             
             <?php if (!$has_exception) { ?>
-            <?php if ($search_takhmeen) { ?>
-            <form method="post">
-                <input type="hidden" name="action" value="grant">
-                <input type="hidden" name="hof_id" value="<?= h($search_hof_id) ?>">
-                <div class="mb-2"><?= ui_input('reason', '', 'Reason for exception') ?></div>
-                <div class="mb-2">
-                    <label class="form-label small">Expected Hoob Clearance Date <span class="text-danger">*</span></label>
-                    <input type="date" name="hoob_clearance_date" class="form-control form-control-sm" required>
-                </div>
-                <?= ui_btn('Grant Exception', 'success') ?>
-            </form>
+                <?php if ($search_takhmeen) { ?>
+                    <form method="post">
+                        <input type="hidden" name="action" value="grant">
+                        <input type="hidden" name="hof_id" value="<?= h($search_hof_id) ?>">
+                        <div class="mb-3"><?= ui_input('reason', '', 'Reason for exception') ?></div>
+                        <div class="mb-3">
+                            <label class="form-label small">Expected Hoob Clearance Date <span class="text-danger">*</span></label>
+                            <input type="date" name="hoob_clearance_date" class="form-control form-control-sm" required>
+                        </div>
+                        <?= ui_btn('Grant Exception', 'light') ?>
+                    </form>
+                <?php } else { ?>
+                    <div class="alert alert-warning small">
+                        Cannot grant exception: Takhmeen must be done first.
+                    </div>
+                <?php } ?>
             <?php } else { ?>
-            <div class="alert alert-warning small">
-                Cannot grant exception: Takhmeen must be done first.
-            </div>
-            <?php } ?>
-            <?php } else { ?>
-            <?php if (count($search_allocations) > 0) { ?>
-            <div class="alert alert-warning small">
-                Cannot revoke exception: Family has <?= count($search_allocations) ?> allocated seat(s). Please deallocate seats first.
-            </div>
-            <?php } else { ?>
-            <form method="post">
-                <input type="hidden" name="action" value="revoke">
-                <input type="hidden" name="hof_id" value="<?= h($search_hof_id) ?>">
-                <?= ui_btn('Revoke Exception', 'danger') ?>
-            </form>
-            <?php } ?>
+                <?php if (count($search_allocations) > 0) { ?>
+                    <div class="alert alert-warning small">
+                        Cannot revoke exception: Family has <?= count($search_allocations) ?> allocated seat(s). Please deallocate seats first.
+                    </div>
+                <?php } else { ?>
+                    <form method="post">
+                        <input type="hidden" name="action" value="revoke">
+                        <input type="hidden" name="hof_id" value="<?= h($search_hof_id) ?>">
+                        <?= ui_btn('Revoke Exception', 'light') ?>
+                    </form>
+                <?php } ?>
             <?php } ?>
         </div>
     </div>
@@ -176,68 +176,68 @@ function content_display()
     
     <!-- Active Exceptions List -->
     <div class="card">
-        <div class="card-header"><h6 class="mb-0">Active Exceptions <?= ui_muted("(" . count($exceptions) . ")") ?></h6></div>
         <div class="card-body">
-    <?php
-    if (empty($exceptions)) {
-        echo ui_muted('No active exceptions.');
-    } else {
-        ui_table(['HOF', 'Name', 'Takhmeen', 'Paid', 'Balance', 'Seats', 'Reason', 'Hoob Clearance', 'Granted By', '']);
-        foreach ($exceptions as $exc) {
-            $pending = ($exc->takhmeen ?? 0) - ($exc->paid_amount ?? 0);
-            $balance = ($exc->takhmeen ?? 0) > 0 && $pending <= 0 
-                ? "<small class=\"text-success\">Paid</small>" 
-                : "<small class=\"text-danger\">" . ui_money($pending) . "</small>";
-            
-            // Check if family has allocated seats
-            $allocations = get_seat_allocations_for_family($exc->hof_id);
-            $seats_count = count($allocations);
-            $seats_display = $seats_count > 0 
-                ? '<small class="text-success">' . $seats_count . '</small>' 
-                : ui_muted('0');
-            
-            // Format hoob clearance date with color coding
-            $hoob_date_display = '—';
-            if (!empty($exc->hoob_clearance_date)) {
-                $clearance_date = strtotime($exc->hoob_clearance_date);
-                $today = strtotime(date('Y-m-d'));
-                $days_diff = floor(($clearance_date - $today) / (60 * 60 * 24));
-                
-                if ($days_diff < 0) {
-                    // Overdue
-                    $hoob_date_display = '<small class="text-danger">' . ui_date($exc->hoob_clearance_date, 'd/m/y') . ' <span class="badge bg-danger">Overdue</span></small>';
-                } elseif ($days_diff <= 7) {
-                    // Due soon (within 7 days)
-                    $hoob_date_display = '<small class="text-warning">' . ui_date($exc->hoob_clearance_date, 'd/m/y') . '</small>';
-                } else {
-                    // Future date
-                    $hoob_date_display = '<small>' . ui_date($exc->hoob_clearance_date, 'd/m/y') . '</small>';
-                }
-            }
-            
-            // Only allow revoke if no seats are allocated
-            if ($seats_count > 0) {
-                $revoke = '<small class="text-muted" title="Cannot revoke: seats allocated">—</small>';
+            <h4 class="mb-3">Active Exceptions <?= ui_muted("(" . count($exceptions) . ")") ?></h4>
+            <?php
+            if (empty($exceptions)) {
+                echo ui_muted('No active exceptions.');
             } else {
-                $revoke = '<form method="post" style="display:inline"><input type="hidden" name="action" value="revoke"><input type="hidden" name="hof_id" value="' . h($exc->hof_id) . '"><button type="submit" class="btn btn-sm btn-link text-danger p-0">Revoke</button></form>';
+                ui_table(['HOF', 'Name', 'Takhmeen', 'Paid', 'Balance', 'Seats', 'Reason', 'Hoob Clearance', 'Granted By', '']);
+                foreach ($exceptions as $exc) {
+                    $pending = ($exc->takhmeen ?? 0) - ($exc->paid_amount ?? 0);
+                    $balance = ($exc->takhmeen ?? 0) > 0 && $pending <= 0 
+                        ? "<small class=\"text-success\">Paid</small>" 
+                        : "<small class=\"text-danger\">" . ui_money($pending) . "</small>";
+                    
+                    // Check if family has allocated seats
+                    $allocations = get_seat_allocations_for_family($exc->hof_id);
+                    $seats_count = count($allocations);
+                    $seats_display = $seats_count > 0 
+                        ? '<small class="text-success">' . $seats_count . '</small>' 
+                        : ui_muted('0');
+                    
+                    // Format hoob clearance date with color coding
+                    $hoob_date_display = '—';
+                    if (!empty($exc->hoob_clearance_date)) {
+                        $clearance_date = strtotime($exc->hoob_clearance_date);
+                        $today = strtotime(date('Y-m-d'));
+                        $days_diff = floor(($clearance_date - $today) / (60 * 60 * 24));
+                        
+                        if ($days_diff < 0) {
+                            // Overdue
+                            $hoob_date_display = '<small class="text-danger">' . ui_date($exc->hoob_clearance_date, 'd/m/y') . ' <span class="badge bg-danger">Overdue</span></small>';
+                        } elseif ($days_diff <= 7) {
+                            // Due soon (within 7 days)
+                            $hoob_date_display = '<small class="text-warning">' . ui_date($exc->hoob_clearance_date, 'd/m/y') . '</small>';
+                        } else {
+                            // Future date
+                            $hoob_date_display = '<small>' . ui_date($exc->hoob_clearance_date, 'd/m/y') . '</small>';
+                        }
+                    }
+                    
+                    // Only allow revoke if no seats are allocated
+                    if ($seats_count > 0) {
+                        $revoke = '<small class="text-muted" title="Cannot revoke: seats allocated">—</small>';
+                    } else {
+                        $revoke = '<form method="post" style="display:inline"><input type="hidden" name="action" value="revoke"><input type="hidden" name="hof_id" value="' . h($exc->hof_id) . '"><button type="submit" class="btn btn-light"><i class="bi bi-x"></i></button></form>';
+                    }
+                    
+                    ui_tr([
+                        ui_code($exc->hof_id),
+                        h($exc->full_name),
+                        ui_muted(ui_money($exc->takhmeen ?? 0)),
+                        ui_muted(ui_money($exc->paid_amount ?? 0)),
+                        $balance,
+                        $seats_display,
+                        ui_muted($exc->reason ?: '—'),
+                        $hoob_date_display,
+                        ui_muted($exc->granted_by_name ?: '—'),
+                        $revoke
+                    ]);
+                }
+                ui_table_end();
             }
-            
-            ui_tr([
-                ui_code($exc->hof_id),
-                h($exc->full_name),
-                ui_muted(ui_money($exc->takhmeen ?? 0)),
-                ui_muted(ui_money($exc->paid_amount ?? 0)),
-                $balance,
-                $seats_display,
-                ui_muted($exc->reason ?: '—'),
-                $hoob_date_display,
-                ui_muted($exc->granted_by_name ?: '—'),
-                $revoke
-            ]);
-        }
-        ui_table_end();
-    }
-    ?>
+            ?>
         </div>
     </div>
     <?php

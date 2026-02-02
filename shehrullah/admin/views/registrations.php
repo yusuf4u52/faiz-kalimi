@@ -10,16 +10,10 @@ function content_display()
     $registration_data = get_registration_data($hirji_year);
     $registration_summary = get_registration_summary($hirji_year);
     ?>
-    <div class="row">
-        <div class="col-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-header row">
-                    <div class="col-12">Registration</div>
-                </div>
-                <div class="card-body">                    
-                    <?php __display_table($registration_data, $registration_summary);?>                    
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-body">  
+            <h2 class="mb-3">Registration</h2>                  
+            <?php __display_table($registration_data, $registration_summary);?>                    
         </div>
     </div>
     <?php

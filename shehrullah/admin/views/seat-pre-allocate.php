@@ -122,11 +122,11 @@ function content_display()
     
     ui_card('Pre-Allocate Seats', 'Bypass rules and assign seats directly', "$url/seat-management");
     ?>
-    <form method="post" class="mb-3">
+    <form method="post" class="my-3">
         <input type="hidden" name="action" value="search">
         <div class="input-group input-group-sm" style="max-width: 400px;">
             <?= ui_input('sabeel', '', 'Sabeel or HOF ID') ?>
-            <?= ui_btn('Search', 'primary') ?>
+            <?= ui_btn('Search', 'light') ?>
         </div>
     </form>
     
@@ -135,27 +135,25 @@ function content_display()
         
         // Show available blocked seats after search
         if (!empty($area_blocked_seats)) { ?>
-    <div class="mb-4">
-        <h6 class="text-muted mb-2">Available Blocked Seats by Area</h6>
-        <div class="row g-2">
-            <?php foreach ($area_blocked_seats as $area_code => $blocked_seats) { 
-                $area_name = $area_opts[$area_code] ?? $area_code;
-                $seat_numbers = array_map(function($s) { return $s->seat_number; }, $blocked_seats);
-                $seat_list = implode(', ', $seat_numbers);
-            ?>
-            <div class="col-md-6 col-lg-4">
-                <div class="card card-body py-2 px-3">
-                    <div class="small">
-                        <strong><?= h($area_name) ?></strong>
-                        <div class="text-muted" style="font-size: 0.85rem;">
-                            Seats: <?= h($seat_list) ?>
+            <div class="mb-4">
+                <h6 class="text-muted mb-2">Available Blocked Seats by Area</h6>
+                <div class="row g-2">
+                    <?php foreach ($area_blocked_seats as $area_code => $blocked_seats) { 
+                        $area_name = $area_opts[$area_code] ?? $area_code;
+                        $seat_numbers = array_map(function($s) { return $s->seat_number; }, $blocked_seats);
+                        $seat_list = implode(', ', $seat_numbers);
+                    ?>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="small">
+                                <strong><?= h($area_name) ?></strong>
+                                <div class="text-muted" style="font-size: 0.85rem;">
+                                    Seats: <?= h($seat_list) ?>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    <?php } ?>
                 </div>
             </div>
-            <?php } ?>
-        </div>
-    </div>
         <?php } 
     ?>
     <div class="mb-3">
@@ -214,7 +212,7 @@ function content_display()
                     <td><?= ui_muted($current_area) . $seat_display . $allocated_by_display ?></td>
                     <td><?= ui_select('area_code', $compatible_areas, $att->allocated_area ?? '', 'Select...') ?></td>
                     <td><?= ui_input('seat_number', $current_seat, 'Seat #', 'number', 'width:70px', 'required') ?></td>
-                    <td><?= ui_btn('Assign', 'primary') ?></td>
+                    <td><?= ui_btn('Assign', 'light') ?></td>
                 </form>
             </tr>
             <?php

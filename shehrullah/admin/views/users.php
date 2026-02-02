@@ -47,9 +47,9 @@ function show_input_user()
         <div class="card-body">
             <form action="" method="post">
                 <input type='hidden' name='req_itsid' value="<?= $itsid ?>" />
-                <div class="form-group row">
-                    <label for="itsid" class="col-sm-2 col-form-label">ITS ID</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="itsid" class="col-4 form-label">ITS ID</label>
+                    <div class="col-8">
                         <?php if ($itsid > 0) { ?>
                             <input type='hidden' name='itsid' value="<?= $user_data->itsid ?>" />
                             <?= $user_data->itsid ?>
@@ -60,16 +60,16 @@ function show_input_user()
 
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Name</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Name</label>
+                    <div class="col-8">
                         <input type='text' class='form-control' name='name' value="<?= $user_data->name ?? '' ?>"
                             required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="full_niyaz" class="col-sm-2 col-form-label">Password</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="full_niyaz" class="col-4 form-label">Password</label>
+                    <div class="col-8">
                         <?php if ($itsid > 0) { ?>
                             <input type='hidden' name='passwd' value="<?= $user_data->passwd ?>" />
                             <input type='text' class='form-control' name='passwd_new' />
@@ -78,20 +78,20 @@ function show_input_user()
                         <?php } ?>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="roles" class="col-sm-12 col-form-label">Suggested Roles:
+                <div class="mb-3 row">
+                    <label for="roles" class="col-12 form-label">Suggested Roles:
                         <?= implode(' , ', ROLE) ?></label>
                 </div>
-                <div class="form-group row">
-                    <label for="roles" class="col-sm-2 col-form-label">Roles (Comma separated)</label>
-                    <div class="col-sm-10">
+                <div class="mb-3 row">
+                    <label for="roles" class="col-4 form-label">Roles (Comma separated)</label>
+                    <div class="col-8">
                         <input type='text' class='form-control' name='roles' value="<?= $user_data->roles ?? '' ?>"
                             required />
                     </div>
                 </div>
-                <div class="form-group row">
-                    <div class="col-sm-10">
-                        <button type="submit" class="btn btn-gradient-success btn-rounded btn-fw">Save</button>
+                <div class="mb-3 row">
+                    <div class="col-8">
+                        <button type="submit" class="btn btn-light">Save</button>
                     </div>
                 </div>
             </form>
@@ -106,13 +106,15 @@ function show_user_list()
     $url = getAppData('BASE_URI');
     ?>
     <div class="card">
-        <div class="card-header row">
-            <div class="col-6">User Data</div>
-            <div class="col-6"><a href="<?= $url ?>/users/0" class="btn btn-gradient-success btn-rounded btn-fw">Add New</a>
-            </div>
-        </div>
-
         <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h2 class="mb-3">User Data</h2>
+                </div>
+                <div class="col-6 text-end">
+                    <a href="<?= $url ?>/users/0" class="btn btn-light mb-3">Add New</a>
+                </div>
+            </div>
             <?= __display_user_list([$user_data]) ?>
         </div>
     </div>
@@ -135,7 +137,7 @@ function __show_link2markaz_list($row, $index)
 {
     $itsid = $row->itsid;
     $uri = getAppData('BASE_URI');
-    return "<a href='$uri/users/$itsid' class='btn btn-gradient-success btn-rounded btn-fw'>Edit</a>";
+    return "<a href='$uri/users/$itsid' class='btn btn-light'><i class='bi bi-pencil-square'></i></a>";
 }
 
 

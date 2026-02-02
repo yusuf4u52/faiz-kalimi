@@ -274,7 +274,7 @@ function content_display()
     <?php if($print) { ?>
         <div class='row mt-3 text-center' id='print_button_section'>
             <div class='col-12'>
-                <button class='btn btn-primary' id='Print'>Print</button>
+                <button class='btn btn-light' id='Print'>Print</button>
             </div>            
         </div>
     </div>

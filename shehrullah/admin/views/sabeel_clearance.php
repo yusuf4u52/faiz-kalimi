@@ -73,41 +73,38 @@ function content_display()
     $notes = getAppData('notes');
     $clearance = getAppData('clearance');
     ?>
-    <div class="row">
-        <div class="col-8">
-            <h6>Sabeel Clearance</h6>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="mb-3">Sabeel Clearance</h2>
+            <form method="post">
+                <input type="hidden" value="doChangeClearance" name="action" id="action" />
+                <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
+                <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
+                <div class="mb-3 row">
+                    <label for="staticEmail" class="col-4 form-label">HOF</label>
+                    <div class="col-sm-8">
+                        <input type="text" readonly class="form-control" id="staticEmail"
+                            value="<?= "$hof_id - $name" ?>">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="clearance" class="col-4 form-label">Clearance (Y or N)</label>
+                    <div class="col-sm-8">
+                        <input type="text" pattern="^(?:y|Y|n|N)$" required class="form-control" id="clearance" name="clearance"
+                            value="<?= $clearance ?? '' ?>">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="clearance" class="col-4 form-label">Notes</label>
+                    <div class="col-sm-8">
+                        <textarea class="form-control" name="notes" id="notes"><?= $notes ?? '' ?></textarea>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-light">Save</button>
+                </div>
+            </form>
         </div>
     </div>
-    <form method="post">
-        <input type="hidden" value="doChangeClearance" name="action" id="action" />
-        <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
-        <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
-
-        <div class='col-xs-12'>
-            <div class="mb-3 row">
-                <label for="staticEmail" class="col-sm-3 col-form-label">HOF</label>
-                <div class="col-sm-9">
-                    <input type="text" readonly class="form-control-plaintext" id="staticEmail"
-                        value="<?= "$hof_id - $name" ?>">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="clearance" class="col-sm-3 col-form-label">Clearance (Y or N)</label>
-                <div class="col-sm-9">
-                    <input type="text" pattern="^(?:y|Y|n|N)$" required class="form-control" id="clearance" name="clearance"
-                        value="<?= $clearance ?? '' ?>">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="clearance" class="col-sm-3 col-form-label">Notes</label>
-                <div class="col-sm-9">
-                    <textarea class="form-control" name="notes" id="notes"><?= $notes ?? '' ?></textarea>
-                </div>
-            </div>
-            <div class="form-group" style="font-weight:20px;margin-top: 25px;">
-                <button type="submit" class="btn btn-success">Save</button>
-            </div>
-        </div>
-    </form>
     <?php
 }

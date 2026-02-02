@@ -49,8 +49,8 @@ function ui_table_end($empty_msg = '', $count = -1) {
 
 // Search form
 function ui_search($name, $placeholder, $value = '', $clear_url = '') {
-    $clear = ($value && $clear_url) ? "<a href=\"$clear_url\" class=\"btn btn-outline-secondary\">&times;</a>" : '';
-    echo "<form method=\"post\" class=\"me-auto\" style=\"max-width:400px\"><input type=\"hidden\" name=\"action\" value=\"search\"><div class=\"input-group input-group-sm\"><input type=\"text\" name=\"$name\" class=\"form-control\" placeholder=\"$placeholder\" value=\"" . h($value) . "\"><button class=\"btn btn-outline-secondary\" type=\"submit\">Search</button>$clear</div></form>";
+    $clear = ($value && $clear_url) ? "<a href=\"$clear_url\" class=\"btn btn-light\">&times;</a>" : '';
+    echo "<form method=\"post\" class=\"me-auto\" style=\"max-width:400px\"><input type=\"hidden\" name=\"action\" value=\"search\"><div class=\"input-group input-group-sm\"><input type=\"text\" name=\"$name\" class=\"form-control\" placeholder=\"$placeholder\" value=\"" . h($value) . "\"><button class=\"btn btn-light\" type=\"submit\">Search</button>$clear</div></form>";
 }
 
 // Form elements
@@ -104,7 +104,7 @@ function ui_toolbar() { echo "<div class=\"d-flex gap-2 mb-3 flex-wrap align-ite
 function ui_toolbar_end() { echo "</div>"; }
 function ui_btngroup($btns) {
     echo "<div class=\"btn-group btn-group-sm\">";
-    foreach ($btns as $l => $u) echo "<a href=\"$u\" class=\"btn btn-outline-primary\">$l</a>";
+    foreach ($btns as $l => $u) echo "<a href=\"$u\" class=\"btn btn-outline-light\">$l</a>";
     echo "</div>";
 }
 

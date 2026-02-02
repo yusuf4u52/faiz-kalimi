@@ -79,7 +79,7 @@ function content_display()
             ui_muted($max_family),
             $seats,
             ui_dot($area->is_active == 'Y'),
-            ui_link('Edit', "?edit={$area->area_code}", 'link')
+            ui_link('<i class="bi bi-pencil-square"></i>', "?edit={$area->area_code}", 'light')
         ]);
     }
     

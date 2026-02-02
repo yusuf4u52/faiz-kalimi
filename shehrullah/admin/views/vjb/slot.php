@@ -46,11 +46,11 @@ function show_input_user()
         <div class="card-body">
             <form action="" method="post">
                 <input type='hidden' name='req_itsid' value="<?= $itsid ?>" />
-                <div class="form-group row">
-                    <label for="itsid" class="col-sm-2 col-form-label">ID</label>
-                    <div class="col-sm-10">
-                    <input type='hidden' name='id' value="<?= $user_data->id ?? -1 ?>" />
-                    <?= $user_data->id ?? -1 ?>
+                <div class="mb-3 row">
+                    <label for="itsid" class="col-4 form-label">ID</label>
+                    <div class="col-8">
+                        <input type='hidden' name='id' value="<?= $user_data->id ?? -1 ?>" />
+                        <?= $user_data->id ?? -1 ?>
                     </div>
                 </div>
                 <?php 
@@ -58,10 +58,8 @@ function show_input_user()
                 get_text_field('date', 'Date', $user_data->date ?? '', 'date',true); 
                 get_text_field('capacity', 'Capacity', $user_data->capacity ?? '', 'text',true);
                 ?>                                                
-                <div class="form-group row">
-                    <div class="col-sm-10">
-                        <button type="submit" class="btn btn-gradient-success btn-rounded btn-fw">Save</button>
-                    </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-light">Save</button>
                 </div>
             </form>
         </div>
@@ -75,13 +73,15 @@ function show_user_list()
     $url = getAppData('BASE_URI');
     ?>
     <div class="card">
-        <div class="card-header row">
-            <div class="col-6">User Data</div>
-            <div class="col-6"><a href="<?= $url ?>/vjb.slot/0" class="btn btn-gradient-success btn-rounded btn-fw">Add New</a>
-            </div>
-        </div>
-
         <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h2 class="mb-3">Slot Data</h2>
+                </div>
+                <div class="col-6 text-end">
+                    <a href="<?= $url ?>/vjb.slot/0" class="btn btn-light mb-3">Add New</a>
+                </div>
+            </div>
             <?= __display_user_list([$user_data]) ?>
         </div>
     </div>
@@ -107,8 +107,8 @@ function __show_link2markaz_list($row, $index)
     $id = $row->id;
     $uri = getAppData('BASE_URI');
     
-    return "<a href='$uri/vjb.slot/$id' class='btn btn-gradient-success btn-rounded btn-fw'>Edit</a>
-    <a href='$uri/report/vjb_registration/$id' class='btn btn-gradient-warning btn-rounded btn-fw'>Report</a>
+    return "<a href='$uri/vjb.slot/$id' class='btn btn-light'>Edit</a>
+    <a href='$uri/report/vjb_registration/$id' class='btn btn-light'>Report</a>
     ";
 }
 

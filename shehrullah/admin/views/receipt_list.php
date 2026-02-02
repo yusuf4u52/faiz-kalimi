@@ -7,8 +7,12 @@ function content_display()
     $hijri_year = get_current_hijri_year();
     $receipt_data = get_all_receipt_data_for($hijri_year);
     ?>
-    <p>Receipt History</p>
-    <?php __display_table_records([$receipt_data]) ?>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="mb-3">Receipt History</h2>
+            <?php __display_table_records([$receipt_data]) ?>
+        </div>
+    </div>
     <?php
 }
 
@@ -32,5 +36,5 @@ function __display_table_records($data)
 function __print_link($row, $index) {
     $receipt_num = $row->id;
     $uri = getAppData('BASE_URI');
-    return "<a target='receipt' class='btn btn-primary' href='$uri/receipt2/$receipt_num'>Print</a>";
+    return "<a target='receipt' class='btn btn-light' href='$uri/receipt2/$receipt_num'><i class='bi bi-printer'></i></a>";
 }
