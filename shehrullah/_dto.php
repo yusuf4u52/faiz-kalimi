@@ -269,12 +269,12 @@ function get_filtered_receipt_data($year, $from_date = '', $to_date = '') {
     
     // Add date filters if provided
     if (!empty($from_date)) {
-        $query .= ' AND DATE(created_at) >= ?';
+        $query .= ' AND DATE(created) >= ?';
         $params[] = $from_date;
     }
     
     if (!empty($to_date)) {
-        $query .= ' AND DATE(created_at) <= ?';
+        $query .= ' AND DATE(created) <= ?';
         $params[] = $to_date;
     }
     
