@@ -40,7 +40,7 @@ function content_display()
                         <button type="submit" class="btn btn-light btn-sm me-2">
                             <i class="bi bi-funnel me-1"></i>Filter
                         </button>
-                        <a href="<?= getAppData('BASE_URI') ?>/receipt-list" class="btn btn-outline-light btn-sm">
+                        <a href="<?= getAppData('BASE_URI') ?>/receipt_list" class="btn btn-outline-light btn-sm">
                             <i class="bi bi-x-circle me-1"></i>Clear
                         </a>
                     </div>
