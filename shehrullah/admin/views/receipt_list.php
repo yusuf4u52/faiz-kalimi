@@ -82,9 +82,19 @@ function __display_table_records($data)
         'payment_mode' => 'Mode',
         'hof_id' => 'HOF',
         'amount' => 'amount',
+        '__created_date' => 'Created Date',
         '__created_by_name' => 'Created By',
         '__print_link' => 'Print'
     ]);
+}
+
+function __created_date($row, $index) {
+    if (empty($row->created)) {
+        return '-';
+    }
+    // Convert the datetime to dd/mm/yyyy format
+    $date = new DateTime($row->created);
+    return $date->format('d/m/Y');
 }
 
 function __created_by_name($row, $index) {
