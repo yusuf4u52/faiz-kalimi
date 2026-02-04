@@ -257,28 +257,44 @@ function get_all_receipt_data_for($year) {
 }
 
 /**
- * Get filtered receipt data with optional date range
+ * Get filtered receipt data with optional date range and status filter
  * @param int $year Hijri year
  * @param string $from_date Start date (YYYY-MM-DD format)
  * @param string $to_date End date (YYYY-MM-DD format)
+ * @param string $status_filter Filter by received status: 'all', 'pending', 'received'
  * @return array Receipt records
  */
-function get_filtered_receipt_data($year, $from_date = '', $to_date = '') {
-    $query = 'SELECT * FROM kl_shehrullah_collection_record WHERE year=?';
+function get_filtered_receipt_data($year, $from_date = '', $to_date = '', $status_filter = 'all') {
+    $query = 'SELECT cr.*, 
+              hof.full_name as hof_name,
+              cb.name as createdby_name,
+              rb.name as received_by_name
+              FROM kl_shehrullah_collection_record cr
+              LEFT JOIN its_data hof ON hof.its_id = cr.hof_id
+              LEFT JOIN kl_shehrullah_roles cb ON cb.itsid = cr.createdby
+              LEFT JOIN kl_shehrullah_roles rb ON rb.itsid = cr.received_by
+              WHERE cr.year=?';
     $params = [$year];
     
     // Add date filters if provided
     if (!empty($from_date)) {
-        $query .= ' AND DATE(created) >= ?';
+        $query .= ' AND DATE(cr.created) >= ?';
         $params[] = $from_date;
     }
     
     if (!empty($to_date)) {
-        $query .= ' AND DATE(created) <= ?';
+        $query .= ' AND DATE(cr.created) <= ?';
         $params[] = $to_date;
     }
     
-    $query .= ' ORDER BY id DESC;';
+    // Add status filter
+    if ($status_filter === 'pending') {
+        $query .= ' AND cr.received_status = "pending"';
+    } elseif ($status_filter === 'received') {
+        $query .= ' AND cr.received_status = "received"';
+    }
+    
+    $query .= ' ORDER BY cr.id DESC;';
     
     $result = run_statement($query, ...$params);
     if ($result->success && $result->count > 0) {
@@ -343,12 +359,14 @@ function save_collection_record($year, $hof_id, $amount, $payment_mode, $transac
 
 
 function get_collection_record($id, $year) {
-    $query = 'select cr.id,cr.hof_id, cr.amount,cr.payment_mode, cr.transaction_ref, cr.created, cr.remarks, cr.createdby, t.takhmeen,
-    m.full_name, u.name as createdby_name
+    $query = 'select cr.id,cr.hof_id, cr.amount,cr.payment_mode, cr.transaction_ref, cr.created, cr.remarks, cr.createdby, 
+    cr.received_status, cr.received_by, cr.received_at, t.takhmeen,
+    m.full_name, u.name as createdby_name, rb.name as received_by_name
     FROM kl_shehrullah_collection_record cr 
     JOIN kl_shehrullah_takhmeen t ON t.hof_id = cr.hof_id AND t.year = cr.year
     JOIN its_data m  ON t.hof_id = m.its_id
     LEFT JOIN kl_shehrullah_roles u ON u.itsid = cr.createdby
+    LEFT JOIN kl_shehrullah_roles rb ON rb.itsid = cr.received_by
     where cr.id = ? and cr.year=?';
 
     $result = run_statement($query, $id, $year);
@@ -360,6 +378,213 @@ function get_collection_record($id, $year) {
         return $record;
     }
     return null;
+}
+
+/**
+ * Mark a receipt as received
+ * @param int $receipt_id Receipt ID
+ * @param int $year Hijri year
+ * @param string $received_by User ITS ID who is marking as received
+ * @return bool Success status
+ */
+function mark_receipt_as_received($receipt_id, $year, $received_by) {
+    $query = 'UPDATE kl_shehrullah_collection_record 
+              SET received_status = "received", received_by = ?, received_at = NOW()
+              WHERE id = ? AND year = ?';
+    $result = run_statement($query, $received_by, $receipt_id, $year);
+    return $result->success;
+}
+
+/**
+ * Mark a receipt as pending (undo received)
+ * @param int $receipt_id Receipt ID
+ * @param int $year Hijri year
+ * @return bool Success status
+ */
+function mark_receipt_as_pending($receipt_id, $year) {
+    $query = 'UPDATE kl_shehrullah_collection_record 
+              SET received_status = "pending", received_by = NULL, received_at = NULL
+              WHERE id = ? AND year = ?';
+    $result = run_statement($query, $receipt_id, $year);
+    return $result->success;
+}
+
+/**
+ * Bulk mark CASH receipts as received based on filters
+ * IMPORTANT: Only affects receipts with payment_mode = 'cash'
+ * @param int $year Hijri year
+ * @param string $from_date Start date filter (optional)
+ * @param string $to_date End date filter (optional)
+ * @param string $status_filter Status filter: 'all', 'pending', 'received'
+ * @param string $received_by User ITS ID marking as received
+ * @return array ['count' => int, 'total_amount' => float] Number of receipts updated and total amount
+ */
+function bulk_mark_receipts_as_received($year, $from_date = '', $to_date = '', $status_filter = 'all', $received_by = null) {
+    // First, get the count and total amount of cash receipts that will be affected
+    $summary_query = 'SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total_amount 
+                      FROM kl_shehrullah_collection_record 
+                      WHERE year = ? AND payment_mode = "cash"';
+    $params = [$year];
+    
+    if (!empty($from_date)) {
+        $summary_query .= ' AND DATE(created) >= ?';
+        $params[] = $from_date;
+    }
+    
+    if (!empty($to_date)) {
+        $summary_query .= ' AND DATE(created) <= ?';
+        $params[] = $to_date;
+    }
+    
+    if ($status_filter === 'pending') {
+        $summary_query .= ' AND received_status = "pending"';
+    } elseif ($status_filter === 'received') {
+        $summary_query .= ' AND received_status = "received"';
+    }
+    
+    $summary_result = run_statement($summary_query, ...$params);
+    $count = $summary_result->success && $summary_result->count > 0 ? $summary_result->data[0]->count : 0;
+    $total_amount = $summary_result->success && $summary_result->count > 0 ? $summary_result->data[0]->total_amount : 0;
+    
+    // Now update the receipts
+    $update_query = 'UPDATE kl_shehrullah_collection_record 
+                     SET received_status = "received", received_by = ?, received_at = NOW()
+                     WHERE year = ? AND payment_mode = "cash"';
+    $update_params = [$received_by, $year];
+    
+    if (!empty($from_date)) {
+        $update_query .= ' AND DATE(created) >= ?';
+        $update_params[] = $from_date;
+    }
+    
+    if (!empty($to_date)) {
+        $update_query .= ' AND DATE(created) <= ?';
+        $update_params[] = $to_date;
+    }
+    
+    if ($status_filter === 'pending') {
+        $update_query .= ' AND received_status = "pending"';
+    } elseif ($status_filter === 'received') {
+        $update_query .= ' AND received_status = "received"';
+    }
+    
+    run_statement($update_query, ...$update_params);
+    
+    return ['count' => intval($count), 'total_amount' => floatval($total_amount)];
+}
+
+/**
+ * Bulk mark CASH receipts as pending based on filters
+ * IMPORTANT: Only affects receipts with payment_mode = 'cash'
+ * @param int $year Hijri year
+ * @param string $from_date Start date filter (optional)
+ * @param string $to_date End date filter (optional)
+ * @param string $status_filter Status filter: 'all', 'pending', 'received'
+ * @return array ['count' => int, 'total_amount' => float] Number of receipts updated and total amount
+ */
+function bulk_mark_receipts_as_pending($year, $from_date = '', $to_date = '', $status_filter = 'all') {
+    // First, get the count and total amount of cash receipts that will be affected
+    $summary_query = 'SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total_amount 
+                      FROM kl_shehrullah_collection_record 
+                      WHERE year = ? AND payment_mode = "cash"';
+    $params = [$year];
+    
+    if (!empty($from_date)) {
+        $summary_query .= ' AND DATE(created) >= ?';
+        $params[] = $from_date;
+    }
+    
+    if (!empty($to_date)) {
+        $summary_query .= ' AND DATE(created) <= ?';
+        $params[] = $to_date;
+    }
+    
+    if ($status_filter === 'pending') {
+        $summary_query .= ' AND received_status = "pending"';
+    } elseif ($status_filter === 'received') {
+        $summary_query .= ' AND received_status = "received"';
+    }
+    
+    $summary_result = run_statement($summary_query, ...$params);
+    $count = $summary_result->success && $summary_result->count > 0 ? $summary_result->data[0]->count : 0;
+    $total_amount = $summary_result->success && $summary_result->count > 0 ? $summary_result->data[0]->total_amount : 0;
+    
+    // Now update the receipts
+    $update_query = 'UPDATE kl_shehrullah_collection_record 
+                     SET received_status = "pending", received_by = NULL, received_at = NULL
+                     WHERE year = ? AND payment_mode = "cash"';
+    $update_params = [$year];
+    
+    if (!empty($from_date)) {
+        $update_query .= ' AND DATE(created) >= ?';
+        $update_params[] = $from_date;
+    }
+    
+    if (!empty($to_date)) {
+        $update_query .= ' AND DATE(created) <= ?';
+        $update_params[] = $to_date;
+    }
+    
+    if ($status_filter === 'pending') {
+        $update_query .= ' AND received_status = "pending"';
+    } elseif ($status_filter === 'received') {
+        $update_query .= ' AND received_status = "received"';
+    }
+    
+    run_statement($update_query, ...$update_params);
+    
+    return ['count' => intval($count), 'total_amount' => floatval($total_amount)];
+}
+
+/**
+ * Get summary of CASH receipts matching filters
+ * Used to display count and amount in bulk action button labels
+ * @param int $year Hijri year
+ * @param string $from_date Start date filter (optional)
+ * @param string $to_date End date filter (optional)
+ * @param string $status_filter Status filter: 'all', 'pending', 'received'
+ * @return array ['count' => int, 'total_amount' => float, 'pending_count' => int, 'pending_amount' => float, 'received_count' => int, 'received_amount' => float]
+ */
+function get_cash_receipt_summary($year, $from_date = '', $to_date = '', $status_filter = 'all') {
+    $query = 'SELECT 
+              COUNT(*) as total_count,
+              COALESCE(SUM(amount), 0) as total_amount,
+              COUNT(CASE WHEN received_status = "pending" THEN 1 END) as pending_count,
+              COALESCE(SUM(CASE WHEN received_status = "pending" THEN amount ELSE 0 END), 0) as pending_amount,
+              COUNT(CASE WHEN received_status = "received" THEN 1 END) as received_count,
+              COALESCE(SUM(CASE WHEN received_status = "received" THEN amount ELSE 0 END), 0) as received_amount
+              FROM kl_shehrullah_collection_record 
+              WHERE year = ? AND payment_mode = "cash"';
+    $params = [$year];
+    
+    if (!empty($from_date)) {
+        $query .= ' AND DATE(created) >= ?';
+        $params[] = $from_date;
+    }
+    
+    if (!empty($to_date)) {
+        $query .= ' AND DATE(created) <= ?';
+        $params[] = $to_date;
+    }
+    
+    if ($status_filter === 'pending') {
+        $query .= ' AND received_status = "pending"';
+    } elseif ($status_filter === 'received') {
+        $query .= ' AND received_status = "received"';
+    }
+    
+    $result = run_statement($query, ...$params);
+    if ($result->success && $result->count > 0) {
+        return [
+            'count' => intval($result->data[0]->total_count),
+            'total_amount' => floatval($result->data[0]->total_amount),
+            'pending_count' => intval($result->data[0]->pending_count),
+            'pending_amount' => floatval($result->data[0]->pending_amount),
+            'received_count' => intval($result->data[0]->received_count),
+            'received_amount' => floatval($result->data[0]->received_amount)
+        ];
+    }
+    return ['count' => 0, 'total_amount' => 0, 'pending_count' => 0, 'pending_amount' => 0, 'received_count' => 0, 'received_amount' => 0];
 }
 
 function get_members_for($hof_id)
