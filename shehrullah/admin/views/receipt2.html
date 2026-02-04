@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receipt <?= htmlspecialchars($receipt_id) ?></title>
     <style>
-        /* Optimized for faster print preview rendering */
+        /* Maximally optimized for instant print preview */
         * {
             margin: 0;
             padding: 0;
@@ -15,22 +15,26 @@
         body {
             font-family: Arial, sans-serif;
             background: #fff;
-            padding: 10px;
+            padding: 0;
+            margin: 0;
+            width: 148mm;
         }
 
         .receipt-wrapper {
             text-align: center;
+            padding: 5mm 0 10px 0;
         }
 
         .receipt-container {
-            max-width: 148mm;
-            width: 100%;
+            width: 138mm;
             background: white;
             border: 2px solid #000;
             padding: 10mm 12mm;
             margin: 0 auto;
             display: inline-block;
             text-align: left;
+            will-change: auto;
+            transform: translateZ(0);
         }
 
         .receipt-header {
@@ -45,18 +49,11 @@
         }
 
         .receipt-info {
-            display: table;
             width: 100%;
             margin-bottom: 6mm;
             font-size: 9pt;
-        }
-
-        .receipt-info span:first-child {
-            float: left;
-        }
-
-        .receipt-info span:last-child {
-            float: right;
+            display: flex;
+            justify-content: space-between;
         }
 
         .receipt-content {
@@ -64,7 +61,6 @@
             line-height: 1.4;
             margin-bottom: 6mm;
             text-align: center;
-            clear: both;
         }
 
         .receipt-content p {
@@ -87,17 +83,12 @@
             font-size: 8pt;
             text-align: center;
             width: 100%;
-            display: table;
+            display: flex;
+            justify-content: space-around;
         }
 
         .signature-box {
             width: 45%;
-            display: inline-block;
-            vertical-align: top;
-        }
-
-        .signature-box:first-child {
-            margin-right: 10%;
         }
 
         .signature-line {
@@ -106,78 +97,60 @@
             padding-top: 1mm;
         }
 
-        /* Print Styles - Optimized for A5 paper */
+        /* Print Styles - Almost identical to screen */
         @media print {
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            body {
-                padding: 0;
-                margin: 0;
-                width: 148mm;
-            }
-
-            .receipt-wrapper {
-                padding: 0;
-                margin: 0;
-            }
-
-            .receipt-container {
-                margin: 5mm auto 0;
-                padding: 10mm 12mm;
-                border: 2px solid #000;
-                width: 138mm;
-                max-width: 138mm;
+            .print-button {
+                display: none;
             }
 
             @page {
                 size: A5 portrait;
                 margin: 5mm;
             }
+        }
+
+        /* Screen-only button styles */
+        @media screen {
+            .receipt-wrapper {
+                padding: 5mm 0 10px 0;
+            }
 
             .print-button {
-                display: none !important;
+                text-align: center;
+                margin: 10px auto;
+                max-width: 148mm;
             }
-        }
 
-        /* Screen view */
-        .print-button {
-            text-align: center;
-            margin: 10px auto;
-            max-width: 148mm;
-        }
+            .print-button button {
+                padding: 8px 20px;
+                font-size: 14px;
+                background: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-right: 10px;
+            }
 
-        .print-button button {
-            padding: 8px 20px;
-            font-size: 14px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
+            .print-button button:hover {
+                background: #0056b3;
+            }
 
-        .print-button button:hover {
-            background: #0056b3;
-        }
+            .btn-back-home {
+                padding: 8px 20px;
+                font-size: 14px;
+                background: #6c757d;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                display: inline-block;
+            }
 
-        .btn-back-home {
-            padding: 8px 20px;
-            font-size: 14px;
-            background: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
-        }
-
-        .btn-back-home:hover {
-            background: #5a6268;
-            color: white;
-            text-decoration: none;
+            .btn-back-home:hover {
+                background: #5a6268;
+                color: white;
+                text-decoration: none;
+            }
         }
     </style>
 </head>
@@ -189,8 +162,8 @@
             </div>
 
             <div class="receipt-info">
-                <span>Receipt No : <?= htmlspecialchars($receipt_id) ?></span>
-                <span>Date : <?= htmlspecialchars($date_format) ?></span>
+                <div>Receipt No : <?= htmlspecialchars($receipt_id) ?></div>
+                <div>Date : <?= htmlspecialchars($date_format) ?></div>
             </div>
 
             <div class="receipt-content">
@@ -221,23 +194,29 @@
     </div>
 
     <script>
-        // Force immediate layout calculation to speed up print preview
+        // Ultra-optimized auto-print
         (function() {
-            // Pre-calculate layout before print dialog opens
-            function prepareForPrint() {
-                // Force layout calculation
-                document.body.offsetHeight;
-                
-                // Trigger print
-                window.print();
+            // Check if we should auto-print (only on first load, not when back button is used)
+            var hasAutoPrinted = sessionStorage.getItem('autoPrinted_<?= htmlspecialchars($receipt_id) ?>');
+            
+            function performPrint() {
+                if (!hasAutoPrinted) {
+                    sessionStorage.setItem('autoPrinted_<?= htmlspecialchars($receipt_id) ?>', '1');
+                    
+                    // Double RAF ensures layout is complete
+                    requestAnimationFrame(function() {
+                        requestAnimationFrame(function() {
+                            window.print();
+                        });
+                    });
+                }
             }
             
-            // Wait for DOM to be fully ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', prepareForPrint);
+            // Print as soon as DOM is interactive
+            if (document.readyState !== 'loading') {
+                performPrint();
             } else {
-                // DOM already loaded
-                prepareForPrint();
+                document.addEventListener('DOMContentLoaded', performPrint);
             }
         })();
     </script>
