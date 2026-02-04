@@ -172,8 +172,8 @@ function get_text_field($name, $title, $value, $type='text', $is_required = true
     $required = $is_required ? 'required' : '';
     ?>
     <div class='row mb-3'>
-        <label for='full_niyaz' class='col-2 form-label'><?=$title?></label>
-        <div class='col-10'>
+        <label for='full_niyaz' class='col-4 form-label'><?=$title?></label>
+        <div class='col-8'>
             <input type='<?=$type?>' class='form-control' name='<?=$name?>' 
             id='<?=$name?>' value='<?=$value?>' <?=$required?> />
         </div>

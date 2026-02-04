@@ -108,7 +108,7 @@ function content_display()
     foreach ($areas as $a) $area_opts[$a->area_code] = $a->area_name;
     
     // Toggle button HTML
-    $toggle_btn = '<form method="post" class="mb-0"><input type="hidden" name="action" value="toggle_selection"><input type="hidden" name="open" value="' . ($is_selection_open ? 'N' : 'Y') . '"><button type="submit" class="btn btn-sm ' . ($is_selection_open ? 'btn-success' : 'btn-outline-secondary') . '">' . ($is_selection_open ? '● Open' : '○ Closed') . '</button></form>';
+    $toggle_btn = '<form method="post" class="mb-0"><input type="hidden" name="action" value="toggle_selection"><input type="hidden" name="open" value="' . ($is_selection_open ? 'N' : 'Y') . '"><button type="submit" class="btn btn-sm mb-3 ' . ($is_selection_open ? 'btn-success' : 'btn-danger') . '">' . ($is_selection_open ? '● Open' : '○ Closed') . '</button></form>';
     
     ui_card("Seat Management - {$hijri_year}H", '', '', ['Toggle' => $toggle_btn]);
     
@@ -136,7 +136,7 @@ function content_display()
             }
             
             // Delete button
-            $delete_btn = '<form method="post" style="display:inline" onsubmit="return confirm(\'Delete allocation for ' . h($alloc->full_name) . '?\')"><input type="hidden" name="action" value="delete_allocation"><input type="hidden" name="its_id" value="' . h($alloc->its_id) . '"><button type="submit" class="btn btn-sm btn-link text-danger p-0">Delete</button></form>';
+            $delete_btn = '<form method="post" style="display:inline" onsubmit="return confirm(\'Delete allocation for ' . h($alloc->full_name) . '?\')"><input type="hidden" name="action" value="delete_allocation"><input type="hidden" name="its_id" value="' . h($alloc->its_id) . '"><button type="submit" class="btn btn-sm btn-light"><i class="bi bi-trash"></i></button></form>';
             
             ui_tr([
                 ui_code($alloc->its_id),

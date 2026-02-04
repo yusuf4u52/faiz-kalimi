@@ -16,17 +16,11 @@ function content_display() {
     $report_data = $result->data;
     $uri = getAppData('BASE_URI');
     ?>
-<div class="row">
-        <div class="col-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-header row">
-                    <div class="col-12">Shehrullah Hub Report</div>                    
-                </div>
-                <div class="card-body">
-                <p><a href="<?=$uri?>/report.hoob_list_download">Download</a></p>
-                <?php __display_table_records([$report_data]) ?>
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="mb-3">Shehrullah Hub Report</h2>                    
+            <p><a href="<?=$uri?>/report.hoob_list_download">Download</a></p>
+            <?php __display_table_records([$report_data]) ?>
         </div>
     </div>    
     <?php

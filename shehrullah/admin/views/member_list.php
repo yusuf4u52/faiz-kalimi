@@ -74,69 +74,68 @@ function show_add_member_form()
     $hof_id = $_POST['hof_id'];
     $sabeel = $_POST['sabeel'];
     ?>
-    <div class="row">
-        <div class="col-8">
-            <h6>Add Mehman</h6>
-        </div>
-        <!-- <div class="col-4" style="text-align: right;">
-            <form method="post" action="search_sabeel">
+    <div class="card">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h2 class="mb-3">Add Mehman for sabeel #:<?= $sabeel ?></h2>
+                </div>
+                <!--<div class="col-6 text-end">
+                    <form method="post" action="search_sabeel">
+                        <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
+                        <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
+                        <button type="submit" class="btn btn-light mb-3">Back</button>
+                    </form>
+                </div>-->
+            </div>
+            <form method="post">
+                <input type="hidden" value="register" name="action" id="action" />
                 <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
                 <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
-                <button type="submit" class="btn btn-warning">Back</button>
+                <div class="mb-3 row">
+                    <label for="staticEmail" class="col-4 form-label">HOF ID</label>
+                    <div class="col-8">
+                        <input type="text" readonly class="form-control" id="staticEmail" value="<?= $hof_id ?>">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="its_id" class="col-4 form-label">ITS ID</label>
+                    <div class="col-8">
+                        <input type="text" pattern="^[0-9]{8}$" required class="form-control" id="its_id" name="its_id">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="full_name" class="col-4 form-label">Full name</label>
+                    <div class="col-8">
+                        <input type="text" required class="form-control" id="full_name" name="full_name">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="gender" class="col-4 form-label">Gender (M or F)</label>
+                    <div class="col-8">
+                        <input type="text" pattern="^(?:m|M|f|F)$" required 
+                        class="form-control" id="gender" name="gender" value="<?= $_POST['gender'] ?? '' ?>">                    
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="age" class="col-4 form-label">Age</label>
+                    <div class="col-8">
+                        <input type="text" pattern="^[0-9]{1,2}$" required class="form-control" id="age" name="age">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="misaq" class="col-4 form-label">Misaq (Y or N)</label>
+                    <div class="col-8">
+                    <input type="text" pattern="^(?:y|Y|n|N)$" required 
+                    class="form-control" id="misaq" name="misaq" value="<?= $_POST['misaq'] ?? '' ?>">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-light">Save</button>
+                </div>
             </form>
-
-        </div> -->
-    </div>
-    <form method="post">
-        <input type="hidden" value="register" name="action" id="action" />
-        <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
-        <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
-
-        <div class='col-xs-12'>
-            <div class="mb-3 row">
-                <label for="staticEmail" class="col-sm-3 col-form-label">HOF ID</label>
-                <div class="col-sm-9">
-                    <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="<?= $hof_id ?>">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="its_id" class="col-sm-3 col-form-label">ITS ID</label>
-                <div class="col-sm-9">
-                    <input type="text" pattern="^[0-9]{8}$" required class="form-control" id="its_id" name="its_id">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="full_name" class="col-sm-3 col-form-label">Full name</label>
-                <div class="col-sm-9">
-                    <input type="text" required class="form-control" id="full_name" name="full_name">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="gender" class="col-sm-3 col-form-label">Gender (M or F)</label>
-                <div class="col-sm-9">
-                    <input type="text" pattern="^(?:m|M|f|F)$" required 
-                    class="form-control" id="gender" name="gender" value="<?= $_POST['gender'] ?? '' ?>">                    
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="age" class="col-sm-3 col-form-label">Age</label>
-                <div class="col-sm-9">
-                    <input type="text" pattern="^[0-9]{1,2}$" required class="form-control" id="age" name="age">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="misaq" class="col-sm-3 col-form-label">Misaq (Y or N)</label>
-                <div class="col-sm-9">
-                <input type="text" pattern="^(?:y|Y|n|N)$" required 
-                class="form-control" id="misaq" name="misaq" value="<?= $_POST['misaq'] ?? '' ?>">
-                </div>
-            </div>
-
-            <div class="form-group" style="font-weight:20px;margin-top: 25px;">
-                <button type="submit" class="btn btn-success">Save</button>
-            </div>
         </div>
-    </form>
+    </div>
     <?php
 }
 
@@ -174,29 +173,31 @@ function show_member_list()
     $url = getAppData('BASE_URI');
     $hof_id = getAppData('hof_id');
     ?>
-    <div class="row">
-        <div class="col-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-header row">
-                    <div class="col-6">Add Member</div>
-                    <div class="col-6">
-                        <form class="forms-sample" action="" method="POST">
-                            <input type="hidden" name="action" value="entry">
-                            <input type="hidden" name="hof_id" value="<?= $hof_id ?>">
-                            <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
-                            <button type="submit" class="btn btn-gradient-success btn-rounded btn-fw">New</button>
-                        </form>
-                    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h2 class="mb-3">Add Member for sabeel #: <?= $sabeel ?></h2>
                 </div>
-                <div class="card-body">
-                    <p class="card-description"> Select the member and submit </p>
+                <div class="col-6 text-end">
+                    <form class="forms-sample mb-3" action="" method="POST">
+                        <input type="hidden" name="action" value="entry">
+                        <input type="hidden" name="hof_id" value="<?= $hof_id ?>">
+                        <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
+                        <button type="submit" class="btn btn-light">New</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <p class="mb-3"> Select the member and submit </p>
                     <form class="forms-sample" action="" method="POST">
                         <input type="hidden" name="action" value="enable_member">
                         <input type="hidden" name="sabeel" value="<?= $sabeel ?>">
                         <div class="form-group row">
                             <?php __display_family_list([$attendees_data]) ?>
                         </div>
-                        <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+                        <button type="submit" class="btn btn-light">Submit</button>
                     </form>
                 </div>
             </div>

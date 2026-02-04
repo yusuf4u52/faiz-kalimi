@@ -3,9 +3,14 @@
 function content_display() {
     $arg = getAppData('arg1');
     if( function_exists($arg) ) {
-        $arg();
+        echo "<div class='card'>
+            <div class='card-body'>";
+            $arg();
+        echo "</div></div>";
     } else {
-        echo 'No report found..';
+        echo '<div class="card">
+            <div class="card-body"><h2>No report found..</h2></div>
+        </div>';
     }
 }
 
@@ -107,6 +112,7 @@ function fmb_lq_niyat() {
     }
 
     ?>
+    <h2 class="mb-3">FMB LQ Niyat Report</h2>                    
     <div class="table-responsive">
         <table class="table table-bordered">
             <thead>
@@ -134,7 +140,7 @@ function registered_users() {
     }
 
     function __chair_preference($row, $index) {
-        $chair_preference = $row->chair_preference ?? 'N';
+        $chair_preference = $row->chair_preference ?? 'N';  
         return $chair_preference == 'Y' ? 'Yes' : 'No';
     }
 
@@ -151,24 +157,26 @@ function registered_users() {
     
     $uri = getAppData('BASE_URI');
     ?>
-    <div class="row">
-        <div class="col-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-header row">
-                    <div class="col-12">Registered Users Report (Shehrullah Form Filled)</div>                    
+    <div class="card">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h2 class="mb-3">Registered Users Report (Shehrullah Form Filled)</h2>
                 </div>
-                <div class="card-body">
-                    <p><a href="<?=$uri?>/report.registered_users_download" class="btn btn-gradient-primary btn-rounded btn-fw">Download Excel</a></p>
-                    <?php util_show_data_table($records, [
-                        '__show_row_sequence' => 'Sr#',        
-                        'its_id' => 'ITS ID',
-                        'full_name' => 'Name',
-                        'gender' => 'Gender',
-                        'age' => 'Age',
-                        'misaq' => 'Misaq',
-                        '__chair_preference' => 'Chair'
-                    ]); ?>
+                <div class="col-6 text-end">
+                    <a href="<?=$uri?>/report.registered_users_download" class="btn btn-light mb-3">Download Excel</a>
                 </div>
+            </div>
+            <?php util_show_data_table($records, [
+                '__show_row_sequence' => 'Sr#',        
+                'its_id' => 'ITS ID',
+                'full_name' => 'Name',
+                'gender' => 'Gender',
+                'age' => 'Age',
+                'misaq' => 'Misaq',
+                '__chair_preference' => 'Chair'
+            ]); ?>
+        </div>
             </div>
         </div>
     </div>

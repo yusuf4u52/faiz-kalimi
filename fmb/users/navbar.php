@@ -71,6 +71,14 @@ if($curr_page != 'events.php') {
                         echo '<p class="m-0">Thali No: <strong>' . $values['tiffinno'] . '</strong> | Thali Status: <strong class="text-success">Start</strong></p> ';
                     } else {
                         echo '<p class="m-0">Thali No: <strong>' . $values['tiffinno'] . '</strong> | Thali Status: <strong class="text-danger">Stop</strong></p> ';
+						$stop_dates = mysqli_query($link, "WITH ranked_dates AS (
+						SELECT `id`, `thali`, DATE(`stop_date`) AS stop_date, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY DATE(`stop_date`)) AS row_num FROM `stop_thali` WHERE `thali` = '" . $_SESSION['thali'] . "' AND DATE(`stop_date`) >= CURDATE()),
+						grouped_dates AS (SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates)
+						SELECT `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date, DATE_ADD(MAX(`stop_date`), INTERVAL 1 DAY) AS next_active_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date ASC LIMIT 1;") or die(mysqli_error($link));
+						if (isset($stop_dates) && $stop_dates->num_rows > 0) {
+							$row = mysqli_fetch_assoc($stop_dates);
+							echo '<p class="m-0">Thali Start Date: <strong class="text-success">' . date("d M Y", strtotime($row['next_active_date'])) . '</strong></p>';
+						}
                     }
                 } ?>
             </div>
