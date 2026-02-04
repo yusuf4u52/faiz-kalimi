@@ -257,6 +257,37 @@ function get_all_receipt_data_for($year) {
 }
 
 /**
+ * Get filtered receipt data with optional date range
+ * @param int $year Hijri year
+ * @param string $from_date Start date (YYYY-MM-DD format)
+ * @param string $to_date End date (YYYY-MM-DD format)
+ * @return array Receipt records
+ */
+function get_filtered_receipt_data($year, $from_date = '', $to_date = '') {
+    $query = 'SELECT * FROM kl_shehrullah_collection_record WHERE year=?';
+    $params = [$year];
+    
+    // Add date filters if provided
+    if (!empty($from_date)) {
+        $query .= ' AND DATE(created_at) >= ?';
+        $params[] = $from_date;
+    }
+    
+    if (!empty($to_date)) {
+        $query .= ' AND DATE(created_at) <= ?';
+        $params[] = $to_date;
+    }
+    
+    $query .= ' ORDER BY id DESC;';
+    
+    $result = run_statement($query, ...$params);
+    if ($result->success && $result->count > 0) {
+        return $result->data;
+    }
+    return [];
+}
+
+/**
  * Calculate total paid amount from receipts for a given year and optionally hof_id
  * @param int $year Hijri year
  * @param string|null $hof_id Head of Family ID (optional - if null, returns total for all families)

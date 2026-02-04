@@ -5,11 +5,64 @@ if (!is_user_a(SUPER_ADMIN, TAKHMEENER)) {
 function content_display()
 {
     $hijri_year = get_current_hijri_year();
-    $receipt_data = get_all_receipt_data_for($hijri_year);
+    
+    // Get date filter parameters
+    $from_date = $_GET['from_date'] ?? '';
+    $to_date = $_GET['to_date'] ?? '';
+    
+    // Get filtered receipt data
+    $receipt_data = get_filtered_receipt_data($hijri_year, $from_date, $to_date);
     ?>
     <div class="card">
         <div class="card-body">
             <h2 class="mb-3">Receipt History</h2>
+            
+            <!-- Date Filter Form -->
+            <form method="get" class="mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="from_date" class="form-label fw-semibold small">
+                            <i class="bi bi-calendar-event me-1"></i>From Date
+                        </label>
+                        <input type="date" class="form-control form-control-sm" 
+                               id="from_date" name="from_date" 
+                               value="<?= htmlspecialchars($from_date) ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="to_date" class="form-label fw-semibold small">
+                            <i class="bi bi-calendar-event me-1"></i>To Date
+                        </label>
+                        <input type="date" class="form-control form-control-sm" 
+                               id="to_date" name="to_date" 
+                               value="<?= htmlspecialchars($to_date) ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-light btn-sm me-2">
+                            <i class="bi bi-funnel me-1"></i>Filter
+                        </button>
+                        <a href="<?= getAppData('BASE_URI') ?>/receipt-list" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-x-circle me-1"></i>Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+            
+            <?php if ($from_date || $to_date): ?>
+                <div class="alert alert-info alert-dismissible fade show py-2" role="alert">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Filter Applied:</strong> 
+                    <?php if ($from_date && $to_date): ?>
+                        Showing receipts from <strong><?= htmlspecialchars($from_date) ?></strong> 
+                        to <strong><?= htmlspecialchars($to_date) ?></strong>
+                    <?php elseif ($from_date): ?>
+                        Showing receipts from <strong><?= htmlspecialchars($from_date) ?></strong> onwards
+                    <?php elseif ($to_date): ?>
+                        Showing receipts up to <strong><?= htmlspecialchars($to_date) ?></strong>
+                    <?php endif; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+            
             <?php __display_table_records([$receipt_data]) ?>
         </div>
     </div>
