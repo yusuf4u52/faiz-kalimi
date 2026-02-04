@@ -201,7 +201,7 @@ function content_display()
                             Online and Cheque receipts are excluded from bulk actions.
                         </div>
                         
-                        <form method="post" id="bulk-action-form" onsubmit="return confirmBulkAction(event)">
+                        <form method="post" id="bulk-action-form">
                             <input type="hidden" name="from_date" value="<?= htmlspecialchars($from_date) ?>">
                             <input type="hidden" name="to_date" value="<?= htmlspecialchars($to_date) ?>">
                             <input type="hidden" name="status_filter" value="<?= htmlspecialchars($status_filter) ?>">
@@ -237,42 +237,23 @@ function content_display()
     
     <script>
     function setBulkAction(action, count, amount) {
+        // Set the action type
         document.getElementById('bulk-action-type').value = action;
-        document.getElementById('bulk-action-form').dispatchEvent(new Event('submit', {cancelable: true}));
-    }
-    
-    function confirmBulkAction(event) {
-        const action = document.getElementById('bulk-action-type').value;
-        const formData = new FormData(event.target);
         
-        // Extract count and amount from button click
+        // Build confirmation message
         let message = '';
+        const formattedAmount = amount.toLocaleString('en-IN');
+        
         if (action === 'bulk_mark_received') {
-            // Find pending cash count from the button
-            const button = event.submitter || document.querySelector('[onclick*="bulk_mark_received"]');
-            if (button) {
-                const text = button.textContent;
-                const match = text.match(/Mark All (\d+) Cash Receipts as Received \(Rs\. ([\d,]+)\)/);
-                if (match) {
-                    message = `Are you sure you want to mark ${match[1]} CASH receipts as received (Rs. ${match[2]})?`;
-                }
-            }
+            message = `Are you sure you want to mark ${count} CASH receipt(s) as received (Rs. ${formattedAmount})?`;
         } else if (action === 'bulk_mark_pending') {
-            const button = event.submitter || document.querySelector('[onclick*="bulk_mark_pending"]');
-            if (button) {
-                const text = button.textContent;
-                const match = text.match(/Mark All (\d+) Cash Receipts as Pending \(Rs\. ([\d,]+)\)/);
-                if (match) {
-                    message = `Are you sure you want to mark ${match[1]} CASH receipts as pending (Rs. ${match[2]})?`;
-                }
-            }
+            message = `Are you sure you want to mark ${count} CASH receipt(s) as pending (Rs. ${formattedAmount})?`;
         }
         
-        if (!message) {
-            message = 'Are you sure you want to perform this bulk action?';
+        // Confirm and submit
+        if (confirm(message)) {
+            document.getElementById('bulk-action-form').submit();
         }
-        
-        return confirm(message);
     }
     </script>
     
