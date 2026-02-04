@@ -29,9 +29,17 @@ function __display_table_records($data)
         'payment_mode' => 'Mode',
         'hof_id' => 'HOF',
         'amount' => 'amount',
-        'createdby' => 'Created By',
+        '__created_by_name' => 'Created By',
         '__print_link' => 'Print'
     ]);
+}
+
+function __created_by_name($row, $index) {
+    if (empty($row->createdby)) {
+        return '-';
+    }
+    $user = get_user_record_for($row->createdby);
+    return $user ? $user->name : $row->createdby;
 }
 
 function __print_link($row, $index) {
