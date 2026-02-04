@@ -25,6 +25,7 @@ function __display_table_records($data)
         'payment_mode' => 'Mode',
         'hof_id' => 'HOF',
         'amount' => 'amount',
+        'createdby' => 'Created By',
         '__print_link' => 'Print'
     ]);
 }
