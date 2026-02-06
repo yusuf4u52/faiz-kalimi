@@ -1085,7 +1085,7 @@ function revoke_seat_exception($hof_id) {
  */
 function get_all_seat_exceptions() {
     $hijri_year = get_current_hijri_year();
-    $query = 'SELECT e.*, m.full_name, t.takhmeen, gb.name as granted_by_name
+    $query = 'SELECT e.*, m.full_name, t.takhmeen, t.whatsapp, t.sabeel, gb.name as granted_by_name
               FROM kl_shehrullah_seat_exceptions e
               LEFT JOIN its_data m ON m.its_id = e.hof_id
               LEFT JOIN kl_shehrullah_takhmeen t ON t.hof_id = e.hof_id AND t.year = e.hijri_year
@@ -1102,6 +1102,47 @@ function get_all_seat_exceptions() {
         return $result->data;
     }
     return [];
+}
+
+/**
+ * Send one message via external API (POST multipart: accountId, toNumber, message, optional image).
+ * @param string $to_number Recipient phone (e.g. +91...)
+ * @param string $message Body text
+ * @param string|null $image_path Path to image file to attach, or null
+ * @param array $config ['url' => ..., 'api_key' => ..., 'account_id' => ...]
+ * @return array ['success' => bool, 'error' => string|null]
+ */
+function send_message_via_api($to_number, $message, $image_path, $config) {
+    $url = $config['url'] ?? '';
+    $api_key = $config['api_key'] ?? '';
+    $account_id = $config['account_id'] ?? '';
+    if ($url === '' || $api_key === '' || $account_id === '') {
+        return ['success' => false, 'error' => 'Message API not configured (check .env).'];
+    }
+    $ch = curl_init($url);
+    $post = [
+        'accountId' => $account_id,
+        'toNumber' => $to_number,
+        'message' => $message,
+    ];
+    if ($image_path !== null && is_file($image_path)) {
+        $post['image'] = new \CURLFile($image_path, mime_content_type($image_path) ?: 'image/jpeg', basename($image_path));
+    }
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $post,
+        CURLOPT_HTTPHEADER => ['X-API-Key: ' . $api_key],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 30,
+    ]);
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err = curl_error($ch);
+    curl_close($ch);
+    if ($err) {
+        return ['success' => false, 'error' => $err];
+    }
+    return ['success' => $http_code >= 200 && $http_code < 300, 'error' => $http_code >= 200 && $http_code < 300 ? null : ($response ?: "HTTP $http_code")];
 }
 
 /**

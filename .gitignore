@@ -1,5 +1,6 @@
 _credentials.php
 connection.php
+.env
 *.txt
 .idea
 .htaccess
