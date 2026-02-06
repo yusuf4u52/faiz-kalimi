@@ -259,7 +259,14 @@ function content_display()
     ?>
     <div class="card">
         <div class="card-body">
-            <h4 class="mb-3">Active Exceptions <?= ui_muted("(" . count($exceptions) . ")") ?></h4>
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h4 class="mb-0">Active Exceptions <?= ui_muted("(" . count($exceptions) . ")") ?></h4>
+                <?php if (!empty($exceptions) && $has_message_api) { ?>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#sendMessageModal">
+                    <i class="bi bi-send me-1"></i>Send message
+                </button>
+                <?php } ?>
+            </div>
             <?php
             if (empty($exceptions)) {
                 echo ui_muted('No active exceptions.');
@@ -334,24 +341,36 @@ function content_display()
                 }
                 ui_table_end();
                 ?>
-                <!-- Send message card -->
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Send message to selected</h5>
-                        <?php if (!$has_message_api) { ?>
-                        <p class="text-warning small">Message API not configured. Set MESSAGE_API_URL, MESSAGE_API_KEY, MESSAGE_API_ACCOUNT_ID in .env (copy from .env.example).</p>
-                        <?php } else { ?>
-                        <div class="mb-2">
-                            <label class="form-label small">Message (use @variables)</label>
-                            <textarea name="message" class="form-control form-control-sm" rows="4" placeholder="e.g. Assalamo Alaikum @full_name, your balance is Rs. @pending. Hoob clearance date: @hoob_clearance_date"></textarea>
-                            <small class="text-muted">Variables: @full_name, @hof_id, @takhmeen, @paid_amount, @pending, @hoob_clearance_date, @reason, @whatsapp, @sabeel, @granted_by_name</small>
+                <!-- Send message modal (inside form so message + image submit with checkboxes) -->
+                <div class="modal fade" id="sendMessageModal" tabindex="-1" aria-labelledby="sendMessageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="sendMessageModalLabel">Send message to selected</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <?php if (!$has_message_api) { ?>
+                                <p class="text-warning small mb-0">Message API not configured. Set MESSAGE_API_URL, MESSAGE_API_KEY, MESSAGE_API_ACCOUNT_ID in .env (copy from .env.example).</p>
+                                <?php } else { ?>
+                                <div class="mb-3">
+                                    <label class="form-label small">Message (use @variables)</label>
+                                    <textarea name="message" class="form-control form-control-sm" rows="4" placeholder="e.g. Assalamo Alaikum @full_name, your balance is Rs. @pending. Hoob clearance date: @hoob_clearance_date"></textarea>
+                                    <small class="text-muted">Variables: @full_name, @hof_id, @takhmeen, @paid_amount, @pending, @hoob_clearance_date, @reason, @whatsapp, @sabeel, @granted_by_name</small>
+                                </div>
+                                <div class="mb-0">
+                                    <label class="form-label small">Image (optional)</label>
+                                    <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
+                                </div>
+                                <?php } ?>
+                            </div>
+                            <?php if ($has_message_api) { ?>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Send message to selected</button>
+                            </div>
+                            <?php } ?>
                         </div>
-                        <div class="mb-2">
-                            <label class="form-label small">Image (optional)</label>
-                            <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-sm">Send message to selected</button>
-                        <?php } ?>
                     </div>
                 </div>
             </form>
