@@ -86,66 +86,130 @@ function _handle_post()
         } else {
             setSessionData(TRANSIT_DATA, 'Failed to revoke exception.');
         }
-    } else if ($action === 'send_message') {
-        $hof_ids = isset($_POST['hof_ids']) && is_array($_POST['hof_ids']) ? array_map('trim', $_POST['hof_ids']) : [];
-        $message_template = trim($_POST['message'] ?? '');
-        $image_path = null;
-        if (!empty($_FILES['image']['tmp_name']) && is_uploaded_file($_FILES['image']['tmp_name'])) {
-            $image_path = $_FILES['image']['tmp_name'];
-        }
+    } else if ($action === 'send_message_prepare') {
+        header('Content-Type: application/json');
+
         $api_url = getenv('MESSAGE_API_URL');
         $api_key = getenv('MESSAGE_API_KEY');
         $api_account_id = getenv('MESSAGE_API_ACCOUNT_ID');
         if (empty($api_url) || empty($api_key) || empty($api_account_id)) {
-            setSessionData(TRANSIT_DATA, 'Message API not configured. Set MESSAGE_API_URL, MESSAGE_API_KEY, MESSAGE_API_ACCOUNT_ID in .env');
-            return;
+            echo json_encode([
+                'result' => 'error',
+                'message' => 'Message API not configured. Set MESSAGE_API_URL, MESSAGE_API_KEY, MESSAGE_API_ACCOUNT_ID in .env',
+            ]);
+            exit;
         }
+
+        $hof_ids = isset($_POST['hof_ids']) && is_array($_POST['hof_ids']) ? array_map('trim', $_POST['hof_ids']) : [];
+        $message_template = trim($_POST['message'] ?? '');
+
         if (empty($hof_ids)) {
-            setSessionData(TRANSIT_DATA, 'Select at least one recipient.');
-            return;
+            echo json_encode([
+                'result' => 'error',
+                'message' => 'Select at least one recipient.',
+            ]);
+            exit;
         }
         if ($message_template === '') {
-            setSessionData(TRANSIT_DATA, 'Message is required.');
-            return;
+            echo json_encode([
+                'result' => 'error',
+                'message' => 'Message is required.',
+            ]);
+            exit;
         }
+
         $exceptions = get_all_seat_exceptions();
         $by_hof = [];
         foreach ($exceptions as $e) {
             $by_hof[$e->hof_id] = $e;
         }
-        $sent = 0;
-        $failed = 0;
-        $skipped = 0;
-        $config = ['url' => $api_url, 'api_key' => $api_key, 'account_id' => $api_account_id];
+
+        $jobs = [];
+        $requested = count($hof_ids);
+        $skipped_no_number = 0;
+
         foreach ($hof_ids as $hof_id) {
             $e = $by_hof[$hof_id] ?? null;
-            if (!$e) continue;
-            $whatsapp = trim($e->whatsapp ?? '');
-            if ($whatsapp === '') {
-                $skipped++;
+            if (!$e) {
                 continue;
             }
+
+            $whatsapp = trim($e->whatsapp ?? '');
+            if ($whatsapp === '') {
+                $skipped_no_number++;
+                continue;
+            }
+
             $pending = ($e->takhmeen ?? 0) - ($e->paid_amount ?? 0);
             $message = _seat_exception_replace_message_vars($message_template, $e, $pending);
+
             $to_number = $whatsapp;
             if (preg_match('/^[0-9]{10}$/', $to_number)) {
                 $to_number = '+91' . $to_number;
             } elseif (strpos($to_number, '+') !== 0) {
                 $to_number = '+' . $to_number;
             }
-            $result = send_message_via_api($to_number, $message, $image_path, $config);
-            if ($result['success']) {
-                $sent++;
-            } else {
-                $failed++;
-            }
+
+            $jobs[] = [
+                'job_id' => (string)$hof_id,
+                'hof_id' => (string)$hof_id,
+                'to_number' => $to_number,
+                'message' => $message,
+            ];
         }
-        $parts = [];
-        if ($sent > 0) $parts[] = "Sent: $sent";
-        if ($failed > 0) $parts[] = "Failed: $failed";
-        if ($skipped > 0) $parts[] = "Skipped (no number): $skipped";
-        setSessionData(TRANSIT_DATA, implode('. ', $parts) ?: 'No messages sent.');
-        return;
+
+        echo json_encode([
+            'result' => 'success',
+            'jobs' => $jobs,
+            'stats' => [
+                'requested' => $requested,
+                'prepared' => count($jobs),
+                'skipped_no_number' => $skipped_no_number,
+            ],
+        ]);
+        exit;
+    } else if ($action === 'send_single_message') {
+        header('Content-Type: application/json');
+
+        $api_url = getenv('MESSAGE_API_URL');
+        $api_key = getenv('MESSAGE_API_KEY');
+        $api_account_id = getenv('MESSAGE_API_ACCOUNT_ID');
+        if (empty($api_url) || empty($api_key) || empty($api_account_id)) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Message API not configured.',
+            ]);
+            exit;
+        }
+
+        $to_number = trim($_POST['to_number'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+
+        if ($to_number === '' || $message === '') {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Missing to_number or message.',
+            ]);
+            exit;
+        }
+
+        // Normalise number again as a safety net
+        if (preg_match('/^[0-9]{10}$/', $to_number)) {
+            $to_number = '+91' . $to_number;
+        } elseif (strpos($to_number, '+') !== 0) {
+            $to_number = '+' . $to_number;
+        }
+
+        $config = ['url' => $api_url, 'api_key' => $api_key, 'account_id' => $api_account_id];
+        $result = send_message_via_api($to_number, $message, null, $config);
+
+        $success = !empty($result['success']);
+
+        echo json_encode([
+            'success' => $success,
+            'error' => $success ? null : ($result['error'] ?? 'Unknown error'),
+        ]);
+        exit;
     }
 }
 
@@ -273,7 +337,7 @@ function content_display()
             } else {
             ?>
             <form id="send-message-form" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="action" value="send_message">
+                <input type="hidden" name="action" value="send_message_prepare">
                 <div class="mb-2">
                     <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectAllExceptions(true)">Select all</button>
                     <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectAllExceptions(false)">Select none</button>
@@ -361,13 +425,18 @@ function content_display()
                                 <div class="mb-0">
                                     <label class="form-label small">Image (optional)</label>
                                     <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
+                                    <small class="text-muted d-block mt-1">Bulk sending currently sends text only; any selected image will be ignored.</small>
+                                </div>
+                                <div class="mt-3">
+                                    <div id="send-message-status" class="small text-muted"></div>
+                                    <div id="send-message-log" class="small mt-2" style="max-height: 200px; overflow-y: auto;"></div>
                                 </div>
                                 <?php } ?>
                             </div>
                             <?php if ($has_message_api) { ?>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary btn-sm">Send message to selected</button>
+                                <button type="submit" id="send-message-submit" class="btn btn-primary btn-sm">Send message to selected</button>
                             </div>
                             <?php } ?>
                         </div>
@@ -390,6 +459,183 @@ function content_display()
                     cb.checked = cb.getAttribute('data-overdue') === '1' && cb.getAttribute('data-balance') === '1';
                 });
             }
+
+            (function() {
+                var form = document.getElementById('send-message-form');
+                if (!form) return;
+
+                var sendButton = document.getElementById('send-message-submit');
+                var statusEl = document.getElementById('send-message-status');
+                var logEl = document.getElementById('send-message-log');
+                var jobs = [];
+                var currentIndex = 0;
+                var sentCount = 0;
+                var failedCount = 0;
+                var skippedNoNumber = 0;
+                var isSending = false;
+                var SEND_DELAY_MS = 800;
+
+                function setStatus(text) {
+                    if (statusEl) {
+                        statusEl.textContent = text;
+                    }
+                }
+
+                function appendLog(text) {
+                    if (!logEl) return;
+                    var div = document.createElement('div');
+                    div.textContent = text;
+                    logEl.appendChild(div);
+                }
+
+                function updateSummary() {
+                    var total = jobs.length;
+                    var parts = [];
+                    parts.push('Prepared: ' + total);
+                    parts.push('Sent: ' + sentCount);
+                    if (failedCount > 0) {
+                        parts.push('Failed: ' + failedCount);
+                    }
+                    if (skippedNoNumber > 0) {
+                        parts.push('Skipped (no number): ' + skippedNoNumber);
+                    }
+                    setStatus(parts.join(' • '));
+                }
+
+                function sendNextJob() {
+                    if (currentIndex >= jobs.length) {
+                        isSending = false;
+                        if (sendButton) {
+                            sendButton.disabled = false;
+                        }
+                        updateSummary();
+                        return;
+                    }
+
+                    var job = jobs[currentIndex];
+                    var indexLabel = (currentIndex + 1) + '/' + jobs.length;
+
+                    var fd = new FormData();
+                    fd.append('action', 'send_single_message');
+                    fd.append('to_number', job.to_number);
+                    fd.append('message', job.message);
+                    fd.append('job_id', job.job_id || '');
+
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        body: fd
+                    }).then(function(response) {
+                        if (!response.ok) {
+                            return { success: false, error: 'HTTP ' + response.status };
+                        }
+                        return response.json();
+                    }).then(function(data) {
+                        if (data && data.success) {
+                            sentCount++;
+                            appendLog(indexLabel + ' ✓ Sent to ' + job.to_number);
+                        } else {
+                            failedCount++;
+                            appendLog(indexLabel + ' ✗ Failed to ' + job.to_number + (data && data.error ? ' (' + data.error + ')' : ''));
+                        }
+                        currentIndex++;
+                        updateSummary();
+                        setTimeout(sendNextJob, SEND_DELAY_MS);
+                    }).catch(function(error) {
+                        failedCount++;
+                        appendLog(indexLabel + ' ✗ Failed to ' + job.to_number + ' (' + (error && error.message ? error.message : 'Network error') + ')');
+                        currentIndex++;
+                        updateSummary();
+                        setTimeout(sendNextJob, SEND_DELAY_MS);
+                    });
+                }
+
+                function handleSend(event) {
+                    if (event) {
+                        event.preventDefault();
+                    }
+                    if (isSending) {
+                        return;
+                    }
+
+                    var selected = form.querySelectorAll('.send-checkbox:checked');
+                    if (!selected.length) {
+                        alert('Select at least one recipient.');
+                        return;
+                    }
+
+                    if (statusEl) {
+                        statusEl.textContent = '';
+                    }
+                    if (logEl) {
+                        logEl.innerHTML = '';
+                    }
+
+                    isSending = true;
+                    jobs = [];
+                    currentIndex = 0;
+                    sentCount = 0;
+                    failedCount = 0;
+                    skippedNoNumber = 0;
+
+                    if (sendButton) {
+                        sendButton.disabled = true;
+                    }
+                    setStatus('Preparing messages...');
+
+                    var fd = new FormData(form);
+                    fd.set('action', 'send_message_prepare');
+
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        body: fd
+                    }).then(function(response) {
+                        if (!response.ok) {
+                            return { result: 'error', message: 'HTTP ' + response.status };
+                        }
+                        return response.json();
+                    }).then(function(data) {
+                        if (!data || data.result !== 'success') {
+                            isSending = false;
+                            if (sendButton) {
+                                sendButton.disabled = false;
+                            }
+                            var msg = (data && data.message) ? data.message : 'Failed to prepare messages.';
+                            setStatus(msg);
+                            return;
+                        }
+
+                        jobs = data.jobs || [];
+                        if (data.stats && typeof data.stats.skipped_no_number !== 'undefined') {
+                            skippedNoNumber = data.stats.skipped_no_number;
+                        }
+
+                        if (!jobs.length) {
+                            isSending = false;
+                            if (sendButton) {
+                                sendButton.disabled = false;
+                            }
+                            updateSummary();
+                            return;
+                        }
+
+                        updateSummary();
+                        sendNextJob();
+                    }).catch(function(error) {
+                        isSending = false;
+                        if (sendButton) {
+                            sendButton.disabled = false;
+                        }
+                        setStatus(error && error.message ? error.message : 'Error preparing messages.');
+                    });
+                }
+
+                form.addEventListener('submit', handleSend);
+                if (sendButton) {
+                    sendButton.addEventListener('click', handleSend);
+                }
+            })();
             </script>
             <?php
             }
