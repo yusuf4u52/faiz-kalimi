@@ -200,8 +200,41 @@ function _handle_post()
             $to_number = '+' . $to_number;
         }
 
+        // Handle image upload
+        $image_path = null;
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $upload_file = $_FILES['image'];
+            $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            $max_size = 5 * 1024 * 1024; // 5MB
+            
+            // Validate file type
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime_type = finfo_file($finfo, $upload_file['tmp_name']);
+            finfo_close($finfo);
+            
+            if (!in_array($mime_type, $allowed_types)) {
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'Invalid image type. Only JPEG, PNG, GIF, and WebP are allowed.',
+                ]);
+                exit;
+            }
+            
+            // Validate file size
+            if ($upload_file['size'] > $max_size) {
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'Image file is too large. Maximum size is 5MB.',
+                ]);
+                exit;
+            }
+            
+            // Use the temporary upload path
+            $image_path = $upload_file['tmp_name'];
+        }
+
         $config = ['url' => $api_url, 'api_key' => $api_key, 'account_id' => $api_account_id];
-        $result = send_message_via_api($to_number, $message, null, $config);
+        $result = send_message_via_api($to_number, $message, $image_path, $config);
 
         $success = !empty($result['success']);
 
@@ -425,7 +458,7 @@ function content_display()
                                 <div class="mb-0">
                                     <label class="form-label small">Image (optional)</label>
                                     <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
-                                    <small class="text-muted d-block mt-1">Bulk sending currently sends text only; any selected image will be ignored.</small>
+                                    <small class="text-muted d-block mt-1">If an image is selected, it will be sent with each message. Maximum file size: 5MB. Supported formats: JPEG, PNG, GIF, WebP.</small>
                                 </div>
                                 <div class="mt-3">
                                     <div id="send-message-status" class="small text-muted"></div>
@@ -502,6 +535,8 @@ function content_display()
                     setStatus(parts.join(' • '));
                 }
 
+                var imageFile = null; // Store the image file for reuse in bulk sends
+
                 function sendNextJob() {
                     if (currentIndex >= jobs.length) {
                         isSending = false;
@@ -520,6 +555,11 @@ function content_display()
                     fd.append('to_number', job.to_number);
                     fd.append('message', job.message);
                     fd.append('job_id', job.job_id || '');
+                    
+                    // Include image file if it was selected
+                    if (imageFile) {
+                        fd.append('image', imageFile);
+                    }
 
                     fetch(window.location.href, {
                         method: 'POST',
@@ -582,6 +622,10 @@ function content_display()
                         sendButton.disabled = true;
                     }
                     setStatus('Preparing messages...');
+
+                    // Capture the image file from the form for reuse in each send
+                    var imageInput = form.querySelector('input[name="image"]');
+                    imageFile = (imageInput && imageInput.files && imageInput.files.length > 0) ? imageInput.files[0] : null;
 
                     var fd = new FormData(form);
                     fd.set('action', 'send_message_prepare');
