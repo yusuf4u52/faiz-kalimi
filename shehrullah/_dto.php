@@ -1126,7 +1126,7 @@ function send_message_via_api($to_number, $message, $image_path, $config) {
         'message' => $message,
     ];
     if ($image_path !== null && is_file($image_path)) {
-        $post['image'] = new \CURLFile($image_path, mime_content_type($image_path) ?: 'image/jpeg', basename($image_path));
+        $post['images'] = new \CURLFile($image_path, mime_content_type($image_path) ?: 'image/jpeg', basename($image_path));
     }
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
