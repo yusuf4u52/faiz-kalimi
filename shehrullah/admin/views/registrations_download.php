@@ -2,31 +2,12 @@
 
 DEFINE('NO_TEMPLATE', true);
 
-// Bootstrap the application
-$current_directory = basename(__DIR__);
-DEFINE('CURRENT_DIR', $current_directory);
-DEFINE('IS_APP_SECURE', true); 
-DEFINE('IS_RELATIVE_AUTH_REDIRECT', true);
-DEFINE('AUTH_REDIRECT', '/login');
-DEFINE('SECURE_LANDING_PAGE', 'home');
-DEFINE('OPEN_PAGE_LIST', ['login']);
-DEFINE('THE_SESSION_ID', 'SHEHRULLAH_5645645646');
-
-require_once __DIR__ . '/../load_env.php';
-load_env_file(__DIR__ . '/../../../.env');
-
-require_once __DIR__ . '/../../../fmb/users/connection.php';
-
-include_once __DIR__ . '/../../_gui.php';
-include_once __DIR__ . '/../../_dto.php';
-include_once __DIR__ . '/../../_framework.php';
-
-// Load composer autoload for PhpSpreadsheet
-require_once __DIR__ . '/../../../vendor/autoload.php';
-
 if( !is_super_admin() ) {
     do_redirect_with_message('/home', 'Unauthorized.');
 }
+
+// Load composer autoload for PhpSpreadsheet (vendor is in fmb/vendor)
+require_once __DIR__ . '/../../fmb/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
