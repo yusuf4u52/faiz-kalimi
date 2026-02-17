@@ -11,8 +11,16 @@ function content_display()
     $registration_summary = get_registration_summary($hirji_year);
     ?>
     <div class="card">
-        <div class="card-body">  
-            <h2 class="mb-3">Registration</h2>                  
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h2 class="mb-3">Registration</h2>
+                </div>
+                <div class="col-6 text-end">
+                    <?php $uri = getAppData('BASE_URI'); ?>
+                    <a href="<?=$uri?>/registrations_download" class="btn btn-light mb-3">Download Excel</a>
+                </div>
+            </div>
             <?php __display_table($registration_data, $registration_summary);?>                    
         </div>
     </div>
