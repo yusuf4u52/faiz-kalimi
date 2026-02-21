@@ -1,3 +1,5 @@
+<?php
+
 do_for_post('_handle_form_submission');
 
 function content_display()
@@ -62,3 +64,4 @@ function sabeel_search() {
     $enc_sabeel = do_encrypt($sabeel);
     do_redirect('/vjb.slot_booking/' . $enc_sabeel);
 }
+
