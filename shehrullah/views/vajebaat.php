@@ -39,7 +39,7 @@ function _handle_form_submission()
 }
 
 function sabeel_search() {
-    $sabeel = $_POST['sabeel'];
+    $sabeel = $_POST['hof_id'];
     $sabeel_data = get_thaalilist_data($sabeel);
     if (is_null($sabeel_data)) {
         do_redirect_with_message('/vajebaat', 'No records found for input ' . $sabeel . '. Enter correct sabeel number or HOF ITS.');
@@ -64,5 +64,6 @@ function sabeel_search() {
     $enc_sabeel = do_encrypt($sabeel);
     do_redirect('/vjb.slot_booking/' . $enc_sabeel);
 }
+
 
 
