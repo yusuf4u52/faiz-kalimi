@@ -10,7 +10,7 @@ function content_display()
             <h2 class="mb-2">Vajebaat Slot Registration</h2>
             <p class="mb-3"><small>Please enter HOF ID to proceed for vajebaat slots booking</small></p>
             <form method="post" action="" class="forms-sample">
-                <input type="hidden" name="action" value="nonsab_register"/>
+                <input type="hidden" name="action" value="sabeel_search"/>
                 <div class="row mb-3">
                     <label class="col-4 form-label">HOF ID (Numbers only)</label>
                     <div class="col-8">
@@ -64,4 +64,5 @@ function sabeel_search() {
     $enc_sabeel = do_encrypt($sabeel);
     do_redirect('/vjb.slot_booking/' . $enc_sabeel);
 }
+
 
