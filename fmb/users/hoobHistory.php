@@ -11,14 +11,14 @@ include('getHijriDate.php');
 		<table class="table table-striped display" width="100%">
 			<thead>
 				<tr>
-				<th>Receipt No</th>
-				<th>Date</th>
-				<th>Hijri Date</th>
-				<th>Name</th>
-				<th>Amount</th>
-				<th>Payment Mode</th>
-				<th>Transaction Id</th>
-				<th>Takhmeen Year</th>
+					<th>Date</th>
+					<th>Hijri</th>
+					<th>Receipt No</th>
+					<th>Name</th>
+					<th>Amount</th>
+					<th>Pay Mode</th>
+					<th>Transaction Id</th>
+					<th>Takhmeen Year</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -30,9 +30,9 @@ include('getHijriDate.php');
 					$row[$key] = stripslashes($value);
 				}
 				echo "<tr>";
+				echo "<td data-sort=" . strtotime($row['Date']) . ">" . date('d M Y', strtotime($row['Date'])) . "</td>";
+            	echo "<td>" . getHijriFullDate($row['Date']) . "</td>";
 				echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-				echo "<td data-sort=" . strtotime($row['Date']) . ">" . $row['Date'] . "</td>";
-				echo "<td>" . getHijriDate($row['Date']) . "</td>";
 				echo "<td>" . nl2br($row['name']) . "</td>";
 				echo "<td>" . nl2br($row['Amount']) . "</td>";
 				echo "<td>" . nl2br($row['payment_type']) . "</td>";

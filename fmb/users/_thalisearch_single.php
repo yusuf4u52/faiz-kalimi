@@ -274,12 +274,12 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
       <table class="table table-striped" width="100%">
         <thead>
           <tr>
+            <th>Date</th>
+            <th>Hijri</th>
             <th>Receipt No</th>
-      		  <th>Date</th>
-            <th>Hijri Date</th>
       		  <th>Name</th>
       		  <th>Amount</th>
-      		  <th>Payment Mode</th>
+      		  <th>Pay Mode</th>
       		  <th>Transaction Id</th>
       		  <th>Takhmeen Year</th>
           </tr>
@@ -293,9 +293,9 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
               $row[$key] = stripslashes($value);
             }
             echo "<tr>";
+            echo "<td data-sort=" . strtotime($row['Date']) . ">" . date('d M Y', strtotime($row['Date'])) . "</td>";
+            echo "<td>" . getHijriFullDate($row['Date']) . "</td>";
             echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-      		  echo "<td data-sort=" . strtotime($row['Date']) . ">" . $row['Date'] . "</td>";
-            echo "<td>" . getHijriDate($row['Date']) . "</td>";
       		  echo "<td>" . nl2br($row['name']) . "</td>";
       		  echo "<td>" . nl2br($row['Amount']) . "</td>";
       		  echo "<td>" . nl2br($row['payment_type']) . "</td>";
