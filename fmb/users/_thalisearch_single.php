@@ -270,12 +270,13 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
   </div>
   <div class="tab-pane fade" id="receipt" role="tabpanel" aria-labelledby="receipt-tab">
     <h4 class="mb-3">Receipt Details</h4>
-    <div class="table-responsive">
-      <table class="table table-striped display" width="100%">
+    <div id="printableArea" class="table-responsive">
+      <table class="table table-striped" width="100%">
         <thead>
           <tr>
             <th>Receipt No</th>
       		  <th>Date</th>
+            <th>Hijri Date</th>
       		  <th>Name</th>
       		  <th>Amount</th>
       		  <th>Payment Mode</th>
@@ -293,7 +294,8 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
             }
             echo "<tr>";
             echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-      		  echo "<td data-sort=" . strtotime($row['Date']) . ">" . date('d M Y', strtotime($row['Date'])) . "</td>";
+      		  echo "<td data-sort=" . strtotime($row['Date']) . ">" . $row['Date'] . "</td>";
+            echo "<td>" . getHijriDate($row['Date']) . "</td>";
       		  echo "<td>" . nl2br($row['name']) . "</td>";
       		  echo "<td>" . nl2br($row['Amount']) . "</td>";
       		  echo "<td>" . nl2br($row['payment_type']) . "</td>";
@@ -304,6 +306,9 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
           ?>
         </tbody>
       </table>
+    </div>
+    <div class='col-12'>
+        <button class='btn btn-light' id='Print' onclick="printDiv('printableArea')">Print</button>
     </div>
   </div>
   <!--<div class="tab-pane fade" id="comment" role="tabpanel" aria-labelledby="comment-tab">
@@ -332,3 +337,14 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
     </ul>
   </div>
 </div>-->
+    <script>
+      function printDiv(divId) {
+        var originalContents = document.body.innerHTML; // Store original content
+        var printContents = document.getElementById(divId).innerHTML; // Get the specific div's HTML
+
+        document.body.innerHTML = printContents; // Replace body content with the div's content
+        window.print(); // Print the current body content
+
+        document.body.innerHTML = originalContents; // Restore the original page
+    }
+    </script>
