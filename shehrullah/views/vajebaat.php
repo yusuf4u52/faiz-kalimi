@@ -50,20 +50,23 @@ function sabeel_search() {
 
     $hof_data = get_hof_data($hof_id);
     if (is_null($hof_data)) {
-        do_redirect_with_message('/vajebaat', "This is not a HOF ID");
+        do_redirect_with_message('/vajebaat', "$hof_id is not a found");
+    } else if( $hof_data->its_id != $hof_data->hof_id){
+        do_redirect_with_message('/vajebaat', "$hof_id is not a HOF ID.");
     }
 
-    $hijri_year = get_current_hijri_year();
-    setAppData('hijri_year', $hijri_year);
+    // $hijri_year = get_current_hijri_year();
+    // setAppData('hijri_year', $hijri_year);
 
-    $attendees_data = get_attendees_data_for($hof_id, $hijri_year, false);
-    if (is_null($attendees_data)) {
-        do_redirect_with_message('/vajebaat', 'Error: Seems your ITS (' . $hof_id . ') belong to other mohallah. Please contact jamaat office.');
-    }
+    // $attendees_data = get_attendees_data_for($hof_id, $hijri_year, false);
+    // if (is_null($attendees_data)) {
+    //     do_redirect_with_message('/vajebaat', 'Error: Seems your ITS (' . $hof_id . ') belong to other mohallah. Please contact jamaat office.');
+    // }
 
     $enc_sabeel = do_encrypt($sabeel);
     do_redirect('/vjb.slot_booking/' . $enc_sabeel);
 }
+
 
 
 
