@@ -89,13 +89,11 @@ function _handle_post()
     } else if ($action === 'send_message_prepare') {
         header('Content-Type: application/json');
 
-        $api_url = getenv('MESSAGE_API_URL');
-        $api_key = getenv('MESSAGE_API_KEY');
-        $api_account_id = getenv('MESSAGE_API_ACCOUNT_ID');
-        if (empty($api_url) || empty($api_key) || empty($api_account_id)) {
+        list($config, $configError) = get_message_api_config();
+        if ($configError !== null) {
             echo json_encode([
                 'result' => 'error',
-                'message' => 'Message API not configured. Set MESSAGE_API_URL, MESSAGE_API_KEY, MESSAGE_API_ACCOUNT_ID in .env',
+                'message' => $configError,
             ]);
             exit;
         }
@@ -143,12 +141,7 @@ function _handle_post()
             $pending = ($e->takhmeen ?? 0) - ($e->paid_amount ?? 0);
             $message = _seat_exception_replace_message_vars($message_template, $e, $pending);
 
-            $to_number = $whatsapp;
-            if (preg_match('/^[0-9]{10}$/', $to_number)) {
-                $to_number = '+91' . $to_number;
-            } elseif (strpos($to_number, '+') !== 0) {
-                $to_number = '+' . $to_number;
-            }
+            $to_number = normalize_whatsapp_number($whatsapp);
 
             $jobs[] = [
                 'job_id' => (string)$hof_id,
@@ -171,13 +164,11 @@ function _handle_post()
     } else if ($action === 'send_single_message') {
         header('Content-Type: application/json');
 
-        $api_url = getenv('MESSAGE_API_URL');
-        $api_key = getenv('MESSAGE_API_KEY');
-        $api_account_id = getenv('MESSAGE_API_ACCOUNT_ID');
-        if (empty($api_url) || empty($api_key) || empty($api_account_id)) {
+        list($config, $configError) = get_message_api_config();
+        if ($configError !== null) {
             echo json_encode([
                 'success' => false,
-                'error' => 'Message API not configured.',
+                'error' => $configError,
             ]);
             exit;
         }
@@ -194,46 +185,18 @@ function _handle_post()
         }
 
         // Normalise number again as a safety net
-        if (preg_match('/^[0-9]{10}$/', $to_number)) {
-            $to_number = '+91' . $to_number;
-        } elseif (strpos($to_number, '+') !== 0) {
-            $to_number = '+' . $to_number;
+        $to_number = normalize_whatsapp_number($to_number);
+
+        // Handle image upload (reused helper)
+        list($image_path, $imageError) = get_validated_message_image_path('image');
+        if ($imageError !== null) {
+            echo json_encode([
+                'success' => false,
+                'error' => $imageError,
+            ]);
+            exit;
         }
 
-        // Handle image upload
-        $image_path = null;
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $upload_file = $_FILES['image'];
-            $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-            $max_size = 5 * 1024 * 1024; // 5MB
-            
-            // Validate file type
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mime_type = finfo_file($finfo, $upload_file['tmp_name']);
-            finfo_close($finfo);
-            
-            if (!in_array($mime_type, $allowed_types)) {
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'Invalid image type. Only JPEG, PNG, GIF, and WebP are allowed.',
-                ]);
-                exit;
-            }
-            
-            // Validate file size
-            if ($upload_file['size'] > $max_size) {
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'Image file is too large. Maximum size is 5MB.',
-                ]);
-                exit;
-            }
-            
-            // Use the temporary upload path
-            $image_path = $upload_file['tmp_name'];
-        }
-
-        $config = ['url' => $api_url, 'api_key' => $api_key, 'account_id' => $api_account_id];
         $result = send_message_via_api($to_number, $message, $image_path, $config);
 
         $success = !empty($result['success']);
@@ -352,7 +315,7 @@ function content_display()
     
     <!-- Active Exceptions List + Send message -->
     <?php
-    $has_message_api = getenv('MESSAGE_API_URL') && getenv('MESSAGE_API_KEY') && getenv('MESSAGE_API_ACCOUNT_ID');
+    $has_message_api = is_message_api_configured();
     ?>
     <div class="card">
         <div class="card-body">

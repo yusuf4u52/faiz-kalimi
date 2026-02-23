@@ -1105,6 +1105,86 @@ function get_all_seat_exceptions() {
 }
 
 /**
+ * Check if Message API is configured in environment.
+ */
+function is_message_api_configured() {
+    return getenv('MESSAGE_API_URL') && getenv('MESSAGE_API_KEY') && getenv('MESSAGE_API_ACCOUNT_ID');
+}
+
+/**
+ * Get Message API config from environment.
+ * @return array [array|null $config, string|null $error]
+ */
+function get_message_api_config() {
+    $api_url = getenv('MESSAGE_API_URL');
+    $api_key = getenv('MESSAGE_API_KEY');
+    $api_account_id = getenv('MESSAGE_API_ACCOUNT_ID');
+
+    if (empty($api_url) || empty($api_key) || empty($api_account_id)) {
+        return [null, 'Message API not configured. Set MESSAGE_API_URL, MESSAGE_API_KEY, MESSAGE_API_ACCOUNT_ID in .env'];
+    }
+
+    return [
+        [
+            'url' => $api_url,
+            'api_key' => $api_key,
+            'account_id' => $api_account_id,
+        ],
+        null,
+    ];
+}
+
+/**
+ * Normalise a phone number for WhatsApp sending.
+ * - 10 digit numbers are treated as Indian (+91)
+ * - Numbers without + are prefixed with +
+ */
+function normalize_whatsapp_number($to_number) {
+    $to_number = trim((string)$to_number);
+    if ($to_number === '') {
+        return '';
+    }
+    if (preg_match('/^[0-9]{10}$/', $to_number)) {
+        return '+91' . $to_number;
+    }
+    if (strpos($to_number, '+') !== 0) {
+        return '+' . $to_number;
+    }
+    return $to_number;
+}
+
+/**
+ * Validate uploaded image for WhatsApp messages.
+ * @param string $field File input name (default "image")
+ * @return array [string|null $image_path, string|null $error]
+ */
+function get_validated_message_image_path($field = 'image') {
+    if (!isset($_FILES[$field]) || $_FILES[$field]['error'] !== UPLOAD_ERR_OK) {
+        return [null, null]; // No image uploaded
+    }
+
+    $upload_file = $_FILES[$field];
+    $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    $max_size = 5 * 1024 * 1024; // 5MB
+
+    // Validate file type
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime_type = finfo_file($finfo, $upload_file['tmp_name']);
+    finfo_close($finfo);
+
+    if (!in_array($mime_type, $allowed_types)) {
+        return [null, 'Invalid image type. Only JPEG, PNG, GIF, and WebP are allowed.'];
+    }
+
+    // Validate file size
+    if ($upload_file['size'] > $max_size) {
+        return [null, 'Image file is too large. Maximum size is 5MB.'];
+    }
+
+    return [$upload_file['tmp_name'], null];
+}
+
+/**
  * Send one message via external API (POST multipart: accountId, toNumber, message, optional image).
  * @param string $to_number Recipient phone (e.g. +91...)
  * @param string $message Body text
