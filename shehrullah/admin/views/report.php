@@ -22,10 +22,12 @@ function vjb_registration() {
     $slot_id = getAppData('arg2');
 
     $query = 'SELECT 
+    l.Thali as sabeel, 
     i.ITS_ID, i.Full_Name, s.title
     FROM kl_shehrullah_vjb_allocation a 
     JOIN kl_shehrullah_vjb_slots s ON s.id = a.slot_id
     JOIN ITS_RECORD i ON i.ITS_ID  = a.hof_id
+    JOIN thalilist l ON l.ITS_No = a.hof_id
     WHERE a.slot_id = ? and a.hijri_year = ?
     ';
 
@@ -34,7 +36,8 @@ function vjb_registration() {
     $result = run_statement($query, $slot_id, $hijri_year);
     $records = $result->data;
     util_show_data_table($records, [
-        '__show_row_sequence' => 'Sr#',        
+        '__show_row_sequence' => 'Sr#',   
+        'sabeel' => 'Sabeel',
         'ITS_ID' => 'ITS ID',
         'Full_Name' => 'Name',
         'title' => 'Slot'
@@ -182,5 +185,6 @@ function registered_users() {
     </div>
     <?php
 }
+
 
 
