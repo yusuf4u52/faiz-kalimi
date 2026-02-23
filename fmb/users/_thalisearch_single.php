@@ -21,6 +21,10 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
     <button class="nav-link" id="receipt-tab" data-bs-toggle="tab" data-bs-target="#receipt" type="button" role="tab"
       aria-controls="receipt" aria-selected="false">Receipt</button>
   </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab"
+      aria-controls="members" aria-selected="false">Members</button>
+  </li>
   <!--<li class="nav-item" role="presentation">
     <button class="nav-link" id="comment-tab" data-bs-toggle="tab" data-bs-target="#comment" type="button" role="tab"
       aria-controls="comment" aria-selected="false">Comments</button>
@@ -74,7 +78,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Email Address</div>
-        <a href="mailto:<?php echo $values['Email_ID']; ?>"><?php echo $values['Email_ID']; ?></a> <?php if(!empty($values['SEmail_ID'])) : ?>| <a
+        <a href="mailto:<?php echo $values['Email_ID']; ?>"><?php echo $values['Email_ID']; ?></a> <?php if (!empty($values['SEmail_ID'])) : ?>| <a
           href="mailto:<?php echo $values['SEmail_ID']; ?>"><?php echo $values['SEmail_ID']; ?></a> <?php endif; ?>
       </li>
       <?php if ($musaid_details) { ?>
@@ -115,14 +119,14 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         ₹<?php echo $values['Total_Pending'] + $values['Paid']; ?> -
         ₹<?php echo $values['Paid']; ?> = ₹<?php echo $values['Total_Pending']; ?>
       </li>
-      <?php if($values['Total_Pending'] > 0) { ?>
+      <?php if ($values['Total_Pending'] > 0) { ?>
         <li class="list-group-item">
           <div class="fw-bold">Whatsapp Mumin for Hub</div>
           <?php $msg = "Salaam " . $values['NAME'] . ", %0A%0AAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Iltemas che k aapni pending hoob jald si jald ada kariye ane hamne FMB khidmat team ne yaari aapiye.
           %0A%0ASabil - " . $values['Thali'] . "
     			%0APending Hoob - " . $values['Total_Pending']
-  				?>
-  				<a target="_blank" href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo ($msg); ?>">WhatsApp</a>
+          ?>
+          <a target="_blank" href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo ($msg); ?>">WhatsApp</a>
         </li>
       <?php } ?>
       <li class="list-group-item">
@@ -195,7 +199,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
                     disabled>RSVP Ended</button><?php } ?>
               </td>
             </tr>
-            <?php mysqli_free_result($user_menu);
+          <?php mysqli_free_result($user_menu);
           }
           mysqli_free_result($menu_list); ?>
         </tbody>
@@ -213,7 +217,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
             <a class="nav-link" data-bs-toggle="modal" href="#stop_thali">Stop By Dates</a>
           </li>
           <li class="nav-item"><?php
-            if ($values['Active'] == '1') { ?>
+                                if ($values['Active'] == '1') { ?>
               <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a>
             <?php } else { ?>
               <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a>
@@ -237,51 +241,51 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
     )
     SELECT `id`, `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date DESC;") or die(mysqli_error($link));
     if (isset($stop_dates) && $stop_dates->num_rows > 0) { ?>
-        <div class="table-responsive">
-            <table class="table table-striped display" width="100%">
-                <thead>
-                    <tr>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($stop_values = mysqli_fetch_assoc($stop_dates)) {
-                        $stop_date = new DateTime($stop_values['start_date'] . '00:00:00');
-                        $stop_date = $stop_date->format('Y-m-d H:i:s'); ?>
-                        <tr>
-                            <td data-sort="<?php echo strtotime($stop_values['start_date']); ?>"><?php echo date('d M Y', strtotime($stop_values['start_date'])); ?></td>
-                            <td data-sort="<?php echo strtotime($stop_values['end_date']); ?>"><?php echo date('d M Y', strtotime($stop_values['end_date'])); ?></td>
-                            <td><?php if (date('Y-m-d H:i:s') < $stop_date) { ?><button type="button"
-                                        class="btn btn-light"
-                                        data-bs-target="#startthali-<?php echo $stop_values['id']; ?>"
-                                        data-bs-toggle="modal" style="margin-bottom:5px">Delete</button><?php } else { ?> <button type="button"
-                                        class="btn btn-light" disabled>RSVP Ended</button> <?php } ?>
-                            </td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
+      <div class="table-responsive">
+        <table class="table table-striped display" width="100%">
+          <thead>
+            <tr>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php while ($stop_values = mysqli_fetch_assoc($stop_dates)) {
+              $stop_date = new DateTime($stop_values['start_date'] . '00:00:00');
+              $stop_date = $stop_date->format('Y-m-d H:i:s'); ?>
+              <tr>
+                <td data-sort="<?php echo strtotime($stop_values['start_date']); ?>"><?php echo date('d M Y', strtotime($stop_values['start_date'])); ?></td>
+                <td data-sort="<?php echo strtotime($stop_values['end_date']); ?>"><?php echo date('d M Y', strtotime($stop_values['end_date'])); ?></td>
+                <td><?php if (date('Y-m-d H:i:s') < $stop_date) { ?><button type="button"
+                      class="btn btn-light"
+                      data-bs-target="#startthali-<?php echo $stop_values['id']; ?>"
+                      data-bs-toggle="modal" style="margin-bottom:5px">Delete</button><?php } else { ?> <button type="button"
+                      class="btn btn-light" disabled>RSVP Ended</button> <?php } ?>
+                </td>
+              </tr>
+            <?php } ?>
+          </tbody>
+        </table>
+      </div>
     <?php } else {
-        echo '<h5 class="text-center mb-3">Currently you has no stop dates.</h5>';
-    } mysqli_free_result($stop_dates); ?>
+      echo '<h5 class="text-center mb-3">Currently you has no stop dates.</h5>';
+    }
+    mysqli_free_result($stop_dates); ?>
   </div>
   <div class="tab-pane fade" id="receipt" role="tabpanel" aria-labelledby="receipt-tab">
     <h4 class="mb-3">Receipt Details</h4>
-    <div id="printableArea" class="table-responsive">
+    <div id="printableReceipts" class="table-responsive">
       <table class="table table-striped" width="100%">
         <thead>
           <tr>
             <th>Date</th>
             <th>Hijri</th>
             <th>Receipt No</th>
-      		  <th>Name</th>
-      		  <th>Amount</th>
-      		  <th>Pay Mode</th>
-      		  <th>Transaction Id</th>
-      		  <th>Takhmeen Year</th>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Pay Mode</th>
+            <th>Takhmeen Year</th>
           </tr>
         </thead>
         <tbody>
@@ -296,21 +300,57 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
             echo "<td data-sort=" . strtotime($row['Date']) . ">" . date('d M Y', strtotime($row['Date'])) . "</td>";
             echo "<td>" . getHijriFullDate($row['Date']) . "</td>";
             echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-      		  echo "<td>" . nl2br($row['name']) . "</td>";
-      		  echo "<td>" . nl2br($row['Amount']) . "</td>";
-      		  echo "<td>" . nl2br($row['payment_type']) . "</td>";
-      		  echo "<td>" . nl2br($row['transaction_id']) . "</td>";
-      		  echo "<td>" . nl2br($row['takmeem_year']) . "</td>";
+            echo "<td>" . nl2br($row['name']) . "</td>";
+            echo "<td>" . nl2br($row['Amount']) . "</td>";
+            echo "<td>" . nl2br($row['payment_type']) . "</td>";
+            echo "<td>" . nl2br($row['takmeem_year']) . "</td>";
             echo "</tr>";
           }
+          mysqli_free_result($result);
           ?>
         </tbody>
       </table>
     </div>
     <div class='col-12'>
-        <button class='btn btn-light' id='Print' onclick="printDiv('printableArea')">Print</button>
+      <button class='btn btn-light' id='Print' onclick="printTabs()">Print</button>
     </div>
   </div>
+  <div class="tab-pane fade" id="members" role="tabpanel" aria-labelledby="members-tab">
+    <h4 class="mb-3">Member Details</h4>
+    <div id="printableMembers" class="table-responsive">
+      <table class="table table-striped" width="100%">
+        <thead>
+          <tr>
+            <th>ITS No</th>
+            <th>Member Type</th>
+            <th>Full Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          $members = "SELECT * FROM thalilist_members WHERE thalilist_id ='" . $values['id'] . "' ORDER BY age DESC";
+          $res_members = mysqli_query($link, $members);
+          while ($row_members = mysqli_fetch_assoc($res_members)) {
+            echo "<tr>";
+            echo "<td>" . nl2br($row_members['its_no']) . "</td>";
+            echo "<td>" . nl2br($row_members['member_type']) . "</td>";
+            echo "<td>" . nl2br($row_members['full_name']) . "</td>";
+            echo "<td>" . nl2br($row_members['age']) . "</td>";
+            echo "<td>" . nl2br($row_members['gender']) . "</td>";
+            echo "</tr>";
+          }
+          mysqli_free_result($res_members);
+          ?>
+        </tbody>
+      </table>
+    </div>
+    <div class='col-12'>
+      <button class='btn btn-light' id='Print' onclick="printTabs()">Print</button>
+    </div>
+  </div>
+
   <!--<div class="tab-pane fade" id="comment" role="tabpanel" aria-labelledby="comment-tab">
     <h4 class="mb-3">Comments</h4>
     <form method="post" autocomplete="off">
@@ -333,18 +373,20 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         </li>
         <?php
       }
-      ?>
+        ?>
     </ul>
   </div>
 </div>-->
-    <script>
-      function printDiv(divId) {
-        var originalContents = document.body.innerHTML; // Store original content
-        var printContents = document.getElementById(divId).innerHTML; // Get the specific div's HTML
+  <script>
+    function printTabs() {
+      var originalContents = document.body.innerHTML; // Store original content
+      var printReciepts = document.getElementById('printableReceipts').innerHTML;
+      var printMembers = document.getElementById('printableMembers').innerHTML;
+      var printContents = printReciepts + printMembers;
 
-        document.body.innerHTML = printContents; // Replace body content with the div's content
-        window.print(); // Print the current body content
+      document.body.innerHTML = printContents; // Replace body content with the div's content
+      window.print(); // Print the current body content
 
-        document.body.innerHTML = originalContents; // Restore the original page
+      document.body.innerHTML = originalContents; // Restore the original page
     }
-    </script>
+  </script>

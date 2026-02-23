@@ -50,6 +50,7 @@ $rights = array(
 		"/fmb/users/uploadoutstanding.php",
 		"/fmb/users/uploadreciept.php",
 		"/fmb/users/uploadsector.php",
+		"/fmb/users/uploadmembers.php",
 		"/fmb/sms/index.php"
 	),
 	"staff" => array(
