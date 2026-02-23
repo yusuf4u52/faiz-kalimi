@@ -16,7 +16,7 @@ DEFINED('IS_APP_SECURE') or DEFINE('IS_APP_SECURE', false); // This should be se
 DEFINED('IS_RELATIVE_AUTH_REDIRECT') or DEFINE('IS_RELATIVE_AUTH_REDIRECT', false);
 DEFINED('AUTH_REDIRECT') or DEFINE('AUTH_REDIRECT', 'https://www.its52.com/Login.aspx?OneLogin='); //If application is secure and not autheticated.. define the redirect page 
 DEFINED('OPEN_PAGE_LIST') or DEFINE('OPEN_PAGE_LIST', ['data_entry']); //List of pages that bypasses authentication.
-DEFINED('SECURE_LANDING_PAGE') or DEFINE('SECURE_LANDING_PAGE', 'input-sabeel');
+DEFINED('SECURE_LANDING_PAGE') or DEFINE('SECURE_LANDING_PAGE', 'vajebaat');
 
 /* == SESSION STUFF */
 DEFINED('DB_BASED_SESSION') or DEFINE('DB_BASED_SESSION', false);
