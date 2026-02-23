@@ -342,7 +342,7 @@ function vjb_pending() {
                 var failedCount = 0;
                 var skippedNoNumber = 0;
                 var isSending = false;
-                var SEND_DELAY_MS = 800;
+                var SEND_DELAY_MS = 0;
 
                 function setStatus(text) {
                     if (statusEl) {
