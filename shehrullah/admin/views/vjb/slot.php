@@ -1,5 +1,5 @@
 <?php
-if (!is_user_a(SUPER_ADMIN)) {
+if (!is_user_a(SUPER_ADMIN, RECEPTION)) {
     do_redirect_with_message('/home', 'Redirected as tried to access unauthorized area.');
 }
 
@@ -128,4 +128,5 @@ function _handle_add_user()
         $msg = 'Failed with error: ' . $result;
     }
     do_redirect_with_message('/vjb.slot', $msg);
+
 }
