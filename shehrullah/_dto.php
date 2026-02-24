@@ -153,6 +153,20 @@ function add_booking($hof_id, $slot_id) {
     return $result->success ? null : $result->message;
 }
 
+function delete_booking($hof_id, $slot_id) {
+    $year = get_current_hijri_year();
+
+    $query = 'UPDATE kl_shehrullah_vjb_slots SET registered = registered - 1 
+        WHERE id=? and hijri_year=?';
+    $result = run_statement($query, $slot_id, $year); 
+    if( $result->count == 0 ) {
+        return 'Oops! This slot is full. Please select another slot.';
+    }
+
+    $query = 'DELETE FROM kl_shehrullah_vjb_allocation WHERE hof_id=? and slot_id = ? and hijri_year=?;';
+    $result = run_statement($query, $hof_id, $slot_id, $year);
+    return $result->success ? null : $result->message;
+}
 //////
 
 function family_stats_for($hof_id) {
@@ -1930,4 +1944,5 @@ function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is
 //     // Integration with WhatsApp Business API
 //     // Update whatsapp_sent and whatsapp_sent_at in kl_shehrullah_seat_allocation
 // }
+
 
