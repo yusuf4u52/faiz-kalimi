@@ -26,8 +26,11 @@ function content_display() {
 }
 
 function vjb_registration() {
-    if( !(is_user_role(SUPER_ADMIN)) ) {
-        do_redirect_with_message('/home', 'You are not authorized to view this page');
+    // if( !(is_user_role(SUPER_ADMIN)) ) {
+    //     do_redirect_with_message('/home', 'You are not authorized to view this page');
+    // }
+    if (!is_user_a(SUPER_ADMIN, RECEPTION)) {
+        do_redirect_with_message('/home', 'Redirected as tried to access unauthorized area.');
     }
 
     $slot_id = getAppData('arg2');
@@ -632,6 +635,7 @@ function registered_users() {
     </div>
     <?php
 }
+
 
 
 
