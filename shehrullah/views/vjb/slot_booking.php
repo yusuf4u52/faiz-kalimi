@@ -35,16 +35,25 @@ function _handle_form_submit()
     $action = $_POST['action'];
 
     $encrypted_hof_id = do_encrypt($hof_id);
-
-
-    $result = add_booking($hof_id, $slot_id);
-    if( is_null($result) ) {
-        //do_redirect_with_message('/vjb.vajebaat_input/' . do_encrypt($hof_id), 'Your slot is booked successfully');
-        //setSessionData(TRANSIT_DATA, 'Your slot is booked sucessfully.');
-        do_redirect_with_message("/vjb.slot_booking/$encrypted_hof_id", 'Your slot is booked sucessfully.');
+    
+    if( $action == 'delete_slot' ) {
+        $result = delete_booking($hof_id, $slot_id);
+        if( is_null($result) ) {
+            do_redirect_with_message("/vjb.slot_booking/$encrypted_hof_id", 'Your slot is deleted successfully.');
+        } else {
+            do_redirect_with_message("/vjb.slot_booking/$encrypted_hof_id" , $result);
+        }
+        return;
     } else {
-        //setSessionData(TRANSIT_DATA, $result);
-        do_redirect_with_message("/vjb.slot_booking/$encrypted_hof_id" , $result);
+        $result = add_booking($hof_id, $slot_id);
+            if( is_null($result) ) {
+                //do_redirect_with_message('/vjb.vajebaat_input/' . do_encrypt($hof_id), 'Your slot is booked successfully');
+                //setSessionData(TRANSIT_DATA, 'Your slot is booked sucessfully.');
+                do_redirect_with_message("/vjb.slot_booking/$encrypted_hof_id", 'Your slot is booked sucessfully.');
+            } else {
+                //setSessionData(TRANSIT_DATA, $result);
+                do_redirect_with_message("/vjb.slot_booking/$encrypted_hof_id" , $result);
+            }
     }
 }
 
@@ -95,14 +104,15 @@ function content_display()
             <form method="post" action="" class="forms-sample">
                 <input type="hidden" name="hof_id" value="<?=$hof_id?>" />
                 <input type="hidden" name="action" value="delete_slot" />
+                <input type="hidden" name="slot_id" value="<?=$booking_details->id?>" />
                 <div class="row mb-3">
                     <label for="whatsapp" class="col-3 form-label">Vajebaat Slot</label>
                     <div class="col-9">
                         <?=$booking_details->title?>
                     </div>
                 </div>
-                <!-- <p>Delete my slot</p>
-                <button type="submit" class="btn btn-light">Delete</button> -->
+                <p>Delete my slot</p>
+                <button type="submit" class="btn btn-light">Delete</button>
             </form>
         </div>
         <!-- <div class="card-footer">
@@ -111,5 +121,6 @@ function content_display()
     </div>
     <?php
     }
+
 
 }
