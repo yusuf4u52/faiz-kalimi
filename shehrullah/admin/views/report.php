@@ -37,10 +37,11 @@ function vjb_registration() {
 
     $query = 'SELECT 
     l.Thali as sabeel, 
-    l.ITS_No as ITS_ID, l.NAME as Full_Name, s.title
+    l.ITS_No as ITS_ID, l.NAME as Full_Name, i.its_id as its,s.title
     FROM kl_shehrullah_vjb_allocation a 
     JOIN kl_shehrullah_vjb_slots s ON s.id = a.slot_id
-    JOIN thalilist l ON l.ITS_No = a.hof_id
+    LEFT JOIN its_data  i ON i.its_id = a.hof_id
+    LEFT JOIN thalilist l ON l.ITS_No = a.hof_id
     WHERE a.slot_id = ? and a.hijri_year = ?
     ';
 
@@ -53,7 +54,8 @@ function vjb_registration() {
     util_show_data_table($records, [
         '__show_row_sequence' => 'Sr#',   
         'sabeel' => 'Sabeel',
-        'ITS_ID' => 'ITS ID',
+        'ITS_ID' => 'HOF ID',
+        'its' => 'ITS ID',
         'Full_Name' => 'Name',
         'title' => 'Slot'
     ]);
@@ -636,6 +638,7 @@ function registered_users() {
     </div>
     <?php
 }
+
 
 
 
