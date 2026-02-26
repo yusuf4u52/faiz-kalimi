@@ -37,13 +37,14 @@ function vjb_registration() {
 
     $query = 'SELECT 
     l.Thali as sabeel, 
-    i.ITS_ID, i.Full_Name, s.title
+    l.ITS_No as ITS_ID, l.NAME as Full_Name, s.title
     FROM kl_shehrullah_vjb_allocation a 
     JOIN kl_shehrullah_vjb_slots s ON s.id = a.slot_id
-    JOIN ITS_RECORD i ON i.ITS_ID  = a.hof_id
     JOIN thalilist l ON l.ITS_No = a.hof_id
     WHERE a.slot_id = ? and a.hijri_year = ?
     ';
+
+    // //JOIN ITS_RECORD i ON i.ITS_ID  = a.hof_id
 
     $hijri_year = get_current_hijri_year();
 
@@ -635,6 +636,7 @@ function registered_users() {
     </div>
     <?php
 }
+
 
 
 
