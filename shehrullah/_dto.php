@@ -997,6 +997,25 @@ function add_hof($hof_id) {
 
 }
 
+function add_medical_data($hof_id, $full_name, $age, $height_cm, $weight_kg, $bp_systolic, $bp_diastolic, $random_blood_sugar_mgdl, $pledge_reduce_kg, $pledge_target_date) {
+    $year = get_current_hijri_year();
+    $query = 'INSERT INTO kl_shehrullah_medical_test_result (its_id, hijri,full_name,age,height_cm,weight_kg,bp_systolic,bp_diastolic,random_blood_sugar_mgdl,pledge_reduce_kg,pledge_target_date,created)
+    values(?,?,?,?,?,?,?,?,?,?,?,now()) ON DUPLICATE KEY UPDATE full_name=?,age=?,height_cm=?,weight_kg=?,bp_systolic=?,bp_diastolic=?,random_blood_sugar_mgdl=?,pledge_reduce_kg=?,pledge_target_date=?,updated=now();';
+    $result = run_statement($query, $hof_id, $year, $full_name, $age, $height_cm, $weight_kg, $bp_systolic, $bp_diastolic, $random_blood_sugar_mgdl, $pledge_reduce_kg, $pledge_target_date,
+        $full_name, $age, $height_cm, $weight_kg, $bp_systolic, $bp_diastolic, $random_blood_sugar_mgdl, $pledge_reduce_kg, $pledge_target_date);
+    return $result->success && $result->count > 0 ? true : false;
+}
+
+function get_medical_data($hof_id) {
+    $year = get_current_hijri_year();
+    $query = 'SELECT i.*, 
+    m.height_cm, m.weight_kg, m.bp_systolic, m.bp_diastolic, m.random_blood_sugar_mgdl, m.pledge_reduce_kg, m.pledge_target_date     
+    FROM its_data i 
+    LEFT JOIN kl_shehrullah_medical_test_result m ON i.its_id = m.its_id and m.hijri=?
+    WHERE i.its_id=?;';
+    $result = run_statement($query, $year, $hof_id);
+    return $result->success && $result->count > 0 ? $result->data[0] : null;
+}
 //--------------------------------------------
 // SEAT SELECTION FUNCTIONS
 //--------------------------------------------
@@ -1944,6 +1963,7 @@ function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is
 //     // Integration with WhatsApp Business API
 //     // Update whatsapp_sent and whatsapp_sent_at in kl_shehrullah_seat_allocation
 // }
+
 
 
 
