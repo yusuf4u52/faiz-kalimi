@@ -11,12 +11,6 @@ if ($action === 'fetch_person') {
 
     $its_data = get_medical_data($itsId) ?? [];
 
-    // Simulate fetching from its_data
-    // $data = [
-    //     '12345678' => ['full_name' => 'Alice Smith', 'age' => 30, 'height_cm' => 165],
-    //     '87654321' => ['full_name' => 'Bob Johnson', 'age' => 45, 'height_cm' => 175],
-    // ];
-
     if (isset($its_data->its_id)) {
         $its_data->height_cm = 175;;
         echo json_encode(['ok' => true, 'data' => $its_data]);
@@ -78,7 +72,7 @@ function content_display() {
 
 <h2>Medical Checkup Form</h2>
 
-<?php if ( isset($message) ): //$success): ?>
+<?php if ( isset($message) ): ?>
   <p class="ok"><strong><?= htmlspecialchars($message) ?></strong></p>
 <?php endif; ?>
 
@@ -269,4 +263,5 @@ function content_display() {
 </script>
 
     <?php
+
 }
