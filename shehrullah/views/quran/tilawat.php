@@ -85,9 +85,10 @@ function content_display() {
     $quran_count = getAppData('quran_count');
     $tilawat_data = getAppData('tilawat_data');
     $record_exist = getAppData('record_exist');
+    $its_data= getAppData('its_data');
 ?>
 <div class="container-fluid px-2">
-    <h2 class="h5 mb-3">Tilawat Record for <?= $its_id ?></h2>
+    <h2 class="h5 mb-3">Tilawat Record for <?= $its_id . ' ' . $its_data->name ?></h2>
 </div>
 <form method="post" action="<?= $url ?>/quran.tilawat">
     <div class="container-fluid px-2">
@@ -160,4 +161,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <?php
+
 }
