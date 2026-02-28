@@ -28,6 +28,11 @@ function _handle_form_submit() {
         } else {
             $message = 'Success: Your tilawat data is submitted.';
         }
+
+        if( $click === 'save') {
+            do_redirect_with_message('/quran.its', "Your quran recite data saved successfully.");
+        }
+        
         define('NO_TEMPLATE', true);
         $uri = getAppData('BASE_URI');
         echo '<body onload="setTimeout(\'document.forms[0].submit()\', 2000)">
@@ -61,7 +66,6 @@ exit();
             setAppData('quran_count', 3);
             setAppData('tilawat_data', (object) ['quran_count' => 3, 'sipara_1' => [], 'sipara_2' => [], 'sipara_3' => []]);
             setAppData('record_exist', false);
-        
         } else {
             setAppData('quran_count', $result->quran_count);
             $tilawat_data = json_decode($result->tilawat_data);
@@ -157,6 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php
 
 }
+
 
 
 
