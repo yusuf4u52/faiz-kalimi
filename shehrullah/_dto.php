@@ -36,6 +36,27 @@ function is_data_entry()
 // DATABASE AREA
 //--------------------------------------------
 
+function get_quran_recite_data($its_id)
+{
+    $year = get_current_hijri_year();
+    $query = 'SELECT * FROM kl_shehrullah_quran_khatm WHERE its_id = ? and year=?;';
+    $result = run_statement($query, $its_id, $year);
+    if ($result->count > 0) {
+        return $result->data[0];
+    } else {
+        return null;
+    }
+}
+
+function save_quran_recite_data($its_id, $quran_count, $tilawat_data)
+{
+    $year = get_current_hijri_year();
+    $query = 'INSERT INTO kl_shehrullah_quran_khatm (its_id, year, quran_count, tilawat_data) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE quran_count = ?, tilawat_data = ?;';
+    $tilwat_json_data = json_encode($tilawat_data);
+    $result = run_statement($query, $its_id, $year, $quran_count, $tilwat_json_data, $quran_count, $tilwat_json_data);
+    return $result->success ? null : $result->message;
+}
+
 function add_markaz_hub_data(
     $year,
     $start_eng_date,
@@ -1963,6 +1984,7 @@ function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is
 //     // Integration with WhatsApp Business API
 //     // Update whatsapp_sent and whatsapp_sent_at in kl_shehrullah_seat_allocation
 // }
+
 
 
 
