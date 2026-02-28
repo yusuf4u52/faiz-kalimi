@@ -39,19 +39,10 @@ function _handle_form_submit() {
     <br/>
     <h4>You will be automatically re-directed in 5 seconds or less.</h4>
     <p>If you do not get re-directed in a few seconds, press the button below.</p>
-    <button type="submit" name="click" value="Search">Continue</button>
+    <button type="submit" name="click" value="search">Continue</button>
   </form>
 </body>';
 exit();
-        
-        
-    // } else if( $click === 'add' ) {
-    //     $result = add_new_quran($_POST);
-    //     if( isset($result) ) {
-    //         do_redirect_with_message('/quran.its', 'Error: New Quran not added. ' . $result);
-    //     } else {
-    //         do_redirect_with_message('/quran.its', 'Success: New Quran added. Please update the tilawat data for the new Quran.');            
-    //     }
     } else {
         $its_data = get_hof_data($itsid);
         if (is_null($its_data)) {
@@ -163,4 +154,5 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php
 
 }
+
 
