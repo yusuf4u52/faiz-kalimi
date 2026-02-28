@@ -22,7 +22,7 @@ function _handle_form_submit() {
         }
 
     
-        $result = save_quran_recite_data($its_id, $quran_count, $tilawat_data);
+        $result = save_quran_recite_data($itsid, $quran_count, $tilawat_data);
         if( isset($result) ) {
             $message = 'Error: Tilawat data not recorded. ' . $result;
         } else {
@@ -56,15 +56,15 @@ exit();
 
         $result = get_quran_recite_data($itsid);
         if( is_null($result) ) {
-            setAppData('quran_count', value: 3);
+            setAppData('quran_count', 3);
             setAppData('tilawat_data', (object) ['quran_count' => 3, 'sipara_1' => [], 'sipara_2' => [], 'sipara_3' => []]);
-            setAppData('record_exist', value: false);
+            setAppData('record_exist', false);
         
-            } else {
+        } else {
             setAppData('quran_count', $result->quran_count);
             $tilawat_data = json_decode($result->tilawat_data);
             setAppData('tilawat_data', $tilawat_data);
-            setAppData('record_exist', value: true);
+            setAppData('record_exist', true);
         }
     }
     
@@ -154,5 +154,6 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php
 
 }
+
 
 
