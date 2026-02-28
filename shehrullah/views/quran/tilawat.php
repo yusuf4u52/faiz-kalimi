@@ -81,7 +81,8 @@ function content_display() {
     $its_data= getAppData('its_data');
 ?>
 <div class="container-fluid px-2">
-    <h2 class="h5 mb-3">Tilawat Record for <?= $its_id . ' ' . $its_data->full_name ?></h2>
+    <h2 class="h5 mb-3">Tilawat Record for <b><?= $its_id . ' ' . $its_data->full_name ?></b></h2>
+    <h5>Don't forget to save the changes</h5>
 </div>
 <form method="post" action="<?= $url ?>/quran.tilawat">
     <div class="container-fluid px-2">
@@ -156,6 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php
 
 }
+
 
 
 
