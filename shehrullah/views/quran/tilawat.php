@@ -35,11 +35,13 @@ function _handle_form_submit() {
     <!-- your form inputs (can be hidden) -->
     <input type="hidden" name="its_id" value="'.$itsid.'">
     <input type="hidden" name="action" value="tilawat">
+    <input type="hidden" name="click" value="search">
+    
     <h2>'.$message.'</h2>
     <br/>
     <h4>You will be automatically re-directed in 5 seconds or less.</h4>
     <p>If you do not get re-directed in a few seconds, press the button below.</p>
-    <button type="submit" name="click" value="search">Continue</button>
+    <input type="submit" value="Continue">
   </form>
 </body>';
 exit();
@@ -154,6 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php
 
 }
+
 
 
 
