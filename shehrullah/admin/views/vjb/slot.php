@@ -106,9 +106,10 @@ function __show_link2markaz_list($row, $index)
 {
     $id = $row->id;
     $uri = getAppData('BASE_URI');
-    
+
     return "<a href='$uri/vjb.slot/$id' class='btn btn-light'>Edit</a>
     <a href='$uri/report/vjb_registration/$id' class='btn btn-light'>Report</a>
+    <a href='$uri/report/vjb_registration_forms/$id' class='btn btn-light'>Print Forms</a>
     ";
 }
 

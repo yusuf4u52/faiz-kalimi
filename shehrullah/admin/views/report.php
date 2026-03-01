@@ -55,6 +55,255 @@ function vjb_registration() {
     ]);
 }
 
+function vjb_registration_forms() {
+    if( !(is_user_role(SUPER_ADMIN)) ) {
+        do_redirect_with_message('/home', 'You are not authorized to view this page');
+    }
+
+    $slot_id = getAppData('arg2');
+    $hijri_year = get_current_hijri_year();
+    $prev_year = $hijri_year > 0 ? $hijri_year - 1 : 0;
+
+    $query = 'SELECT 
+    l.Thali as sabeel,
+    i.ITS_ID,
+    i.Full_Name,
+    i.Address,
+    i.Mobile,
+    i.Sector as sector,
+    i.Sub_Sector as sub_sector,
+    s.title as slot_title,
+    s.date as slot_date,
+    vprev.vajebaat_prev,
+    vprev.annual_niyaz_prev,
+    vprev.ikram_prev,
+    vprev.husaini_scheme_status_prev
+    FROM kl_shehrullah_vjb_allocation a 
+    JOIN kl_shehrullah_vjb_slots s ON s.id = a.slot_id
+    JOIN ITS_RECORD i ON i.ITS_ID  = a.hof_id
+    JOIN thalilist l ON l.ITS_No = a.hof_id
+    LEFT JOIN kl_shehrullah_vajebaat_prev vprev
+        ON vprev.hijri_year = ? AND vprev.its_id = a.hof_id
+    WHERE a.slot_id = ? and a.hijri_year = ?
+    ORDER BY i.ITS_ID
+    ';
+
+    $result = run_statement($query, $prev_year, $slot_id, $hijri_year);
+    $records = $result->data;
+
+    if (empty($records)) {
+        echo ui_muted('No registered users found for this slot.');
+        return;
+    }
+
+    $current_year = $hijri_year;
+    $vajebaat_prev_label = ($current_year - 1) . ' H';
+    $vajebaat_curr_label = $current_year . ' H';
+    $niyaz_prev_label = ($current_year - 2) . '-' . ($current_year - 1) . ' H';
+    $niyaz_curr_label = $current_year . '-' . ($current_year + 1) . ' H';
+    $ikram_prev_label = ($current_year - 1) . ' H';
+    $ikram_curr_label = $current_year . ' H';
+
+    ?>
+    <style>
+    .vjb-forms-wrapper {
+        font-size: 0.9rem;
+    }
+    .vjb-form-page {
+        padding: 12px 8px;
+        border-bottom: 1px dashed #ccc;
+        margin-bottom: 16px;
+    }
+    .vjb-form-header-title {
+        font-weight: 600;
+        text-align: center;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+    .vjb-form-header-subtitle {
+        text-align: center;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+    .vjb-form-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+    .vjb-form-table td {
+        padding: 2px 4px;
+        vertical-align: top;
+    }
+    .vjb-form-label {
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .vjb-form-line {
+        border-bottom: 1px solid #000;
+        min-height: 1.2em;
+        display: inline-block;
+        padding: 0 4px;
+    }
+    .vjb-scissor-line {
+        text-align: center;
+        font-size: 0.8rem;
+        margin-top: 6px;
+    }
+    .vjb-section-title {
+        font-weight: 600;
+        margin-top: 6px;
+        margin-bottom: 2px;
+    }
+    .vjb-signature-row td {
+        padding-top: 10px;
+    }
+    @media print {
+        .card,
+        .card-body {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .d-print-none {
+            display: none !important;
+        }
+        .vjb-form-page {
+            page-break-after: always;
+            border: none;
+            margin-bottom: 0;
+        }
+    }
+    </style>
+    <div class="d-flex justify-content-end mb-2 d-print-none">
+        <button type="button" class="btn btn-light btn-sm" onclick="window.print()">Print</button>
+    </div>
+    <div class="vjb-forms-wrapper">
+        <?php foreach ($records as $index => $row): ?>
+            <?php
+            $vajebaatPrev = $row->vajebaat_prev ?? '';
+            $annualNiyazPrev = $row->annual_niyaz_prev ?? '';
+            $ikramPrev = $row->ikram_prev ?? '';
+            $husainiStatus = $row->husaini_scheme_status_prev ?? '';
+            $sector = $row->sector ?? '';
+            $subSector = $row->sub_sector ?? '';
+            ?>
+            <div class="vjb-form-page">
+                <div class="vjb-form-header-title">
+                    DAWOODI BOHRA JAMAAT TRUST, KALIMI MOHALLA, POONA JAMAAT
+                </div>
+                <div class="vjb-form-header-subtitle">
+                    VAJEBAAT TAKHMEEN FORM <?= h($current_year) ?>H
+                    <?php if (!empty($row->slot_title)): ?>
+                        - <?= h($row->slot_title) ?>
+                    <?php endif; ?>
+                </div>
+
+                <table class="vjb-form-table">
+                    <tr>
+                        <td class="vjb-form-label">Sabil #</td>
+                        <td><span class="vjb-form-line"><?= h($row->sabeel ?? '') ?></span></td>
+                        <td class="vjb-form-label">Name</td>
+                        <td><span class="vjb-form-line"><?= h($row->Full_Name ?? '') ?></span></td>
+                    </tr>
+                    <tr>
+                        <td class="vjb-form-label">ITS #</td>
+                        <td><span class="vjb-form-line"><?= h($row->ITS_ID ?? '') ?></span></td>
+                        <td class="vjb-form-label">Mobile #</td>
+                        <td><span class="vjb-form-line"><?= h($row->Mobile ?? '') ?></span></td>
+                    </tr>
+                    <tr>
+                        <td class="vjb-form-label">HOF/FM #</td>
+                        <td><span class="vjb-form-line"></span></td>
+                        <td class="vjb-form-label">Date</td>
+                        <td><span class="vjb-form-line"><?= !empty($row->slot_date) ? h($row->slot_date) : '' ?></span></td>
+                    </tr>
+                    <tr>
+                        <td class="vjb-form-label">Address #</td>
+                        <td colspan="3"><span class="vjb-form-line" style="min-width: 80%;"><?= h($row->Address ?? '') ?></span></td>
+                    </tr>
+                    <tr>
+                        <td class="vjb-form-label">Sector</td>
+                        <td><span class="vjb-form-line"><?= h($sector) ?></span></td>
+                        <td class="vjb-form-label">Sub Sector</td>
+                        <td><span class="vjb-form-line"><?= h($subSector) ?></span></td>
+                    </tr>
+                </table>
+
+                <div class="vjb-section-title">ITS Data / Verification / Status</div>
+                <table class="vjb-form-table">
+                    <tr>
+                        <td style="width: 33%;"><span class="vjb-form-line" style="min-width: 90%;"></span></td>
+                        <td style="width: 33%;"><span class="vjb-form-line" style="min-width: 90%;"></span></td>
+                        <td style="width: 34%;"><span class="vjb-form-line" style="min-width: 90%;"></span></td>
+                    </tr>
+                </table>
+
+                <div class="vjb-section-title">Vajebaat</div>
+                <table class="vjb-form-table">
+                    <tr>
+                        <td class="vjb-form-label"><?= h($vajebaat_prev_label) ?></td>
+                        <td><span class="vjb-form-line"><?= h($vajebaatPrev) ?></span></td>
+                        <td class="vjb-form-label"><?= h($vajebaat_curr_label) ?></td>
+                        <td><span class="vjb-form-line"></span></td>
+                    </tr>
+                </table>
+
+                <div class="vjb-section-title">Annual Niyaz</div>
+                <table class="vjb-form-table">
+                    <tr>
+                        <td class="vjb-form-label"><?= h($niyaz_prev_label) ?></td>
+                        <td><span class="vjb-form-line"><?= h($annualNiyazPrev) ?></span></td>
+                        <td class="vjb-form-label"><?= h($niyaz_curr_label) ?></td>
+                        <td><span class="vjb-form-line"></span></td>
+                    </tr>
+                </table>
+
+                <div class="vjb-section-title">Ikram</div>
+                <table class="vjb-form-table">
+                    <tr>
+                        <td class="vjb-form-label"><?= h($ikram_prev_label) ?></td>
+                        <td><span class="vjb-form-line"><?= h($ikramPrev) ?></span></td>
+                        <td class="vjb-form-label"><?= h($ikram_curr_label) ?></td>
+                        <td><span class="vjb-form-line"></span></td>
+                    </tr>
+                </table>
+
+                <div class="vjb-section-title">HUSAINI SCHEME ACCOUNT STATUS</div>
+                <table class="vjb-form-table">
+                    <tr>
+                        <td><span class="vjb-form-line" style="min-width: 40%;"><?= h($husainiStatus) ?></span></td>
+                    </tr>
+                </table>
+
+                <table class="vjb-form-table vjb-signature-row">
+                    <tr>
+                        <td style="width: 33%;">
+                            <span class="vjb-form-label">Sign:</span>
+                            <span class="vjb-form-line" style="min-width: 70%;"></span><br>
+                            <small>Abde Syedna</small>
+                        </td>
+                        <td style="width: 33%;">
+                            <span class="vjb-form-label">Sign:</span>
+                            <span class="vjb-form-line" style="min-width: 70%;"></span><br>
+                            <small>Secretary / Treasurer</small>
+                        </td>
+                        <td style="width: 34%;">
+                            <span class="vjb-form-label">Sign:</span>
+                            <span class="vjb-form-line" style="min-width: 70%;"></span><br>
+                            <small>Aamil Saheb</small>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="vjb-scissor-line">
+                    ----------------✂------------------------------------------------------------------------✂---------------------
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <?php
+}
+
 function _vjb_pending_replace_message_vars($template, $row) {
     $replace = [
         '@full_name' => $row->Full_Name ?? '',

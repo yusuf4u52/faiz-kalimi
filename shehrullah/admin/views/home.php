@@ -211,6 +211,20 @@ function content_display()
             <div class="d-flex col-md-4 col-sm-6 col-12">
                 <div class="card mb-4 w-100">
                     <div class="card-body">
+                        <h5 class="card-title">Previous Year Vajebaat Data</h5>
+                        <p class="card-text">Upload previous year Vajebaat / Annual Niyaz / Ikram data.</p>
+                        <form action="vajebaat_prev_upload" method="post" enctype="multipart/form-data">
+                            <div class="input-group mb-3">
+                                <input type='file' class='form-control file-upload-browse' name='vajebaat_prev_file' required />
+                                <button class="btn btn-light" type="submit" id="button-addon2">GO</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex col-md-4 col-sm-6 col-12">
+                <div class="card mb-4 w-100">
+                    <div class="card-body">
                         <h5 class="card-title">Seat Management</h5>
                         <p class="card-text">Manage seat allocations</p>
                         <a href="<?= $url ?>/seat-management" class="btn btn-light">Go <i class="bi bi-chevron-double-right"></i></a>
