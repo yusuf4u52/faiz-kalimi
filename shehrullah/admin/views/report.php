@@ -235,17 +235,27 @@ function vjb_registration_forms() {
                     </tr>
                 </table>
 
-                <div class="vjb-section-title">ITS Data / Verification / Status</div>
+                <!-- ITS Data / Verification / Status - three separate lines as in blank form -->
                 <table class="vjb-form-table">
                     <tr>
-                        <td style="width: 33%;"><span class="vjb-form-line" style="min-width: 90%;"></span></td>
-                        <td style="width: 33%;"><span class="vjb-form-line" style="min-width: 90%;"></span></td>
-                        <td style="width: 34%;"><span class="vjb-form-line" style="min-width: 90%;"></span></td>
+                        <td class="vjb-form-label">ITS Data</td>
+                        <td><span class="vjb-form-line" style="min-width: 90%;"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="vjb-form-label">Verification</td>
+                        <td><span class="vjb-form-line" style="min-width: 90%;"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="vjb-form-label">Status</td>
+                        <td><span class="vjb-form-line" style="min-width: 90%;"></span></td>
                     </tr>
                 </table>
 
-                <div class="vjb-section-title">Vajebaat</div>
+                <!-- Vajebaat block: heading row then year row -->
                 <table class="vjb-form-table">
+                    <tr>
+                        <td colspan="4" class="vjb-form-label">Vajebaat</td>
+                    </tr>
                     <tr>
                         <td class="vjb-form-label"><?= h($vajebaat_prev_label) ?></td>
                         <td><span class="vjb-form-line"><?= h($vajebaatPrev) ?></span></td>
@@ -254,8 +264,11 @@ function vjb_registration_forms() {
                     </tr>
                 </table>
 
-                <div class="vjb-section-title">Annual Niyaz</div>
+                <!-- Annual Niyaz block -->
                 <table class="vjb-form-table">
+                    <tr>
+                        <td colspan="4" class="vjb-form-label">Annual Niyaz</td>
+                    </tr>
                     <tr>
                         <td class="vjb-form-label"><?= h($niyaz_prev_label) ?></td>
                         <td><span class="vjb-form-line"><?= h($annualNiyazPrev) ?></span></td>
@@ -264,8 +277,11 @@ function vjb_registration_forms() {
                     </tr>
                 </table>
 
-                <div class="vjb-section-title">Ikram</div>
+                <!-- Ikram block -->
                 <table class="vjb-form-table">
+                    <tr>
+                        <td colspan="4" class="vjb-form-label">Ikram</td>
+                    </tr>
                     <tr>
                         <td class="vjb-form-label"><?= h($ikram_prev_label) ?></td>
                         <td><span class="vjb-form-line"><?= h($ikramPrev) ?></span></td>
@@ -274,30 +290,35 @@ function vjb_registration_forms() {
                     </tr>
                 </table>
 
-                <div class="vjb-section-title">HUSAINI SCHEME ACCOUNT STATUS</div>
-                <table class="vjb-form-table">
-                    <tr>
-                        <td><span class="vjb-form-line" style="min-width: 40%;"><?= h($husainiStatus) ?></span></td>
-                    </tr>
-                </table>
-
+                <!-- Husaini scheme + signatures in the same order as blank form -->
                 <table class="vjb-form-table vjb-signature-row">
                     <tr>
-                        <td style="width: 33%;">
-                            <span class="vjb-form-label">Sign:</span>
-                            <span class="vjb-form-line" style="min-width: 70%;"></span><br>
-                            <small>Abde Syedna</small>
-                        </td>
-                        <td style="width: 33%;">
-                            <span class="vjb-form-label">Sign:</span>
-                            <span class="vjb-form-line" style="min-width: 70%;"></span><br>
-                            <small>Secretary / Treasurer</small>
-                        </td>
-                        <td style="width: 34%;">
-                            <span class="vjb-form-label">Sign:</span>
-                            <span class="vjb-form-line" style="min-width: 70%;"></span><br>
-                            <small>Aamil Saheb</small>
-                        </td>
+                        <td class="vjb-form-label">Sign:</td>
+                        <td><span class="vjb-form-line" style="min-width: 70%;"></span></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><small>Abde Syedna</small></td>
+                    </tr>
+                    <tr>
+                        <td class="vjb-form-label">HUSAINI SCHEME ACCOUNT STATUS</td>
+                        <td><span class="vjb-form-line" style="min-width: 70%;"><?= h($husainiStatus) ?></span></td>
+                    </tr>
+                    <tr>
+                        <td class="vjb-form-label">Sign:</td>
+                        <td><span class="vjb-form-line" style="min-width: 70%;"></span></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><small>Secretary / Treasurer</small></td>
+                    </tr>
+                    <tr>
+                        <td class="vjb-form-label">Sign:</td>
+                        <td><span class="vjb-form-line" style="min-width: 70%;"></span></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><small>Aamil Saheb</small></td>
                     </tr>
                 </table>
 
