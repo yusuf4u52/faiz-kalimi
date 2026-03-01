@@ -26,21 +26,26 @@ function content_display() {
 }
 
 function vjb_registration() {
-    if( !(is_user_role(SUPER_ADMIN)) ) {
-        do_redirect_with_message('/home', 'You are not authorized to view this page');
+    // if( !(is_user_role(SUPER_ADMIN)) ) {
+    //     do_redirect_with_message('/home', 'You are not authorized to view this page');
+    // }
+    if (!is_user_a(SUPER_ADMIN, RECEPTION)) {
+        do_redirect_with_message('/home', 'Redirected as tried to access unauthorized area.');
     }
 
     $slot_id = getAppData('arg2');
 
     $query = 'SELECT 
     l.Thali as sabeel, 
-    i.ITS_ID, i.Full_Name, s.title
+    l.ITS_No as ITS_ID, l.NAME as Full_Name, i.its_id as its,s.title
     FROM kl_shehrullah_vjb_allocation a 
     JOIN kl_shehrullah_vjb_slots s ON s.id = a.slot_id
-    JOIN ITS_RECORD i ON i.ITS_ID  = a.hof_id
-    JOIN thalilist l ON l.ITS_No = a.hof_id
+    LEFT JOIN its_data  i ON i.its_id = a.hof_id
+    LEFT JOIN thalilist l ON l.ITS_No = a.hof_id
     WHERE a.slot_id = ? and a.hijri_year = ?
     ';
+
+    // //JOIN ITS_RECORD i ON i.ITS_ID  = a.hof_id
 
     $hijri_year = get_current_hijri_year();
 
@@ -49,7 +54,8 @@ function vjb_registration() {
     util_show_data_table($records, [
         '__show_row_sequence' => 'Sr#',   
         'sabeel' => 'Sabeel',
-        'ITS_ID' => 'ITS ID',
+        'ITS_ID' => 'HOF ID',
+        'its' => 'ITS ID',
         'Full_Name' => 'Name',
         'title' => 'Slot'
     ]);
@@ -881,6 +887,9 @@ function registered_users() {
     </div>
     <?php
 }
+
+
+
 
 
 

@@ -60,6 +60,18 @@ function content_display()
                     </div>
                 </div>
             </div>
+        <?php }
+        //superadmin, reception and data entry 
+        if (is_user_a(SUPER_ADMIN, RECEPTION)) { ?>
+            <div class="d-flex col-md-4 col-sm-6 col-12">
+                <div class="card mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Vajebaat</h5>
+                        <p class="card-text">Baithak Slots</p>
+                        <a href="<?= $url ?>/vjb.slot" class="btn btn-light">Go <i class="bi bi-chevron-double-right"></i></a>
+                    </div>
+                </div>
+            </div>
             <!-- <div class="d-flex col-md-4 col-sm-6 col-12">
                 <div class="card mb-4 w-100">
                     <div class="card-body">
@@ -69,6 +81,19 @@ function content_display()
                     </div>
                 </div>
             </div> -->
+    <?php }
+        //superadmin, reception and data entry 
+        if (is_user_a(SUPER_ADMIN, RECEPTION, TAKHMEENER)) { ?>
+        <div class="d-flex col-md-4 col-sm-6 col-12">
+                <div class="card mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Receipts</h5>
+                        <p class="card-text">Report - List of receipts</p>
+                        <a href="<?= $url ?>/receipt_list" class="btn btn-light">Go <i class="bi bi-chevron-double-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        
         <?php }
         //super admin and takhmeen
         if (is_user_a(SUPER_ADMIN, TAKHMEENER)) { ?>
@@ -105,15 +130,7 @@ function content_display()
                     </div>
                 </div>
             </div> 
-            <div class="d-flex col-md-4 col-sm-6 col-12">
-                <div class="card mb-4 w-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Receipts</h5>
-                        <p class="card-text">Report - List of receipts</p>
-                        <a href="<?= $url ?>/receipt_list" class="btn btn-light">Go <i class="bi bi-chevron-double-right"></i></a>
-                    </div>
-                </div>
-            </div>
+            
         <?php }
         //superadmin
         if (is_user_a(SUPER_ADMIN)) { ?>
@@ -162,15 +179,7 @@ function content_display()
                     </div>
                 </div>
             </div>
-            <div class="d-flex col-md-4 col-sm-6 col-12">
-                <div class="card mb-4 w-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Vajebaat</h5>
-                        <p class="card-text">Baithak Slots</p>
-                        <a href="<?= $url ?>/vjb.slot" class="btn btn-light">Go <i class="bi bi-chevron-double-right"></i></a>
-                    </div>
-                </div>
-            </div>
+            
             <div class="d-flex col-md-4 col-sm-6 col-12">
                 <div class="card mb-4 w-100">
                     <div class="card-body">
@@ -237,4 +246,6 @@ function content_display()
     <!-- End of row -->
     <?php
 }
+
+
 

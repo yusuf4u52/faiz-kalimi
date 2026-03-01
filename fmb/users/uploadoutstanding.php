@@ -43,16 +43,18 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                         $outstanding = str_replace(',', '', $row[3]);
                         $outstanding = intval($outstanding);
                         $takmeem = intval($row[6]); 
-                        if( $takmeem > $outstanding ) {
-                            $prev = 0;
-                            $paid = $takmeem - $outstanding;
-                        } else {
-                            $prev = $outstanding - $takmeem;
-                            $paid = 0;
+                        if( $takmeem > 0 {
+                            if( $takmeem > $outstanding ) {
+                                $prev = 0;
+                                $paid = $takmeem - $outstanding;
+                            } else {
+                                $prev = $outstanding - $takmeem;
+                                $paid = 0;
+                            }
+                            $sql = "UPDATE  thalilist SET `Previous_Due` = '" . $prev . "', `yearly_hub` = '" . $takmeem . "', `Paid` = '" . $paid . "' WHERE `ITS_No` = '".$its."'";
+                            mysqli_query($link,$sql) or die(mysqli_error($link));
+                            echo '<h4>'.$its.' data updated successfully</h4>';
                         }
-                        $sql = "UPDATE  thalilist SET `Previous_Due` = '" . $prev . "', `yearly_hub` = '" . $takmeem . "', `Paid` = '" . $paid . "' WHERE `ITS_No` = '".$its."'";
-                        mysqli_query($link,$sql) or die(mysqli_error($link));
-                        echo '<h4>'.$its.' data updated successfully</h4>';
                     }
                 } else {
                     //echo "No file uploaded.";

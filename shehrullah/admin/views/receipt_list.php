@@ -1,5 +1,5 @@
 <?php
-if (!is_user_a(SUPER_ADMIN)) {
+if (!is_user_a(SUPER_ADMIN, TAKHMEENER, RECEPTION)) {
     do_redirect_with_message('/home', 'Redirected as tried to access unauthorized area.');
 }
 
@@ -318,3 +318,4 @@ function __print_link($row, $index) {
     $uri = getAppData('BASE_URI');
     return "<a target='receipt' class='btn btn-sm btn-light' href='$uri/receipt2/$receipt_num'><i class='bi bi-printer'></i></a>";
 }
+

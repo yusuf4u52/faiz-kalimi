@@ -36,6 +36,27 @@ function is_data_entry()
 // DATABASE AREA
 //--------------------------------------------
 
+function get_quran_recite_data($its_id)
+{
+    $year = get_current_hijri_year();
+    $query = 'SELECT * FROM kl_shehrullah_quran_khatm WHERE its_id = ? and year=?;';
+    $result = run_statement($query, $its_id, $year);
+    if ($result->count > 0) {
+        return $result->data[0];
+    } else {
+        return null;
+    }
+}
+
+function save_quran_recite_data($its_id, $quran_count, $tilawat_data)
+{
+    $year = get_current_hijri_year();
+    $query = 'INSERT INTO kl_shehrullah_quran_khatm (its_id, year, quran_count, tilawat_data) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE quran_count = ?, tilawat_data = ?;';
+    $tilwat_json_data = json_encode($tilawat_data);
+    $result = run_statement($query, $its_id, $year, $quran_count, $tilwat_json_data, $quran_count, $tilwat_json_data);
+    return $result->success ? null : $result->message;
+}
+
 function add_markaz_hub_data(
     $year,
     $start_eng_date,
@@ -112,7 +133,7 @@ function get_slot_for_registration() {
     $year = get_current_hijri_year();
     $query = 'SELECT * FROM kl_shehrullah_vjb_slots WHERE hijri_year=? 
     and registered != capacity
-    and date >= DATE_FORMAT(now(), "%Y-%m-%d")    
+    and date >= DATE_FORMAT((NOW() + INTERVAL 1 DAY), "%Y-%m-%d")    
     ';
     $result = run_statement($query, $year);
     return $result->success && $result->count > 0 ? $result->data : [];
@@ -153,6 +174,20 @@ function add_booking($hof_id, $slot_id) {
     return $result->success ? null : $result->message;
 }
 
+function delete_booking($hof_id, $slot_id) {
+    $year = get_current_hijri_year();
+
+    $query = 'UPDATE kl_shehrullah_vjb_slots SET registered = registered - 1 
+        WHERE id=? and hijri_year=?';
+    $result = run_statement($query, $slot_id, $year); 
+    if( $result->count == 0 ) {
+        return 'Oops! This slot is full. Please select another slot.';
+    }
+
+    $query = 'DELETE FROM kl_shehrullah_vjb_allocation WHERE hof_id=? and slot_id = ? and hijri_year=?;';
+    $result = run_statement($query, $hof_id, $slot_id, $year);
+    return $result->success ? null : $result->message;
+}
 //////
 
 function family_stats_for($hof_id) {
@@ -983,6 +1018,25 @@ function add_hof($hof_id) {
 
 }
 
+function add_medical_data($hof_id, $full_name, $age, $height_cm, $weight_kg, $bp_systolic, $bp_diastolic, $random_blood_sugar_mgdl, $pledge_reduce_kg, $pledge_target_date) {
+    $year = get_current_hijri_year();
+    $query = 'INSERT INTO kl_shehrullah_medical_test_result (its_id, hijri,full_name,age,height_cm,weight_kg,bp_systolic,bp_diastolic,random_blood_sugar_mgdl,pledge_reduce_kg,pledge_target_date,created)
+    values(?,?,?,?,?,?,?,?,?,?,?,now()) ON DUPLICATE KEY UPDATE full_name=?,age=?,height_cm=?,weight_kg=?,bp_systolic=?,bp_diastolic=?,random_blood_sugar_mgdl=?,pledge_reduce_kg=?,pledge_target_date=?,updated=now();';
+    $result = run_statement($query, $hof_id, $year, $full_name, $age, $height_cm, $weight_kg, $bp_systolic, $bp_diastolic, $random_blood_sugar_mgdl, $pledge_reduce_kg, $pledge_target_date,
+        $full_name, $age, $height_cm, $weight_kg, $bp_systolic, $bp_diastolic, $random_blood_sugar_mgdl, $pledge_reduce_kg, $pledge_target_date);
+    return $result->success && $result->count > 0 ? true : false;
+}
+
+function get_medical_data($hof_id) {
+    $year = get_current_hijri_year();
+    $query = 'SELECT i.*, 
+    m.height_cm, m.weight_kg, m.bp_systolic, m.bp_diastolic, m.random_blood_sugar_mgdl, m.pledge_reduce_kg, m.pledge_target_date     
+    FROM its_data i 
+    LEFT JOIN kl_shehrullah_medical_test_result m ON i.its_id = m.its_id and m.hijri=?
+    WHERE i.its_id=?;';
+    $result = run_statement($query, $year, $hof_id);
+    return $result->success && $result->count > 0 ? $result->data[0] : null;
+}
 //--------------------------------------------
 // SEAT SELECTION FUNCTIONS
 //--------------------------------------------
@@ -1930,4 +1984,8 @@ function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is
 //     // Integration with WhatsApp Business API
 //     // Update whatsapp_sent and whatsapp_sent_at in kl_shehrullah_seat_allocation
 // }
+
+
+
+
 
