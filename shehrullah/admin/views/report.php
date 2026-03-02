@@ -119,116 +119,106 @@ function vjb_registration_forms() {
         width: 210mm;
         min-height: 297mm;
         margin: 0 auto 12px auto;
-        padding: 10mm;
         box-sizing: border-box;
-        border: 1px solid #d0d0d0;
+        border: 1px solid #777;
         background: #fff;
-        display: flex;
-        flex-direction: column;
+        page-break-inside: avoid;
     }
-    .vjb-title {
-        text-align: center;
+    .vjb-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 14px;
+    }
+    .vjb-table td {
+        border: 1px solid #777;
+        padding: 3px 8px;
+        vertical-align: middle;
+    }
+    .vjb-label {
         font-weight: 700;
-        font-size: 16px;
-        text-transform: uppercase;
-        letter-spacing: 0.02em;
+        width: 13%;
+        white-space: nowrap;
     }
-    .vjb-subtitle {
+    .vjb-value {
+        font-weight: 600;
+    }
+    .vjb-logo-cell {
+        width: 13%;
+        text-align: center;
+        vertical-align: top !important;
+        padding-top: 8px !important;
+    }
+    .vjb-logo-cell img {
+        width: 52px;
+        height: 52px;
+        object-fit: contain;
+    }
+    .vjb-head-main {
         text-align: center;
         font-weight: 700;
         font-size: 15px;
-        margin-top: 4px;
-        margin-bottom: 10px;
+        line-height: 1.25;
+        text-transform: uppercase;
     }
-    .vjb-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px 16px;
+    .vjb-head-sub {
+        margin-top: 18px;
+        font-size: 15px;
     }
-    .vjb-field {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 6px;
-        align-items: end;
+    .vjb-row-sm td {
+        height: 42px;
     }
-    .vjb-label {
-        font-weight: 600;
-        white-space: nowrap;
+    .vjb-row-md td {
+        height: 50px;
     }
-    .vjb-line {
-        border-bottom: 1px solid #000;
-        min-height: 20px;
-        padding: 0 3px;
-        display: flex;
-        align-items: end;
+    .vjb-row-gap td {
+        height: 56px;
     }
-    .vjb-right-panel {
-        margin-top: 8px;
-        margin-left: auto;
-        width: 40%;
+    .vjb-band-blue {
+        background: #5b8fe3;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: underline;
     }
-    .vjb-right-panel .vjb-field {
-        margin-bottom: 4px;
+    .vjb-band-cyan {
+        background: #11ace3;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: underline;
     }
-    .vjb-amount-section {
-        margin-top: 8px;
-        border: 1px solid #000;
-    }
-    .vjb-amount-title {
+    .vjb-year {
         text-align: center;
         font-weight: 700;
-        border-bottom: 1px solid #000;
-        padding: 3px 0;
+        font-size: 15px;
     }
-    .vjb-amount-row {
-        display: grid;
-        grid-template-columns: 30% 20% 30% 20%;
-        border-bottom: 1px solid #000;
-    }
-    .vjb-amount-row:last-child {
-        border-bottom: none;
-    }
-    .vjb-amount-cell {
-        padding: 4px 6px;
-        border-right: 1px solid #000;
-    }
-    .vjb-amount-row .vjb-amount-cell:last-child {
-        border-right: none;
-    }
-    .vjb-signatures {
-        margin-top: auto;
-        padding-top: 16px;
-    }
-    .vjb-sign-row {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 8px;
-        margin-bottom: 6px;
-        align-items: end;
-    }
-    .vjb-sign-caption {
-        font-size: 12px;
-        margin-left: 48px;
-        margin-bottom: 10px;
-    }
-    .vjb-sign-footer {
-        margin-top: 14px;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 32px;
-    }
-    .vjb-sign-footer .vjb-sign-block {
-        text-align: center;
-    }
-    .vjb-sign-footer .vjb-line {
-        min-height: 22px;
-    }
-    .vjb-scissor-line {
-        text-align: center;
-        margin-top: 12px;
-        color: #666;
+    .vjb-prev-value {
+        margin-top: 2px;
         font-size: 13px;
-        letter-spacing: 0.03em;
+        font-weight: 600;
+    }
+    .vjb-sign-box {
+        height: 128px;
+        vertical-align: top !important;
+        position: relative;
+        font-size: 13px;
+    }
+    .vjb-sign-title {
+        font-weight: 700;
+        text-align: center;
+        margin-top: 2px;
+        letter-spacing: 0.02em;
+    }
+    .vjb-sign-label {
+        position: absolute;
+        bottom: 4px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 29px;
+        font-weight: 700;
+    }
+    .vjb-sign-box .vjb-sign-top {
+        font-size: 14px;
     }
     @page {
         size: A4;
@@ -274,121 +264,103 @@ function vjb_registration_forms() {
             }
             ?>
             <div class="vjb-form-page">
-                <div class="vjb-title">DAWOODI BOHRA JAMAAT TRUST, KALIMI MOHALLA, POONA JAMAAT</div>
-                <div class="vjb-subtitle">
-                    VAJEBAAT TAKHMEEN FORM <?= h($current_year) ?>H
-                    <?php if (!empty($row->slot_title)): ?>
-                        - <?= h($row->slot_title) ?>
-                    <?php endif; ?>
-                </div>
+                <table class="vjb-table">
+                    <colgroup>
+                        <col style="width:13%">
+                        <col style="width:16%">
+                        <col style="width:14%">
+                        <col style="width:16%">
+                        <col style="width:13%">
+                        <col style="width:28%">
+                    </colgroup>
+                    <tr>
+                        <td class="vjb-logo-cell">
+                            <img src="/shehrullah/assets/img/logo.png" alt="Kalimi Mohalla Logo">
+                        </td>
+                        <td colspan="5" class="vjb-head-main">
+                            DAWOODI BOHRA JAMAAT TRUST, KALIMI MOHALLA, POONA JAMAAT
+                            <div class="vjb-head-sub">VAJEBAAT TAKHMEEN FORM <?= h($current_year) ?>H</div>
+                        </td>
+                    </tr>
+                    <tr class="vjb-row-sm">
+                        <td class="vjb-label">Sabil #</td>
+                        <td class="vjb-value"><?= h($row->sabeel ?? '') ?></td>
+                        <td class="vjb-label">Name</td>
+                        <td colspan="3" class="vjb-value"><?= h($row->Full_Name ?? '') ?></td>
+                    </tr>
+                    <tr class="vjb-row-sm">
+                        <td class="vjb-label">ITS #</td>
+                        <td class="vjb-value"><?= h($row->ITS_ID ?? '') ?></td>
+                        <td class="vjb-label">Mobile #</td>
+                        <td class="vjb-value"><?= h($row->Mobile ?? '') ?></td>
+                        <td class="vjb-label">HOF/FM #</td>
+                        <td class="vjb-value"></td>
+                    </tr>
+                    <tr class="vjb-row-sm">
+                        <td class="vjb-label">Address #</td>
+                        <td colspan="3" class="vjb-value"><?= h($row->Address ?? '') ?></td>
+                        <td class="vjb-label">Date</td>
+                        <td class="vjb-value"><?= h($slotDate) ?></td>
+                    </tr>
+                    <tr class="vjb-row-sm">
+                        <td class="vjb-label">Sector</td>
+                        <td class="vjb-value"><?= h($sector) ?></td>
+                        <td class="vjb-label">Sub Sector</td>
+                        <td class="vjb-value"><?= h($subSector) ?></td>
+                        <td class="vjb-label">ITS Data Verification Status</td>
+                        <td class="vjb-value"></td>
+                    </tr>
 
-                <div class="vjb-grid">
-                    <div class="vjb-field">
-                        <div class="vjb-label">Sabil #</div>
-                        <div class="vjb-line"><?= h($row->sabeel ?? '') ?></div>
-                    </div>
-                    <div class="vjb-field">
-                        <div class="vjb-label">Name</div>
-                        <div class="vjb-line"><?= h($row->Full_Name ?? '') ?></div>
-                    </div>
-                    <div class="vjb-field">
-                        <div class="vjb-label">ITS #</div>
-                        <div class="vjb-line"><?= h($row->ITS_ID ?? '') ?></div>
-                    </div>
-                    <div class="vjb-field">
-                        <div class="vjb-label">Mobile #</div>
-                        <div class="vjb-line"><?= h($row->Mobile ?? '') ?></div>
-                    </div>
-                    <div class="vjb-field">
-                        <div class="vjb-label">Address #</div>
-                        <div class="vjb-line"><?= h($row->Address ?? '') ?></div>
-                    </div>
-                    <div class="vjb-field">
-                        <div class="vjb-label">Date</div>
-                        <div class="vjb-line"><?= h($slotDate) ?></div>
-                    </div>
-                    <div class="vjb-field">
-                        <div class="vjb-label">Sector</div>
-                        <div class="vjb-line"><?= h($sector) ?></div>
-                    </div>
-                    <div class="vjb-field">
-                        <div class="vjb-label">Sub Sector</div>
-                        <div class="vjb-line"><?= h($subSector) ?></div>
-                    </div>
-                </div>
+                    <tr><td colspan="6" class="vjb-band-blue">Vajebaat</td></tr>
+                    <tr>
+                        <td colspan="3" class="vjb-band-blue vjb-year">
+                            <?= h($vajebaat_prev_label) ?>
+                            <?php if ($vajebaatPrev !== ''): ?><div class="vjb-prev-value"><?= h($vajebaatPrev) ?></div><?php endif; ?>
+                        </td>
+                        <td colspan="3" class="vjb-band-blue vjb-year"><?= h($vajebaat_curr_label) ?></td>
+                    </tr>
+                    <tr class="vjb-row-gap"><td colspan="3"></td><td colspan="3"></td></tr>
 
-                <div class="vjb-right-panel">
-                    <div class="vjb-field">
-                        <div class="vjb-label">HOF/FM #</div>
-                        <div class="vjb-line"></div>
-                    </div>
-                    <div class="vjb-field">
-                        <div class="vjb-label">ITS Data</div>
-                        <div class="vjb-line"></div>
-                    </div>
-                    <div class="vjb-field">
-                        <div class="vjb-label">Verification</div>
-                        <div class="vjb-line"></div>
-                    </div>
-                    <div class="vjb-field">
-                        <div class="vjb-label">Status</div>
-                        <div class="vjb-line"></div>
-                    </div>
-                </div>
+                    <tr><td colspan="6" class="vjb-band-cyan">Annual Niyaz</td></tr>
+                    <tr>
+                        <td colspan="3" class="vjb-band-cyan vjb-year">
+                            <?= h($niyaz_prev_label) ?>
+                            <?php if ($annualNiyazPrev !== ''): ?><div class="vjb-prev-value"><?= h($annualNiyazPrev) ?></div><?php endif; ?>
+                        </td>
+                        <td colspan="3" class="vjb-band-cyan vjb-year"><?= h($niyaz_curr_label) ?></td>
+                    </tr>
+                    <tr class="vjb-row-gap"><td colspan="3"></td><td colspan="3"></td></tr>
 
-                <div class="vjb-amount-section">
-                    <div class="vjb-amount-title">Vajebaat</div>
-                    <div class="vjb-amount-row">
-                        <div class="vjb-amount-cell vjb-label"><?= h($vajebaat_prev_label) ?></div>
-                        <div class="vjb-amount-cell"><?= h($vajebaatPrev) ?></div>
-                        <div class="vjb-amount-cell vjb-label"><?= h($vajebaat_curr_label) ?></div>
-                        <div class="vjb-amount-cell"></div>
-                    </div>
-                </div>
+                    <tr><td colspan="6" class="vjb-band-blue">Ikram</td></tr>
+                    <tr>
+                        <td colspan="3" class="vjb-band-blue vjb-year">
+                            <?= h($ikram_prev_label) ?>
+                            <?php if ($ikramPrev !== ''): ?><div class="vjb-prev-value"><?= h($ikramPrev) ?></div><?php endif; ?>
+                        </td>
+                        <td colspan="3" class="vjb-band-blue vjb-year"><?= h($ikram_curr_label) ?></td>
+                    </tr>
 
-                <div class="vjb-amount-section">
-                    <div class="vjb-amount-title">Annual Niyaz</div>
-                    <div class="vjb-amount-row">
-                        <div class="vjb-amount-cell vjb-label"><?= h($niyaz_prev_label) ?></div>
-                        <div class="vjb-amount-cell"><?= h($annualNiyazPrev) ?></div>
-                        <div class="vjb-amount-cell vjb-label"><?= h($niyaz_curr_label) ?></div>
-                        <div class="vjb-amount-cell"></div>
-                    </div>
-                </div>
-
-                <div class="vjb-amount-section">
-                    <div class="vjb-amount-title">Ikram</div>
-                    <div class="vjb-amount-row">
-                        <div class="vjb-amount-cell vjb-label"><?= h($ikram_prev_label) ?></div>
-                        <div class="vjb-amount-cell"><?= h($ikramPrev) ?></div>
-                        <div class="vjb-amount-cell vjb-label"><?= h($ikram_curr_label) ?></div>
-                        <div class="vjb-amount-cell"></div>
-                    </div>
-                </div>
-
-                <div class="vjb-signatures">
-                    <div class="vjb-sign-row">
-                        <div class="vjb-label">Sign:</div>
-                        <div class="vjb-line"></div>
-                    </div>
-                    <div class="vjb-sign-caption">Abde Syedna</div>
-                    <div class="vjb-sign-row">
-                        <div class="vjb-label">HUSAINI SCHEME ACCOUNT STATUS</div>
-                        <div class="vjb-line"><?= h($husainiStatus) ?></div>
-                    </div>
-                    <div class="vjb-sign-footer">
-                        <div class="vjb-sign-block">
-                            <div class="vjb-line"></div>
-                            <div class="vjb-sign-caption" style="margin: 4px 0 0 0;">Secretary / Treasurer</div>
-                        </div>
-                        <div class="vjb-sign-block">
-                            <div class="vjb-line"></div>
-                            <div class="vjb-sign-caption" style="margin: 4px 0 0 0;">Aamil Saheb</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="vjb-scissor-line">------------------------------ CUT HERE ------------------------------</div>
+                    <tr>
+                        <td colspan="3" class="vjb-sign-box">
+                            <div class="vjb-sign-top">Sign:</div>
+                            <div class="vjb-sign-label">Abde Syedna</div>
+                        </td>
+                        <td colspan="3" class="vjb-sign-box" style="padding: 0;">
+                            <div class="vjb-band-cyan vjb-sign-title" style="padding: 10px 8px; text-decoration: none;">HUSAINI SCHEME ACCOUNT STATUS</div>
+                            <div style="padding: 10px 8px; font-weight: 700; font-size: 14px;"><?= h($husainiStatus) ?></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="vjb-sign-box">
+                            <div class="vjb-sign-top">Sign:</div>
+                            <div class="vjb-sign-label">Secretary / Treasurer</div>
+                        </td>
+                        <td colspan="3" class="vjb-sign-box">
+                            <div class="vjb-sign-top">Sign:</div>
+                            <div class="vjb-sign-label">Aamil Saheb</div>
+                        </td>
+                    </tr>
+                </table>
             </div>
         <?php endforeach; ?>
     </div>
