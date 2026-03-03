@@ -6,6 +6,7 @@
     width: 210mm;
     min-height: 297mm;
     margin: 0 auto 12px auto;
+    padding: 8mm;
     box-sizing: border-box;
     border: 1px solid #777;
     background: #fff;
@@ -109,9 +110,17 @@
 }
 @page {
     size: A4;
-    margin: 8mm;
+    margin: 10mm;
 }
 @media print {
+    html,
+    body {
+        width: 210mm;
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
     .card,
     .card-body {
         border: none !important;
@@ -123,8 +132,11 @@
         display: none !important;
     }
     .vjb-form-page {
+        width: 100%;
+        min-height: auto;
         border: none;
-        margin: 0 0 6mm 0;
+        margin: 0;
+        padding: 6mm;
         page-break-after: always;
     }
     .vjb-form-page:last-child {
