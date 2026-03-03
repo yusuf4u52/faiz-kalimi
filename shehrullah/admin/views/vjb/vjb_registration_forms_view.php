@@ -258,7 +258,7 @@
                     </td>
                     <td colspan="3" class="vjb-sign-box" style="padding: 0;">
                         <div class="vjb-band-cyan vjb-sign-title" style="padding: 10px 8px; text-decoration: none;">HUSAINI SCHEME ACCOUNT STATUS</div>
-                        <div style="padding: 10px 8px; font-weight: 700; font-size: 14px;"><?= h($husainiStatus) ?></div>
+                        <div style="padding: 10px 8px; font-weight: 700; font-size: 14px; text-align: center;"><?= h($husainiStatus) ?></div>
                     </td>
                 </tr>
                 <tr>
