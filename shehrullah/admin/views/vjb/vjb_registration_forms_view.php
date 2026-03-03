@@ -1,6 +1,8 @@
 <style>
 .vjb-forms-wrapper {
     font-size: 14px;
+    content-visibility: auto;
+    contain-intrinsic-size: 297mm;
 }
 .vjb-form-page {
     width: 210mm;
@@ -118,6 +120,19 @@
     margin: 10mm;
 }
 @media print {
+    body * {
+        visibility: hidden !important;
+    }
+    .vjb-forms-wrapper,
+    .vjb-forms-wrapper * {
+        visibility: visible !important;
+    }
+    .vjb-forms-wrapper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
     html,
     body {
         width: 210mm;
@@ -179,7 +194,7 @@
                 </colgroup>
                 <tr>
                     <td class="vjb-logo-cell">
-                        <img src="/shehrullah/assets/img/logo.png" alt="Kalimi Mohalla Logo">
+                        <img src="/shehrullah/assets/img/logo.png" alt="Kalimi Mohalla Logo" loading="lazy" decoding="async">
                     </td>
                     <td colspan="5" class="vjb-head-main">
                         DAWOODI BOHRA JAMAAT TRUST, KALIMI MOHALLA, POONA JAMAAT
