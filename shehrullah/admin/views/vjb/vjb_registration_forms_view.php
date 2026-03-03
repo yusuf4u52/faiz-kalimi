@@ -1,8 +1,6 @@
 <style>
 .vjb-forms-wrapper {
     font-size: 14px;
-    content-visibility: auto;
-    contain-intrinsic-size: 297mm;
 }
 .vjb-form-page {
     width: 210mm;
