@@ -84,6 +84,11 @@
     font-size: 13px;
     font-weight: 600;
 }
+.vjb-prev-row-value {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+}
 .vjb-sign-box {
     height: 128px;
     vertical-align: top !important;
@@ -214,29 +219,36 @@
                 <tr>
                     <td colspan="3" class="vjb-band-blue vjb-year">
                         <?= h($vajebaat_prev_label) ?>
-                        <?php if ($vajebaatPrev !== ''): ?><div class="vjb-prev-value"><?= h($vajebaatPrev) ?></div><?php endif; ?>
                     </td>
                     <td colspan="3" class="vjb-band-blue vjb-year"><?= h($vajebaat_curr_label) ?></td>
                 </tr>
-                <tr class="vjb-row-gap"><td colspan="3"></td><td colspan="3"></td></tr>
+                <tr class="vjb-row-gap">
+                    <td colspan="3" class="vjb-prev-row-value"><?php if ($vajebaatPrev !== ''): ?><div class="vjb-prev-value"><?= h($vajebaatPrev) ?></div><?php endif; ?></td>
+                    <td colspan="3"></td>
+                </tr>
 
                 <tr><td colspan="6" class="vjb-band-cyan">Annual Niyaz</td></tr>
                 <tr>
                     <td colspan="3" class="vjb-band-cyan vjb-year">
                         <?= h($niyaz_prev_label) ?>
-                        <?php if ($annualNiyazPrev !== ''): ?><div class="vjb-prev-value"><?= h($annualNiyazPrev) ?></div><?php endif; ?>
                     </td>
                     <td colspan="3" class="vjb-band-cyan vjb-year"><?= h($niyaz_curr_label) ?></td>
                 </tr>
-                <tr class="vjb-row-gap"><td colspan="3"></td><td colspan="3"></td></tr>
+                <tr class="vjb-row-gap">
+                    <td colspan="3" class="vjb-prev-row-value"><?php if ($annualNiyazPrev !== ''): ?><div class="vjb-prev-value"><?= h($annualNiyazPrev) ?></div><?php endif; ?></td>
+                    <td colspan="3"></td>
+                </tr>
 
                 <tr><td colspan="6" class="vjb-band-blue">Ikram</td></tr>
                 <tr>
                     <td colspan="3" class="vjb-band-blue vjb-year">
                         <?= h($ikram_prev_label) ?>
-                        <?php if ($ikramPrev !== ''): ?><div class="vjb-prev-value"><?= h($ikramPrev) ?></div><?php endif; ?>
                     </td>
                     <td colspan="3" class="vjb-band-blue vjb-year"><?= h($ikram_curr_label) ?></td>
+                </tr>
+                <tr class="vjb-row-gap">
+                    <td colspan="3" class="vjb-prev-row-value"><?php if ($ikramPrev !== ''): ?><div class="vjb-prev-value"><?= h($ikramPrev) ?></div><?php endif; ?></td>
+                    <td colspan="3"></td>
                 </tr>
 
                 <tr>
