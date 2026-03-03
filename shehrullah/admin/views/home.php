@@ -224,7 +224,7 @@ function content_display()
                         <p class="card-text">Upload previous year Vajebaat / Annual Niyaz / Ikram data.</p>
                         <form action="vajebaat_prev_upload" method="post" enctype="multipart/form-data">
                             <div class="input-group mb-3">
-                                <input type='file' class='form-control file-upload-browse' name='vajebaat_prev_file' required />
+                                <input type='file' class='form-control file-upload-browse' name='vajebaat_prev_file' accept=".xlsx,.csv" required />
                                 <button class="btn btn-light" type="submit" id="button-addon2">GO</button>
                             </div>
                         </form>

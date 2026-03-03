@@ -33,71 +33,82 @@ function _manage_upload() {
             do_redirect_with_message($home_link, 'Sorry, your file is too large (' . $file_size . ') expected is <= 1000000.');
         }
 
-        if ($fileType !== "xlsx") {
-            do_redirect_with_message($home_link, "Sorry, only xlsx file is allowed. ($fileType)");
+        if (!in_array($fileType, ["xlsx", "csv"], true)) {
+            do_redirect_with_message($home_link, "Sorry, only xlsx and csv files are allowed. ($fileType)");
         }
 
         if (move_uploaded_file($_FILES["vajebaat_prev_file"]["tmp_name"], $target_file)) {
-            include_once './simple_xlsx/SimpleXLSX.php';
-
             $page_data = '<h1>Previous Year Vajebaat Data Upload</h1><pre>';
+            if ($fileType === "xlsx") {
+                include_once './simple_xlsx/SimpleXLSX.php';
+                if ($xlsx = SimpleXLSX::parse($target_file)) {
+                    $rows = $xlsx->rows();
+                } else {
+                    do_redirect_with_message($home_link, SimpleXLSX::parseError());
+                }
+            } else {
+                $rows = [];
+                if (($fp = fopen($target_file, "r")) === false) {
+                    do_redirect_with_message($home_link, "Unable to read uploaded CSV file.");
+                }
+                while (($csvRow = fgetcsv($fp)) !== false) {
+                    $rows[] = $csvRow;
+                }
+                fclose($fp);
+            }
 
-            if ($xlsx = SimpleXLSX::parse($target_file)) {
-                $first = true;
-                $page_data .= '<table border=1>';
-                $query = '';
-                $error_found = 0;
+            $first = true;
+            $page_data .= '<table border=1>';
+            $query = '';
+            $error_found = 0;
 
-                foreach ($xlsx->rows() as $row) {
-                    if ($first) {
-                        $first = false;
-                        if (empty($row)) {
-                            continue;
-                        }
-                        $page_data .= '<tr><th>Status</th><th>' . implode('</th><th>', $row) . '</th></tr>';
+            foreach ($rows as $row) {
+                if ($first) {
+                    $first = false;
+                    if (empty($row)) {
+                        continue;
+                    }
+                    $page_data .= '<tr><th>Status</th><th>' . implode('</th><th>', $row) . '</th></tr>';
 
-                        // Expect header columns to match kl_shehrullah_vajebaat_prev table:
-                        // hijri_year,its_id,vajebaat_prev,annual_niyaz_prev,ikram_prev,husaini_scheme_status_prev
-                        $query = 'INSERT INTO kl_shehrullah_vajebaat_prev (' . implode(',', $row) . ')
-                                VALUES (' . str_repeat("?,", count($row) - 1) . '?)';
-                        array_shift($row);
-                        $query .= ' ON DUPLICATE KEY UPDATE ' . implode('=?,', $row) . '=?;';
+                    // Expect header columns to match kl_shehrullah_vajebaat_prev table:
+                    // hijri_year,its_id,vajebaat_prev,annual_niyaz_prev,ikram_prev,husaini_scheme_status_prev
+                    $query = 'INSERT INTO kl_shehrullah_vajebaat_prev (' . implode(',', $row) . ')
+                            VALUES (' . str_repeat("?,", count($row) - 1) . '?)';
+                    array_shift($row);
+                    $query .= ' ON DUPLICATE KEY UPDATE ' . implode('=?,', $row) . '=?;';
+                } else {
+                    // skip completely empty rows
+                    $nonEmpty = array_filter($row, function ($v) {
+                        return strlen(trim((string)$v)) > 0;
+                    });
+                    if (empty($nonEmpty)) {
+                        continue;
+                    }
+
+                    $row2 = $row;
+                    array_shift($row);
+                    $finalData = array_merge($row2, $row);
+
+                    $rslt = run_statement($query, $finalData);
+                    if (!$rslt->success) {
+                        $error_found++;
+                        $msg = $rslt->message ?? 'Unknown Error';
+                        $page_data .= "<tr><td>$msg</td><td>" . implode('</td><td>', $row2) . '</td></tr>';
                     } else {
-                        // skip completely empty rows
-                        $nonEmpty = array_filter($row, function ($v) {
-                            return strlen(trim((string)$v)) > 0;
-                        });
-                        if (empty($nonEmpty)) {
-                            continue;
-                        }
-
-                        $row2 = $row;
-                        array_shift($row);
-                        $finalData = array_merge($row2, $row);
-
-                        $rslt = run_statement($query, $finalData);
-                        if (!$rslt->success) {
-                            $error_found++;
-                            $msg = $rslt->message ?? 'Unknown Error';
-                            $page_data .= "<tr><td>$msg</td><td>" . implode('</td><td>', $row2) . '</td></tr>';
-                        } else {
-                            $page_data .= "<tr><td>SUCCESS</td><td>" . implode('</td><td>', $row2) . '</td></tr>';
-                        }
+                        $page_data .= "<tr><td>SUCCESS</td><td>" . implode('</td><td>', $row2) . '</td></tr>';
                     }
                 }
-
-                $page_data .= '</table>';
-
-                if ($error_found === 0) {
-                    $page_data .= '<h2>Previous year Vajebaat data uploaded successfully.</h2>';
-                } else {
-                    $page_data .= '<h2>Previous year Vajebaat data uploaded with errors.</h2>';
-                }
-
-                setAppData('page_data', $page_data);
-            } else {
-                do_redirect_with_message($home_link, SimpleXLSX::parseError());
             }
+
+            $page_data .= '</table>';
+
+            if ($error_found === 0) {
+                $page_data .= '<h2>Previous year Vajebaat data uploaded successfully.</h2>';
+            } else {
+                $page_data .= '<h2>Previous year Vajebaat data uploaded with errors.</h2>';
+            }
+
+            setAppData('page_data', $page_data);
         } else {
             do_redirect_with_message($home_link, "Sorry, there was an error uploading your file.");
         }
