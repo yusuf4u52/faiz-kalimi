@@ -194,7 +194,10 @@
                 </colgroup>
                 <tr>
                     <td class="vjb-logo-cell">
-                        <img src="/shehrullah/assets/img/logo.png" alt="Kalimi Mohalla Logo" loading="lazy" decoding="async">
+                        <picture>
+                            <source srcset="/shehrullah/assets/img/logo.avif" type="image/avif">
+                            <img src="/shehrullah/assets/img/logo.png" alt="Kalimi Mohalla Logo" loading="lazy" decoding="async" fetchpriority="low" width="52" height="52">
+                        </picture>
                     </td>
                     <td colspan="5" class="vjb-head-main">
                         DAWOODI BOHRA JAMAAT TRUST, KALIMI MOHALLA, POONA JAMAAT
