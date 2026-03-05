@@ -126,9 +126,12 @@
         visibility: visible !important;
     }
     .vjb-forms-wrapper {
-        position: static;
-        width: 210mm;
-        margin: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     html,
     body {
@@ -150,14 +153,19 @@
     }
     .vjb-form-page {
         width: 210mm;
-        min-height: 297mm;
+        min-height: 0;
+        height: 297mm;
         border: none;
         margin: 0;
         padding: 8mm;
         page-break-after: always;
+        break-after: page;
+        page-break-inside: avoid;
+        break-inside: avoid;
     }
-    .vjb-form-page:last-child {
+    .vjb-form-page:last-of-type {
         page-break-after: auto;
+        break-after: auto;
     }
 }
 </style>
