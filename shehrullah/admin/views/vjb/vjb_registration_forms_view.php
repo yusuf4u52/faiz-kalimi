@@ -13,74 +13,177 @@
     page-break-inside: avoid;
 }
 .takhmeen-page {
-    border: 1px solid #777;
-    padding: 10mm 8mm;
+    border: 1px solid #999;
+    background: #efefef;
+    padding: 6mm;
+    direction: rtl;
+    font-size: 13px;
+    color: #111;
+    height: 100%;
+    box-sizing: border-box;
 }
-.takhmeen-title {
+.tk-frame {
+    border: 2px solid #8d8d8d;
+    min-height: 100%;
+    padding: 7mm 5mm;
+    position: relative;
+}
+.tk-corner {
+    width: 10px;
+    height: 10px;
+    border-color: #8d8d8d;
+    border-style: solid;
+    position: absolute;
+}
+.tk-corner.tl { top: 6px; left: 6px; border-width: 3px 0 0 3px; }
+.tk-corner.tr { top: 6px; right: 6px; border-width: 3px 3px 0 0; }
+.tk-corner.bl { bottom: 6px; left: 6px; border-width: 0 0 3px 3px; }
+.tk-corner.br { bottom: 6px; right: 6px; border-width: 0 3px 3px 0; }
+.tk-head {
+    display: grid;
+    grid-template-columns: 120px 1fr 120px;
+    gap: 10px;
+    align-items: start;
+}
+.tk-box {
+    border: 1px solid #666;
+    min-height: 34px;
+    padding: 4px 6px;
     text-align: center;
-    font-size: 18px;
+    font-size: 12px;
+}
+.tk-year {
+    text-align: center;
+    margin-top: 6px;
+    font-size: 12px;
+}
+.tk-center-title {
+    text-align: center;
+    line-height: 1.35;
+}
+.tk-center-title .main {
+    font-size: 28px;
     font-weight: 700;
-    margin-bottom: 6px;
-    text-transform: uppercase;
 }
-.takhmeen-subtitle {
-    text-align: center;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 10px;
+.tk-center-title .sub {
+    font-size: 15px;
 }
-.takhmeen-grid {
+.tk-place {
+    text-align: right;
+    padding-top: 16px;
+    font-size: 16px;
+}
+.tk-place-line {
+    display: inline-block;
+    width: 70px;
+    border-bottom: 1px solid #444;
+    height: 12px;
+    vertical-align: middle;
+}
+.tk-note-para {
+    margin: 10px 0 12px;
+    text-align: right;
+    line-height: 1.5;
+    min-height: 58px;
+}
+.tk-split {
+    display: grid;
+    grid-template-columns: 1fr 1.9fr;
+    gap: 8px;
+    direction: ltr;
+}
+.tk-mini,
+.tk-main {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
-    font-size: 13px;
-}
-.takhmeen-grid td,
-.takhmeen-grid th {
-    border: 1px solid #777;
-    padding: 6px 8px;
-    vertical-align: middle;
-}
-.takhmeen-grid th {
     background: #efefef;
+}
+.tk-mini th,
+.tk-mini td,
+.tk-main th,
+.tk-main td {
+    border: 1px solid #333;
+    padding: 4px 6px;
+    height: 28px;
+    vertical-align: middle;
+    direction: rtl;
+}
+.tk-mini th,
+.tk-main th {
     font-weight: 700;
     text-align: center;
 }
-.takhmeen-label {
-    width: 58%;
-    font-weight: 600;
+.tk-main .amt {
+    text-align: center;
+    width: 24%;
 }
-.takhmeen-amount {
-    width: 42%;
-    text-align: right;
+.tk-main .cnt {
+    text-align: center;
+    width: 14%;
+}
+.tk-main .men {
+    text-align: center;
+    width: 14%;
+}
+.tk-main .item {
+    width: 48%;
+}
+.tk-total-row {
+    margin-top: 8px;
+    border: 1px solid #333;
+    min-height: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    align-items: center;
+    padding: 0 8px;
     font-weight: 700;
 }
-.takhmeen-line {
-    border-bottom: 1px solid #777;
-    min-height: 20px;
-    display: inline-block;
-    vertical-align: bottom;
+.tk-inwords {
+    margin: 6px 0 10px;
+    border-bottom: 1px solid #333;
+    min-height: 24px;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    font-size: 12px;
 }
-.tk-w-100 { width: 100%; }
-.tk-w-80 { width: 80%; }
-.tk-w-70 { width: 70%; }
-.tk-w-60 { width: 60%; }
-.tk-w-50 { width: 50%; }
-.tk-meta {
-    margin-top: 10px;
+.tk-bottom {
+    border: 1px solid #333;
+    min-height: 110px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 1fr 170px;
+    gap: 8px;
+}
+.tk-bottom-left {
+    direction: ltr;
+    font-size: 12px;
+}
+.tk-row {
+    margin-bottom: 10px;
+}
+.tk-line {
+    display: inline-block;
+    border-bottom: 1px solid #333;
+    min-height: 14px;
+    vertical-align: middle;
+}
+.tk-line.w-120 { width: 120px; }
+.tk-line.w-140 { width: 140px; }
+.tk-line.w-160 { width: 160px; }
+.tk-line.w-220 { width: 220px; }
+.tk-line.w-320 { width: 320px; }
+.tk-sign-box {
+    border: 1px solid #666;
+    text-align: center;
+    padding: 8px 6px;
     font-size: 13px;
 }
-.tk-meta-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 8px;
-}
-.tk-meta-col {
-    flex: 1;
-}
-.tk-note {
-    margin-top: 8px;
-    font-size: 12px;
+.tk-sign-line {
+    margin-top: 12px;
+    border-bottom: 1px solid #333;
+    height: 12px;
 }
 .vjb-table {
     width: 100%;
@@ -382,59 +485,84 @@
         </div>
         <div class="vjb-form-page">
             <div class="takhmeen-page">
-                <div class="takhmeen-title">Vajebaat Takhmeen Form <?= h($current_year) ?>H</div>
-                <div class="takhmeen-subtitle">Amount offered as wajebaat on raas-ul-maal</div>
+                <div class="tk-frame">
+                    <span class="tk-corner tl"></span>
+                    <span class="tk-corner tr"></span>
+                    <span class="tk-corner bl"></span>
+                    <span class="tk-corner br"></span>
 
-                <table class="takhmeen-grid">
-                    <tr>
-                        <th class="takhmeen-label">Description</th>
-                        <th class="takhmeen-amount">Amount (Rs.)</th>
-                    </tr>
-                    <tr>
-                        <td class="takhmeen-label">Haqooq / Wajebaat</td>
-                        <td class="takhmeen-amount"></td>
-                    </tr>
-                    <tr>
-                        <td class="takhmeen-label">Sila-tul Imam</td>
-                        <td class="takhmeen-amount"></td>
-                    </tr>
-                    <tr>
-                        <td class="takhmeen-label">Zakat-ul-Fitr / Ikram / Other</td>
-                        <td class="takhmeen-amount"></td>
-                    </tr>
-                    <tr>
-                        <td class="takhmeen-label" style="font-weight:700;">Total (A + B)</td>
-                        <td class="takhmeen-amount"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            In words: <span class="takhmeen-line tk-w-100"></span>
-                        </td>
-                    </tr>
-                </table>
+                    <div class="tk-head">
+                        <div>
+                            <div class="tk-box">رسمي نمبر:</div>
+                            <div class="tk-year"><?= h($current_year) ?>هـ<br><?= h(date('Y')) ?></div>
+                        </div>
+                        <div class="tk-center-title">
+                            <div class="main">القوة المباركة اليمنية</div>
+                            <div class="sub">المبلغ الذي تبرع بحقه الواجب في رأس المال</div>
+                            <div class="sub">زكوة الفطر / صلة الإمام عليه السلام / الحقوق الواجبات</div>
+                        </div>
+                        <div class="tk-place">موضع: <span class="tk-place-line"></span></div>
+                    </div>
 
-                <div class="tk-meta">
-                    <div class="tk-meta-row">
-                        <div class="tk-meta-col">Name: <span class="takhmeen-line tk-w-70"><?= h($row->Full_Name ?? '') ?></span></div>
-                        <div class="tk-meta-col">ITS ID: <span class="takhmeen-line tk-w-60"><?= h($row->ITS_ID ?? '') ?></span></div>
+                    <div class="tk-note-para">
+                        عـبـدِ سـيـدنـا الـطـاهـر الـمـكـرم قـدم هـذا الـفـورم لـبـيـان مـقـدار الـواجـبـات،
+                        عـلـى حـسـب الـمـقـرر مـن جـهـة الـدعـوة.
                     </div>
-                    <div class="tk-meta-row">
-                        <div class="tk-meta-col">Contact No: <span class="takhmeen-line tk-w-70"><?= h($row->Mobile ?? '') ?></span></div>
-                        <div class="tk-meta-col"></div>
+
+                    <div class="tk-split">
+                        <table class="tk-mini">
+                            <tr>
+                                <th>رسم</th>
+                                <th>الواجبات</th>
+                            </tr>
+                            <tr><td></td><td>زكوة المال</td></tr>
+                            <tr><td></td><td>صلة الإمام ع م</td></tr>
+                            <tr><td></td><td>الخمس</td></tr>
+                            <tr><td></td><td>الكفارة</td></tr>
+                            <tr><td></td><td>منة وغيرها</td></tr>
+                            <tr><td></td><td>النجوى</td></tr>
+                            <tr><td></td><td><strong>جملة (B):</strong></td></tr>
+                        </table>
+
+                        <table class="tk-main">
+                            <tr>
+                                <th class="amt">مبلغ رقم<br>Rs.</th>
+                                <th class="cnt">تعداد</th>
+                                <th class="men">مرد/بئر</th>
+                                <th class="item"></th>
+                            </tr>
+                            <tr><td class="amt"></td><td class="cnt"></td><td class="men"></td><td class="item">زكوة الفطر - مرد</td></tr>
+                            <tr><td class="amt"></td><td class="cnt"></td><td class="men"></td><td class="item">زكوة الفطر - بئر</td></tr>
+                            <tr><td class="amt"></td><td class="cnt"></td><td class="men"></td><td class="item">زكوة الفطر - غير بالغ</td></tr>
+                            <tr><td class="amt"></td><td class="cnt"></td><td class="men"></td><td class="item">زكوة الفطر - حمل</td></tr>
+                            <tr><td class="amt"></td><td class="cnt"></td><td class="men"></td><td class="item">زكوة الفطر - اموات</td></tr>
+                            <tr><td class="amt"></td><td colspan="3"><strong>جملة:</strong></td></tr>
+                            <tr><td class="amt"></td><td colspan="3">صلة الإمام ع م</td></tr>
+                            <tr><td class="amt"></td><td colspan="3">نذر للمقام ع م</td></tr>
+                            <tr><td class="amt"></td><td colspan="3">داعي العصر ع ط نجوى</td></tr>
+                            <tr><td class="amt"></td><td colspan="3"><strong>جملة (A):</strong></td></tr>
+                        </table>
                     </div>
-                    <div class="tk-meta-row">
-                        <div class="tk-meta-col">Address: <span class="takhmeen-line tk-w-100"><?= h($row->Address ?? '') ?></span></div>
+
+                    <div class="tk-total-row">
+                        <div></div>
+                        <div>جملة المبلغ (A + B):</div>
                     </div>
-                    <div class="tk-meta-row">
-                        <div class="tk-meta-col">Place: <span class="takhmeen-line tk-w-80"></span></div>
-                        <div class="tk-meta-col">Date: <span class="takhmeen-line tk-w-60"></span></div>
-                    </div>
-                    <div class="tk-meta-row">
-                        <div class="tk-meta-col">Signature (Receiver): <span class="takhmeen-line tk-w-80"></span></div>
-                        <div class="tk-meta-col">Signature (Abde Syedna): <span class="takhmeen-line tk-w-80"></span></div>
+                    <div class="tk-inwords">(In Words: Rs. ________________________________Only)</div>
+
+                    <div class="tk-bottom">
+                        <div class="tk-bottom-left">
+                            <div class="tk-row">اداء كردن نى صحيح: <span class="tk-line w-220"></span></div>
+                            <div class="tk-row">نام عبد/امة سيدنا المنعم ع م: <span class="tk-line w-320"><?= h($row->Full_Name ?? '') ?></span></div>
+                            <div class="tk-row">ITS ID: <span class="tk-line w-120"><?= h($row->ITS_ID ?? '') ?></span> &nbsp;&nbsp; Contact No: <span class="tk-line w-140"><?= h($row->Mobile ?? '') ?></span></div>
+                            <div class="tk-row">Address: <span class="tk-line w-320"><?= h($row->Address ?? '') ?></span></div>
+                        </div>
+                        <div class="tk-sign-box">
+                            وصول كردانلا دستخط
+                            <div class="tk-sign-line"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="tk-note">Year: <?= h($current_year) ?>H</div>
             </div>
         </div>
     <?php endforeach; ?>
