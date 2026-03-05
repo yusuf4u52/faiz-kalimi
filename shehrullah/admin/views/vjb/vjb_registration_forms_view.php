@@ -12,15 +12,75 @@
     background: #fff;
     page-break-inside: avoid;
 }
-.vjb-form-page--pdf {
-    padding: 0;
-    overflow: hidden;
+.takhmeen-page {
+    border: 1px solid #777;
+    padding: 10mm 8mm;
 }
-.vjb-pdf-object {
-    display: block;
+.takhmeen-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+.takhmeen-subtitle {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.takhmeen-grid {
     width: 100%;
-    height: 100%;
-    border: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 13px;
+}
+.takhmeen-grid td,
+.takhmeen-grid th {
+    border: 1px solid #777;
+    padding: 6px 8px;
+    vertical-align: middle;
+}
+.takhmeen-grid th {
+    background: #efefef;
+    font-weight: 700;
+    text-align: center;
+}
+.takhmeen-label {
+    width: 58%;
+    font-weight: 600;
+}
+.takhmeen-amount {
+    width: 42%;
+    text-align: right;
+    font-weight: 700;
+}
+.takhmeen-line {
+    border-bottom: 1px solid #777;
+    min-height: 20px;
+    display: inline-block;
+    vertical-align: bottom;
+}
+.tk-w-100 { width: 100%; }
+.tk-w-80 { width: 80%; }
+.tk-w-70 { width: 70%; }
+.tk-w-60 { width: 60%; }
+.tk-w-50 { width: 50%; }
+.tk-meta {
+    margin-top: 10px;
+    font-size: 13px;
+}
+.tk-meta-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.tk-meta-col {
+    flex: 1;
+}
+.tk-note {
+    margin-top: 8px;
+    font-size: 12px;
 }
 .vjb-table {
     width: 100%;
@@ -182,9 +242,6 @@
         page-break-inside: avoid;
         break-inside: avoid;
     }
-    .vjb-form-page--pdf {
-        padding: 0;
-    }
     .vjb-form-page:last-of-type {
         page-break-after: auto;
         break-after: auto;
@@ -200,7 +257,6 @@
     <button type="button" class="btn btn-light btn-sm" onclick="window.print()">Print</button>
 </div>
 <div class="vjb-forms-wrapper">
-    <?php $takhmeen_form_url = '/shehrullah/admin/views/vjb/Takhmeen_Form_1447.pdf'; ?>
     <?php foreach ($records as $row): ?>
         <?php
         $vajebaatPrev = trim((string)($row->vajebaat_prev ?? ''));
@@ -324,10 +380,62 @@
                 </tr>
             </table>
         </div>
-        <div class="vjb-form-page vjb-form-page--pdf">
-            <object data="<?= h($takhmeen_form_url) ?>#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf" class="vjb-pdf-object">
-                <iframe src="<?= h($takhmeen_form_url) ?>#toolbar=0&navpanes=0&scrollbar=0&view=FitH" class="vjb-pdf-object" title="Takhmeen Form"></iframe>
-            </object>
+        <div class="vjb-form-page">
+            <div class="takhmeen-page">
+                <div class="takhmeen-title">Vajebaat Takhmeen Form <?= h($current_year) ?>H</div>
+                <div class="takhmeen-subtitle">Amount offered as wajebaat on raas-ul-maal</div>
+
+                <table class="takhmeen-grid">
+                    <tr>
+                        <th class="takhmeen-label">Description</th>
+                        <th class="takhmeen-amount">Amount (Rs.)</th>
+                    </tr>
+                    <tr>
+                        <td class="takhmeen-label">Haqooq / Wajebaat</td>
+                        <td class="takhmeen-amount"></td>
+                    </tr>
+                    <tr>
+                        <td class="takhmeen-label">Sila-tul Imam</td>
+                        <td class="takhmeen-amount"></td>
+                    </tr>
+                    <tr>
+                        <td class="takhmeen-label">Zakat-ul-Fitr / Ikram / Other</td>
+                        <td class="takhmeen-amount"></td>
+                    </tr>
+                    <tr>
+                        <td class="takhmeen-label" style="font-weight:700;">Total (A + B)</td>
+                        <td class="takhmeen-amount"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            In words: <span class="takhmeen-line tk-w-100"></span>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="tk-meta">
+                    <div class="tk-meta-row">
+                        <div class="tk-meta-col">Name: <span class="takhmeen-line tk-w-70"><?= h($row->Full_Name ?? '') ?></span></div>
+                        <div class="tk-meta-col">ITS ID: <span class="takhmeen-line tk-w-60"><?= h($row->ITS_ID ?? '') ?></span></div>
+                    </div>
+                    <div class="tk-meta-row">
+                        <div class="tk-meta-col">Contact No: <span class="takhmeen-line tk-w-70"><?= h($row->Mobile ?? '') ?></span></div>
+                        <div class="tk-meta-col"></div>
+                    </div>
+                    <div class="tk-meta-row">
+                        <div class="tk-meta-col">Address: <span class="takhmeen-line tk-w-100"><?= h($row->Address ?? '') ?></span></div>
+                    </div>
+                    <div class="tk-meta-row">
+                        <div class="tk-meta-col">Place: <span class="takhmeen-line tk-w-80"></span></div>
+                        <div class="tk-meta-col">Date: <span class="takhmeen-line tk-w-60"></span></div>
+                    </div>
+                    <div class="tk-meta-row">
+                        <div class="tk-meta-col">Signature (Receiver): <span class="takhmeen-line tk-w-80"></span></div>
+                        <div class="tk-meta-col">Signature (Abde Syedna): <span class="takhmeen-line tk-w-80"></span></div>
+                    </div>
+                </div>
+                <div class="tk-note">Year: <?= h($current_year) ?>H</div>
+            </div>
         </div>
     <?php endforeach; ?>
 </div>
