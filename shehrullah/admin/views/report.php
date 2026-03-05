@@ -78,21 +78,28 @@ function vjb_registration_forms() {
     i.Mobile,
     i.Sector as sector,
     i.Sub_Sector as sub_sector,
-    s.title as slot_title,
-    s.date as slot_date,
-    vprev.vajebaat_prev,
-    vprev.annual_niyaz_prev,
-    vprev.ikram_prev,
-    vprev.husaini_scheme_status_prev
-    FROM kl_shehrullah_vjb_allocation a 
-    JOIN kl_shehrullah_vjb_slots s ON s.id = a.slot_id
-    JOIN ITS_RECORD i ON i.ITS_ID  = a.hof_id
-    JOIN thalilist l ON l.ITS_No = a.hof_id
-    LEFT JOIN kl_shehrullah_vajebaat_prev vprev
-        ON vprev.hijri_year = ? AND vprev.its_id = a.hof_id
-    WHERE a.slot_id = ? and a.hijri_year = ?
-    ORDER BY i.ITS_ID
-    ';
+	    s.title as slot_title,
+	    s.date as slot_date,
+	    vprev.vajebaat_prev,
+	    vprev.annual_niyaz_prev,
+	    vprev.ikram_prev,
+	    vprev.husaini_scheme_status_prev,
+	    fd.gents_count,
+	    fd.ladies_count,
+	    fd.kids_count,
+	    fd.amwat_count,
+	    fd.hamal_count
+	    FROM kl_shehrullah_vjb_allocation a 
+	    JOIN kl_shehrullah_vjb_slots s ON s.id = a.slot_id
+	    JOIN ITS_RECORD i ON i.ITS_ID  = a.hof_id
+	    JOIN thalilist l ON l.ITS_No = a.hof_id
+	    LEFT JOIN kl_shehrullah_vajebaat_prev vprev
+	        ON vprev.hijri_year = ? AND vprev.its_id = a.hof_id
+	    LEFT JOIN kl_shehrullah_vjb_formdata fd
+	        ON fd.hijri_year = a.hijri_year AND fd.hof_id = a.hof_id
+	    WHERE a.slot_id = ? and a.hijri_year = ?
+	    ORDER BY i.ITS_ID
+	    ';
 
     $result = run_statement($query, $prev_year, $slot_id, $hijri_year);
     $records = $result->data;
