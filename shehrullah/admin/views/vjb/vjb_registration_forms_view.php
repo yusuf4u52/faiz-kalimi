@@ -12,6 +12,16 @@
     background: #fff;
     page-break-inside: avoid;
 }
+.vjb-form-page--pdf {
+    padding: 0;
+    overflow: hidden;
+}
+.vjb-pdf-object {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
 .vjb-table {
     width: 100%;
     border-collapse: collapse;
@@ -172,6 +182,9 @@
         page-break-inside: avoid;
         break-inside: avoid;
     }
+    .vjb-form-page--pdf {
+        padding: 0;
+    }
     .vjb-form-page:last-of-type {
         page-break-after: auto;
         break-after: auto;
@@ -187,6 +200,7 @@
     <button type="button" class="btn btn-light btn-sm" onclick="window.print()">Print</button>
 </div>
 <div class="vjb-forms-wrapper">
+    <?php $takhmeen_form_url = '/shehrullah/admin/views/vjb/Takhmeen_Form_1447.pdf'; ?>
     <?php foreach ($records as $row): ?>
         <?php
         $vajebaatPrev = trim((string)($row->vajebaat_prev ?? ''));
@@ -309,6 +323,11 @@
                     </td>
                 </tr>
             </table>
+        </div>
+        <div class="vjb-form-page vjb-form-page--pdf">
+            <object data="<?= h($takhmeen_form_url) ?>#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf" class="vjb-pdf-object">
+                <iframe src="<?= h($takhmeen_form_url) ?>#toolbar=0&navpanes=0&scrollbar=0&view=FitH" class="vjb-pdf-object" title="Takhmeen Form"></iframe>
+            </object>
         </div>
     <?php endforeach; ?>
 </div>
