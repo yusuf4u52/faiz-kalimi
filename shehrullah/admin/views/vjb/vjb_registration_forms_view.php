@@ -147,6 +147,15 @@
         box-shadow: none !important;
         padding: 0 !important;
         margin: 0 !important;
+        position: static !important;
+    }
+    .container,
+    .container-fluid,
+    .content-wrapper,
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+        position: static !important;
     }
     .d-print-none {
         display: none !important;
