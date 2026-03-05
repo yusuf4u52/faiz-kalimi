@@ -7,6 +7,14 @@ if (!function_exists('vjb_print_to_int')) {
     }
 }
 
+if (!function_exists('vjb_print_display_number')) {
+    function vjb_print_display_number($value)
+    {
+        $intValue = (int)$value;
+        return $intValue === 0 ? '' : (string)$intValue;
+    }
+}
+
 if (!function_exists('vjb_print_build_payload')) {
     function vjb_print_build_payload(array $data)
     {
@@ -79,27 +87,27 @@ if (!function_exists('vjb_print_render_image_resource')) {
         $fontSize = 22;
         $x = 1100;
         $y = 860;
-        imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, (string)$mardoCount);
-        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, (string)$mardoValue);
+        imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, vjb_print_display_number($mardoCount));
+        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, vjb_print_display_number($mardoValue));
 
         $y += 90;
-        imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, (string)$bairaoCount);
-        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, (string)$bairaoValue);
+        imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, vjb_print_display_number($bairaoCount));
+        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, vjb_print_display_number($bairaoValue));
 
         $y += 80;
-        imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, (string)$kidsCount);
-        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, (string)$kidsValue);
+        imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, vjb_print_display_number($kidsCount));
+        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, vjb_print_display_number($kidsValue));
 
         $y += 80;
-        imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, (string)$hamalCount);
-        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, (string)$hamalValue);
+        imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, vjb_print_display_number($hamalCount));
+        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, vjb_print_display_number($hamalValue));
 
         $y += 80;
-        imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, (string)$amwatCount);
-        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, (string)$amwatValue);
+        imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, vjb_print_display_number($amwatCount));
+        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, vjb_print_display_number($amwatValue));
 
         $y += 80;
-        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, (string)$totalSF);
+        imagettftext($img, $fontSize, 0, $x - 400, $y, $ink, $fontPath, vjb_print_display_number($totalSF));
 
         $fontSize = 20;
         $x = 150;
