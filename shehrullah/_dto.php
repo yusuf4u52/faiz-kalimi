@@ -133,8 +133,9 @@ function get_slot_for_registration() {
     $year = get_current_hijri_year();
     $query = 'SELECT * FROM kl_shehrullah_vjb_slots WHERE hijri_year=? 
     and registered != capacity
-    and date >= DATE_FORMAT((NOW() + INTERVAL 1 DAY), "%Y-%m-%d")    
+    and date >= DATE_FORMAT(NOW(), "%Y-%m-%d")    
     ';
+	//and date >= DATE_FORMAT((NOW() + INTERVAL 1 DAY), "%Y-%m-%d") 
     $result = run_statement($query, $year);
     return $result->success && $result->count > 0 ? $result->data : [];
 }
@@ -1984,6 +1985,9 @@ function update_seating_area($area_code, $area_name, $seat_start, $seat_end, $is
 //     // Integration with WhatsApp Business API
 //     // Update whatsapp_sent and whatsapp_sent_at in kl_shehrullah_seat_allocation
 // }
+
+
+
 
 
 
