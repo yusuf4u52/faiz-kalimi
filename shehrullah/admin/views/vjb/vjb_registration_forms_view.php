@@ -176,6 +176,11 @@
         page-break-after: auto;
         break-after: auto;
     }
+    .vjb-band-blue,
+    .vjb-band-cyan {
+        background: #d9d9d9 !important;
+        color: #000 !important;
+    }
 }
 </style>
 <div class="d-flex justify-content-end mb-2 d-print-none">
