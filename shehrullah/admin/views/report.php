@@ -62,7 +62,7 @@ function vjb_registration() {
 }
 
 function vjb_registration_forms() {
-    if( !(is_user_role(SUPER_ADMIN)) ) {
+    if (!is_user_a(SUPER_ADMIN, RECEPTION)) {
         do_redirect_with_message('/home', 'You are not authorized to view this page');
     }
 
