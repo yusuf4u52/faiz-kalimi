@@ -115,7 +115,7 @@
 }
 @page {
     size: A4;
-    margin: 10mm;
+    margin: 0;
 }
 @media print {
     body * {
@@ -126,14 +126,13 @@
         visibility: visible !important;
     }
     .vjb-forms-wrapper {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
+        position: static;
+        width: 210mm;
+        margin: 0;
     }
     html,
     body {
-        width: 210mm;
+        width: auto;
         margin: 0;
         padding: 0;
         -webkit-print-color-adjust: exact;
@@ -150,11 +149,11 @@
         display: none !important;
     }
     .vjb-form-page {
-        width: 100%;
-        min-height: auto;
+        width: 210mm;
+        min-height: 297mm;
         border: none;
         margin: 0;
-        padding: 6mm;
+        padding: 8mm;
         page-break-after: always;
     }
     .vjb-form-page:last-child {
