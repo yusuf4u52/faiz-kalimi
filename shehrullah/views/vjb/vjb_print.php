@@ -25,7 +25,7 @@ if (!function_exists('vjb_print_build_payload')) {
             'name' => trim((string)($data['name'] ?? '')),
             'mobile' => trim((string)($data['mobile'] ?? '')),
             'address' => trim((string)($data['address'] ?? '')),
-            'jamaat' => trim((string)($data['jamaat'] ?? 'Mufaddal Mohalla, Poona')),
+            'jamaat' => trim((string)($data['jamaat'] ?? 'Kalimi Mohalla, Poona')),
             'last_vajebaat2' => trim((string)($data['last_vajebaat2'] ?? '')),
             'form_mardo_count' => vjb_print_to_int($data['form_mardo_count'] ?? 0),
             'form_bairo_count' => vjb_print_to_int($data['form_bairo_count'] ?? 0),
