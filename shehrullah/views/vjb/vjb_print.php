@@ -114,7 +114,7 @@ if (!function_exists('vjb_print_render_image_resource')) {
         imagettftext($img, $fontSize, 0, $x, $y, $ink, $fontPath, $payload['name']);
         imagettftext($img, $fontSize, 0, $x + 103, $y + 55, $ink, $fontPath, $payload['itsid']);
         imagettftext($img, $fontSize, 0, $x + 583, $y + 55, $ink, $fontPath, $payload['mobile']);
-        imagettftext($img, $fontSize, 0, $x + 3, $y + 105, $ink, $fontPath, $payload['address']);
+        imagettftext($img, $fontSize, 0, $x + 103, $y + 105, $ink, $fontPath, $payload['address']);
         imagettftext($img, $fontSize, 0, $x + 3, 2082, $ink, $fontPath, 'Last Year: ' . $payload['last_vajebaat2']);
 
         return $img;
