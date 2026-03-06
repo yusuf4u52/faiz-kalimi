@@ -3,7 +3,7 @@ function content_display()
 {
     $result = get_miqaat_stats_report();
     $data = $result->data;
-    $hdr = ['', 'Total', 'Total', 'Mardo', 'Bairao', 'Kids', 'Miqaat', 'Start', 'End'];
+    $hdr = ['', 'Thaal', 'Total', 'Mardo', 'Bairao', 'Kids', 'Miqaat', 'Start', 'End'];
     $cols = ['total', 'mardo', 'bairo', 'infant', 'name', 'start_datetime', 'end_datetime'];
     ?>
     <h4 class="mb-3">Report</h5>
@@ -27,3 +27,4 @@ function content_display()
     <?php
 
 } ?>
+
