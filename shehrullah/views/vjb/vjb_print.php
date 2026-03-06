@@ -81,7 +81,7 @@ if (!function_exists('vjb_print_render_image_resource')) {
 
         $fontSize = 18;
         imagettftext($img, $fontSize, 0, 280, 280, $ink, $fontPath, $payload['hijri_year']);
-        imagettftext($img, $fontSize, 0, 1100, 410, $ink, $fontPath, $payload['jamaat']);
+        imagettftext($img, $fontSize, 0, 1140, 410, $ink, $fontPath, $payload['jamaat']);
 
         $fontSize = 22;
         $x = 1100;
