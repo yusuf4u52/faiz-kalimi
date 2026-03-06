@@ -18,9 +18,13 @@ if (!function_exists('vjb_print_display_number')) {
 if (!function_exists('vjb_print_build_payload')) {
     function vjb_print_build_payload(array $data)
     {
+        // Get current Hijri year
+        $hijri_year = get_current_hijri_year();
+        
         return [
             'sno' => trim((string)($data['sno'] ?? '')),
             'date' => trim((string)($data['date'] ?? date('d-M-Y'))),
+            'hijri_year' => $hijri_year,
             'itsid' => trim((string)($data['itsid'] ?? '')),
             'name' => trim((string)($data['name'] ?? '')),
             'mobile' => trim((string)($data['mobile'] ?? '')),
@@ -82,6 +86,7 @@ if (!function_exists('vjb_print_render_image_resource')) {
 
         $fontSize = 18;
         imagettftext($img, $fontSize, 0, 1325, 155, $ink, $fontPath, ' Date. ' . $payload['date']);
+        imagettftext($img, $fontSize, 0, 280, 280, $ink, $fontPath, $payload['hijri_year']);
         imagettftext($img, $fontSize, 0, 1100, 410, $ink, $fontPath, $payload['jamaat']);
 
         $fontSize = 22;
