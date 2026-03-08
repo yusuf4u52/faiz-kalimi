@@ -53,6 +53,10 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         <?php echo $values['Thali']; ?>
       </li>
       <li class="list-group-item">
+        <div class="fw-bold">Sabeel Type</div>
+        <?php echo $values['sabeelType']; ?>
+      </li>
+      <li class="list-group-item">
         <div class="fw-bold">Tiffin Number</div>
         <?php echo $values['tiffinno']; ?>
       </li>
