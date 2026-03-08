@@ -6,7 +6,7 @@ function content_display()
 {
     $url = getAppData('BASE_URI');
     ?>
-    <!-- <div class="card">
+    <div class="card">
         <div class="card-body">
             <h2 class="mb-2">FMB - Lailatul Qadr Niyat</h2>
             <p class="mb-3"><small>Enter HOF ID and Search</small></p>
@@ -24,7 +24,7 @@ function content_display()
                 </div>
             </form>            
         </div>
-    </div> -->
+    </div>
     <div class="card">
         <div class="card-body">
             <h2 class="mb-2">Shehrullah Registration</h2>
@@ -147,4 +147,5 @@ function hof_for_fmb() {
 //     $encrypted_hof_id = do_encrypt($hof_id);
 
 //     do_redirect('/vjb.slot_booking/'.$encrypted_hof_id);
+
 // }
