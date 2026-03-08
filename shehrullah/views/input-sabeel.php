@@ -108,10 +108,14 @@ function sabeel_search() {
 
 function hof_for_fmb() {
     $hof_id = $_POST['hof_id'];
-    $hof_data = get_its_record_for($hof_id);
-    if (is_null($hof_data) ) {
-        do_redirect_with_message('/input-sabeel', 'Error: This ITS ['.$hof_id.'] is not a HOF or not belong to Kalimi. Please contact Moiz Bhai Mulla (9096778753)');
+    $thaali_data = get_thaalilist_data($hof_id);
+    if (is_null($thaali_data)) {
+        do_redirect_with_message('/input-sabeel', 'No records found for input ' . $sabeel . '. Enter correct sabeel number or HOF ITS.');
     }
+    // $hof_data = get_thaalilist_data($hof_id);
+    // if (is_null($hof_data) ) {
+    //     do_redirect_with_message('/input-sabeel', 'Error: This ITS ['.$hof_id.'] is not a HOF or not belong to Kalimi. Please contact Moiz Bhai Mulla (9096778753)');
+    // }
 
     //$encrypted_hof_id = do_encrypt($hof_id);
     setSessionData('HOF_FOR_FMB', $hof_id);
@@ -149,3 +153,4 @@ function hof_for_fmb() {
 //     do_redirect('/vjb.slot_booking/'.$encrypted_hof_id);
 
 // }
+
