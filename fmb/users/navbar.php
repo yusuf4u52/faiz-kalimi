@@ -1,11 +1,11 @@
-<?php 
-include('_authCheck.php'); 
+<?php
+include('_authCheck.php');
 include('_common.php');
 
 $curr_page = basename($_SERVER['PHP_SELF']);
 //$query = mysqli_query($link , "SELECT * FROM thalilist as th LEFT JOIN transporters as tr  on th.Transporter = tr.Name where th.Email_ID = '" . $_SESSION['email'] . "' OR th.SEmail_ID = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
 
-$query = mysqli_query($link , "SELECT * FROM thalilist  where Email_ID = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+$query = mysqli_query($link, "SELECT * FROM thalilist  where Email_ID = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
 $values = $query->fetch_assoc();
 
 $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobile FROM users where email = '" . $values['musaid'] . "'"));
@@ -14,48 +14,48 @@ $_SESSION['thaliid'] = $values['id'];
 $_SESSION['thali'] = $values['Thali'];
 
 // Check if users gmail id is registered with us and he is a transporter against it
-$transporter = mysqli_query($link , "SELECT * FROM transporters  where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
-if ($transporter->num_rows > 0 ) {
+$transporter = mysqli_query($link, "SELECT * FROM transporters  where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+if ($transporter->num_rows > 0) {
     header("Location: /fmb/transporter/home.php");
     exit;
 }
 
 // Check if users gmail id is registered with us and has got a thali number against it 
 if (is_null($values['Active']) || $values['Active'] == 2) {
-  $some_email = $_SESSION['email'];
-  session_unset();
-  session_destroy();
-  $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send an email to kalimimohallapoona@gmail.com";
-  header("Location: /fmb/index.php?status=$status");
-  exit;
+    $some_email = $_SESSION['email'];
+    session_unset();
+    session_destroy();
+    $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send an email to kalimimohallapoona@gmail.com";
+    header("Location: /fmb/index.php?status=$status");
+    exit;
 }
 
 // Redirect users to update details page if any details are missing
-if($curr_page != 'update_details.php') {
-	if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['wingflat']) || empty($values['society']) || empty($values['Full_Address']))) {
-	  header("Location: update_details.php?update_pending_info");
-	  exit;
-	}
+if ($curr_page != 'update_details.php') {
+    if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['wingflat']) || empty($values['society']) || empty($values['Full_Address']))) {
+        header("Location: update_details.php?update_pending_info");
+        exit;
+    }
 }
 
 // Check if there is any enabled event that needs users response
-if($curr_page != 'events.php') {
-	$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_ID = '" . $_SESSION['email'] . "'";
-	$takesFmb = mysqli_num_rows(mysqli_query($link, $query));
-	$result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
-	while ($values1 = mysqli_fetch_assoc($result)) {
-	  // $showToNonFmbOnly = $values1['showtononfmb'];
-	  // skip redirects to events for fmb holder if the database flag is set to do so
-	  // if ($showToNonFmbOnly == 1) {
-		if (!isResponseReceived($values1['id'])) {
-		  header("Location: events.php");
-		  exit;
-		}
-	 //  } else if (!isResponseReceived($values['id'])) {
-		// header("Location: events.php");
-		// exit;
-	//   }
-	}
+if ($curr_page != 'events.php') {
+    $query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_ID = '" . $_SESSION['email'] . "'";
+    $takesFmb = mysqli_num_rows(mysqli_query($link, $query));
+    $result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
+    while ($values1 = mysqli_fetch_assoc($result)) {
+        // $showToNonFmbOnly = $values1['showtononfmb'];
+        // skip redirects to events for fmb holder if the database flag is set to do so
+        // if ($showToNonFmbOnly == 1) {
+        if (!isResponseReceived($values1['id'])) {
+            header("Location: events.php");
+            exit;
+        }
+        //  } else if (!isResponseReceived($values['id'])) {
+        // header("Location: events.php");
+        // exit;
+        //   }
+    }
 }
 ?>
 <header class="header">
@@ -67,18 +67,18 @@ if($curr_page != 'events.php') {
             <div class="col-8 text-end">
                 <p class="text-capitalize m-0 fw-bold fst-italic">Salaam, <?php echo strtolower($values['NAME']); ?></p>
                 <?php if (!empty($values['yearly_hub'])) {
-                    if ($values['Active'] == 1) { 
+                    if ($values['Active'] == 1) {
                         echo '<p class="m-0">Thali No: <strong>' . $values['tiffinno'] . '</strong> | Thali Status: <strong class="text-success">Start</strong></p> ';
                     } else {
                         echo '<p class="m-0">Thali No: <strong>' . $values['tiffinno'] . '</strong> | Thali Status: <strong class="text-danger">Stop</strong></p> ';
-						$stop_dates = mysqli_query($link, "WITH ranked_dates AS (
+                        $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
 						SELECT `id`, `thali`, DATE(`stop_date`) AS stop_date, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY DATE(`stop_date`)) AS row_num FROM `stop_thali` WHERE `thali` = '" . $_SESSION['thali'] . "' AND DATE(`stop_date`) >= CURDATE()),
 						grouped_dates AS (SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates)
 						SELECT `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date, DATE_ADD(MAX(`stop_date`), INTERVAL 1 DAY) AS next_active_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date ASC LIMIT 1;") or die(mysqli_error($link));
-						if (isset($stop_dates) && $stop_dates->num_rows > 0) {
-							$row = mysqli_fetch_assoc($stop_dates);
-							echo '<p class="m-0">Thali Start Date: <strong class="text-success">' . date("d M Y", strtotime($row['next_active_date'])) . '</strong></p>';
-						}
+                        if (isset($stop_dates) && $stop_dates->num_rows > 0) {
+                            $row = mysqli_fetch_assoc($stop_dates);
+                            echo '<p class="m-0">Thali Start Date: <strong class="text-success">' . date("d M Y", strtotime($row['next_active_date'])) . '</strong></p>';
+                        }
                     }
                 } ?>
             </div>
@@ -109,7 +109,7 @@ if($curr_page != 'events.php') {
                         </li>
                     <?php } ?>
                     <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com', 'aliasgaraurangabadwala@gmail.com'))) {
-                        ?>
+                    ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Menu Management</a>
                             <ul class="dropdown-menu">
@@ -174,7 +174,7 @@ if($curr_page != 'events.php') {
         </div>
     </nav>
 </header>
-<?php if($values['Total_Pending'] != 0) { ?>
+<?php /*if($values['Total_Pending'] != 0) { ?>
     <div class="payment-reminder mt-3">
         <div class="container-fluid">
             <div class="row">
@@ -193,7 +193,7 @@ if($curr_page != 'events.php') {
             </div>
         </div>
     </div>
-<?php } ?>
+<?php } */ ?>
 
 <div class="content mt-3">
     <div class="container-fluid">

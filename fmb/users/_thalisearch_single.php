@@ -123,6 +123,10 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         ₹<?php echo $values['yearly_hub']; ?>
       </li>
       <li class="list-group-item">
+        <div class="fw-bold">Zabihat Niyat</div>
+        <?php echo $values['Zabihat']; ?>
+      </li>
+      <li class="list-group-item">
         <div class="fw-bold">Hub Pending</div>
         ₹<?php echo $values['Total_Pending'] + $values['Paid']; ?> -
         ₹<?php echo $values['Paid']; ?> = ₹<?php echo $values['Total_Pending']; ?>
