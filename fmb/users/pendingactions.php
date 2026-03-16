@@ -42,7 +42,6 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 							<th>Thali No</th>
 							<th>Transporter</th>
 							<th>Sector</th>
-							<th>Subsector</th>
 							<th>Society</th>
 							<th>Name</th>
 							<th>Active</th>
@@ -89,20 +88,6 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 											?>
 												<option value='<?php echo $sector_name; ?>' <?php echo ($sector_name == $values['sector']) ? 'selected' : ''; ?>>
 													<?php echo $sector_name; ?>
-												</option>
-											<?php
-											}
-											?>
-										</select>
-									</td>
-									<td>
-										<select class='subsector form-select form-select-sm'
-											name='subsector' required>
-											<option value=''>Select</option>
-											<?php
-											foreach ($subsector_list as $subsector_name) {
-											?>
-												<option value='<?php echo $subsector_name; ?>' <?php echo ($subsector_name == $values['subsector']) ? 'selected' : ''; ?>><?php echo $subsector_name; ?>
 												</option>
 											<?php
 											}
