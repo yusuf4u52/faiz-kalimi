@@ -39,6 +39,7 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 				<table class="table table-striped display" width="100%">
 					<thead>
 						<tr>
+							<th>Sabeel No</th>
 							<th>Thali No</th>
 							<th>Transporter</th>
 							<th>Sector</th>
@@ -59,6 +60,11 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 										<?php echo $values['Thali']; ?>
 										<input type="hidden" name="Thali"
 											value="<?php echo $values['Thali']; ?>">
+									</td>
+									<td>
+										<?php echo $values['tiffinno']; ?>
+										<input type="hidden" name="tiffinno"
+											value="<?php echo $values['tiffinno']; ?>">
 									</td>
 									<td>
 										<?php
