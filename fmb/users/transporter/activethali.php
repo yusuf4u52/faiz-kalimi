@@ -31,7 +31,7 @@ include('../navbar.php');
                                         <td><?php echo $start_list['tiffinno']; ?></td>
                                         <td><?php echo $start_list['thalisize']; ?></td>
                                         <td class="text-capitalize"><?php echo strtolower($start_list['NAME']); ?></td>
-                                        <td><?php echo $start_list['CONTACT']; ?></td>
+                                        <td><a href="tel:<?php echo $stop_list['CONTACT']; ?>"><?php echo $start_list['CONTACT']; ?></a></td>
                                         <td><?php echo $start_list['wingflat'] . ' ' . $start_list['society']; ?></td>
                                     </tr>
                                 <?php } ?>

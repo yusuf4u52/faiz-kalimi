@@ -62,7 +62,7 @@ if($curr_page != 'events.php') {
     <div class="container-fluid py-2">
         <div class="row align-items-center">
             <div class="col-4">
-                <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/styles/img/logo.avif" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
+                <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/assets/img/logo.avif" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
             </div>
             <div class="col-8 text-end">
                 <p class="text-capitalize m-0 fw-bold fst-italic">Salaam, <?php echo strtolower($values['NAME']); ?></p>
@@ -145,10 +145,6 @@ if($curr_page != 'events.php') {
                     <?php } ?>
                     <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizagasiyawala@gmail.com', 'tinwalaabizer@gmail.com'))) { ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/pendingactions.php">Pending Actions</a></li>
-                        <!--<li class="nav-item"><a class="nav-link" href="/fmb/users/_daily_hisab_entry.php">Daily Hisab</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/fmb/users/requestarchive.txt">CR NR</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/fmb/users/stopMultipleThaalis.php">Stop Thali</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/fmb/users/expenses_new.php">Expenses</a></li>-->
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Backend</a>
                             <ul class="dropdown-menu" role="menu">
@@ -164,11 +160,7 @@ if($curr_page != 'events.php') {
                                 <li><a class="dropdown-item" href="/fmb/users/admin_scripts.php">Scripts</a></li>
                             </ul>
                         </li>
-                        <!--<li class="nav-item"><a class="nav-link" href="/fmb/users/notpickedup.php">NotPickedUp</a></li>-->
                         <li class="nav-item"><a class="nav-link" target="_blank" href="/fmb/sms/index.php">SMS</a></li>
-                    <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) { ?>
-                        <li class="nav-item"><a class="nav-link" href="/fmb/users/amount_received_by.php">Received</a></li>
                     <?php } ?>
                     <li class="nav-item"><a class="nav-link" href="/fmb/users/hub_details.php">Hub details</a></li>
                     <li class="nav-item"><a class="nav-link" href="/fmb/users/stop_dates.php">Stop Dates</a></li>

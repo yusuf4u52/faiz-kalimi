@@ -1,63 +1,50 @@
+CREATE TABLE change_table_%month% LIKE `change_table`;
+INSERT INTO change_table_%month% SELECT * FROM `change_table`;
+TRUNCATE TABLE change_table;
+
+CREATE TABLE daily_thali_count_%month% LIKE `daily_thali_count`;
+INSERT INTO daily_thali_count_%month% SELECT * FROM `daily_thali_count`;
+TRUNCATE TABLE daily_thali_count;
+
+CREATE TABLE fmb_roti_distribution_%month% LIKE `fmb_roti_distribution`;
+INSERT INTO fmb_roti_distribution_%month% SELECT * FROM `fmb_roti_distribution`;
+TRUNCATE TABLE fmb_roti_distribution;
+
+CREATE TABLE fmb_roti_recieved_%month% LIKE `fmb_roti_recieved`;
+INSERT INTO fmb_roti_recieved_%month% SELECT * FROM `fmb_roti_recieved`;
+TRUNCATE TABLE fmb_roti_recieved;
+
+CREATE TABLE menu_list_%month% LIKE `menu_list`;
+INSERT INTO menu_list_%month% SELECT * FROM `menu_list`;
+TRUNCATE TABLE menu_list;
+
 CREATE TABLE receipts_%month% LIKE `receipts`;
 INSERT INTO receipts_%month% SELECT * FROM `receipts`;
 TRUNCATE TABLE receipts;
 
-CREATE TABLE ashara_%month% LIKE `ashara`;
-INSERT INTO ashara_%month% SELECT * FROM `ashara`;
-TRUNCATE TABLE ashara;
-
-CREATE TABLE niyaz_%month% LIKE `niyaz`;
-INSERT INTO niyaz_%month% SELECT * FROM `niyaz`;
-TRUNCATE TABLE niyaz;
-
-CREATE TABLE sherullah_%month% LIKE `sherullah`;
-INSERT INTO sherullah_%month% SELECT * FROM `sherullah`;
-TRUNCATE TABLE sherullah;
-
-CREATE TABLE voluntary_%month% LIKE `voluntary`;
-INSERT INTO voluntary_%month% SELECT * FROM `voluntary`;
-TRUNCATE TABLE voluntary;
-
-CREATE TABLE zabihat_%month% LIKE `zabihat`;
-INSERT INTO zabihat_%month% SELECT * FROM `zabihat`;
-TRUNCATE TABLE zabihat;
-
-CREATE TABLE sf_hisab_%month% LIKE `sf_hisab`;
-INSERT INTO sf_hisab_%month% SELECT * FROM `sf_hisab`;
-TRUNCATE TABLE `sf_hisab`;
-CREATE TABLE account_%month% LIKE `account`;
-INSERT INTO account_%month% SELECT * FROM `account`;
-TRUNCATE TABLE account;
-CREATE TABLE change_table_%month% LIKE `change_table`;
-INSERT INTO change_table_%month% SELECT * FROM `change_table`;
-TRUNCATE TABLE change_table;
-CREATE TABLE amount_received_%month% LIKE `amount_received`;
-INSERT INTO amount_received_%month% SELECT * FROM `amount_received`;
-TRUNCATE TABLE amount_received;
 CREATE TABLE thalilist_%month% LIKE thalilist;
 ALTER TABLE thalilist_%month% MODIFY COLUMN `Total_Pending` int(11);
 INSERT INTO thalilist_%month% SELECT * FROM `thalilist`;
 ALTER TABLE thalilist_%month% MODIFY COLUMN `Total_Pending` int(11) GENERATED ALWAYS AS (`Previous_Due` + `yearly_hub` + `Zabihat` - `Paid`) STORED;
 UPDATE thalilist SET Previous_Due = Total_Pending;
+UPDATE thalilist SET previous_hub = yearly_hub;
 UPDATE thalilist SET yearly_hub = 0, Zabihat = 0, Paid = 0, thalicount = 0;
--- UPDATE thalilist SET Dues = 1800 where Active = 1;
--- UPDATE thalilist SET TranspFee = 250 where Active = 1 AND Transporter != 'Pick Up';
+
+CREATE TABLE transporter_daily_count_%month% LIKE `transporter_daily_count`;
+INSERT INTO transporter_daily_count_%month% SELECT * FROM `transporter_daily_count`;
+TRUNCATE TABLE transporter_daily_count;
+
+CREATE TABLE user_feedmenu_%month% LIKE `user_feedmenu`;
+INSERT INTO user_feedmenu_%month% SELECT * FROM `user_feedmenu`;
+TRUNCATE TABLE user_feedmenu;
+
+CREATE TABLE user_menu_%month% LIKE `user_menu`;
+INSERT INTO user_menu_%month% SELECT * FROM `user_menu`;
+TRUNCATE TABLE user_menu;
+
+CREATE TABLE zabihat_%month% LIKE `zabihat`;
+INSERT INTO zabihat_%month% SELECT * FROM `zabihat`;
+TRUNCATE TABLE zabihat;
+
 UPDATE settings SET `value` = `value` + 1 WHERE `settings`.`key` = 'current_year';
 INSERT INTO settings (`key`,`value`) values ('cash_in_hand_%month%',0);
-
--- Customization
-
--- Sadhashive peth
--- UPDATE thalilist SET TranspFee = 350 where Active = 1 AND Transporter != 'Pick Up' AND Thali IN (9,410,602);
-
--- Kothrud
--- UPDATE thalilist SET TranspFee = 500 where Active = 1 AND Transporter != 'Pick Up' AND Thali IN (202,593,594,595,596,615,600,629);
-
--- Saif Colony
--- UPDATE thalilist SET TranspFee = 400 where Active = 1 AND Transporter != 'Pick Up' AND Thali IN (237,520);
-
--- Hoob adjust
--- UPDATE thalilist SET Dues = 1400 where Active = 1 AND Thali IN (553,548,618,619,620);
--- UPDATE thalilist SET Dues = 1000 where Active = 1 AND Thali IN (41);
--- UPDATE thalilist SET Dues = 1100 where Active = 1 AND Thali IN (112,598);
--- UPDATE thalilist SET Dues = 1500 where Active = 1 AND Thali IN (431);

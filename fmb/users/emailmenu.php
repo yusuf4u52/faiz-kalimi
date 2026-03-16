@@ -21,7 +21,7 @@ if ($menu_item->num_rows > 0) {
 			<table border="0" width="720" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="color:#333333; padding:1rem;">
 				<tr>
 					<td align="left">
-						<img src="https://kalimijamaatpoona.org/fmb/styles/img/logo.avif" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="90" height="90"> 
+						<img src="https://kalimijamaatpoona.org/fmb/assets/img/logo.avif" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="90" height="90"> 
 					</td>
 					<td align="right"><strong>Updated Thali of '.$day .'<br/>'.$hijridate.' '.$tomorrow_date.'</strong></td>
 				</tr>

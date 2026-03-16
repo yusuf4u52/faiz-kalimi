@@ -1,40 +1,45 @@
 {
   "id": "kalimijamaatpoona.fmb",
   "name": "Faizul Mawaidil Burhaniya (Kalimi Mohalla)",
-  "short_name": "FMB (Kalimi)",
-  "description": "A FMB App for Kalimi Mohalla (Poona) Mumineen",
+  "short_name": "FMB Kalimi",
+  "description": "Faiz ul Mawaidil Burhaniyah App for Kalimi Mohalla Mumineen",
+
+  "start_url": "/fmb/",
+  "scope": "/fmb/",
+  "display": "standalone",
+  "orientation": "portrait",
+
+  "background_color": "#ffffff",
+  "theme_color": "#c36d29",
+
   "icons": [
     {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "src": "/fmb/assets/img/logo-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
     },
     {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/logo-512x512-maskable.png",
+      "src": "/fmb/assets/img/logo-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/fmb/assets/img/logo-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
+
   "screenshots": [
     {
-      "src": "https://kalimijamaatpoona.org/fmb/styles/img/screenshot.png",
-      "type": "image/png",
+      "src": "/fmb/assets/img/screenshot.png",
       "sizes": "628x1031",
-      "label": "Homescreen of FMB Kalimi App"
+      "type": "image/png",
+      "label": "FMB Kalimi App"
     }
   ],
-  "background_color": "#FFFFFF",
-  "theme_color": "#c36d29",
-  "display": "standalone",
-  "dir": "ltr",
-  "orientation": "portrait",
-  "start_url": ".",
-  "categories": ["community", "food", "mumineen"],
-  "scope": "/",
-  "launch_handler": {
-    "client_mode": "auto"
-  },
-  "handle_links": "preferred"
+
+  "categories": ["community", "food"],
+  "dir": "ltr"
 }

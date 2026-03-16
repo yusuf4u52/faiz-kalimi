@@ -8,21 +8,21 @@ require '_sendMail.php';
 
 $today = getTodayDateHijri();
 // print_r($_POST); exit;
-$values[] = "Thali = '".addslashes($_POST['thalino'])."'";
-$values[] = "musaid = '".addslashes($_POST['musaid'])."'";
+$values[] = "Thali = '" . addslashes($_POST['sabeelno']) . "'";
+$values[] = "tiffinno = '" . addslashes($_POST['thalino']) . "'";
+$values[] = "thalisize = '" . addslashes($_POST['thalisize']) . "'";
 $values[] = "Active = '1'";
-$values[] = "Thali_Start_Date = '".($today)."'";
-$values[] = "yearly_hub = '".($_POST['hub'])."'";
+$values[] = "Thali_Start_Date = '" . ($today) . "'";
+$values[] = "yearly_hub = '" . ($_POST['hub']) . "'";
 
-if(isset($_POST['transporter']))
-{
-	$values[] = "Transporter = '".addslashes($_POST['transporter'])."'";	
-} 
+if (isset($_POST['transporter'])) {
+	$values[] = "Transporter = '" . addslashes($_POST['transporter']) . "'";
+}
 
-mysqli_query($link,"UPDATE thalilist set ".implode(',', $values)." WHERE id = '".$_POST['id']."'") or die(mysqli_error($link));
-mysqli_query($link,"INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`,`processed`) VALUES ('" . $_POST['thalino'] . "','".$_POST['id']."', 'New Thali','" . $today . "',0)") or die(mysqli_error($link));
-mysqli_query($link,"INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`,`processed`) VALUES ('" . $_POST['thalino'] . "','".$_POST['id']."', 'Start Thali','" . $today . "',1)") or die(mysqli_error($link));
-mysqli_query($link,"update change_table set processed = 1 where userid = '" . $_POST['id'] . "' and `Operation` in ('Stop Permanent') and processed = 0") or die(mysqli_error($link));
+mysqli_query($link, "UPDATE thalilist set " . implode(',', $values) . " WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
+mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`,`processed`) VALUES ('" . $_POST['thalino'] . "','" . $_POST['id'] . "', 'New Thali','" . $today . "',0)") or die(mysqli_error($link));
+mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`,`processed`) VALUES ('" . $_POST['thalino'] . "','" . $_POST['id'] . "', 'Start Thali','" . $today . "',1)") or die(mysqli_error($link));
+mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_POST['id'] . "' and `Operation` in ('Stop Permanent') and processed = 0") or die(mysqli_error($link));
 
 
 $msgvar = "Salaam %name%,<br><br>Mubarak for starting your Faiz ul Mawaid il Burhaniyah Thaali -<br><br>Your Thali No. will be : <b>%thali%</b><br><br>
@@ -38,7 +38,7 @@ $msgvar = "Salaam %name%,<br><br>Mubarak for starting your Faiz ul Mawaid il Bur
 Abeede Sayedna (TUS)<br>
 Faiz Khidmat Team<br>";
 
-$msgvar = str_replace(array('%thali%','%name%','%email%'), array($_POST['thalino'],$_POST['name'],$_POST['email']), $msgvar);
-sendEmail($_POST['email'], 'Thali Activated', $msgvar, null);
+$msgvar = str_replace(array('%thali%', '%name%', '%email%'), array($_POST['thalino'], $_POST['name'], $_POST['email']), $msgvar);
+sendEmail([$_POST['email']], 'Thali Activated', $msgvar, null);
 
 header("Location: pendingactions.php");

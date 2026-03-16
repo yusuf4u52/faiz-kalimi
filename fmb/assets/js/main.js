@@ -112,7 +112,7 @@
               .before(
                 '<tr class="group"><td colspan="6"><strong>' +
                   group +
-                  "</strong></td></tr>"
+                  "</strong></td></tr>",
               );
 
             last = group;
@@ -200,51 +200,12 @@
       .removeClass("d-none");
   });
 
-  var receiptForm = $("#receiptForm");
-  receiptForm.hide();
-  $('[data-key="payhoob"]').click(function () {
-    $('[name="receipt_thali"]', receiptForm).val($(this).attr("data-thali"));
-    receiptForm.show();
-  });
-
-  $('[name="save"]').click(function () {
-    var data = "";
-    $('input[type!="button"]', receiptForm).each(function () {
-      data = data + $(this).attr("name") + "=" + $(this).val() + "&";
-    });
-    data = data + "payment_type=" + $("#payment_type").val();
-    $.ajax({
-      method: "post",
-      url: "_payhoob.php",
-      async: "false",
-      data: data,
-      success: function (data) {
-        if (data.includes("Success")) {
-          alert("Hoob sucessfully updated.");
-          receiptForm.hide();
-          location.reload();
-          // } else if(data == 'DuplicateReceiptNo') {
-          //   alert('Receipt number already exists in database');
-        } else {
-          alert(data);
-        }
-      },
-      error: function () {
-        alert("Try again");
-      },
-    });
-  });
-
-  $('[name="cancel"]').click(function () {
-    receiptForm.hide();
-  });
-
   $('[data-key="stopthaali"]').click(function () {
     stopThali_admin(
       $(this).attr("data-thali"),
       $(this).attr("data-active"),
       false,
-      false
+      false,
     );
   });
 
@@ -255,7 +216,7 @@
     }
     var clearHub;
     var r = confirm(
-      "Press OK to clear pending hub or CANCEL to go ahead with stop permanent without clearing!"
+      "Press OK to clear pending hub or CANCEL to go ahead with stop permanent without clearing!",
     );
     if (r == true) {
       clearHub = "true";
@@ -271,16 +232,8 @@
       function (data, status) {
         alert("Thali Stopped Successfully and Number released to be re-used");
         location.reload();
-      }
+      },
     );
-  });
-
-  $("#payment_type").on("change", function () {
-    if ($(this).val() === "Cash") {
-      $("#transaction_id").hide();
-    } else {
-      $("#transaction_id").show();
-    }
   });
 })(jQuery);
 
@@ -301,13 +254,13 @@ function stopThali_admin(thaaliId, active, hardStop, hardStopComment) {
         alert(
           "Thaali #" +
             thaaliId +
-            " does not exists or is already stopped. Contact Mustafa Manawar or Yusuf Rampur for further details."
+            " does not exists or is already stopped. Contact Mustafa Manawar or Yusuf Rampur for further details.",
         );
       } else {
         alert(
           "Something went wrong while stopping thaali #" +
             thaaliId +
-            ". Please contact Mustafa Manawar or Yusuf Rampur"
+            ". Please contact Mustafa Manawar or Yusuf Rampur",
         );
       }
       location.reload();
@@ -316,7 +269,7 @@ function stopThali_admin(thaaliId, active, hardStop, hardStopComment) {
       alert(
         "Something went wrong while stopping thaali #" +
           thaaliId +
-          ". Please contact Mustafa Manawar or Yusuf Rampur"
+          ". Please contact Mustafa Manawar or Yusuf Rampur",
       );
       location.reload();
     },
