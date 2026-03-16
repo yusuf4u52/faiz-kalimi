@@ -5,7 +5,7 @@ include('navbar.php');
 
 <div class="card">
   <div class="card-body">
-    <?php if (!empty($values['yearly_hub'])) { 
+    <?php if (!empty($values['yearly_hub'])) {
       if (!empty($_SESSION['thali'])) { ?>
         <div class="row">
           <div class="col-6">
@@ -27,7 +27,7 @@ include('navbar.php');
             </strong> to <strong>
               <?php echo date('d M Y', strtotime($_GET['edate'])); ?>
             </strong>. Click <a href="/fmb/users/stop_dates.php">here</a> to view stopped dates.</div>
-        <?php } 
+        <?php }
         if (isset($_GET['action']) && $_GET['action'] == 'srsvp') { ?>
           <div class="alert alert-warning" role="alert">RSVP ended to stop thali of <strong>
               <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
@@ -39,7 +39,7 @@ include('navbar.php');
             <div class="modal-content">
               <form id="user_stop" class="form-horizontal" method="post" action="stopthali.php" autocomplete="off">
                 <input type="hidden" name="action" value="stop_thali" />
-                <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thali']; ?>" />
+                <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thaliid']; ?>" />
                 <div class="modal-header">
                   <h4 class="modal-title">Stop Thali</h4>
                   <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
@@ -51,7 +51,8 @@ include('navbar.php');
                     <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                     <input type="text" class="form-control" name="end_date" id="end_date" placeholder="End Date">
                   </div>
-                  <p class="text-danger mb-0"><strong>Note:</strong> RSVP will end at 5 PM one day before start date.<p>
+                  <p class="text-danger mb-0"><strong>Note:</strong> RSVP will end at 5 PM one day before start date.
+                  <p>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>

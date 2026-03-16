@@ -1,15 +1,15 @@
 <?php
-include ('connection.php');
-include ('_authCheck.php');
+include('connection.php');
+include('_authCheck.php');
 
 if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
-   
+
     $menu_list = mysqli_query($link, "SELECT `menu_date` FROM menu_list WHERE `id` = '" . $_POST['menu_id'] . "'") or die(mysqli_error($link));
     if (isset($menu_list) && $menu_list->num_rows > 0) {
         $menu_date = $menu_list->fetch_assoc();
         $menu_date = $menu_date['menu_date'];
     }
-    
+
     date_default_timezone_set('Asia/Kolkata');
     if (isset($_POST['action']) && $_POST['action'] == 'change_menu') {
         $GivenDate = new DateTime($menu_date . '17:00:00');
@@ -24,14 +24,17 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
     }
 
     if (!empty($CurrentDate) && !empty($GivenDate) && $CurrentDate < $GivenDate) {
-        if(isset($_POST['status'])) {
+        if (isset($_POST['status'])) {
             $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $menu_date . "'") or die(mysqli_error($link));
             if ($menu_item->num_rows > 0) {
                 $menu_item = $menu_item->fetch_assoc();
                 $menu_item = unserialize($menu_item['menu_item']);
-                $change = 'no'; $sstop = 'no'; $tstop = 'no'; $rstop = 'no';
+                $change = 'no';
+                $sstop = 'no';
+                $tstop = 'no';
+                $rstop = 'no';
                 if (!empty($menu_item['sabji']['item'])) {
-                    if( $_POST['menu_item']['sabji']['qty'] == 0 ) {
+                    if ($_POST['menu_item']['sabji']['qty'] == 0) {
                         $sstop = 'yes';
                         $change = 'yes';
                     } elseif ($menu_item['sabji']['qty'] !== $_POST['menu_item']['sabji']['qty']) {
@@ -39,9 +42,9 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
                     }
                 } else {
                     $sstop = 'yes';
-                } 
+                }
                 if (!empty($menu_item['tarkari']['item'])) {
-                    if( $_POST['menu_item']['tarkari']['qty'] == 0 ) {
+                    if ($_POST['menu_item']['tarkari']['qty'] == 0) {
                         $tstop = 'yes';
                         $change = 'yes';
                     } elseif ($menu_item['tarkari']['qty'] !== $_POST['menu_item']['tarkari']['qty']) {
@@ -49,9 +52,9 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
                     }
                 } else {
                     $tstop = 'yes';
-                } 
+                }
                 if (!empty($menu_item['rice']['item'])) {
-                    if( $_POST['menu_item']['rice']['qty'] == 0 ) {
+                    if ($_POST['menu_item']['rice']['qty'] == 0) {
                         $rstop = 'yes';
                         $change = 'yes';
                     } elseif ($menu_item['rice']['qty'] !== $_POST['menu_item']['rice']['qty']) {
@@ -65,7 +68,7 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
             $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
             if ($stop_thali->num_rows > 0) {
                 $delete_stop = "DELETE FROM stop_thali WHERE `stop_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                mysqli_query($link,$delete_stop) or die(mysqli_error($link));
+                mysqli_query($link, $delete_stop) or die(mysqli_error($link));
                 $msg = 'start';
             }
 
@@ -75,7 +78,7 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
                     $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
                     if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
                         $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                        mysqli_query($link,$user_del) or die(mysqli_error($link));
+                        mysqli_query($link, $user_del) or die(mysqli_error($link));
                     }
                     $action = 'astop';
                     $date = $menu_date;
@@ -85,12 +88,12 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
                     $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
                     if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
                         $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                        mysqli_query($link,$user_del) or die(mysqli_error($link));
+                        mysqli_query($link, $user_del) or die(mysqli_error($link));
                     }
                     $action = 'stop';
                     $date = $menu_date;
                 }
-            } elseif(isset($change) && $change == 'yes') {
+            } elseif (isset($change) && $change == 'yes') {
                 $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
                 if ($user_menu->num_rows > 0) {
                     $row = $user_menu->fetch_assoc();
@@ -99,7 +102,7 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
                     $sql = "INSERT INTO `user_menu` (`thali`,`menu_date`,`menu_item`) VALUES ('" . $_POST['thali'] . "', '" . $menu_date . "', '" . serialize($_POST['menu_item']) . "')";
                 }
                 mysqli_query($link, $sql) or die(mysqli_error($link));
-                if(isset($msg) && $msg == 'start') {
+                if (isset($msg) && $msg == 'start') {
                     $action = 'sedit';
                 } else {
                     $action = 'edit';
@@ -109,9 +112,9 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
                 $user_r_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
                 if (isset($user_r_menu) && $user_r_menu->num_rows > 0) {
                     $sql = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                    mysqli_query($link,$sql) or die(mysqli_error($link));
+                    mysqli_query($link, $sql) or die(mysqli_error($link));
                 }
-                if(isset($msg) && $msg == 'start') {
+                if (isset($msg) && $msg == 'start') {
                     $action = 'snochange';
                 } else {
                     $action = 'nochange';
@@ -124,7 +127,7 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
                 $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
                 if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
                     $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                    mysqli_query($link,$user_del) or die(mysqli_error($link));
+                    mysqli_query($link, $user_del) or die(mysqli_error($link));
                 }
                 $action = 'astop';
                 $date = $menu_date;
@@ -134,7 +137,7 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
                 $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
                 if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
                     $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                    mysqli_query($link,$user_del) or die(mysqli_error($link));
+                    mysqli_query($link, $user_del) or die(mysqli_error($link));
                 }
                 $action = 'stop';
                 $date = $menu_date;
@@ -168,4 +171,3 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
         header("Location: /fmb/users/index.php?action=" . $action . "&date=" . $menu_date);
     }
 }
-?>

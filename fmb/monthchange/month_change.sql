@@ -22,6 +22,10 @@ CREATE TABLE receipts_%month% LIKE `receipts`;
 INSERT INTO receipts_%month% SELECT * FROM `receipts`;
 TRUNCATE TABLE receipts;
 
+CREATE TABLE stop_thali_%month% LIKE `stop_thali`;
+INSERT INTO stop_thali_%month% SELECT * FROM `stop_thali`;
+TRUNCATE TABLE stop_thali;	
+
 CREATE TABLE thalilist_%month% LIKE thalilist;
 ALTER TABLE thalilist_%month% MODIFY COLUMN `Total_Pending` int(11);
 INSERT INTO thalilist_%month% SELECT * FROM `thalilist`;

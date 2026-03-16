@@ -16,13 +16,13 @@ if ($dayOfWeek == 1 && $time >= '13:00') {
 if ($isInRange) {
     if (isset($_POST['action']) && $_POST['action'] == 'feedback_menu') {
         foreach ($_POST['feedback'] as $date => $value) {
-            $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
+            $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $date . "' AND `thali` = '" . $_POST['id'] . "'") or die(mysqli_error($link));
             if ($user_feedmenu->num_rows > 0) {
                 $row = $user_feedmenu->fetch_assoc();
                 $sql = "UPDATE `user_feedmenu` SET `menu_feed` = '" . serialize($value['menu_item']) . "', `feedback` = '" . $value['comment'] . "' WHERE `id` = '" . $row['id'] . "'";
                 $action = 'editfeed';
             } else {
-                $sql = "INSERT INTO `user_feedmenu` (`thali`,`menu_date`,`menu_feed`,`feedback`) VALUES ('" . $_POST['thali'] . "', '" . $date . "', '" . serialize($value['menu_item']) . "', '" . $value['comment'] . "')";
+                $sql = "INSERT INTO `user_feedmenu` (`thali`,`menu_date`,`menu_feed`,`feedback`) VALUES ('" . $_POST['id'] . "', '" . $date . "', '" . serialize($value['menu_item']) . "', '" . $value['comment'] . "')";
                 $action = 'addfeed';
             }
             mysqli_query($link, $sql) or die(mysqli_error($link));
@@ -46,7 +46,7 @@ if ($isInRange) {
                             echo '<h5>Feedback will be live from <strong class="text-danger">Monday: 01:00 PM</strong> to <strong class="text-danger">Sunday: 11:30 PM</strong> for this week.</h5>';
                         } else {
                             if (isset($msg)) {
-                                $hofName = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_POST['thali'] . "' AND `hardstop` != 1") or die(mysqli_error($link));
+                                $hofName = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_POST['id'] . "' AND `hardstop` != 1") or die(mysqli_error($link));
                                 if (isset($hofName) && $hofName->num_rows > 0) {
                                     $hofName = $hofName->fetch_assoc();
                                     echo '<h5 class="text-success mt-5">Thank you <strong class="text-capitalize">' . strtolower($hofName['NAME']) . '</strong> for your valuable feedback.</h5>';

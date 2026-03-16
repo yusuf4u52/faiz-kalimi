@@ -29,7 +29,7 @@ if (isset($_POST)) {
   }
 
   if (isset($_POST['action']) && $_POST['action'] == 'change_email' && isset($_POST['Email_ID'])) {
-    $checkemail = mysqli_query($link , "SELECT * FROM thalilist where Email_ID = '" . $_POST['Email_ID'] . "' OR `SEmail_ID` = '" . $_POST['Email_ID'] . "'") or die(mysqli_error($link));
+    $checkemail = mysqli_query($link, "SELECT * FROM thalilist where Email_ID = '" . $_POST['Email_ID'] . "' OR `SEmail_ID` = '" . $_POST['Email_ID'] . "'") or die(mysqli_error($link));
     if ($checkemail->num_rows > 0) {
       $action = 'remail';
       $remail = $_POST['Email_ID'];
@@ -111,7 +111,7 @@ if (isset($_GET['year'])) {
       </div>
     <?php }
     if (isset($action) && $action == 'remail') { ?>
-      <div class="alert alert-success" role="alert">Email Id 
+      <div class="alert alert-success" role="alert">Email Id
         <strong><?php echo $remail; ?></strong> is already registered in our system.
       </div>
     <?php }
@@ -219,7 +219,7 @@ if (isset($_GET['year'])) {
           <select class="form-select" id="year" name="year">
             <?php for ($i = 1438; $i <= 1450; $i++) { ?>
               <option value="<?php echo $i; ?>" <?php if ($current_year['value'] == $i)
-                    echo "selected"; ?>>
+                                                  echo "selected"; ?>>
                 <?php echo $i; ?>
               </option>
             <?php } ?>
@@ -293,9 +293,9 @@ if (isset($_GET['year'])) {
             <option value=''>Select</option>
             <?php
             while ($musaid = mysqli_fetch_assoc($musaid_list)) {
-              ?>
+            ?>
               <option value='<?php echo $musaid['email']; ?>'><?php echo $musaid['username']; ?></option>
-              <?php
+            <?php
             }
             ?>
           </select>
@@ -496,8 +496,7 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
           autocomplete="off">
           <input type="hidden" name="action" value="admin_change_menu" />
           <input type="hidden" name="menu_id" value="<?php echo $menu_id; ?>" />
-          <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
-          <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+          <input type="hidden" name="thali" value="<?php echo $values['id']; ?>" />
           <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
           <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
           <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
@@ -621,7 +620,7 @@ if (isset($stop_dates) && $stop_dates->num_rows > 0) {
           <form id="startthali-<?php echo $values['id']; ?>" class="form-horizontal" method="post" action="stopthali.php"
             autocomplete="off">
             <input type="hidden" name="action" value="admin_start_thali" />
-            <input type="hidden" name="thali" value="<?php echo $values['thali']; ?>" />
+            <input type="hidden" name="thali" value="<?php echo $values['id']; ?>" />
             <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
             <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
             <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
@@ -644,7 +643,7 @@ if (isset($stop_dates) && $stop_dates->num_rows > 0) {
         </div>
       </div>
     </div>
-  <?php }
+<?php }
 }
 mysqli_free_result($stop_dates); ?>
 

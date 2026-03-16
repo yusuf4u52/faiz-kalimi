@@ -1,5 +1,5 @@
 <?php
-$takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_SESSION['thali'] . "' AND `hardstop` != 1") or die(mysqli_error($link));
+$takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SESSION['thaliid'] . "' AND `hardstop` != 1") or die(mysqli_error($link));
 ?>
 
 <?php if (isset($takesFmb) && $takesFmb->num_rows > 0) {
@@ -8,46 +8,46 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
     <div class="alert alert-success" role="alert">Thali of <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong> is edited successfully.</div>
-  <?php } 
+  <?php }
   if (isset($_GET['action']) && $_GET['action'] == 'sedit') { ?>
     <div class="alert alert-success" role="alert">Thali of <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong> is started & edited successfully.</div>
-  <?php } 
+  <?php }
   if (isset($_GET['action']) && $_GET['action'] == 'nochange') { ?>
     <div class="alert alert-warning" role="alert">You have't change anything on thali of <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong>.</div>
-  <?php } 
+  <?php }
   if (isset($_GET['action']) && $_GET['action'] == 'snochange') { ?>
     <div class="alert alert-success" role="alert">Thali of <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong> is started successfully.</div>
-  <?php } 
+  <?php }
   if (isset($_GET['action']) && $_GET['action'] == 'astop') { ?>
     <div class="alert alert-warning" role="alert">Thali of <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong> is already stopped.</div>
-  <?php } 
+  <?php }
   if (isset($_GET['action']) && $_GET['action'] == 'stop') { ?>
     <div class="alert alert-danger" role="alert">Thali of <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong> is stopped successfully.</div>
-  <?php } 
+  <?php }
   if (isset($_GET['action']) && $_GET['action'] == 'rsvp') { ?>
     <div class="alert alert-danger" role="alert">You can't edit the thali now because RSVP time for editing thali of
       <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong> is finished.
     </div>
-  <?php } 
+  <?php }
   if (isset($_GET['action']) && $_GET['action'] == 'addfeed') { ?>
     <div class="alert alert-success" role="alert">Thank you for your valuable feedback for thali on
       <strong>
         <?php echo date('d M Y', strtotime($_GET['date'])); ?>
       </strong>.
     </div>
-  <?php } 
+  <?php }
   if (isset($_GET['action']) && $_GET['action'] == 'editfeed') { ?>
     <div class="alert alert-success" role="alert">Thank you for your valuable feedback for thali on
       <strong>
@@ -61,7 +61,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
   $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));
   $sched_res = [];
   while ($menu = mysqli_fetch_assoc($result)) {
-    $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
+    $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
     if ($user_menu->num_rows > 0) {
       $row = $user_menu->fetch_assoc();
       $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $row['menu_date'] . "'") or die(mysqli_error($link));
@@ -74,13 +74,13 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
       $menu['menu_item'] = unserialize($menu['menu_item']);
       $menu['sdate'] = date("F d, Y h:i A", strtotime($menu['menu_date']));
     }
-    $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
+    $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
     if ($user_feedmenu->num_rows > 0) {
       $rowfeed = $user_feedmenu->fetch_assoc();
       $menu['menu_feed'] = unserialize($rowfeed['menu_feed']);
       $menu['feedback'] = $rowfeed['feedback'];
     }
-    $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thali'] . "'") or die(mysqli_error($link));
+    $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
     if ($stop_thali->num_rows > 0) {
       $menu['status'] = 'stop';
     } else {
@@ -98,7 +98,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
         <form id="changemenu" class="form-horizontal" method="post" action="changemenu.php" autocomplete="off">
           <input type="hidden" name="action" value="change_menu" />
           <input type="hidden" id="menu_id" name="menu_id" value="" />
-          <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thali']; ?>" />
+          <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thaliid']; ?>" />
           <input type="hidden" id="thalisize" name="thalisize" value="<?php echo $thalisize; ?>" />
           <div class="modal-header">
             <h4 class="modal-title"></h4>
@@ -171,11 +171,11 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <?php if( !empty($thalisize) && $thalisize != 'Barnamaj' ) { ?>
+            <?php if (!empty($thalisize) && $thalisize != 'Barnamaj') { ?>
               <button type="button" class="btn btn-light rsvp-end d-none" disabled>RSVP Ended</button>
             <?php } ?>
             <button type="button" class="btn btn-light feedback d-none" data-bs-target="#feedbackmenu" data-bs-toggle="modal" data-bs-dismiss="modal">Feedback</button>
-            <?php if( !empty($thalisize) && $thalisize != 'Barnamaj' ) { ?>
+            <?php if (!empty($thalisize) && $thalisize != 'Barnamaj') { ?>
               <button type="submit" class="btn btn-light edit-menu d-none">Save Changes</button>
             <?php } ?>
           </div>
@@ -190,7 +190,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
         <form id="feedbackmenu" class="form-horizontal" method="post" action="changemenu.php" autocomplete="off">
           <input type="hidden" name="action" value="feedback_menu" />
           <input type="hidden" id="menu_id" name="menu_id" value="" />
-          <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thali']; ?>" />
+          <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thaliid']; ?>" />
           <input type="hidden" id="thalisize" name="thalisize" value="<?php echo $thalisize; ?>" />
           <div class="modal-header">
             <h4 class="modal-title"></h4>
@@ -202,23 +202,23 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               <div class="col-8">
                 <input type="hidden" class="form-control" name="menu_item[sabji][item]" id="sabji" value="">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating-excellent" value="Excellent" >
+                  <input class="form-check-input mb-2 sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating-excellent" value="Excellent">
                   <label class="form-check-label" for="sabjirating-excellent">Excellent</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating-good" value="Good" >
+                  <input class="form-check-input mb-2 sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating-good" value="Good">
                   <label class="form-check-label" for="sabjirating-good">Good</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating-ok" value="Ok" >
+                  <input class="form-check-input mb-2 sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating-ok" value="Ok">
                   <label class="form-check-label" for="sabjirating-ok">Ok</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating-not-satisfied" value="Not Satisfied" >
+                  <input class="form-check-input mb-2 sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating-not-satisfied" value="Not Satisfied">
                   <label class="form-check-label" for="sabjirating-not-satisfied">Not Satisfied</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating-not-taken" value="Not Taken" >
+                  <input class="form-check-input mb-2 sabjirating" type="radio" name="menu_item[sabji][rating]" id="sabjirating-not-taken" value="Not Taken">
                   <label class="form-check-label" for="sabjirating-not-taken">Not Taken</label>
                 </div>
               </div>
@@ -228,23 +228,23 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               <div class="col-8">
                 <input type="hidden" class="form-control" name="menu_item[tarkari][item]" id="tarkari" value="">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating-excellent" value="Excellent" >
+                  <input class="form-check-input mb-2 tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating-excellent" value="Excellent">
                   <label class="form-check-label" for="tarkarirating-excellent">Excellent</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating-good" value="Good" >
+                  <input class="form-check-input mb-2 tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating-good" value="Good">
                   <label class="form-check-label" for="tarkarirating-good">Good</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating-ok" value="Ok" >
+                  <input class="form-check-input mb-2 tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating-ok" value="Ok">
                   <label class="form-check-label" for="tarkarirating-ok">Ok</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating-not-satisfied" value="Not Satisfied" >
+                  <input class="form-check-input mb-2 tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating-not-satisfied" value="Not Satisfied">
                   <label class="form-check-label" for="tarkarirating-not-satisfied">Not Satisfied</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating-not-taken" value="Not Taken" >
+                  <input class="form-check-input mb-2 tarkarirating" type="radio" name="menu_item[tarkari][rating]" id="tarkarirating-not-taken" value="Not Taken">
                   <label class="form-check-label" for="tarkarirating-not-taken">Not Taken</label>
                 </div>
               </div>
@@ -270,7 +270,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
                   <label class="form-check-label" for="ricerating-not-satisfied">Not Satisfied</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating-not-taken" value="Not Taken" >
+                  <input class="form-check-input mb-2 ricerating" type="radio" name="menu_item[rice][rating]" id="ricerating-not-taken" value="Not Taken">
                   <label class="form-check-label" for="ricerating-not-taken">Not Taken</label>
                 </div>
               </div>
@@ -280,23 +280,23 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               <div class="col-8">
                 <input type="hidden" class="form-control" name="menu_item[roti][item]" id="roti" value="">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating-excellent" value="Excellent" >
+                  <input class="form-check-input mb-2 rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating-excellent" value="Excellent">
                   <label class="form-check-label" for="rotirating-excellent">Excellent</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating-good" value="Good" >
+                  <input class="form-check-input mb-2 rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating-good" value="Good">
                   <label class="form-check-label" for="rotirating-good">Good</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating-ok" value="Ok" >
+                  <input class="form-check-input mb-2 rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating-ok" value="Ok">
                   <label class="form-check-label" for="rotirating-ok">Ok</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating-not-satisfied" value="Not Satisfied" >
+                  <input class="form-check-input mb-2 rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating-not-satisfied" value="Not Satisfied">
                   <label class="form-check-label" for="rotirating-not-satisfied">Not Satisfied</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating-not-taken" value="Not Taken" >
+                  <input class="form-check-input mb-2 rotirating" type="radio" name="menu_item[roti][rating]" id="rotirating-not-taken" value="Not Taken">
                   <label class="form-check-label" for="rotirating-not-taken">Not Taken</label>
                 </div>
               </div>
@@ -306,23 +306,23 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `Thali` = '" . $_
               <div class="col-8">
                 <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating-excellent" value="Excellent" >
+                  <input class="form-check-input mb-2 extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating-excellent" value="Excellent">
                   <label class="form-check-label" for="extrarating-excellent">Excellent</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating-good" value="Good" >
+                  <input class="form-check-input mb-2 extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating-good" value="Good">
                   <label class="form-check-label" for="extrarating-good">Good</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating-ok" value="Ok" >
+                  <input class="form-check-input mb-2 extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating-ok" value="Ok">
                   <label class="form-check-label" for="extrarating-ok">Ok</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating-not-satisfied" value="Not Satisfied" >
+                  <input class="form-check-input mb-2 extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating-not-satisfied" value="Not Satisfied">
                   <label class="form-check-label" for="extrarating-not-satisfied">Not Satisfied</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input mb-2 extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating-not-taken" value="Not Taken" >
+                  <input class="form-check-input mb-2 extrarating" type="radio" name="menu_item[extra][rating]" id="extrarating-not-taken" value="Not Taken">
                   <label class="form-check-label" for="extrarating-not-taken">Not Taken</label>
                 </div>
               </div>
