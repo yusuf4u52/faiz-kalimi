@@ -8,8 +8,8 @@ include('../navbar.php');
         <div class="row">
             <div class="col-12">
                 <h2 class="mb-3">Active Thali</h2>
-                <?php $start_thali = mysqli_query($link, "SELECT * FROM thalilist WHERE Active = 1 AND Transporter != '' ORDER BY Transporter ASC");
-                if($start_thali->num_rows > 0) { ?>
+                <?php $start_thali = mysqli_query($link, "SELECT * FROM thalilist WHERE Active = 1 AND hardstop !=1 AND Transporter != '' ORDER BY Transporter ASC");
+                if ($start_thali->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="userfeedmenu" class="table table-striped table-hover">
                             <thead>
