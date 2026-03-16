@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
     <div class="card-body">
         <div class="row align-items-center">
             <div class="col-6">
-                <h2 class="mb-3">Upload Sector List</h2>
+                <h2 class="mb-3">Upload Thali List</h2>
             </div>
         </div>
         <div class="row">
@@ -39,9 +39,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                     $headers = array_shift($rows);
                     // Skip header row and loop through the data
                     foreach ($rows as $row) {
-                        $sql = "UPDATE  thalilist SET `sector` = '" . $row[1] . "', `musaid` = '" . $row[2] . "' WHERE `society` = '".$row[0]."'";
-                        mysqli_query($link,$sql) or die(mysqli_error($link));
-                        echo '<h4>'.$row[0].' data updated successfully</h4>';
+                        echo '<pre>';
+                        print_r($row);
+                        die;
+                        //$sql = "UPDATE  thalilist SET `sector` = '" . $row[1] . "', `musaid` = '" . $row[2] . "' WHERE `society` = '" . $row[0] . "'";
+                        //mysqli_query($link, $sql) or die(mysqli_error($link));
+                        //echo '<h4>' . $row[0] . ' data updated successfully</h4>';
                     }
                 } else {
                     //echo "No file uploaded.";
