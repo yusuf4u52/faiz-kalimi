@@ -161,7 +161,7 @@ function content_display()
                             </label>
                             <div class="col-4">
                                 <select class="form-select form-select-sm" name="zabihat_count" id="zabihat_count">
-                                    <?= getCountDropdown(0, 5, $takhmeen_data->zabihat_count ?? 0) ?>
+                                    <?= getCountDropdown(0, 10, $takhmeen_data->zabihat_count ?? 0) ?>
                                 </select>
                             </div>
                             <div class="col-4">
