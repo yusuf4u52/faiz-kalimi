@@ -68,7 +68,7 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 										<input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
 									</td>
 									<td>
-										<input type="text" name="tiffinno" value="<?php echo $values['tiffinno']; ?>">
+										<input type="text" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" required>
 									</td>
 									<td>
 										<select class="form-select form-select-sm" name="thalisize" required>
