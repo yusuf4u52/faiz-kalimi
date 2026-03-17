@@ -5,12 +5,14 @@ extract($_POST);
 
 if (isset($transporter)) {
     $update_query = "UPDATE thalilist SET
-    sector = '" . mysqli_real_escape_string($link, $sector) . "',
+    tifinno = '" . mysqli_real_escape_string($link, $tiffinno) . "',
+    thalisize = '" . mysqli_real_escape_string($link, $thalisize) . "',
     Transporter = '" . mysqli_real_escape_string($link, $transporter) . "'
     WHERE Thali = '" . mysqli_real_escape_string($link, $Thali) . "'";
 } else {
     $update_query = "UPDATE thalilist SET
-    sector = '" . mysqli_real_escape_string($link, $sector) . "'
+    tifinno = '" . mysqli_real_escape_string($link, $tiffinno) . "',
+    thalisize = '" . mysqli_real_escape_string($link, $thalisize) . "'
     WHERE Thali = '" . mysqli_real_escape_string($link, $Thali) . "'";
 }
 
