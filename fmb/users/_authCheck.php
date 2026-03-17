@@ -43,6 +43,7 @@ $rights = array(
 		"/fmb/users/transporter/savelist.php",
 		"/fmb/users/transporter/activethali.php",
 		"/fmb/users/transporter/inactivethali.php",
+		"/fmb/users/transporter/hardstopthali.php",
 		"/fmb/users/transporter/thalicount.php",
 		"/fmb/users/transporter/report.php",
 		"/fmb/users/pendingactions.php",
@@ -91,4 +92,3 @@ if ($row = mysqli_fetch_assoc($sql)) {
 	header("Location: /fmb/users/index.php");
 	//exit;
 }
-?>
