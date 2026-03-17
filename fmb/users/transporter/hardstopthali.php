@@ -14,7 +14,6 @@ include('../navbar.php');
                         <table id="userfeedmenu" class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>Transporter</th>
                                     <th>Sabeel No</th>
                                     <th>Tiffin No</th>
                                     <th>Tiffin Size</th>
@@ -27,7 +26,6 @@ include('../navbar.php');
                             <tbody>
                                 <?php while ($hardstop_list = mysqli_fetch_assoc($hardstop_thali)) { ?>
                                     <tr>
-                                        <td><?php echo $hardstop_list['Transporter']; ?></td>
                                         <td><?php echo $hardstop_list['Thali']; ?></td>
                                         <td><?php echo $hardstop_list['tiffinno']; ?></td>
                                         <td><?php echo $hardstop_list['thalisize']; ?></td>
