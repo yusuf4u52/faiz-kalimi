@@ -2,7 +2,7 @@
 include('../header.php');
 include('../navbar.php');
 
-$query = "SELECT id, Thali, tiffinno, NAME, CONTACT, Active, Transporter, thalisize, extraRoti, yearly_hub, ITS_No, Email_ID, SEmail_ID, thalicount, Thali_start_date, Thali_stop_date, Full_Address, musaid, Paid, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist WHERE thalisize LIKE 'Friday' ORDER BY tiffinno ASC";
+$query = "SELECT id, Thali, tiffinno, NAME, CONTACT, Active, Transporter, thalisize, extraRoti, yearly_hub, ITS_No, Email_ID, SEmail_ID, thalicount, Thali_start_date, Thali_stop_date, wingflat, society, Full_Address, musaid, Paid, (Previous_Due + yearly_hub - Paid) AS Total_Pending FROM thalilist WHERE thalisize LIKE 'Friday' ORDER BY tiffinno ASC";
 $result = mysqli_query($link, $query);
 $max_days = mysqli_fetch_row(mysqli_query($link, "SELECT MAX(thalicount) as max FROM thalilist"));
 if (mysqli_num_rows($result) > 1): ?>
