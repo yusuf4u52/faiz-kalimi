@@ -32,7 +32,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 
 <div class="accordion" id="accordionMusaid">
 	<?php foreach ($musaid_list as $musaid) {
-		$result = mysqli_query($link, "SELECT * FROM thalilist where Previous_Due > 0 AND Previous_Due != 2 AND Previous_Due != 3 AND Transporter IS NOT NULL AND musaid='" . $musaid['email'] . "' order by `Paid %`");
+		$result = mysqli_query($link, "SELECT * FROM thalilist where Previous_Due > 3 AND Transporter IS NOT NULL AND musaid='" . $musaid['email'] . "' order by `Paid %`");
 		$thali_details = mysqli_fetch_all($result, MYSQLI_ASSOC);
 		$musaid_thali_count = count($thali_details);
 		if ($musaid_thali_count > 0) { ?>
@@ -82,9 +82,9 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 												<td>
 													<?php
 													$msg = "Salaam " . $values['NAME'] . ",
-														%0A%0AAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Iltemas che k aapni pending hoob jald si jald ada kariye ane hamne FMB khidmat team ne yaari aapiye.
+														%0A%0AAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Iltemas che k aapni previous year pending hoob jald si jald ada kariye ane hamne FMB khidmat team ne yaari aapiye.
 														%0A%0ASabil - " . $values['Thali'] . "
-														%0APending Hoob - " . $values['Total_Pending']
+														%0APending Hoob - " . $values['Previous_Due']
 													?>
 													<a target="_blank"
 														href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo ($msg); ?>">WhatsApp</a>
