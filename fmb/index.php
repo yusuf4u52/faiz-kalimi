@@ -64,6 +64,11 @@ if (isset($authUrl) || isset($_GET['status'])) {
 							<img class="img-fluid mx-auto d-block" src="assets/img/pakavi.avif" alt="pakavi" width=981
 								height="254" />
 							<hr>
+							<?php if (isset($_GET['status'])) { ?>
+								<div class="alert alert-danger" role="alert">
+									<?php echo $_GET['status']; ?>
+								</div>
+							<?php } ?>
 							<h3>Already have Kalimi Mohalla Sabil?</h3>
 							<a class="btn btn-light btn-lg" href="<?php echo $authUrl; ?>"><i class="bi bi-google"></i> Login with Google</a>
 						</div>
@@ -77,10 +82,4 @@ if (isset($authUrl) || isset($_GET['status'])) {
 				$_SESSION['fromLogin'] = "true";
 				$_SESSION['email'] = $user->email;
 				header('Location: users/index.php');
-			}
-
-			if (isset($_GET['status'])) { ?>
-					<script type="text/javascript">
-						alert('<?php echo $_GET['status']; ?>');
-					</script>
-				<?php } ?>
+			} ?>
