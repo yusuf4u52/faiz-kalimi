@@ -65,7 +65,7 @@ if (isset($authUrl) || isset($_GET['status'])) {
 								height="254" />
 							<hr>
 							<h3>Already have Kalimi Mohalla Sabil?</h3>
-							<a class="btn btn-light btn-lg" href="<?php echo $authUrl; ?>">Login With <i class="bi bi-google"></i></a>
+							<a class="btn btn-light btn-lg" href="<?php echo $authUrl; ?>"><i class="bi bi-google"></i> Login with Google</a>
 						</div>
 					</div>
 
@@ -77,6 +77,7 @@ if (isset($authUrl) || isset($_GET['status'])) {
 				$_SESSION['fromLogin'] = "true";
 				$_SESSION['email'] = $user->email;
 				header('Location: users/index.php');
+				exit;
 			}
 
 			if (isset($_GET['status'])) { ?>

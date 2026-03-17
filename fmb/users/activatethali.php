@@ -13,10 +13,21 @@ $values[] = "tiffinno = '" . addslashes($_POST['thalino']) . "'";
 $values[] = "thalisize = '" . addslashes($_POST['thalisize']) . "'";
 $values[] = "Active = '1'";
 $values[] = "Thali_Start_Date = '" . ($today) . "'";
-$values[] = "yearly_hub = '" . ($_POST['hub']) . "'";
+$values[] = "yearly_hub = '" . addslashes($_POST['hub']) . "'";
 
 if (isset($_POST['transporter'])) {
 	$values[] = "Transporter = '" . addslashes($_POST['transporter']) . "'";
+}
+
+if (isset($_POST['sector'])) {
+	$values[] = "sector = '" . addslashes($_POST['sector']) . "'";
+	$musaiddata = "Select musaid from `thalilist` where sector='" . $_POST['sector'] . "' limit 1";
+	$musaidresult = mysqli_query($link, $musaiddata);
+	if (mysqli_num_rows($musaidresult) > 0) {
+		$musaidrow = mysqli_fetch_assoc($musaidresult);
+		$musaid = $musaidrow['musaid'];
+		$values[] = "musaid = '" . addslashes($musaid) . "'";
+	}
 }
 
 mysqli_query($link, "UPDATE thalilist set " . implode(',', $values) . " WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));

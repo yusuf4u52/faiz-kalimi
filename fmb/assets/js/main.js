@@ -171,6 +171,21 @@
     daysOfWeekDisabled: 0,
   });
 
+  $(document).ready(function () {
+    function toggleSocietyFields() {
+      if ($("#society").val() === "Other") {
+        $("#society_name_wrapper, #society_address_wrapper").show();
+        $("#society_name_input, #society_address_input").prop("required", true);
+      } else {
+        $("#society_name_wrapper, #society_address_wrapper").hide();
+        $("#society_name_input, #society_address_input").prop(
+          "required",
+          false,
+        );
+      }
+    }
+  });
+
   $('[data-key="LazyLoad" ]').removeClass("hidden");
   var els = $(".gregdate");
   for (var i = 0; i < els.length; i++) {

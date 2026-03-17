@@ -19,14 +19,28 @@ if (isset($_POST['submit'])) {
 	if (mysqli_num_rows($thalilist_result) > 0) {
 		$msg = "Your data already exist in the system and so you can login directly.";
 	} else {
-		$thalidata = "Select Full_Address, musaid, sector, Transporter from `thalilist` where society='$society' limit 1";
-		$thalidataresult = mysqli_query($link, $thalidata);
-		if (mysqli_num_rows($thalidataresult) > 0) {
-			$thalidatarow = mysqli_fetch_assoc($thalidataresult);
-			$sector = $thalidatarow['sector'];
-			$transporter = $thalidatarow['Transporter'];
-			$musaid = $thalidatarow['musaid'];
-			$full_address = $thalidatarow['Full_Address'];
+		$society = mysqli_real_escape_string($link, $_POST['society']);
+
+		if ($society === 'Other') {
+			$society_name = mysqli_real_escape_string($link, $_POST['society_name']);
+			$society_address = mysqli_real_escape_string($link, $_POST['society_address']);
+
+			$society = $society_name;
+			$full_address = $society_address;
+
+			$sector = '';
+			$transporter = '';
+			$musaid = '';
+		} else {
+			$thalidata = "Select Full_Address, musaid, sector, Transporter from `thalilist` where society='$society' limit 1";
+			$thalidataresult = mysqli_query($link, $thalidata);
+			if (mysqli_num_rows($thalidataresult) > 0) {
+				$thalidatarow = mysqli_fetch_assoc($thalidataresult);
+				$sector = $thalidatarow['sector'];
+				$transporter = $thalidatarow['Transporter'];
+				$musaid = $thalidatarow['musaid'];
+				$full_address = $thalidatarow['Full_Address'];
+			}
 		}
 		$name = $firstname . " " . $fathername . " " . $lastname;
 		$sql = "INSERT INTO `thalilist` (`ITS_No`, `Name`, `CONTACT`, `WhatsApp`, `Email_ID`, `wingflat`, `society`, `sector`, `musaid`, `Transporter`, `Full_Address`) VALUES ('$its', '$name', '$mobile', '$whatsapp', '$email', '$wingflat', '$society', '$sector', '$musaid', '$transporter', '$full_address')";
@@ -120,7 +134,19 @@ include('../users/header.php'); ?>
 										<?php } ?>
 										<option value="Other">Other</option>
 									</select>
-									<p class="help-block mb-0 text-danger text-end"><small>(If your society/house name is not in the list, please select other and contact jamaat office)</small></p>
+									<p class="help-block mb-0 text-danger text-end"><small>(If your society/house name is not in the list then please select other)</small></p>
+								</div>
+							</div>
+							<div id="society_name_wrapper" class="mb-3 row" style="display:none;">
+								<label for="society_name" class="col-3 control-label">Other Society/House Name</label>
+								<div class="col-9">
+									<input type="text" class="form-control" name="society_name" id="society_name_input" />
+								</div>
+							</div>
+							<div id="society_address_wrapper" class="mb-3 row" style="display:none;">
+								<label for="society_address" class="col-3 control-label">Other Society/House Address</label>
+								<div class="col-9">
+									<textarea class="form-control" name="society_address" id="society_address_input"></textarea>
 								</div>
 							</div>
 							<div class="mb-3 row">

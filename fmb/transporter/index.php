@@ -1,6 +1,4 @@
-<?php include('header.php');
-
-session_start();
+<?php session_start();
 
 include('../users/connection.php');
 require_once('../users/libraries/Google/autoload.php');
@@ -50,14 +48,16 @@ if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
 } else {
 	$authUrl = $client->createAuthUrl();
 }
-if (isset($authUrl) || isset($_GET['status'])) { ?>
+
+if (isset($authUrl) || isset($_GET['status'])) {
+	include('header.php'); ?>
 	<div class="content mt-4 text-center">
 		<div class="container">
 			<div class="row">
 				<div class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
 					<div class="card">
 						<div class="card-body">
-							<img class="img-fluid mx-auto d-block" src="/fmb/assets/img/logo.avif" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" 
+							<img class="img-fluid mx-auto d-block" src="/fmb/assets/img/logo.avif" alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)"
 								width="253" height="253" />
 							<hr>
 							<img class="img-fluid mx-auto d-block" src="/fmb/assets/img/sakat-hoi.avif" alt="sakat hoi"
@@ -69,21 +69,17 @@ if (isset($authUrl) || isset($_GET['status'])) { ?>
 							<a class="btn btn-light btn-lg" href="<?php echo $authUrl; ?>">Login</a>
 						</div>
 					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-<?php } else {
-	$user = $service->userinfo->get();
-	$_SESSION['fromLogin'] = "true";
-	$_SESSION['email'] = $user->email;
-	header('Location: home.php');
-}
+				<?php include('footer.php');
+			} else {
+				$user = $service->userinfo->get();
+				$_SESSION['fromLogin'] = "true";
+				$_SESSION['email'] = $user->email;
+				header('Location: home.php');
+				exit;
+			}
 
-if (isset($_GET['status'])) { ?>
-	<script type="text/javascript">
-		alert('<?php echo $_GET['status']; ?>');
-	</script>
-<?php }
-
-include('footer.php'); ?>
+			if (isset($_GET['status'])) { ?>
+					<script type="text/javascript">
+						alert('<?php echo $_GET['status']; ?>');
+					</script>
+				<?php } ?>

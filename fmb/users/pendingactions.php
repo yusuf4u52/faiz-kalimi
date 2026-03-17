@@ -72,7 +72,7 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 									</td>
 									<td>
 										<select class="form-select form-select-sm" name="thalisize" required>
-											<option value=''>Select</option>
+											<option value=''>Select Thalisize</option>
 											<?php foreach ($thalisize_list as $tsize) { ?>
 												<option value='<?php echo $tsize; ?>' <?php echo ($tsize == $values['thalisize']) ? 'selected' : ''; ?>>
 													<?php echo $tsize; ?>
@@ -83,7 +83,7 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 									<td>
 										<?php if ($values['yearly_hub'] != "0") { ?>
 											<select class='transporter form-select form-select-sm' name='transporter' required>
-												<option value=''>Select</option>
+												<option value=''>Select Transporter</option>
 												<?php foreach ($transporter_list as $tname) { ?>
 													<option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>>
 														<?php echo $tname; ?>
@@ -121,8 +121,9 @@ SELECT (t1.Thali +1) AS gap_starts_at, (SELECT MIN( t3.Thali )-1 FROM thalilist 
 							<th>Thali No</th>
 							<th>Thali Size</th>
 							<th>Hub</th>
-							<th>Society</th>
-							<th>Address</th>
+							<th>Sector</th>
+							<th>Transporter</th>
+							<th>Full Address</th>
 							<th>Name</th>
 							<th>Mobile</th>
 							<th>Action</th>
@@ -136,8 +137,6 @@ SELECT (t1.Thali +1) AS gap_starts_at, (SELECT MIN( t3.Thali )-1 FROM thalilist 
 								<form action='activatethali.php' method='post'>
 									<input type='hidden' value='<?php echo $values['id']; ?>' name='id'>
 									<input type='hidden' value='<?php echo $values['NAME']; ?>' name='name'>
-									<input type='hidden' value='<?php echo $values['Transporter']; ?>'
-										name='trasnporter'>
 									<td>
 										<input class="form-control form-control-sm" type='text' name='sabeelno' class='' required='required'>
 									</td>
@@ -154,17 +153,22 @@ SELECT (t1.Thali +1) AS gap_starts_at, (SELECT MIN( t3.Thali )-1 FROM thalilist 
 										</select>
 									</td>
 									<td><input class="form-control form-control-sm" type='number' name="hub" required='required' value="<?php echo $values['yearly_hub']; ?>"></td>
+									<td>
+										<select class='sector form-select form-select-sm' name='sector' required>
+											<option value=''>Select Sector</option>
+											<?php foreach ($sector_list as $sector_name) { ?>
+												<option value='<?php echo $sector_name; ?>' <?php echo ($sector_name == $values['sector']) ? 'selected' : ''; ?>>
+													<?php echo $sector_name; ?>
+												</option>
+											<?php } ?>
+										</select>
 									</td>
 									<td>
-										<select class="form-select form-select-sm" name="society" required>
-											<option value="">Select Society</option>
-											<?php
-											$society_query = "SELECT DISTINCT `Society` FROM `thalilist` WHERE `Society` IS NOT NULL AND `Society` != '' ORDER BY `Society` ASC";
-											$society_result = mysqli_query($link, $society_query);
-											while ($society_row = mysqli_fetch_assoc($society_result)) {
-											?>
-												<option value="<?php echo $society_row['Society']; ?>" <?php echo ($society_row['Society'] == $values['society']) ? 'selected' : ''; ?>>
-													<?php echo $society_row['Society']; ?>
+										<select class='transporter form-select form-select-sm' name='transporter' required>
+											<option value=''>Select Transporter</option>
+											<?php foreach ($transporter_list as $tname) { ?>
+												<option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>>
+													<?php echo $tname; ?>
 												</option>
 											<?php } ?>
 										</select>
