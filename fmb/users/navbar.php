@@ -25,7 +25,7 @@ if (is_null($values['Active']) || $values['Active'] == 2) {
     $some_email = $_SESSION['email'];
     session_unset();
     session_destroy();
-    $status = "Sorry! Either $some_email is not registered with us OR your thali is not active. Send an email to kalimimohallapoona@gmail.com";
+    $status = "Sorry! Either $some_email is not registered with us or you are not taking barakat from Kalimi Mohallah. Please contact on below helpline numbers.";
     header("Location: /fmb/index.php?status=$status");
     exit;
 }
