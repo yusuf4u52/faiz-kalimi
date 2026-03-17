@@ -172,7 +172,7 @@
   });
 
   $(document).ready(function () {
-    function toggleSocietyFields() {
+    $("#society").change(function () {
       if ($("#society").val() === "Other") {
         $("#society_name_wrapper, #society_address_wrapper").show();
         $("#society_name_input, #society_address_input").prop("required", true);
@@ -183,7 +183,7 @@
           false,
         );
       }
-    }
+    });
   });
 
   $('[data-key="LazyLoad" ]').removeClass("hidden");
