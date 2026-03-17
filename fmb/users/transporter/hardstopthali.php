@@ -38,7 +38,6 @@ include('../navbar.php');
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th>Transporter</th>
                                     <th>Sabeel No</th>
                                     <th>Tiffin No</th>
                                     <th>Tiffin Size</th>
