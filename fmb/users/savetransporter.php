@@ -5,7 +5,7 @@ extract($_POST);
 
 if (isset($transporter)) {
     $update_query = "UPDATE thalilist SET
-    tifinno = '" . mysqli_real_escape_string($link, $tiffinno) . "',
+    tiffinno = '" . mysqli_real_escape_string($link, $tiffinno) . "',
     thalisize = '" . mysqli_real_escape_string($link, $thalisize) . "',
     Transporter = '" . mysqli_real_escape_string($link, $transporter) . "'
     WHERE Thali = '" . mysqli_real_escape_string($link, $Thali) . "'";
