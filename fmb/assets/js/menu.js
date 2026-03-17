@@ -82,7 +82,7 @@
     if (total > 4) {
       $(".modal-body #validate").remove();
       $(".modal-body").append(
-        '<div id="validate" class="row text-center"><div class="col-xs-12"><small class="text-danger">Total should not be greater than 4. Also 0.5 will also be count as 1</small><div>'
+        '<div id="validate" class="row text-center"><div class="col-xs-12"><small class="text-danger">Total should not be greater than 4. Also 0.5 will also be count as 1</small><div>',
       );
       return false;
     }
@@ -172,20 +172,20 @@
             feedmenu.find(".modal-body #validate").remove();
             var GivenDate = new Date(scheds[id].menu_date).toLocaleString(
               "en-US",
-              { timeZone: "Asia/Kolkata" }
+              { timeZone: "Asia/Kolkata" },
             );
             GivenDate = new Date(GivenDate);
             GivenDate.setDate(GivenDate.getDate() - 1);
             GivenDate.setHours(17, 0, 0, 0);
             var MenuDate = new Date(scheds[id].menu_date).toLocaleString(
               "en-US",
-              { timeZone: "Asia/Kolkata" }
+              { timeZone: "Asia/Kolkata" },
             );
             MenuDate = new Date(MenuDate);
             MenuDate.setHours(13, 0, 0, 0);
             var Sunday = new Date(scheds[id].menu_date).toLocaleString(
               "en-US",
-              { timeZone: "Asia/Kolkata" }
+              { timeZone: "Asia/Kolkata" },
             );
             Sunday = new Date(Sunday);
             Sunday.setDate(Sunday.getDate() + ((7 - Sunday.getDay()) % 7));
@@ -199,7 +199,7 @@
               editmenu
                 .find(".modal-title")
                 .html(
-                  "Miqaat on <strong>" + menu_date.toDateString() + "</strong>"
+                  "Miqaat on <strong>" + menu_date.toDateString() + "</strong>",
                 );
               editmenu.find("div#status").addClass("d-none");
               editmenu.find("div#thali").addClass("d-none");
@@ -218,7 +218,7 @@
                 .html(
                   "View/Edit Menu of <strong>" +
                     menu_date.toDateString() +
-                    "</strong>"
+                    "</strong>",
                 );
               editmenu.find("div#miqaat").addClass("d-none");
               editmenu.find("div#status").removeClass("d-none");
@@ -228,7 +228,7 @@
                 .html(
                   "Feedback Menu of <strong>" +
                     menu_date.toDateString() +
-                    "</strong>"
+                    "</strong>",
                 );
               if (scheds[id]?.status == "stop") {
                 editmenu.find("input#status").removeAttr("checked", "checked");

@@ -14,6 +14,7 @@ if (is_null($_SESSION['fromLogin'])) {
 
   //send them back
   header("Location: /fmb/index.php");
+  exit;
 }
 
 // check if request is in cut off time
@@ -41,3 +42,4 @@ mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`,`Operation`, `D
 
 $status = 'Stop Thali Successful';
 header("Location: index.php?status=$status");
+exit;

@@ -7,13 +7,18 @@
 
 const cacheName = "fmb-kalimi-cache-2.2.25";
 const startPage = "https://kalimijamaatpoona.org/fmb/";
-const offlinePage = "https://kalimijamaatpoona.org/fmb/";
+const offlinePage = "https://kalimijamaatpoona.org/fmb/offline.php";
 
-const filesToCache = [startPage, offlinePage];
+const filesToCache = [
+  "/fmb/",
+  "/fmb/assets/css/main.css",
+  "/fmb/assets/js/main.js",
+  "/fmb/assets/img/logo-192x192.png",
+];
 const neverCacheUrls = [
   /\/users\/viewmenu.php/,
-  /\/users\/assets\/css/,
-  /\/users\/assets\/js/,
+  /\/assets\/css/,
+  /\/assets\/js/,
   /\/admin/,
 ];
 
@@ -28,7 +33,7 @@ self.addEventListener("install", function (e) {
           return console.log("PWA: " + String(reason) + " " + url);
         });
       });
-    })
+    }),
   );
 });
 
@@ -43,9 +48,9 @@ self.addEventListener("activate", function (e) {
             console.log("PWA old cache removed", key);
             return caches.delete(key);
           }
-        })
+        }),
       );
-    })
+    }),
   );
   return self.clients.claim();
 });
@@ -53,13 +58,13 @@ self.addEventListener("activate", function (e) {
 // Range Data Code
 var fetchRangeData = function (event) {
   var pos = Number(
-    /^bytes\=(\d+)\-$/g.exec(event.request.headers.get("range"))[1]
+    /^bytes\=(\d+)\-$/g.exec(event.request.headers.get("range"))[1],
   );
   console.log(
     "Range request for",
     event.request.url,
     ", starting position:",
-    pos
+    pos,
   );
   event.respondWith(
     caches
@@ -87,7 +92,7 @@ var fetchRangeData = function (event) {
             ],
           ],
         });
-      })
+      }),
   );
 };
 
@@ -126,8 +131,8 @@ self.addEventListener("fetch", function (e) {
           })
           .catch(function () {
             // If the network is unavailable, get the request from cache
-            return cache.match(e.request.url);
-          })
+            return cache.match(e.request);
+          }),
       );
     } else {
       // For non-GET requests, simply fetch from the network
@@ -153,7 +158,7 @@ self.addEventListener("fetch", function (e) {
       })
       .catch(function () {
         return caches.match(offlinePage);
-      })
+      }),
   );
   //strategy_replace_end
 });
@@ -166,7 +171,7 @@ function checkNeverCacheList(url) {
   return true;
 }
 importScripts(
-  "https://storage.googleapis.com/workbox-cdn/releases/6.0.2/workbox-sw.js"
+  "https://storage.googleapis.com/workbox-cdn/releases/6.0.2/workbox-sw.js",
 );
 if (workbox.googleAnalytics) {
   try {

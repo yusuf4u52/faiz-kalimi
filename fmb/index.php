@@ -1,6 +1,4 @@
-<?php include('users/header.php');
-
-session_start();
+<?php session_start();
 
 include('users/connection.php');
 require_once('users/libraries/Google/autoload.php');
@@ -50,43 +48,39 @@ if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
 } else {
 	$authUrl = $client->createAuthUrl();
 }
-if (isset($authUrl) || isset($_GET['status'])) { ?>
-
+if (isset($authUrl) || isset($_GET['status'])) {
+	include('users/header.php'); ?>
 	<div class="content mt-4 text-center">
 		<div class="container">
 			<div class="row">
 				<div class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
 					<div class="card">
 						<div class="card-body">
-							<img class="img-fluid mx-auto d-block" src="styles/img/logo.avif"
+							<img class="img-fluid mx-auto d-block" src="assets/img/logo.avif"
 								alt="Faiz ul Mawaid il Burhaniyah (Kalimi Mohalla - Poona)" width="253" height="253" />
 							<hr>
-							<img class="img-fluid mx-auto d-block" src="styles/img/sakat-hoi.avif" alt="sakat hoi"
+							<img class="img-fluid mx-auto d-block" src="assets/img/sakat-hoi.avif" alt="sakat hoi"
 								width="877" height="284" />
-							<img class="img-fluid mx-auto d-block" src="styles/img/pakavi.avif" alt="pakavi" width=981
+							<img class="img-fluid mx-auto d-block" src="assets/img/pakavi.avif" alt="pakavi" width=981
 								height="254" />
 							<hr>
 							<h3>Already have Kalimi Mohalla Sabil?</h3>
-							<a class="btn btn-light btn-lg" href="<?php echo $authUrl; ?>">Login</a>
+							<a class="btn btn-light btn-lg" href="<?php echo $authUrl; ?>">Login With <i class="bi bi-google"></i></a>
 						</div>
 					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-<?php } else {
 
-	$user = $service->userinfo->get();
+				<?php include('users/footer.php');
+			} else {
 
-	$_SESSION['fromLogin'] = "true";
-	$_SESSION['email'] = $user->email;
-	header('Location: users/index.php');
-}
+				$user = $service->userinfo->get();
 
-if (isset($_GET['status'])) { ?>
-	<script type="text/javascript">
-		alert('<?php echo $_GET['status']; ?>');
-	</script>
-<?php }
+				$_SESSION['fromLogin'] = "true";
+				$_SESSION['email'] = $user->email;
+				header('Location: users/index.php');
+			}
 
-include('users/footer.php'); ?>
+			if (isset($_GET['status'])) { ?>
+					<script type="text/javascript">
+						alert('<?php echo $_GET['status']; ?>');
+					</script>
+				<?php } ?>

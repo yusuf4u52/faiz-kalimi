@@ -5,7 +5,7 @@ include('navbar.php');
 
 <div class="card">
     <div class="card-body">
-        <?php if (!empty($values['yearly_hub'])) { 
+        <?php if (!empty($values['yearly_hub'])) {
             if (!empty($_SESSION['thali'])) { ?>
                 <div class="row">
                     <div class="col-6">
@@ -48,7 +48,7 @@ include('navbar.php');
                             <form id="user_stop" class="form-horizontal" method="post" action="stopthali.php" autocomplete="off">
                                 <input type="hidden" name="action" value="stop_date_thali" />
                                 <input type="hidden" id="thali" name="thali"
-                                    value="<?php echo $_SESSION['thali']; ?>" />
+                                    value="<?php echo $_SESSION['thaliid']; ?>" />
                                 <div class="modal-header">
                                     <h4 class="modal-title">Stop Thali</h4>
                                     <button type="button" class="btn ms-auto" data-bs-dismiss="modal"
@@ -62,7 +62,8 @@ include('navbar.php');
                                         <input type="text" class="form-control" name="end_date" id="end_date"
                                             placeholder="End Date">
                                     </div>
-                                    <p class="text-danger mb-0"><strong>Note:</strong> RSVP will end at 5 PM one day before start date.<p>
+                                    <p class="text-danger mb-0"><strong>Note:</strong> RSVP will end at 5 PM one day before start date.
+                                    <p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-light"
@@ -76,7 +77,7 @@ include('navbar.php');
                 <?php
                 date_default_timezone_set('Asia/Kolkata');
                 $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-                    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `Thali` = '" . $_SESSION['thali'] . "'
+                    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `thali` = '" . $_SESSION['thaliid'] . "'
                 ),
                 grouped_dates AS (
                     SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
@@ -113,7 +114,8 @@ include('navbar.php');
                     </div>
                 <?php } else {
                     echo '<h5 class="text-center mb-3">Currently you has no stop dates.</h5>';
-                } mysqli_free_result($stop_dates);
+                }
+                mysqli_free_result($stop_dates);
             } else { ?>
                 <h5 class="mb-3">Sabeel no is not assigned yet. Please contact Moiz Bhai Mulla at <a href="https://api.whatsapp.com/send?phone=+919096778753">9096778753</a> to view this page.</h5>
             <?php }
@@ -127,7 +129,7 @@ include('navbar.php');
 
 <?php
 $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `Thali` = '" . $_SESSION['thali'] . "'
+    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `thali` = '" . $_SESSION['thaliid'] . "'
 ),
 grouped_dates AS (
     SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
@@ -160,7 +162,8 @@ if (isset($stop_dates) && $stop_dates->num_rows > 0) {
                 </div>
             </div>
         </div>
-    <?php }
-} mysqli_free_result($stop_dates); ?>
+<?php }
+}
+mysqli_free_result($stop_dates); ?>
 
 <?php include('footer.php'); ?>

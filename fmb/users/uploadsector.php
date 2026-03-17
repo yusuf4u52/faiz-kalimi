@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
     <div class="card-body">
         <div class="row align-items-center">
             <div class="col-6">
-                <h2 class="mb-3">Upload Sector List</h2>
+                <h2 class="mb-3">Upload Thali List</h2>
             </div>
         </div>
         <div class="row">
@@ -39,9 +39,24 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                     $headers = array_shift($rows);
                     // Skip header row and loop through the data
                     foreach ($rows as $row) {
-                        $sql = "UPDATE  thalilist SET `sector` = '" . $row[1] . "', `musaid` = '" . $row[2] . "' WHERE `society` = '".$row[0]."'";
-                        mysqli_query($link,$sql) or die(mysqli_error($link));
-                        echo '<h4>'.$row[0].' data updated successfully</h4>';
+                        if ($row[15] == 'Transfer') {
+                            $sql = "UPDATE  thalilist SET `Active` = '0', `hardstop` = '1', `hardstop_comment` = '" . $row[16] . "' WHERE `ITS_No` = '" . $row[1] . "'";
+                            mysqli_query($link, $sql) or die(mysqli_error($link));
+                            echo '<h4 class="text-danger">' . $row[1] . ' Transfer successfully</h4>';
+                        } elseif (is_numeric($row[12]) && $row[12] > 0) {
+                            if (empty($row[13]) && $row[13] == '') {
+                                $Zabihat = 0;
+                            } else {
+                                $Zabihat = $row[13];
+                            }
+                            $sql = "UPDATE thalilist SET `Active` = '1', `yearly_hub` = '" . $row[12] . "', `Zabihat` = '" . $Zabihat . "' WHERE `ITS_No` = '" . $row[1] . "'";
+                            mysqli_query($link, $sql) or die(mysqli_error($link));
+                            echo '<h4 class="text-success">' . $row[1] . ' updated successfully</h4>';
+                        } else {
+                            $sql = "UPDATE  thalilist SET `Active` = '0', `yearly_hub` = '0', `Zabihat` = '0' WHERE `ITS_No` = '" . $row[1] . "'";
+                            mysqli_query($link, $sql) or die(mysqli_error($link));
+                            echo '<h4 class="text-warning">' . $row[1] . ' Stopped successfully</h4>';
+                        }
                     }
                 } else {
                     //echo "No file uploaded.";

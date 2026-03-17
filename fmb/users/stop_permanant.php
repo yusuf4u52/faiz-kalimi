@@ -1,6 +1,6 @@
 <?php
-include ('connection.php');
-include ('_authCheck.php');
+include('connection.php');
+include('_authCheck.php');
 include('getHijriDate.php');
 
 
@@ -10,7 +10,8 @@ $clearhub = true;
 if (isset($_POST['action']) && $_POST['action'] == 'stop_permanant') {
 	stoppermenant($thali, $clearhub);
 
-	function stoppermenant($thali, $clearhub) {
+	function stoppermenant($thali, $clearhub)
+	{
 
 		$today = getTodayDateHijri();
 		$sql = "select id, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending from thalilist WHERE Thali = '" . $thali . "'";
@@ -24,6 +25,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'stop_permanant') {
 		}
 		mysqli_query($link, "update change_table set processed = 1 where userid = '" . $name['id'] . "' and `Operation` in ('New Thali') and processed = 0") or die(mysqli_error($link));
 
-		header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thalino'] . "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=spermanant" );
+		header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thalino'] . "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=spermanant");
+		exit;
 	}
 }

@@ -8,8 +8,8 @@ include('../navbar.php');
         <div class="row">
             <div class="col-12">
                 <h2 class="mb-3">Inactive Thali</h2>
-                <?php $stop_thali = mysqli_query($link, "SELECT * FROM thalilist WHERE Active = 0  AND Transporter != '' ORDER BY Transporter ASC");
-                if($stop_thali->num_rows > 0) { ?>
+                <?php $stop_thali = mysqli_query($link, "SELECT * FROM thalilist WHERE Active = 0 AND hardstop != 1  AND Transporter != '' ORDER BY Transporter ASC");
+                if ($stop_thali->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="userfeedmenu" class="table table-striped table-hover">
                             <thead>
@@ -31,7 +31,7 @@ include('../navbar.php');
                                         <td><?php echo $stop_list['tiffinno']; ?></td>
                                         <td><?php echo $stop_list['thalisize']; ?></td>
                                         <td class="text-capitalize"><?php echo strtolower($stop_list['NAME']); ?></td>
-                                        <td><?php echo $start_list['CONTACT']; ?></td>
+                                        <td><a href="tel:<?php echo $stop_list['CONTACT']; ?>"><?php echo $stop_list['CONTACT']; ?></a></td>
                                         <td><?php echo $stop_list['wingflat'] . ' ' . $stop_list['society']; ?></td>
                                     </tr>
                                 <?php } ?>

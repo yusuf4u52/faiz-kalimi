@@ -16,6 +16,13 @@ while ($values1 = mysqli_fetch_assoc($result1)) {
 	$transporter_list[] = $values1['Name'];
 }
 
+$thalisize_list = array();
+$thalisize_query = "SELECT Distinct(thalisize) as size FROM thalilist where thalisize is not NULL";
+$thalisize_result = mysqli_query($link, $thalisize_query);
+while ($thalisize_values = mysqli_fetch_assoc($thalisize_result)) {
+	$thalisize_list[] = $thalisize_values['size'];
+}
+
 $sector_list = array();
 $sector_query = "SELECT DISTINCT(sector) FROM `thalilist` WHERE sector IS NOT NULL order by sector";
 $sector_result = mysqli_query($link, $sector_query);
@@ -39,10 +46,10 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 				<table class="table table-striped display" width="100%">
 					<thead>
 						<tr>
+							<th>Sabeel No</th>
 							<th>Thali No</th>
+							<th>Thali Size</th>
 							<th>Transporter</th>
-							<th>Sector</th>
-							<th>Subsector</th>
 							<th>Society</th>
 							<th>Name</th>
 							<th>Active</th>
@@ -52,62 +59,38 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 					<tbody>
 						<?php
 						while ($values = mysqli_fetch_assoc($result)) {
-							?>
+						?>
 
 							<tr>
 								<form action='savetransporter.php' method='post'>
 									<td>
 										<?php echo $values['Thali']; ?>
-										<input type="hidden" name="Thali"
-											value="<?php echo $values['Thali']; ?>">
+										<input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
 									</td>
 									<td>
-										<?php
-										if ($values['yearly_hub'] != "0") {
-											?>
-											<select class='transporter form-select form-select-sm'
-												name='transporter' required>
+										<input type="text" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" required>
+									</td>
+									<td>
+										<select class="form-select form-select-sm" name="thalisize" required>
+											<option value=''>Select</option>
+											<?php foreach ($thalisize_list as $tsize) { ?>
+												<option value='<?php echo $tsize; ?>' <?php echo ($tsize == $values['thalisize']) ? 'selected' : ''; ?>>
+													<?php echo $tsize; ?>
+												</option>
+											<?php } ?>
+										</select>
+									</td>
+									<td>
+										<?php if ($values['yearly_hub'] != "0") { ?>
+											<select class='transporter form-select form-select-sm' name='transporter' required>
 												<option value=''>Select</option>
-												<?php
-												foreach ($transporter_list as $tname) {
-													?>
+												<?php foreach ($transporter_list as $tname) { ?>
 													<option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>>
 														<?php echo $tname; ?>
 													</option>
-													<?php
-												}
-												?>
+												<?php } ?>
 											</select>
 										<?php } ?>
-									</td>
-									<td>
-										<select class='sector form-select form-select-sm' name='sector'
-											required>
-											<option value=''>Select</option>
-											<?php
-											foreach ($sector_list as $sector_name) {
-												?>
-												<option value='<?php echo $sector_name; ?>' <?php echo ($sector_name == $values['sector']) ? 'selected' : ''; ?>>
-													<?php echo $sector_name; ?>
-												</option>
-												<?php
-											}
-											?>
-										</select>
-									</td>
-									<td>
-										<select class='subsector form-select form-select-sm'
-											name='subsector' required>
-											<option value=''>Select</option>
-											<?php
-											foreach ($subsector_list as $subsector_name) {
-												?>
-												<option value='<?php echo $subsector_name; ?>' <?php echo ($subsector_name == $values['subsector']) ? 'selected' : ''; ?>><?php echo $subsector_name; ?>
-												</option>
-												<?php
-											}
-											?>
-										</select>
 									</td>
 									<td><?php echo $values['society']; ?></td>
 									<td><?php echo $values['NAME']; ?></td>
@@ -134,10 +117,11 @@ SELECT (t1.Thali +1) AS gap_starts_at, (SELECT MIN( t3.Thali )-1 FROM thalilist 
 				<table class="table table-striped display" width="100%">
 					<thead>
 						<tr>
+							<th>Sabeel No</th>
 							<th>Thali No</th>
-							<th>Transporter</th>
-							<th>Musaid</th>
+							<th>Thali Size</th>
 							<th>Hub</th>
+							<th>Society</th>
 							<th>Address</th>
 							<th>Name</th>
 							<th>Mobile</th>
@@ -147,58 +131,45 @@ SELECT (t1.Thali +1) AS gap_starts_at, (SELECT MIN( t3.Thali )-1 FROM thalilist 
 					<tbody>
 						<?php
 						while ($values = mysqli_fetch_assoc($result_new_thali)) {
-							?>
+						?>
 							<tr>
 								<form action='activatethali.php' method='post'>
-									<input type='hidden' value='<?php echo $values['Email_ID']; ?>'
-										name='email'>
 									<input type='hidden' value='<?php echo $values['id']; ?>' name='id'>
 									<input type='hidden' value='<?php echo $values['NAME']; ?>' name='name'>
-									<input type='hidden' value='<?php echo $values['CONTACT']; ?>'
-										name='contact'>
-									<input type='hidden' value='<?php echo $values['Full_Address']; ?>'
-										name='address'>
 									<input type='hidden' value='<?php echo $values['Transporter']; ?>'
 										name='trasnporter'>
 									<td>
-										<input class="form-control form-control-sm" type='text' size=8
-											name='thalino' class='' required='required'>
+										<input class="form-control form-control-sm" type='text' name='sabeelno' class='' required='required'>
 									</td>
 									<td>
-										<select class="form-select form-select-sm" name="transporter"
-											required='required'>
-											<option value=''>Select</option>
-											<?php
-											foreach ($transporter_list as $tname) {
-												?>
-												<option value='<?php echo $tname; ?>'><?php echo $tname; ?>
-												</option>
-												<?php
-											}
-											?>
-										</select>
+										<input class="form-control form-control-sm" type='text' name="thalino" required='required'>
 									</td>
 									<td>
-										<select class="form-select form-select-sm" name="musaid"
-											required='required'>
-											<option value=''>Select</option>
-											<?php
-											$musaid_list = mysqli_query($link, "SELECT username, email FROM users");
-											while ($musaid = mysqli_fetch_assoc($musaid_list)) {
-												?>
-												<option value='<?php echo $musaid['email']; ?>'>
-													<?php echo $musaid['username']; ?>
-												</option>
-												<?php
-											}
-											?>
+										<select class="form-select form-select-sm" name="thalisize" required>
+											<option value="">Select Thali Size</option>
+											<option value="Mini">Mini</option>
+											<option value="Small">Small</option>
+											<option value="Medium">Medium</option>
+											<option value="Large">Large</option>
 										</select>
 									</td>
-									<td><input class="form-control form-control-sm" type='text' name="hub"
-											size=8 required='required'
-											value="<?php echo $values['yearly_hub']; ?>"></td>
+									<td><input class="form-control form-control-sm" type='number' name="hub" required='required' value="<?php echo $values['yearly_hub']; ?>"></td>
 									</td>
-									<td><?php echo $values['Full_Address']; ?></td>
+									<td>
+										<select class="form-select form-select-sm" name="society" required>
+											<option value="">Select Society</option>
+											<?php
+											$society_query = "SELECT DISTINCT `Society` FROM `thalilist` WHERE `Society` IS NOT NULL AND `Society` != '' ORDER BY `Society` ASC";
+											$society_result = mysqli_query($link, $society_query);
+											while ($society_row = mysqli_fetch_assoc($society_result)) {
+											?>
+												<option value="<?php echo $society_row['Society']; ?>" <?php echo ($society_row['Society'] == $values['society']) ? 'selected' : ''; ?>>
+													<?php echo $society_row['Society']; ?>
+												</option>
+											<?php } ?>
+										</select>
+									</td>
+									<td><?php echo $values['wingflat'] . ', ' . $values['society'] . ', ' . $values['Full_Address']; ?></td>
 									<td><?php echo $values['NAME']; ?></td>
 									<td><?php echo $values['CONTACT']; ?></td>
 									<td><button type="submit"

@@ -11,6 +11,7 @@ if ($_POST['fromLogin']) {
 if (is_null($_SESSION['fromLogin'])) {
   //send them back\
   header("Location: /fmb/index.php");
+  exit;
 }
 
 // check if request is in cut off time
