@@ -67,7 +67,7 @@ if (isset($authUrl) || isset($_GET['status'])) { ?>
 								height="254" />
 							<hr>
 							<h3>Already have Kalimi Mohalla Sabil?</h3>
-							<a class="btn btn-light btn-lg" href="<?php echo $authUrl; ?>">Login With Google</a>
+							<a class="btn btn-light btn-lg" href="<?php echo $authUrl; ?>">Login With <i class="bi bi-google"></i></a>
 						</div>
 					</div>
 				</div>

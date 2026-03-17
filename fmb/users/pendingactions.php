@@ -16,6 +16,13 @@ while ($values1 = mysqli_fetch_assoc($result1)) {
 	$transporter_list[] = $values1['Name'];
 }
 
+$thalisize_list = array();
+$thalisize_query = "SELECT Distinct(thalisize) as size FROM thalilist where thalisize is not NULL";
+$thalisize_result = mysqli_query($link, $thalisize_query);
+while ($thalisize_values = mysqli_fetch_assoc($thalisize_result)) {
+	$thalisize_list[] = $thalisize_values['size'];
+}
+
 $sector_list = array();
 $sector_query = "SELECT DISTINCT(sector) FROM `thalilist` WHERE sector IS NOT NULL order by sector";
 $sector_result = mysqli_query($link, $sector_query);
@@ -41,8 +48,8 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 						<tr>
 							<th>Sabeel No</th>
 							<th>Thali No</th>
+							<th>Thali Size</th>
 							<th>Transporter</th>
-							<th>Sector</th>
 							<th>Society</th>
 							<th>Name</th>
 							<th>Active</th>
@@ -58,47 +65,32 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 								<form action='savetransporter.php' method='post'>
 									<td>
 										<?php echo $values['Thali']; ?>
-										<input type="hidden" name="Thali"
-											value="<?php echo $values['Thali']; ?>">
+										<input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
 									</td>
 									<td>
-										<?php echo $values['tiffinno']; ?>
-										<input type="hidden" name="tiffinno"
-											value="<?php echo $values['tiffinno']; ?>">
+										<input type="text" name="tiffinno" value="<?php echo $values['tiffinno']; ?>">
 									</td>
 									<td>
-										<?php
-										if ($values['yearly_hub'] != "0") {
-										?>
-											<select class='transporter form-select form-select-sm'
-												name='transporter' required>
+										<select class="form-select form-select-sm" name="thalisize" required>
+											<option value=''>Select</option>
+											<?php foreach ($thalisize_list as $tsize) { ?>
+												<option value='<?php echo $tsize; ?>' <?php echo ($tsize == $values['thalisize']) ? 'selected' : ''; ?>>
+													<?php echo $tsize; ?>
+												</option>
+											<?php } ?>
+										</select>
+									</td>
+									<td>
+										<?php if ($values['yearly_hub'] != "0") { ?>
+											<select class='transporter form-select form-select-sm' name='transporter' required>
 												<option value=''>Select</option>
-												<?php
-												foreach ($transporter_list as $tname) {
-												?>
+												<?php foreach ($transporter_list as $tname) { ?>
 													<option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>>
 														<?php echo $tname; ?>
 													</option>
-												<?php
-												}
-												?>
+												<?php } ?>
 											</select>
 										<?php } ?>
-									</td>
-									<td>
-										<select class='sector form-select form-select-sm' name='sector'
-											required>
-											<option value=''>Select</option>
-											<?php
-											foreach ($sector_list as $sector_name) {
-											?>
-												<option value='<?php echo $sector_name; ?>' <?php echo ($sector_name == $values['sector']) ? 'selected' : ''; ?>>
-													<?php echo $sector_name; ?>
-												</option>
-											<?php
-											}
-											?>
-										</select>
 									</td>
 									<td><?php echo $values['society']; ?></td>
 									<td><?php echo $values['NAME']; ?></td>

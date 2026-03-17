@@ -17,3 +17,4 @@ if (isset($transporter)) {
 $result = mysqli_query($link, $update_query) or die(mysqli_error($link));
 
 header("Location: pendingactions.php");
+exit;

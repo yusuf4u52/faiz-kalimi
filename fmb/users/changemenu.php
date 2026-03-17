@@ -19,7 +19,7 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
     }
 
     if (isset($_POST['action']) && $_POST['action'] == 'admin_change_menu') {
-        $GivenDate = new DateTime($menu_date . '00:00:00');
+        $GivenDate = new DateTime($menu_date . '23:00:00');
         $CurrentDate = date('Y-m-d H:i:s');
     }
 
@@ -150,10 +150,12 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
 
     if (isset($_POST['action']) && $_POST['action'] == 'change_menu') {
         header("Location: /fmb/users/index.php?action=" . $action . "&date=" . $menu_date);
+        exit;
     }
 
     if (isset($_POST['action']) && $_POST['action'] == 'admin_change_menu') {
-        header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thali'] . "&tiffinno=" . $_POST['tiffinno'] .  "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=" . $action . "&date=" . $menu_date);
+        header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thalino'] . "&tiffinno=" . $_POST['tiffinno'] .  "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=" . $action . "&date=" . $menu_date);
+        exit;
     }
 
     if (isset($_POST['action']) && $_POST['action'] == 'feedback_menu') {
@@ -169,5 +171,6 @@ if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
         mysqli_query($link, $sql) or die(mysqli_error($link));
         $date = $menu_date;
         header("Location: /fmb/users/index.php?action=" . $action . "&date=" . $menu_date);
+        exit;
     }
 }

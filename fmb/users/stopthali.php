@@ -57,12 +57,15 @@ if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
         }
         if (isset($_POST['action']) && $_POST['action'] == 'stop_thali') {
             header("Location: /fmb/users/index.php?action=" . $action . "&sdate=" . $sdate . "&edate=" . $edate);
+            exit;
         }
         if (isset($_POST['action']) && $_POST['action'] == 'admin_stop_thali') {
-            header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thali'] . "&tiffinno=" . $_POST['tiffinno'] . "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=" . $action . "&sdate=" . $sdate . "&edate=" . $edate);
+            header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thalino'] . "&tiffinno=" . $_POST['tiffinno'] . "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=" . $action . "&sdate=" . $sdate . "&edate=" . $edate);
+            exit;
         }
         if (isset($_POST['action']) && $_POST['action'] == 'stop_date_thali') {
             header("Location: /fmb/users/stop_dates.php?action=" . $action . "&sdate=" . $sdate . "&edate=" . $edate);
+            exit;
         }
     }
 
@@ -82,12 +85,12 @@ if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
 
         if (isset($_POST['action']) && $_POST['action'] == 'start_thali') {
             header("Location: /fmb/users/stop_dates.php?action=start&sdate=" . $sdate . "&edate=" . $edate);
+            exit;
         }
 
         if (isset($_POST['action']) && $_POST['action'] == 'admin_start_thali') {
-            header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thali'] . "&tiffinno=" . $_POST['tiffinno'] . "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=start&sdate=" . $sdate . "&edate=" . $edate);
+            header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thalino'] . "&tiffinno=" . $_POST['tiffinno'] . "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=start&sdate=" . $sdate . "&edate=" . $edate);
+            exit;
         }
     }
 }
-
-?>

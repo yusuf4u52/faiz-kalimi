@@ -39,7 +39,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
       <li class="list-group-item">
         <ul class="nav nav-underline">
           <!--<li class="nav-item"><a class="nav-link" href="#" data-key="payhoob" data-thali="<?php echo $values['Thali']; ?>">Pay Hoob</a></li>-->
-          <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeMusaid">Change Musaid</a>
+          <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeMusaid">Change Masool</a>
           </li>
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#extraRoti">Extra Roti</a>
           </li>
@@ -143,8 +143,11 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
       <?php } ?>
       <li class="list-group-item">
         <div class="fw-bold">Thali Delivered</div>
-        <?php echo round($values['thalicount'] * 100 / $max_days[0]); ?>%
-        of days
+        <?php
+        echo ($max_days[0] > 0)
+          ? round($values['thalicount'] * 100 / $max_days[0]) . '%'
+          : '0%';
+        ?> of days
       </li>
     </ul>
   </div>
