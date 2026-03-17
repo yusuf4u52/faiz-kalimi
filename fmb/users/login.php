@@ -87,6 +87,7 @@ if (isset($authUrl) || isset($_GET['status'])) { ?>
 if (isset($_GET['status'])) { ?>
   <script type="text/javascript">
     alert('<?php echo $_GET['status']; ?>');
+    window.location.href = '/fmb/index.php';
   </script>
 <?php }
 
