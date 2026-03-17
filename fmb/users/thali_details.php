@@ -47,12 +47,12 @@ $transvalues = $transporters->fetch_assoc();
 				</li>
 			<?php } ?>
 			<li class="list-group-item">
-				<div class="fw-bold">Previous Due</div>
-				<?php echo '₹ ' . $values['Previous_Due']; ?>
-			</li>
-			<li class="list-group-item">
 				<div class="fw-bold">Previous Year Takhmeen</div>
 				<?php echo '₹ ' . $values['previous_hub']; ?>
+			</li>
+			<li class="list-group-item">
+				<div class="fw-bold">Previous Due</div>
+				<?php echo '₹ ' . $values['Previous_Due']; ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Current Year Takhmeen</div>
