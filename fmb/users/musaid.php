@@ -2,19 +2,6 @@
 include('header.php');
 include('navbar.php');
 
-if ($_POST) {
-	if (!empty($_POST['date']) && !empty($_POST['rs']) && !empty($_POST['comment'])) {
-		//echo "1sst";
-		mysqli_query($link, "INSERT INTO `hub_commitment` (`author_id`, `thali`, `comments`, `commit_date`, `rs`) VALUES ('" . $_SESSION['thaliid'] . "', '" . $_POST['Thali'] . "', '" . mysqli_real_escape_string($link, $_POST['comment']) . "', '" . $_POST['date'] . "', '" . $_POST['rs'] . "')") or die(mysqli_error($link));
-	} else if (!empty($_POST['date']) && !empty($_POST['rs'])) {
-		//echo "2ndt";
-		mysqli_query($link, "INSERT INTO `hub_commitment` (`author_id`,`thali`, `commit_date`, `rs`) VALUES ('" . $_SESSION['thaliid'] . "', '" . $_POST['Thali'] . "', '" . $_POST['date'] . "', '" . $_POST['rs'] . "')") or die(mysqli_error($link));
-	} else if (!empty($_POST['comment'])) {
-		//echo "3rd";
-		mysqli_query($link, "INSERT INTO `hub_commitment` (`author_id`,`thali`, `comments`) VALUES ('" . $_SESSION['thaliid'] . "', '" . $_POST['Thali'] . "', '" . mysqli_real_escape_string($link, $_POST['comment']) . "')") or die(mysqli_error($link));
-	}
-}
-
 $current_year = mysqli_fetch_assoc(mysqli_query($link, "SELECT value FROM settings where `key`='current_year'"));
 $previous_year = ((int) $current_year['value']) - 1;
 
@@ -44,13 +31,11 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 ?>
 
 <div class="accordion" id="accordionMusaid">
-	<?php
-	foreach ($musaid_list as $musaid) {
+	<?php foreach ($musaid_list as $musaid) {
 		$result = mysqli_query($link, "SELECT * FROM thalilist where Total_Pending > 0 AND yearly_hub != 2 AND yearly_hub != 3 AND Transporter IS NOT NULL AND musaid='" . $musaid['email'] . "' order by `Paid %`");
 		$thali_details = mysqli_fetch_all($result, MYSQLI_ASSOC);
 		$musaid_thali_count = count($thali_details);
-		if ($musaid_thali_count > 0) {
-	?>
+		if ($musaid_thali_count > 0) { ?>
 			<div class="accordion-item">
 				<h2 class="accordion-header" id="heading<?php echo $musaid['id']; ?>">
 					<button class="accordion-button <?php if (count($musaid_list) !== 1)
@@ -122,10 +107,8 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 					</div>
 				</div>
 			</div>
-	<?php
-		}
-	}
-	?>
+	<?php }
+	} ?>
 </div>
 
 <?php include('footer.php'); ?>

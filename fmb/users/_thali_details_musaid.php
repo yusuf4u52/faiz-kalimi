@@ -127,7 +127,7 @@ if ($val !== FALSE) {
 									</li>
 									<li class="list-group-item">
 										<div class="fw-bold">Thali Delivered</div>
-										<?php echo round($values['thalicount'] * 100 / $max_days[0]); ?>% of days
+										<?php echo ($max_days[0] > 0) ? round($values['thalicount'] * 100 / $max_days[0]) . '%' : '0%'; ?> of days
 									</li>
 									<li class="list-group-item">
 										<div class="table-responsive">
