@@ -77,7 +77,6 @@ if (isset($authUrl) || isset($_GET['status'])) {
 				$_SESSION['fromLogin'] = "true";
 				$_SESSION['email'] = $user->email;
 				header('Location: users/index.php');
-				exit;
 			}
 
 			if (isset($_GET['status'])) { ?>
