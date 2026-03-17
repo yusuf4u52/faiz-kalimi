@@ -7,9 +7,9 @@ include('../navbar.php');
     <div class="card-body">
         <div class="row">
             <div class="col-12">
-                <h2 class="mb-3">Active Thali</h2>
-                <?php $start_thali = mysqli_query($link, "SELECT * FROM thalilist WHERE Active = 1 AND hardstop !=1 AND Transporter != '' ORDER BY Transporter ASC");
-                if ($start_thali->num_rows > 0) { ?>
+                <h2 class="mb-3">HardStop Thali</h2>
+                <?php $hardstop_thali = mysqli_query($link, "SELECT * FROM thalilist WHERE hardstop = 1 AND Transporter != '' ORDER BY Transporter ASC");
+                if ($hardstop_thali->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="userfeedmenu" class="table table-striped table-hover">
                             <thead>
@@ -21,18 +21,20 @@ include('../navbar.php');
                                     <th>Name</th>
                                     <th>Contact</th>
                                     <th>Address</th>
+                                    <th>Comment</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($start_list = mysqli_fetch_assoc($start_thali)) { ?>
+                                <?php while ($hardstop_list = mysqli_fetch_assoc($hardstop_thali)) { ?>
                                     <tr>
-                                        <td><?php echo $start_list['Transporter']; ?></td>
-                                        <td><?php echo $start_list['Thali']; ?></td>
-                                        <td><?php echo $start_list['tiffinno']; ?></td>
-                                        <td><?php echo $start_list['thalisize']; ?></td>
-                                        <td class="text-capitalize"><?php echo strtolower($start_list['NAME']); ?></td>
-                                        <td><a href="tel:<?php echo $start_list['CONTACT']; ?>"><?php echo $start_list['CONTACT']; ?></a></td>
-                                        <td><?php echo $start_list['wingflat'] . ' ' . $start_list['society']; ?></td>
+                                        <td><?php echo $hardstop_list['Transporter']; ?></td>
+                                        <td><?php echo $hardstop_list['Thali']; ?></td>
+                                        <td><?php echo $hardstop_list['tiffinno']; ?></td>
+                                        <td><?php echo $hardstop_list['thalisize']; ?></td>
+                                        <td class="text-capitalize"><?php echo strtolower($hardstop_list['NAME']); ?></td>
+                                        <td><a href="tel:<?php echo $hardstop_list['CONTACT']; ?>"><?php echo $hardstop_list['CONTACT']; ?></a></td>
+                                        <td><?php echo $hardstop_list['wingflat'] . ' ' . $hardstop_list['society']; ?></td>
+                                        <td><?php echo $hardstop_list['hardstop_comment']; ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -45,6 +47,7 @@ include('../navbar.php');
                                     <th>Name</th>
                                     <th>Contact</th>
                                     <th>Address</th>
+                                    <th>Comment</th>
                                 </tr>
                             </tfoot>
                         </table>
