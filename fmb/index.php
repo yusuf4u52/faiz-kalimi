@@ -1,6 +1,4 @@
-<?php include('users/header.php');
-
-session_start();
+<?php session_start();
 
 include('users/connection.php');
 require_once('users/libraries/Google/autoload.php');
@@ -50,8 +48,8 @@ if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
 } else {
 	$authUrl = $client->createAuthUrl();
 }
-if (isset($authUrl) || isset($_GET['status'])) { ?>
-
+if (isset($authUrl) || isset($_GET['status'])) {
+	include('users/header.php'); ?>
 	<div class="content mt-4 text-center">
 		<div class="container">
 			<div class="row">
@@ -70,23 +68,19 @@ if (isset($authUrl) || isset($_GET['status'])) { ?>
 							<a class="btn btn-light btn-lg" href="<?php echo $authUrl; ?>">Login With <i class="bi bi-google"></i></a>
 						</div>
 					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-<?php } else {
 
-	$user = $service->userinfo->get();
+				<?php include('users/footer.php');
+			} else {
 
-	$_SESSION['fromLogin'] = "true";
-	$_SESSION['email'] = $user->email;
-	header('Location: users/index.php');
-}
+				$user = $service->userinfo->get();
 
-if (isset($_GET['status'])) { ?>
-	<script type="text/javascript">
-		alert('<?php echo $_GET['status']; ?>');
-	</script>
-<?php }
+				$_SESSION['fromLogin'] = "true";
+				$_SESSION['email'] = $user->email;
+				header('Location: users/index.php');
+			}
 
-include('users/footer.php'); ?>
+			if (isset($_GET['status'])) { ?>
+					<script type="text/javascript">
+						alert('<?php echo $_GET['status']; ?>');
+					</script>
+				<?php } ?>

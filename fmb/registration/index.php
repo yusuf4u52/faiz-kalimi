@@ -1,6 +1,5 @@
 <?php
 include('../users/connection.php');
-include('../users/header.php');
 require_once '../users/_sendMail.php';
 
 if (isset($_POST['submit'])) {
@@ -42,7 +41,8 @@ if (isset($_POST['submit'])) {
 		$msg = "Your registration has been successfully submitted. Please contact Kalimi Mohalla Jamaat Office to start your thali.";
 	}
 }
-?>
+
+include('../users/header.php'); ?>
 
 <div class="content mt-4">
 	<div class="container">
@@ -131,9 +131,5 @@ if (isset($_POST['submit'])) {
 						</form>
 					</div> <!-- /container -->
 				</div>
-			</div>
-		</div>
-	</div>
-</div>
 
-<?php include('../users/footer.php'); ?>
+				<?php include('../users/footer.php'); ?>

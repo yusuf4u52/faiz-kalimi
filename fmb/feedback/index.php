@@ -1,6 +1,5 @@
 <?php
 include('../users/connection.php');
-include('../users/header.php');
 date_default_timezone_set('Asia/Kolkata');
 $now = new DateTime();
 $dayOfWeek = $now->format('w'); // 0 (for Sunday) through 6 (for Saturday)
@@ -31,7 +30,9 @@ if ($isInRange) {
     }
 } else {
     $msg = 'notinrange';
-} ?>
+}
+
+include('../users/header.php'); ?>
 
 <div class="content mt-4">
     <div class="container">
@@ -253,8 +254,5 @@ if ($isInRange) {
                         } ?>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-<?php include('../users/footer.php'); ?>
+
+                <?php include('../users/footer.php'); ?>
