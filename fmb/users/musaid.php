@@ -32,7 +32,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 
 <div class="accordion" id="accordionMusaid">
 	<?php foreach ($musaid_list as $musaid) {
-		$result = mysqli_query($link, "SELECT * FROM thalilist where Total_Pending > 0 AND yearly_hub != 2 AND yearly_hub != 3 AND Transporter IS NOT NULL AND musaid='" . $musaid['email'] . "' order by `Paid %`");
+		$result = mysqli_query($link, "SELECT * FROM thalilist where previous_due > 0 AND previous_due != 2 AND previous_due != 3 AND musaid='" . $musaid['email'] . "' order by `Paid %`");
 		$thali_details = mysqli_fetch_all($result, MYSQLI_ASSOC);
 		$musaid_thali_count = count($thali_details);
 		if ($musaid_thali_count > 0) { ?>
@@ -59,7 +59,8 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 										<th scope="col">Action</th>
 										<th scope="col">Sabeel Type</th>
 										<th scope="col">Name</th>
-										<th scope="col">Total Hub</th>
+										<th scope="col">Previous Due</th>
+										<th scope="col">Current Hub</th>
 										<th scope="col">Pending</th>
 										<th scope="col">Paid %</th>
 									</tr>
@@ -90,6 +91,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 												</td>
 												<td><?php echo $values['sabeelType'] ?></td>
 												<td><?php echo $values['NAME']; ?></td>
+												<td><?php echo $values['previous_due']; ?></td>
 												<td><?php echo $values['yearly_hub']; ?></td>
 												<td><?php echo $values['Total_Pending']; ?></td>
 												<td><?php echo $values['Paid %']; ?></td>
