@@ -74,7 +74,7 @@ include('../users/header.php'); ?>
 						<h2 class="mb-4 text-center">Thaali Registration</h2>
 						<form class="form-horizontal" method="post" autocomplete="off">
 							<div class="mb-3 row">
-								<label for="its" class="col-3 control-label">ITS No</label>
+								<label for="its" class="col-3 control-label">HOF ITS No</label>
 								<div class="col-9">
 									<input type="number" class="form-control" id="its" name="its" pattern="[0-9]{8}" required='required'>
 								</div>
