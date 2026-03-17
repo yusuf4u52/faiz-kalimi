@@ -8,7 +8,7 @@ include('../navbar.php');
         <div class="row">
             <div class="col-12">
                 <h2 class="mb-3">HardStop Thali</h2>
-                <?php $hardstop_thali = mysqli_query($link, "SELECT * FROM thalilist WHERE hardstop = 1 AND Transporter != '' ORDER BY Transporter ASC");
+                <?php $hardstop_thali = mysqli_query($link, "SELECT * FROM thalilist WHERE hardstop = 1 ORDER BY id ASC");
                 if ($hardstop_thali->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="userfeedmenu" class="table table-striped table-hover">
