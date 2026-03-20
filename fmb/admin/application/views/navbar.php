@@ -2,7 +2,7 @@
     <div class="container-fluid py-2">
         <div class="row align-items-center">
             <div class="col-4">
-                <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/styles/img/logo.avif" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
+                <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/assets/img/logo.avif" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
             </div>
             <div class="col-8 text-end">
                 <h3>Admin Panel</h3>
@@ -34,7 +34,7 @@
                         </li>
                     <?php } ?>
                     <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com', 'aliasgaraurangabadwala@gmail.com'))) {
-                        ?>
+                    ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Menu Management</a>
                             <ul class="dropdown-menu">
