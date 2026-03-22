@@ -46,7 +46,8 @@ include('../navbar.php');
                                     <th>Tiffin Size</th>
                                     <th>Name</th>
                                     <th>Contact</th>
-                                    <th>Address</th>
+                                    <th>Flat</th>
+                                    <th>Society</th>
                                 </tr>
                             </tfoot>
                         </table>
