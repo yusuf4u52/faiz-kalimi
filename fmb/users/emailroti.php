@@ -1,6 +1,6 @@
 <?php
-if(isset($_GET['menu_date'])) {
-	$tomorrow_date = $_GET['menu_date'];		
+if (isset($_GET['menu_date'])) {
+	$tomorrow_date = $_GET['menu_date'];
 } else {
 	$tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 }
@@ -12,24 +12,24 @@ if ($menu_item->num_rows > 0) {
 	$row_menu = $menu_item->fetch_assoc();
 	$menu_item = unserialize($row_menu['menu_item']);
 	$roti =  $menu_item['roti']['item'];
-	if(!empty($roti)) {
+	if (!empty($roti)) {
 		$mini = $menu_item['roti']['tqty'];
 		$small = $menu_item['roti']['sqty'];
 		$medium = $menu_item['roti']['mqty'];
 		$large = $menu_item['roti']['lqty'];
-
-		if($roti === 'Roti') {
+		$msgroti = '';
+		if ($roti === 'Roti') {
 			$extramsg = mysqli_query($link, "SELECT DISTINCT `Transporter` from thalilist WHERE Active = 1 AND extraRoti != 0 ORDER BY Transporter");
 			while ($row_extra = mysqli_fetch_assoc($extramsg)) {
-				$sql = mysqli_query($link, "SELECT * from thalilist WHERE extraRoti != 0 AND Active = 1 AND `Transporter` LIKE '".$row_extra['Transporter']."'");
+				$sql = mysqli_query($link, "SELECT * from thalilist WHERE extraRoti != 0 AND Active = 1 AND `Transporter` LIKE '" . $row_extra['Transporter'] . "'");
 				$msgroti .= "<b>" . $row_extra['Transporter'] . "</b><br/>";
 				while ($row = mysqli_fetch_assoc($sql)) {
-					if($row['thalisize'] == 'Mini' || $row['thalisize'] == 'Small') {
-						$msgroti .= "<b>". 1 + $row['extraRoti'] ." Roti</b> - ";
-					} elseif($row['thalisize'] == 'Medium' || $row['thalisize'] == 'Large') {
-						$msgroti .= "<b>". 2 + $row['extraRoti'] ." Roti</b> - ";
+					if ($row['thalisize'] == 'Mini' || $row['thalisize'] == 'Small') {
+						$msgroti .= "<b>" . 1 + $row['extraRoti'] . " Roti</b> - ";
+					} elseif ($row['thalisize'] == 'Medium' || $row['thalisize'] == 'Large') {
+						$msgroti .= "<b>" . 2 + $row['extraRoti'] . " Roti</b> - ";
 					} else {
-						$msgroti .= "<b>".$row['extraRoti']." Roti</b> - ";
+						$msgroti .= "<b>" . $row['extraRoti'] . " Roti</b> - ";
 					}
 					$msgroti .= sprintf("%s - %s - %s - %s - %s - %s<br/>", $row['tiffinno'], $row['thalisize'], $row['NAME'], $row['CONTACT'], $row['wingflat'], $row['society']);
 					$msgroti .= '<br/>';
@@ -60,21 +60,23 @@ if ($menu_item->num_rows > 0) {
 			sum(case when thalisize = 'Friday' then 1 else 0 end) AS fridaycount,
 			sum(case when thalisize = 'Barnamaj' then 1 else 0 end) AS barnamajcount,
 			sum(case when thalisize IS NULL then 1 else 0 end) AS nullcount,
-			SUM(extraRoti) AS extracount
-			FROM `thalilist` WHERE Active = 1 AND `Transporter` LIKE '".$transporter."'");
+			SUM(extraRoti) AS extracount,
+			sum(case when thalisize = 'Roti' then 1 else 0 end) AS roticount
+			FROM `thalilist` WHERE Active = 1 AND `Transporter` LIKE '" . $transporter . "'");
 			$result = mysqli_fetch_row($thaliCount);
-			$thaliSize["mini"][$transporter] = $result[0]*$mini;
-			$thaliSize["small"][$transporter] = $result[1]*$small;
-			$thaliSize["medium"][$transporter] = $result[2]*$medium;
-			$thaliSize["large"][$transporter] = $result[3]*$large;
-			$thaliSize["friday"][$transporter] = $result[4]*$small;
-			$thaliSize["barnamaj"][$transporter] = $result[5]*$small;
+			$thaliSize["mini"][$transporter] = $result[0] * $mini;
+			$thaliSize["small"][$transporter] = $result[1] * $small;
+			$thaliSize["medium"][$transporter] = $result[2] * $medium;
+			$thaliSize["large"][$transporter] = $result[3] * $large;
+			$thaliSize["friday"][$transporter] = $result[4] * $small;
+			$thaliSize["barnamaj"][$transporter] = $result[5] * $small;
 			$thaliSize["no size"][$transporter] = $result[6];
-			if($roti === 'Roti') {
+			if ($roti === 'Roti') {
 				$thaliSize["extra"][$transporter] = $result[7];
-				$thaliSize["Total"][$transporter] = (int) $result[0]*$mini + (int) $result['1']*$small + (int) $result['2']*$medium + (int) $result['3']*$large + (int) $result['4']*$small + (int) $result['5']*$small + (int) $result['6'] + (int) $result['7'];
+				$thaliSize["roti"][$transporter] = $result[8];
+				$thaliSize["Total"][$transporter] = (int) $result[0] * $mini + (int) $result['1'] * $small + (int) $result['2'] * $medium + (int) $result['3'] * $large + (int) $result['4'] * $small + (int) $result['5'] * $small + (int) $result['6'] + (int) $result['7'] + (int) $result['8'];
 			} else {
-				$thaliSize["Total"][$transporter] = (int) $result[0]*$mini + (int) $result['1']*$small + (int) $result['2']*$medium + (int) $result['3']*$large + (int) $result['4']*$small + (int) $result['5']*$small + (int) $result['6'];
+				$thaliSize["Total"][$transporter] = (int) $result[0] * $mini + (int) $result['1'] * $small + (int) $result['2'] * $medium + (int) $result['3'] * $large + (int) $result['4'] * $small + (int) $result['5'] * $small + (int) $result['6'];
 			}
 		}
 		$rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>Total</td></tr>";
@@ -86,24 +88,33 @@ if ($menu_item->num_rows > 0) {
 				$totalSizeCount = $totalSizeCount + $sizeCount[$transporter];
 				$rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>" . $sizeCount[$transporter] . "</td>";
 			}
-			$rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>".$totalSizeCount."</td></tr>";
-		}	
+			$rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>" . $totalSizeCount . "</td></tr>";
+		}
 
 		$rotiTable .= "</table>";
 
 		$msgroti .= $rotiTable;
 
-		if($roti === 'Roti') {
-			$totalCount = $totalSizeCount*4;
-		} elseif($roti === 'Tandoori Roti') {
-			$totalCount = $totalSizeCount*2;
+		if ($roti === 'Roti') {
+			$totalCount = 0;
+			$totalCount += array_sum($thaliSize["mini"]) * 2;
+			$totalCount += array_sum($thaliSize["small"]) * 4;
+			$totalCount += array_sum($thaliSize["medium"]) * 4;
+			$totalCount += array_sum($thaliSize["large"]) * 4;
+			$totalCount += array_sum($thaliSize["friday"]) * 4;
+			$totalCount += array_sum($thaliSize["barnamaj"]) * 2;
+			$totalCount += array_sum($thaliSize["no size"]) * 2;
+			$totalCount += array_sum($thaliSize["roti"]) * 4;
+			if (isset($thaliSize["extra"])) {
+				$totalCount += array_sum($thaliSize["extra"]) * 4;
+			}
 		} else {
 			$totalCount = $totalSizeCount;
 		}
 
 		$msgroti .= "<br/><b>Total $roti Count is $totalCount</b>";
 
-		$subject = $roti .' update ' . $tomorrow_date;
+		$subject = $roti . ' update ' . $tomorrow_date;
 
 		// send email
 		$emails = [
@@ -120,7 +131,6 @@ if ($menu_item->num_rows > 0) {
 	} else {
 		echo "Tomorrow no roti.";
 	}
-	
 } else {
 	echo "Skipping email as no thali on Miqaat or any other reason.";
 	exit;

@@ -20,7 +20,8 @@ include('../navbar.php');
                                     <th>Tiffin Size</th>
                                     <th>Name</th>
                                     <th>Contact</th>
-                                    <th>Address</th>
+                                    <th>Flat</th>
+                                    <th>Society</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -32,7 +33,8 @@ include('../navbar.php');
                                         <td><?php echo $stop_list['thalisize']; ?></td>
                                         <td class="text-capitalize"><?php echo strtolower($stop_list['NAME']); ?></td>
                                         <td><a href="tel:<?php echo $stop_list['CONTACT']; ?>"><?php echo $stop_list['CONTACT']; ?></a></td>
-                                        <td><?php echo $stop_list['wingflat'] . ' ' . $stop_list['society']; ?></td>
+                                        <td><?php echo $stop_list['wingflat']; ?></td>
+                                        <td><?php echo $stop_list['society']; ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>

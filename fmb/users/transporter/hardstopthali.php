@@ -19,7 +19,8 @@ include('../navbar.php');
                                     <th>Tiffin Size</th>
                                     <th>Name</th>
                                     <th>Contact</th>
-                                    <th>Address</th>
+                                    <th>Flat</th>
+                                    <th>Society</th>
                                     <th>Comment</th>
                                 </tr>
                             </thead>
@@ -31,7 +32,8 @@ include('../navbar.php');
                                         <td><?php echo $hardstop_list['thalisize']; ?></td>
                                         <td class="text-capitalize"><?php echo strtolower($hardstop_list['NAME']); ?></td>
                                         <td><a href="tel:<?php echo $hardstop_list['CONTACT']; ?>"><?php echo $hardstop_list['CONTACT']; ?></a></td>
-                                        <td><?php echo $hardstop_list['wingflat'] . ' ' . $hardstop_list['society']; ?></td>
+                                        <td><?php echo $hardstop_list['wingflat']; ?></td>
+                                        <td><?php echo $hardstop_list['society']; ?></td>
                                         <td><?php echo $hardstop_list['hardstop_comment']; ?></td>
                                     </tr>
                                 <?php } ?>
