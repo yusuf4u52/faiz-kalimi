@@ -397,8 +397,7 @@ if (isset($_GET['year'])) {
     <div class="modal-content">
       <form id="admin_stop" class="form-horizontal" method="POST" action="stopthali.php" autocomplete="off">
         <input type="hidden" name="action" value="admin_stop_thali" />
-        <input type="hidden" name="id" value="<?php echo $values['id']; ?>" />
-        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="thali" value="<?php echo $values['id']; ?>" />
         <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
         <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
         <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
@@ -606,7 +605,7 @@ mysqli_free_result($adminmenu); ?>
 
 <?php
 $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `Thali` = '" . $values['Thali'] . "'
+    SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `thali` = '" . $values['id'] . "'
 ),
 grouped_dates AS (
     SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
