@@ -75,7 +75,7 @@ if (isset($_GET['menu_date'])) {
                                         $thalino[] = $row_thali['thali'];
                                     }
                                     $userid = "'" . implode("', '", $thalino) . "'";
-                                    $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE id IN (" . $userid . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
+                                    $thali = mysqli_query($link, "SELECT id, Thali, tiffinno, thalisize, Transporter from thalilist WHERE id IN (" . $userid . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
                                     $sabji = 0;
                                     $tarkari = 0;
                                     $rice = 0;
