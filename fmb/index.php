@@ -1,5 +1,8 @@
 <?php session_start();
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include('users/connection.php');
 require_once('users/libraries/Google/autoload.php');
 
