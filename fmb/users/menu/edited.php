@@ -74,11 +74,13 @@ if (isset($_GET['menu_date'])) {
                                     while ($row_thali = mysqli_fetch_assoc($thali)) {
                                         $thalino[] = $row_thali['thali'];
                                     }
-                                    $sabeelno = "'" . implode("', '", $thalino) . "'";
-                                    $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE Thali IN (" . $sabeelno . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
-                                    $sabji = 0; $tarkari = 0; $rice = 0;
+                                    $userid = "'" . implode("', '", $thalino) . "'";
+                                    $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE id IN (" . $userid . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
+                                    $sabji = 0;
+                                    $tarkari = 0;
+                                    $rice = 0;
                                     while ($row = mysqli_fetch_assoc($thali)) {
-                                        $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
+                                        $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['id'] . "' ORDER BY thali");
                                         if ($user_menu->num_rows > 0) {
                                             $row_user = $user_menu->fetch_assoc();
                                             $user_menu_item = unserialize($row_user['menu_item']); ?>
@@ -100,28 +102,28 @@ if (isset($_GET['menu_date'])) {
                                                     echo '<td>' . $user_menu_item['rice']['qty'] . '</td>';
                                                 } ?>
                                             </tr>
-                                        <?php }
+                                <?php }
                                     }
                                 } ?>
                             </tbody>
                         </table>
                     </div>
-                    <?php 
+                <?php
                     $totalthali = mysqli_query($link, "SELECT count(*) as tcount FROM `thalilist` WHERE Active = 1");
                     $result = mysqli_fetch_row($totalthali);
                     $total = $result[0];
-                    if(!empty($total)) {
-                        if(!empty($totaledited)) {
-                            echo '<h3 class="mb-3">Total Thali - '. $total .'</h3>';
-                            echo '<h4 class="mb-2">Total Edited Thali - '. $totaledited .'</h4>';
+                    if (!empty($total)) {
+                        if (!empty($totaledited)) {
+                            echo '<h3 class="mb-3">Total Thali - ' . $total . '</h3>';
+                            echo '<h4 class="mb-2">Total Edited Thali - ' . $totaledited . '</h4>';
                             if (!empty($menu_item['sabji']['item'])) {
-                                echo '<h5 class="mb-1">' . $menu_item['sabji']['item'] .' - '. $total - ($totaledited - $sabji / $sabjiqty ). '</h5>';
+                                echo '<h5 class="mb-1">' . $menu_item['sabji']['item'] . ' - ' . $total - ($totaledited - $sabji / $sabjiqty) . '</h5>';
                             }
                             if (!empty($menu_item['tarkari']['item'])) {
-                                echo '<h5 class="mb-1">' . $menu_item['tarkari']['item'] .' - '. $total - ($totaledited - $tarkari / $tarkariqty). '</h5>';
+                                echo '<h5 class="mb-1">' . $menu_item['tarkari']['item'] . ' - ' . $total - ($totaledited - $tarkari / $tarkariqty) . '</h5>';
                             }
                             if (!empty($menu_item['rice']['item'])) {
-                                echo '<h5 class="mb-1">' . $menu_item['rice']['item'] .' - '. $total - ($totaledited - $rice / $riceqty). '</h5>';
+                                echo '<h5 class="mb-1">' . $menu_item['rice']['item'] . ' - ' . $total - ($totaledited - $rice / $riceqty) . '</h5>';
                             }
                         }
                     }

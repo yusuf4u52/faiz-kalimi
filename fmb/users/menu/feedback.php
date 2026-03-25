@@ -67,11 +67,13 @@ if (isset($_GET['menu_date'])) {
                                     while ($row_thali = mysqli_fetch_assoc($thali)) {
                                         $thalino[] = $row_thali['thali'];
                                     }
-                                    $sabeelno = "'" . implode("', '", $thalino) . "'";
-                                    $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE Thali IN (" . $sabeelno . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
-                                    $sabji = 0; $tarkari = 0; $rice = 0;
+                                    $userid = "'" . implode("', '", $thalino) . "'";
+                                    $thali = mysqli_query($link, "SELECT Thali, tiffinno, thalisize, Transporter from thalilist WHERE id IN (" . $userid . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
+                                    $sabji = 0;
+                                    $tarkari = 0;
+                                    $rice = 0;
                                     while ($row = mysqli_fetch_assoc($thali)) {
-                                        $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['Thali'] . "' ORDER BY thali");
+                                        $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['id'] . "' ORDER BY thali");
                                         if ($user_feedmenu->num_rows > 0) {
                                             $row_user = $user_feedmenu->fetch_assoc();
                                             $user_menu_item = unserialize($row_user['menu_feed']); ?>
@@ -79,7 +81,7 @@ if (isset($_GET['menu_date'])) {
                                                 <td style="text-align:left"><?php echo $row['Thali']; ?></td>
                                                 <td style="text-align:left"><?php echo $row['tiffinno']; ?></td>
                                                 <?php if (!empty($menu_item['sabji']['item'])) {
-                                                    if(!empty($user_menu_item['sabji']['rating'])) {
+                                                    if (!empty($user_menu_item['sabji']['rating'])) {
                                                         $sabjirating = $user_menu_item['sabji']['rating'];
                                                     } else {
                                                         $sabjirating = 'Not Taken';
@@ -87,7 +89,7 @@ if (isset($_GET['menu_date'])) {
                                                     echo '<td style="text-align:left">' . $sabjirating . '</td>';
                                                 }
                                                 if (!empty($menu_item['tarkari']['item'])) {
-                                                    if(!empty($user_menu_item['tarkari']['rating'])) {
+                                                    if (!empty($user_menu_item['tarkari']['rating'])) {
                                                         $tarkarirating = $user_menu_item['tarkari']['rating'];
                                                     } else {
                                                         $tarkarirating = 'Not Taken';
@@ -95,15 +97,15 @@ if (isset($_GET['menu_date'])) {
                                                     echo '<td style="text-align:left">' . $tarkarirating . '</td>';
                                                 }
                                                 if (!empty($menu_item['rice']['item'])) {
-                                                    if(!empty($user_menu_item['rice']['rating'])) {
+                                                    if (!empty($user_menu_item['rice']['rating'])) {
                                                         $ricerating = $user_menu_item['rice']['rating'];
                                                     } else {
                                                         $ricerating = 'Not Taken';
                                                     }
                                                     echo '<td style="text-align:left">' . $ricerating . '</td>';
-                                                } 
+                                                }
                                                 if (!empty($menu_item['roti']['item'])) {
-                                                    if(!empty($user_menu_item['roti']['rating'])) {
+                                                    if (!empty($user_menu_item['roti']['rating'])) {
                                                         $rotirating = $user_menu_item['roti']['rating'];
                                                     } else {
                                                         $rotirating = 'Not Taken';
@@ -111,7 +113,7 @@ if (isset($_GET['menu_date'])) {
                                                     echo '<td style="text-align:left">' . $rotirating . '</td>';
                                                 }
                                                 if (!empty($menu_item['extra']['item'])) {
-                                                    if(!empty($user_menu_item['extra']['rating'])) {
+                                                    if (!empty($user_menu_item['extra']['rating'])) {
                                                         $extrarating = $user_menu_item['extra']['rating'];
                                                     } else {
                                                         $extrarating = 'Not Taken';
@@ -120,7 +122,7 @@ if (isset($_GET['menu_date'])) {
                                                 } ?>
                                                 <td><?php echo $row_user['feedback']; ?></td>
                                             </tr>
-                                        <?php }
+                                <?php }
                                     }
                                 } ?>
                             </tbody>
@@ -148,7 +150,7 @@ if (isset($_GET['menu_date'])) {
                                 </tr>
                             </tfoot>
                         </table>
-                    </div>  
+                    </div>
                 <?php } ?>
             </div>
         </div>
