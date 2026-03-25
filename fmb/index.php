@@ -20,6 +20,9 @@ $client->setRedirectUri($redirect_uri);
 $client->addScope("email");
 $client->addScope("profile");
 
+$client->setAccessType('offline');
+$client->setPrompt('consent');
+
 /************************************************
 When we create the service here, we pass the
 client to it. The client then queries the service
@@ -47,6 +50,13 @@ requests, else we generate an authentication URL.
  *************************************************/
 if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
 	$client->setAccessToken($_SESSION['access_token']);
+	if ($client->isAccessTokenExpired()) {
+		unset($_SESSION['access_token']);
+		session_destroy();
+
+		header('Location: ' . $redirect_uri . '?status=Session expired. Please login again.');
+		exit;
+	}
 } else {
 	$authUrl = $client->createAuthUrl();
 }
