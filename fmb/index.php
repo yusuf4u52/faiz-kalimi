@@ -80,9 +80,21 @@ if (isset($authUrl) || isset($_GET['status'])) {
 				<?php include('users/footer.php');
 			} else {
 
-				$user = $service->userinfo->get();
+				try {
 
-				$_SESSION['fromLogin'] = "true";
-				$_SESSION['email'] = $user->email;
-				header('Location: users/index.php');
+					$user = $service->userinfo->get();
+
+					$_SESSION['fromLogin'] = "true";
+					$_SESSION['email'] = $user->email;
+					header('Location: users/index.php');
+					exit;
+				} catch (Exception $e) {
+					// Token expired or invalid → clear session
+					unset($_SESSION['access_token']);
+					session_destroy();
+
+					// Redirect to login again
+					header('Location: ' . $redirect_uri . '?status=Session expired. Please login again.');
+					exit;
+				}
 			} ?>
