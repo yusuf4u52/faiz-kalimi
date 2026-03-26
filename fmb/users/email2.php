@@ -1,4 +1,4 @@
-<?php
+<?php exit;
 include('connection.php');
 include('getHijriDate.php');
 include '../backup/_email_backup.php';
