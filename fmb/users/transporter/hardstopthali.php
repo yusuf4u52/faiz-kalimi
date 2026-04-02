@@ -16,10 +16,10 @@ include('../navbar.php');
                             <thead>
                                 <tr>
                                     <th>Sr. No.</th>
-                                    <th>Name</th>
-                                    <th>Contact</th>
                                     <th>Flat</th>
                                     <th>Society</th>
+                                    <th>Name</th>
+                                    <th>Contact</th>
                                     <th>Sabeel No</th>
                                     <th>Comment</th>
                                 </tr>
