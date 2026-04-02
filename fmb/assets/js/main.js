@@ -38,6 +38,64 @@
     },
   });
 
+  const transporterlist = new DataTable("table#transporterlist", {
+    displayLength: 25,
+    responsive: true,
+    columnDefs: [
+      {
+        searchable: false,
+        orderable: false,
+        targets: 0,
+      },
+    ],
+    order: [[1, "asc"]],
+    layout: {
+      topStart: {
+        buttons: [
+          {
+            extend: "excelHtml5",
+            className: "btn-light",
+          },
+          {
+            extend: "print",
+            className: "btn-light",
+          },
+        ],
+      },
+    },
+    initComplete: function () {
+      this.api()
+        .columns()
+        .every(function () {
+          let column = this;
+          let title = column.footer().textContent;
+
+          // Create input element
+          let input = document.createElement("input");
+          input.placeholder = title;
+          input.className = "form-control form-control-sm";
+          column.footer().replaceChildren(input);
+
+          // Event listener for user input
+          input.addEventListener("keyup", () => {
+            if (column.search() !== this.value) {
+              column.search(input.value).draw();
+            }
+          });
+        });
+    },
+  });
+
+  transporterlist.on("draw.dt", function () {
+    let PageInfo = transporterlist.page.info();
+    transporterlist
+      .column(0, { page: "current" })
+      .nodes()
+      .each(function (cell, i) {
+        cell.innerHTML = i + 1 + PageInfo.start;
+      });
+  });
+
   new DataTable("table#userfeedmenu", {
     displayLength: 25,
     responsive: true,
@@ -172,7 +230,7 @@
   });
 
   $(document).ready(function () {
-    $("#society").change(function () {
+    function toggleSocietyFields() {
       if ($("#society").val() === "Other") {
         $("#society_name_wrapper, #society_address_wrapper").show();
         $("#society_name_input, #society_address_input").prop("required", true);
@@ -183,6 +241,14 @@
           false,
         );
       }
+    }
+
+    // Run on page load
+    toggleSocietyFields();
+
+    // Run on change
+    $("#society").change(function () {
+      toggleSocietyFields();
     });
   });
 

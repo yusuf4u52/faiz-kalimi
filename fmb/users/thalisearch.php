@@ -329,6 +329,8 @@ if (isset($_GET['year'])) {
             <option value='Small'>Small</option>
             <option value='Medium'>Medium</option>
             <option value='Large'>Large</option>
+            <option value='Friday'>Friday</option>
+            <option value='Roti'>Roti</option>
           </select>
         </div>
         <div class="modal-footer">
@@ -457,8 +459,8 @@ if (isset($_GET['year'])) {
 while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
   $menu_id = $amenu_values['id'];
   $menu_date = $amenu_values['menu_date'];
-  if (!empty($values['Thali'])) {
-    $adminumenu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $amenu_values['menu_date'] . "' AND `thali` = '" . $values['Thali'] . "'") or die(mysqli_error($link));
+  if (!empty($values['id'])) {
+    $adminumenu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $amenu_values['menu_date'] . "' AND `thali` = '" . $values['id'] . "'") or die(mysqli_error($link));
     if (isset($adminumenu) && $adminumenu->num_rows > 0) {
       $rowaumenu = $adminumenu->fetch_assoc();
       $menu_item = unserialize($rowaumenu['menu_item']);
@@ -481,7 +483,7 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
       }
       $target = 'adminmenu-' . $menu_id;
     }
-    $adminstopthali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $amenu_values['menu_date'] . "' AND `thali` = '" . $values['Thali'] . "'") or die(mysqli_error($link));
+    $adminstopthali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $amenu_values['menu_date'] . "' AND `thali` = '" . $values['id'] . "'") or die(mysqli_error($link));
     if ($adminstopthali->num_rows > 0) {
       $status = 'stop';
     } else {

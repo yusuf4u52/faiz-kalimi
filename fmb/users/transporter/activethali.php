@@ -9,45 +9,49 @@ include('../navbar.php');
             <div class="col-12">
                 <h2 class="mb-3">Active Thali</h2>
                 <?php $start_thali = mysqli_query($link, "SELECT * FROM thalilist WHERE Active = 1 AND hardstop !=1 AND Transporter != '' ORDER BY Transporter ASC");
+                $i = 0;
                 if ($start_thali->num_rows > 0) { ?>
                     <div class="table-responsive">
-                        <table id="userfeedmenu" class="table table-striped table-hover">
+                        <table id="transporterlist" class="table table-striped table-hover">
                             <thead>
                                 <tr>
+                                    <th>Sr No.</th>
                                     <th>Transporter</th>
-                                    <th>Sabeel No</th>
                                     <th>Tiffin No</th>
                                     <th>Tiffin Size</th>
-                                    <th>Name</th>
-                                    <th>Contact</th>
                                     <th>Flat</th>
                                     <th>Society</th>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Sabeel No</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php while ($start_list = mysqli_fetch_assoc($start_thali)) { ?>
                                     <tr>
+                                        <td><?php echo ++$i; ?></td>
                                         <td><?php echo $start_list['Transporter']; ?></td>
-                                        <td><?php echo $start_list['Thali']; ?></td>
                                         <td><?php echo $start_list['tiffinno']; ?></td>
                                         <td><?php echo $start_list['thalisize']; ?></td>
-                                        <td class="text-capitalize"><?php echo strtolower($start_list['NAME']); ?></td>
-                                        <td><a href="tel:<?php echo $start_list['CONTACT']; ?>"><?php echo $start_list['CONTACT']; ?></a></td>
                                         <td><?php echo $start_list['wingflat']; ?></td>
                                         <td><?php echo $start_list['society']; ?></td>
+                                        <td class="text-capitalize"><?php echo strtolower($start_list['NAME']); ?></td>
+                                        <td><a href="tel:<?php echo $start_list['CONTACT']; ?>"><?php echo $start_list['CONTACT']; ?></a></td>
+                                        <td><?php echo $start_list['Thali']; ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
                             <tfoot>
                                 <tr>
+                                    <th>Sr No.</th>
                                     <th>Transporter</th>
-                                    <th>Sabeel No</th>
                                     <th>Tiffin No</th>
                                     <th>Tiffin Size</th>
-                                    <th>Name</th>
-                                    <th>Contact</th>
                                     <th>Flat</th>
                                     <th>Society</th>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Sabeel No</th>
                                 </tr>
                             </tfoot>
                         </table>
