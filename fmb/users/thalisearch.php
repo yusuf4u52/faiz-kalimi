@@ -526,11 +526,11 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
                   <label for="sabji" class="col-6 control-label"><?php echo $menu_item['sabji']['item']; ?></label>
                   <div class="col-6">
                     <input type="hidden" class="form-control" name="menu_item[sabji][item]" id="sabji"
-                      value="<?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] : ''); ?>">
+                      value="<?php echo (isset($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] : ''); ?>">
                     <div class="input-group">
                       <button class="btn btn-light btn-minus" type="button">-</button>
                       <input type="number" class="form-control" name="menu_item[sabji][qty]" id="sabjiqty"
-                        value="<?php echo (!empty($menu_item['sabji']['qty']) ? $menu_item['sabji']['qty'] : '1'); ?>"
+                        value="<?php echo (isset($menu_item['sabji']['qty']) ? $menu_item['sabji']['qty'] : '1'); ?>"
                         min="0" readonly>
                       <button class="btn btn-light btn-plus" type="button">+</button>
                     </div>
@@ -542,11 +542,11 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
                   <label for="tarkari" class="col-6 control-label"><?php echo $menu_item['tarkari']['item']; ?></label>
                   <div class="col-6">
                     <input type="hidden" class="form-control" name="menu_item[tarkari][item]" id="tarkari"
-                      value="<?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] : ''); ?>">
+                      value="<?php echo (isset($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] : ''); ?>">
                     <div class="input-group">
                       <button class="btn btn-light btn-minus" type="button">-</button>
                       <input type="number" class="form-control" name="menu_item[tarkari][qty]" id="tarkariqty"
-                        value="<?php echo (!empty($menu_item['tarkari']['qty']) ? $menu_item['tarkari']['qty'] : '1'); ?>"
+                        value="<?php echo (isset($menu_item['tarkari']['qty']) ? $menu_item['tarkari']['qty'] : '1'); ?>"
                         min="0" readonly>
                       <button class="btn btn-light btn-plus" type="button">+</button>
                     </div>
@@ -558,11 +558,11 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
                   <label for="rice" class="col-6 control-label"><?php echo $menu_item['rice']['item']; ?></label>
                   <div class="col-6">
                     <input type="hidden" class="form-control" name="menu_item[rice][item]" id="rice"
-                      value="<?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] : ''); ?>">
+                      value="<?php echo (isset($menu_item['rice']['item']) ? $menu_item['rice']['item'] : ''); ?>">
                     <div class="input-group">
                       <button class="btn btn-light btn-minus" type="button">-</button>
                       <input type="number" class="form-control" name="menu_item[rice][qty]" id="riceqty"
-                        value="<?php echo (!empty($menu_item['rice']['qty']) ? $menu_item['rice']['qty'] : '1'); ?>" min="0"
+                        value="<?php echo (isset($menu_item['rice']['qty']) ? $menu_item['rice']['qty'] : '1'); ?>" min="0"
                         readonly>
                       <button class="btn btn-light btn-plus" type="button">+</button>
                     </div>
@@ -574,9 +574,9 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
                   <label for="roti" class="col-6 control-label"><?php echo $menu_item['roti']['item']; ?></label>
                   <div class="col-6">
                     <input type="hidden" class="form-control" name="menu_item[roti][item]" id="roti"
-                      value="<?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] : ''); ?>">
+                      value="<?php echo (isset($menu_item['roti']['item']) ? $menu_item['roti']['item'] : ''); ?>">
                     <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty"
-                      value="<?php echo (!empty($roti_qty) ? $roti_qty : '1'); ?>" min="0" readonly>
+                      value="<?php echo (isset($roti_qty) ? $roti_qty : '1'); ?>" min="0" readonly>
                   </div>
                 </div>
               <?php } ?>
@@ -585,9 +585,9 @@ while ($amenu_values = mysqli_fetch_assoc($adminmenu)) {
                   <label for="roti" class="col-6 control-label"><?php echo $menu_item['extra']['item']; ?></label>
                   <div class="col-6">
                     <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra"
-                      value="<?php echo (!empty($menu_item['extra']['item']) ? $menu_item['extra']['item'] : ''); ?>">
+                      value="<?php echo (isset($menu_item['extra']['item']) ? $menu_item['extra']['item'] : ''); ?>">
                     <input type="number" class="form-control" name="menu_item[extra][qty]" id="extraqty"
-                      value="<?php echo (!empty($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>" min="0"
+                      value="<?php echo (isset($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>" min="0"
                       readonly>
                   </div>
                 </div>
