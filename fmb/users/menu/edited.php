@@ -109,7 +109,7 @@ if (isset($_GET['menu_date'])) {
                         </table>
                     </div>
                 <?php
-                    $totalthali = mysqli_query($link, "SELECT count(*) as tcount FROM `thalilist` WHERE Active = 1");
+                    $totalthali = mysqli_query($link, "SELECT count(*) as tcount FROM `thalilist` WHERE AND `hardstop` != 1 AND Active != 0 AND thalisize != 'Roti'");
                     $result = mysqli_fetch_row($totalthali);
                     $total = $result[0];
                     if (!empty($total)) {
