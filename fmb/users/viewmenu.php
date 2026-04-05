@@ -1,5 +1,5 @@
 <?php
-$takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SESSION['thaliid'] . "' AND `hardstop` != 1") or die(mysqli_error($link));
+$takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SESSION['thaliid'] . "' AND `hardstop` != 1 AND thalisize != 'Roti'") or die(mysqli_error($link));
 ?>
 
 <?php if (isset($takesFmb) && $takesFmb->num_rows > 0) {
@@ -347,5 +347,5 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
     var scheds = <?php echo json_encode($sched_res); ?>;
   </script>
 <?php } else {
-  echo '<h3>You are not allowed to view menu as your thali is stopped.</h3>';
+  echo '<h3>You are not allowed to view or edit menu.</h3>';
 } ?>

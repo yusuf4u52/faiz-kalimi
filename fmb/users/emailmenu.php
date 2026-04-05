@@ -60,7 +60,7 @@ if ($menu_item->num_rows > 0) {
 							<tr>
 						</thead>
 						<tbody>';
-			$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, `NAME`, CONTACT, thalisize, wingflat, society from thalilist WHERE `Transporter` LIKE '" . $row_trans['Transporter'] . "' AND id IN (" . $thaliid . ") AND `hardstop` != 1 AND Active != 0 ORDER BY Transporter");
+			$thali = mysqli_query($link, "SELECT id, Thali, tiffinno, `NAME`, CONTACT, thalisize, wingflat, society from thalilist WHERE `Transporter` LIKE '" . $row_trans['Transporter'] . "' AND id IN (" . $thaliid . ") AND `hardstop` != 1 AND Active != 0 AND thalisize != 'Roti' ORDER BY Transporter");
 			while ($row = mysqli_fetch_assoc($thali)) {
 				$user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $tomorrow_date . "' AND `thali` = '" . $row['id'] . "' ORDER BY thali");
 				if ($user_menu->num_rows > 0) {
