@@ -179,6 +179,49 @@
     },
   });
 
+  $("table#thalicount").DataTable({
+    columnDefs: [{ visible: false, targets: 0 }],
+    order: [[0, "desc"]],
+    displayLength: 25,
+    responsive: true,
+    layout: {
+      topStart: {
+        buttons: [
+          {
+            extend: "excelHtml5",
+            className: "btn-light",
+          },
+          {
+            extend: "print",
+            className: "btn-light",
+          },
+        ],
+      },
+    },
+    drawCallback: function (settings) {
+      var api = this.api();
+      var rows = api.rows({ page: "current" }).nodes();
+      var last = null;
+
+      api
+        .column(0, { page: "current" })
+        .data()
+        .each(function (group, i) {
+          if (last !== group) {
+            $(rows)
+              .eq(i)
+              .before(
+                '<tr class="group"><td colspan="9"><strong>' +
+                  group +
+                  "</strong></td></tr>",
+              );
+
+            last = group;
+          }
+        });
+    },
+  });
+
   $(document).ready(function () {
     var now = new Date();
 

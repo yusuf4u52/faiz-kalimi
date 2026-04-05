@@ -16,7 +16,7 @@ $result = mysqli_query($link, "SELECT * FROM transporter_daily_count order by `d
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">
-                    <table id="roti" class="table table-striped" width="100%">
+                    <table id="thalicount" class="table table-striped" width="100%">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -26,6 +26,7 @@ $result = mysqli_query($link, "SELECT * FROM transporter_daily_count order by `d
                                 <th>Medium</th>
                                 <th>Large</th>
                                 <th>Friday</th>
+                                <th>Roti</th>
                                 <th>Barnamaj</th>
                                 <th>Total</th>
                             </tr>
@@ -42,6 +43,7 @@ $result = mysqli_query($link, "SELECT * FROM transporter_daily_count order by `d
                                     <td><?php echo $values['medium']; ?></td>
                                     <td><?php echo $values['large']; ?></td>
                                     <td><?php echo $values['friday']; ?></td>
+                                    <td><?php echo $values['roti']; ?></td>
                                     <td><?php echo $values['barnamaj']; ?></td>
                                     <td><?php echo $values['count']; ?></td>
                                 </tr>
