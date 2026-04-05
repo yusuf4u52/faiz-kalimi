@@ -12,7 +12,6 @@
         </div>
     </footer>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer ></script>
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js" defer ></script>-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer ></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js" defer ></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js" defer ></script>
@@ -22,6 +21,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" defer ></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js" defer ></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js" defer ></script>
-    <script type="text/javascript" src="/fmb/transporter/assets/main.js" defer ></script>
+    <script type="text/javascript" src="/fmb/assets/js/main.js" defer ></script>
     </body>
 </html>

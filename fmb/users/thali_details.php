@@ -75,8 +75,8 @@ $transvalues = $transporters->fetch_assoc();
 			<li class="list-group-item">
 				<div class="fw-bold">Transporter</div>
 				<p class="list-group-item-text">
-					<?php echo  $values['Transporter']; ?> | <a
-						href="https://wa.me/+91<?php echo $transvalues['Mobile']; ?>"><?php echo $transvalues['Mobile']; ?></a>
+					<?php echo  $values['Transporter']; ?> <?php if (!empty($transvalues['Mobile'])) : ?>| <a
+						href="https://wa.me/+91<?php echo $transvalues['Mobile']; ?>"><?php echo $transvalues['Mobile']; ?></a> <?php endif; ?>
 				</p>
 			</li>
 			<li class="list-group-item">

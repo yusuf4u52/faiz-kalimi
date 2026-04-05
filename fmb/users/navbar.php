@@ -3,36 +3,35 @@ include('_authCheck.php');
 include('_common.php');
 
 $curr_page = basename($_SERVER['PHP_SELF']);
-//$query = mysqli_query($link , "SELECT * FROM thalilist as th LEFT JOIN transporters as tr  on th.Transporter = tr.Name where th.Email_ID = '" . $_SESSION['email'] . "' OR th.SEmail_ID = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
 
-$query = mysqli_query($link, "SELECT * FROM thalilist  where Email_ID = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
-$values = $query->fetch_assoc();
+$query = mysqli_query($link, "SELECT * FROM thalilist WHERE (Email_ID = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "') AND Active IS NOT NULL AND hardstop != 1") or die(mysqli_error($link));
 
-$musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobile FROM users where email = '" . $values['musaid'] . "'"));
+if($query->num_rows > 0) {
+    $values = $query->fetch_assoc();
 
-$_SESSION['thaliid'] = $values['id'];
-$_SESSION['thali'] = $values['Thali'];
+    $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobile FROM users where email = '" . $values['musaid'] . "'"));
 
-// Check if users gmail id is registered with us and he is a transporter against it
-$transporter = mysqli_query($link, "SELECT * FROM transporters  where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
-if ($transporter->num_rows > 0) {
-    header("Location: /fmb/transporter/home.php");
-    exit;
-}
-
-// Check if users gmail id is registered with us and has got a thali number against it 
-if (is_null($values['Active']) || $values['Active'] == 2) {
-    $some_email = $_SESSION['email'];
-    session_unset();
-    session_destroy();
-    $status = "Sorry! Either $some_email is not registered with us or you are not taking barakat from Kalimi Mohallah. Please contact on below helpline numbers.";
-    header("Location: /fmb/index.php?status=$status");
-    exit;
+    $_SESSION['thaliid'] = $values['id'];
+    $_SESSION['thali'] = $values['Thali'];
+} else {
+    // Check if users gmail id is registered with us and he is a transporter against it
+    $transporter = mysqli_query($link, "SELECT * FROM transporters where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+    if ($transporter->num_rows > 0) {
+        header("Location: /fmb/transporter/home.php");
+        exit;
+    } else {
+        $some_email = $_SESSION['email'];
+        session_unset();
+        session_destroy();
+        $status = "Sorry! Either $some_email is not registered with us or you are not taking barakat from Kalimi Mohallah. Please contact on below helpline numbers.";
+        header("Location: /fmb/index.php?status=$status");
+        exit;
+    }
 }
 
 // Redirect users to update details page if any details are missing
 if ($curr_page != 'update_details.php') {
-    if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['wingflat']) || empty($values['society']) || empty($values['Full_Address']))) {
+    if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['wingflat']) || empty($values['society']))) {
         header("Location: update_details.php?update_pending_info");
         exit;
     }
@@ -163,6 +162,10 @@ if ($curr_page != 'events.php') {
                         </li>
                         <li class="nav-item"><a class="nav-link" target="_blank" href="/fmb/sms/index.php">SMS</a></li>
                     <?php } ?>
+                    <?php $transporter = mysqli_query($link, "SELECT * FROM transporters where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+                    if ($transporter->num_rows > 0) {
+                        echo '<li class="nav-item"><a class="nav-link" href="/fmb/transporter/home.php">Transporter Panel</a></li>';
+                    } ?>
                     <li class="nav-item"><a class="nav-link" href="/fmb/users/hub_details.php">Hub details</a></li>
                     <li class="nav-item"><a class="nav-link" href="/fmb/users/stop_dates.php">Stop Dates</a></li>
                     <li class="nav-item"><a class="nav-link" href="/fmb/users/events.php">Event Registration</a></li>

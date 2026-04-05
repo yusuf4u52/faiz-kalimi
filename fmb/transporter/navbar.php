@@ -3,7 +3,11 @@ require_once('../users/connection.php');
 if (!isset($_SESSION)) {
 	session_start();
 }
-$query = mysqli_query($link , "SELECT * FROM transporters  where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+if(!isset($_SESSION['email'])) {
+    header('Location: /fmb/index.php');
+    exit;
+}
+$query = mysqli_query($link , "SELECT * FROM transporters where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
 if ($query->num_rows > 0 ) {
     $values = $query->fetch_assoc();
     $_SESSION['transporterid'] = $values['id'];
@@ -37,11 +41,15 @@ if ($query->num_rows > 0 ) {
             </button>
             <div class="collapse navbar-collapse" id="headernavbar">
                 <ul class="navbar-nav me-auto mx-xl-auto">
-                    <li class="nav-item"><a class="nav-link" href="/fmb/transporter/start_thali.php">Start Thali</a>
+                    <?php $query = mysqli_query($link, "SELECT * FROM thalilist WHERE (Email_ID = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "') AND Active IS NOT NULL AND hardstop != 1") or die(mysqli_error($link));
+                    if($query->num_rows > 0) {
+                        echo '<li class="nav-item"><a class="nav-link" href="/fmb/users/index.php">User Panel</a></li>';
+                    } ?>
+                    <li class="nav-item"><a class="nav-link" href="/fmb/transporter/start_thali.php">Active Thali</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="/fmb/transporter/stop_thali.php">Stop Thali</a>
+                    <li class="nav-item"><a class="nav-link" href="/fmb/transporter/stop_thali.php">Inactive Thali</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="/fmb/transporter/logout.php">Logout</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/fmb/users/logout.php">Logout</a></li>
                 </ul>
             </div>
         </div>
