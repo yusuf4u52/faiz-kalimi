@@ -29,7 +29,7 @@ function content_display()
                 </div>
             </div>
         </div>
-        <?php if( $its_id == 30359589 ) { ?>
+        <?php if( $its_id == 30359589 || $its_id == 30362851 ) { ?>
         <div class="col-12 col-md-6">
             <div class="card mt-4">
                 <div class="card-body">
