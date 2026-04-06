@@ -56,7 +56,10 @@ $sql = mysqli_query($link, "SELECT t.id, c.Thali, t.tiffinno, t.thalisize, t.NAM
 		join thalilist as t on (c.userid = t.id) 
 		WHERE c.processed = 0 ORDER BY t.Transporter");
 $request = array();
-$processed_ids = array();
+$processed = array();
+$msg = '';
+$transporterDailyRows = array();
+$dailyThaliCountRow = null;
 while ($row = mysqli_fetch_assoc($sql)) {
 	$request[$row['Transporter']][$row['Operation']][] = $row;
 	$processed[] = $row['id'];
@@ -100,8 +103,7 @@ while ($row = mysqli_fetch_assoc($sql)) {
 	$pivot["barnamaj"][$row['Transporter']] = $row['barnamajcount'];
 	$pivot["no size"][$row['Transporter']] = $row['nullcount'];
 	$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['fridaycount'] + (int) $row['barnamajcount'];
-	$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`, `friday`, `roti`, `barnamaj`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['fridaycount'] . "', '" . $row['roticount'] . "', '" . $row['barnamajcount'] . "', '" . $row['tcount'] . "')";
-	mysqli_query($link, $insert_sql) or die(mysqli_error($link));
+	$transporterDailyRows[] = $row;
 }
 $transporters["total"] = 1;
 
@@ -128,8 +130,7 @@ $pivot["roti"]["total"] = $result[6];
 $pivot["barnamaj"]["total"] = $result[7];
 $pivot["no size"]["total"] = $result[8];
 $pivot["total"]["total"] = $result[0];
-
-mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `barnamaj`, `roti`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $result[7] . "','" . $result[6] . "','" . $result[5] . "','" . $result[4] . "','" . $result[3] . "','" . $result[2] . "','" . $result[1] . "','" . $result[0] . "')") or die(mysqli_error($link));
+$dailyThaliCountRow = $result;
 
 mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
 $msg = str_replace("\n", "<br>", $msg);
@@ -169,6 +170,15 @@ $emails = [
 	"moula1981sk@gmail.com"
 ];
 $mailSent = sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
-if ($mailsent) {
+if ($mailSent) {
+	foreach ($transporterDailyRows as $row) {
+		$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`, `friday`, `roti`, `barnamaj`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['fridaycount'] . "', '" . $row['roticount'] . "', '" . $row['barnamajcount'] . "', '" . $row['tcount'] . "')";
+		mysqli_query($link, $insert_sql) or die(mysqli_error($link));
+	}
+
+	if ($dailyThaliCountRow !== null) {
+		mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `barnamaj`, `roti`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $dailyThaliCountRow[7] . "','" . $dailyThaliCountRow[6] . "','" . $dailyThaliCountRow[5] . "','" . $dailyThaliCountRow[4] . "','" . $dailyThaliCountRow[3] . "','" . $dailyThaliCountRow[2] . "','" . $dailyThaliCountRow[1] . "','" . $dailyThaliCountRow[0] . "')") or die(mysqli_error($link));
+	}
+
 	mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
 }
