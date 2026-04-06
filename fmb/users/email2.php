@@ -168,6 +168,7 @@ $emails = [
 	"kanchwalaabizer@gmail.com",
 	"moula1981sk@gmail.com"
 ];
-sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
-
-mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
+$mailSent = sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
+if ($mailsent) {
+	mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
+}
