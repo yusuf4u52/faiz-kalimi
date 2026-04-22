@@ -165,6 +165,8 @@ $emails = [
 	"moizlife@gmail.com",
 	"abbas.saifee5@gmail.com",
 	"tinwalaabizer@gmail.com",
+	"gheewalamf@gmail.com",
+	"itsammara@gmail.com",
 	"hussainbarnagarwala14@gmail.com",
 	"kanchwalaabizer@gmail.com",
 	"moula1981sk@gmail.com"
