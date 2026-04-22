@@ -97,6 +97,7 @@ if ($menu_item->num_rows > 0) {
 		"mulla.moiz@gmail.com",
 		"moizlife@gmail.com",
 		"tinwalaabizer@gmail.com",
+		"itsammara@gmail.com",
 		"kanchwalaabizer@gmail.com",
 		"moula1981sk@gmail.com"
 	];
