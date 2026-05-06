@@ -28,6 +28,12 @@ if (isset($_POST)) {
     $eroti = $_POST['extraRoti'];
   }
 
+  if (isset($_POST['action']) && $_POST['action'] == 'less_rice' && isset($_POST['lessRice'])) {
+    mysqli_query($link, "UPDATE thalilist set lessRice='" . $_POST['lessRice'] . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
+    $action = 'erice';
+    $erice = $_POST['lessRice'];
+  }
+
   if (isset($_POST['action']) && $_POST['action'] == 'change_email' && isset($_POST['Email_ID'])) {
     $checkemail = mysqli_query($link, "SELECT * FROM thalilist where Email_ID = '" . $_POST['Email_ID'] . "' OR `SEmail_ID` = '" . $_POST['Email_ID'] . "'") or die(mysqli_error($link));
     if ($checkemail->num_rows > 0) {
@@ -62,7 +68,7 @@ if (isset($_GET['year'])) {
     $receipts_tablename = "receipts_" . $_GET['year'];
   }
 
-  $query = "SELECT id, Thali, tiffinno, NAME, CONTACT, WhatsApp, Active, Transporter, thalisize, wingflat, sabeelType, sector, society, extraRoti, previous_hub, yearly_hub, Zabihat, ITS_No, Email_ID, SEmail_ID, thalicount, Thali_start_date, Thali_stop_date, Full_Address, musaid, Paid, (Previous_Due + yearly_hub - Paid) AS Total_Pending FROM thalilist";
+  $query = "SELECT id, Thali, tiffinno, NAME, CONTACT, WhatsApp, Active, Transporter, thalisize, wingflat, sabeelType, sector, society, extraRoti, lessRice, previous_hub, yearly_hub, Zabihat, ITS_No, Email_ID, SEmail_ID, thalicount, Thali_start_date, Thali_stop_date, Full_Address, musaid, Paid, (Previous_Due + yearly_hub - Paid) AS Total_Pending FROM thalilist";
   if (!empty($_GET['thalino'])) {
     $query .= " WHERE Thali LIKE '" . addslashes($_GET['thalino']) . "'";
   } else if (!empty($_GET['tiffinno'])) {
@@ -101,6 +107,12 @@ if (isset($_GET['year'])) {
     if (isset($action) && $action == 'eroti') { ?>
       <div class="alert alert-success" role="alert">Extra Roti
         <strong><?php echo $eroti; ?></strong> is added for sabeel no
+        <strong><?php echo $_GET['thalino']; ?></strong>.
+      </div>
+    <?php }
+    if (isset($action) && $action == 'erice') { ?>
+      <div class="alert alert-success" role="alert">Less Rice
+        <strong><?php echo $erice; ?></strong> is added for sabeel no
         <strong><?php echo $_GET['thalino']; ?></strong>.
       </div>
     <?php }
@@ -356,8 +368,32 @@ if (isset($_GET['year'])) {
               class="bi bi-x-lg"></i></button>
         </div>
         <div class="modal-body">
-          <input type="number" class="form-control" name="extraRoti" placeholder="Extra Roti Quantity"
-            value="<?php echo $values['extraRoti']; ?>" required>
+          <input type="number" class="form-control" name="extraRoti" placeholder="Extra Roti Quantity"value="<?php echo $values['extraRoti']; ?>" min="<?php echo (($values['thalisize'] == 'Medium' || $values['thalisize'] == 'Large') ? '-2' : '-1'); ?>" required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-light">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="lessRice">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" autocomplete="off">
+        <input type="hidden" name="action" value="less_rice" />
+        <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
+        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
+        <div class="modal-header">
+          <h4 class="modal-title">Less Rice</h4>
+          <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
+              class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <input type="number" class="form-control" name="lessRice" placeholder="Less Rice Quantity" value="<?php echo $values['lessRice']; ?>" min="0" max="2" required>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>

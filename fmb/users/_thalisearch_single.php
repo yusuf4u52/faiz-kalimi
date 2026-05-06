@@ -43,6 +43,8 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
           </li>
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#extraRoti">Extra Roti</a>
           </li>
+          <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#lessRice">Less Rice</a>
+          </li>
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeEmail">Change Email</a></li>
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeThalisize">Change Thali
               Size</a></li>
@@ -67,6 +69,10 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
       <li class="list-group-item">
         <div class="fw-bold">Extra Roti</div>
         <?php echo $values['extraRoti']; ?>
+      </li>
+      <li class="list-group-item">
+        <div class="fw-bold">Less Rice</div>
+        <?php echo $values['lessRice']; ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">HOF ITS No</div>
