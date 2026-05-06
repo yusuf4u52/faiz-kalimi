@@ -462,6 +462,13 @@ function getAppData($key)
     return isset($application_data[$key]) ? $application_data[$key] : null;
 }
 
+function hasAppData($key)
+{
+    global $application_data;
+
+    return isset($application_data[$key]) && $application_data[$key] !== null;
+}
+
 /**
  * Session Handler
  */

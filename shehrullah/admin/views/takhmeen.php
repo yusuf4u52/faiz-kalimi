@@ -62,8 +62,24 @@ function __handle_post() {
             + ($chair_count * $hub_data->chair);
         
         // Check if can decrease takhmeen when receipts exist
-        if (is_array($receipt_data) && count($receipt_data) > 0 && $takhmeen_data->takhmeen > $takhmeen) {
-            setSessionData(TRANSIT_DATA, 'Oops! No you can not decrease the takhmeen amount. One or more recipt is created.');
+        if (is_array($receipt_data) && count($receipt_data) > 0) {
+            // Calculate total paid amount from receipts
+            $paid_amount = 0;
+            foreach ($receipt_data as $receipt) {
+                $paid_amount += $receipt->amount;
+            }
+            
+            // Check if new takhmeen is less than paid amount
+            if ($takhmeen < $paid_amount) {
+                setSessionData(TRANSIT_DATA, 'Oops! Takhmeen amount cannot be less than the paid amount (Rs. ' . $paid_amount . '). Please adjust accordingly.');
+                // Reload data and redirect without saved parameter to show error
+                load_takhmeen_data($hof_id);
+                do_redirect('/takhmeen?hof_id=' . urlencode($hof_id));
+                exit();
+            } else {
+                add_shehrullah_takh_hub($hijri_year, $hof_id, $niyaz_hub, $iftar_count, 
+                    $zabihat_count, $fateha_count, $khajoor_count, $pirsa_count, $chair_count, $takhmeen);
+            }
         } else {
             add_shehrullah_takh_hub($hijri_year, $hof_id, $niyaz_hub, $iftar_count, 
                 $zabihat_count, $fateha_count, $khajoor_count, $pirsa_count, $chair_count, $takhmeen);
@@ -97,6 +113,13 @@ function content_display()
     <?php if ($saved) { ?>
         <div class="alert alert-success alert-dismissible fade show py-2 mb-2" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i><strong>Success!</strong> Takhmeen has been saved successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php } ?>
+    
+    <?php if (hasAppData(TRANSIT_DATA)) { ?>
+        <div class="alert alert-danger alert-dismissible fade show py-2 mb-2" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i><?= getAppData(TRANSIT_DATA) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php } ?>
