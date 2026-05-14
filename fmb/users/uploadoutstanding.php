@@ -40,9 +40,9 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                     // Skip header row and loop through the data
                     foreach ($rows as $row) {
                         $its = $row[0];
-                        $outstanding = str_replace(',', '', $row[3]);
+                        $outstanding = str_replace(',', '', $row[7]);
                         $outstanding = intval($outstanding);
-                        $takmeem = intval($row[6]); 
+                        $takmeem = intval($row[10]); 
                         if( $takmeem > 0 ) {
                             if( $takmeem > $outstanding ) {
                                 $prev = 0;
