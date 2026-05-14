@@ -45,7 +45,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                         $thalilist = mysqli_query($link, "SELECT * FROM thalilist WHERE `ITS_No` = '" . $its . "' LIMIT 1");
                         if ($thalilist->num_rows > 0) {
                             $thali = mysqli_fetch_assoc($thalilist);
-                            $receipts = mysqli_query($link, "SELECT * FROM receipts WHERE `Receipt_No` = '" . $Receipt_No . "' AND `Thali_No` = '" . $thali['Thali'] . "'  LIMIT 1");
+                            $receipts = mysqli_query($link, "SELECT * FROM receipts WHERE `Receipt_No` = '" . $Receipt_No . "' AND `userid` = '" . $thali['id'] . "'  AND `Date` = '" . $date . "'LIMIT 1");
                             if ($receipts->num_rows > 0) {
                                 $rec = mysqli_fetch_assoc($receipts);  
                                 $sql = "UPDATE receipts SET `Thali_No` = '" . $thali['Thali'] . "', `userid` = '" . $thali['id'] . "', `name` = '" . $row[4] . "', `Amount` = '" . $row[6] . "', `received_by` = 'saminabarnagarwala2812@gmail.com', `payment_type` = '" . $row[9] . "', `transaction_id` = '" . $row[14] . "', `takmeem_year` = '" . $row[15] . "' WHERE `Receipt_No ` = '".$rec['Receipt_No']."' AND Date = '" . $date . "'";
