@@ -76,6 +76,23 @@ foreach ($request as $transporter_name => $thalis) {
 	$msg .= "\n";
 }
 
+// Check if tomorrow menu has roti
+$hasRoti = false;
+
+$menuCheck = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` = 'thaali' LIMIT 1");
+
+if ($menuCheck->num_rows > 0) {
+	$menuRow = mysqli_fetch_assoc($menuCheck);
+	$menuData = unserialize($menuRow['menu_item']);
+
+	if (
+		isset($menuData['roti']['item']) &&
+		!empty($menuData['roti']['item'])
+	) {
+		$hasRoti = true;
+	}
+}
+
 //----------------- Transporter wise count daily----------------------
 $msg .= "\n<b>Transporter Count $hijridate $day - $tomorrow_date</b>\n";
 $sql = mysqli_query($link, "SELECT
@@ -99,10 +116,16 @@ while ($row = mysqli_fetch_assoc($sql)) {
 	$pivot["small"][$row['Transporter']] = $row['smallcount'];
 	$pivot["mini"][$row['Transporter']] = $row['minicount'];
 	$pivot["friday"][$row['Transporter']] = $row['fridaycount'];
-	$pivot["roti"][$row['Transporter']] = $row['roticount'];
+	if ($hasRoti) {
+		$pivot["roti"][$row['Transporter']] = $row['roticount'];
+	}
 	$pivot["barnamaj"][$row['Transporter']] = $row['barnamajcount'];
 	$pivot["no size"][$row['Transporter']] = $row['nullcount'];
-	$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['fridaycount'] + (int) $row['barnamajcount'];
+	if ($hasRoti) {
+		$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['roticount'] + (int) $row['fridaycount'] + (int) $row['barnamajcount'];
+	} else {
+		$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['fridaycount'] + (int) $row['barnamajcount'];
+	}
 	$transporterDailyRows[] = $row;
 }
 $transporters["total"] = 1;
@@ -126,7 +149,9 @@ $pivot["medium"]["total"] = $result[2];
 $pivot["small"]["total"] = $result[3];
 $pivot["mini"]["total"] = $result[4];
 $pivot["friday"]["total"] = $result[5];
-$pivot["roti"]["total"] = $result[6];
+if ($hasRoti) {
+	$pivot["roti"]["total"] = $result[6];
+}
 $pivot["barnamaj"]["total"] = $result[7];
 $pivot["no size"]["total"] = $result[8];
 $pivot["total"]["total"] = $result[0];
