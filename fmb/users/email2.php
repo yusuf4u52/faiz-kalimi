@@ -51,6 +51,8 @@ if ($menu_item->num_rows == 0) {
 	exit;
 }
 
+exit;
+
 $sql = mysqli_query($link, "SELECT t.id, c.Thali, t.tiffinno, t.thalisize, t.NAME, t.CONTACT, t.Transporter,t.wingflat, t.society, t.Full_Address, c.Operation,c.id 
 		from change_table as c inner 
 		join thalilist as t on (c.userid = t.id) 
