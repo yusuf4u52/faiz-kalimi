@@ -186,7 +186,7 @@ if ($curr_page != 'events.php') {
                     <div class="alert alert-danger<?php //echo( ($values['yearly_hub'] > $values['Total_Pending']) ? 'alert-info' : 'alert-danger'); ?> mb-0" role="alert">
                         <div class="row align-items-center">
                             <div class="col-9">
-                                <h6 class="mb-0">Your previous year's FMB dues of <strong>₹<?php echo $values['Previous_Due']; ?></strong> are still pending. We kindly request you to settle this immediately and share the screenshot on <a href="https://wa.me/+917499860950 "><strong>+91 74998 60950</strong></a> for your reciept.<h6>
+                                <h6 class="mb-0">Your previous year's FMB dues of <strong>₹<?php echo $values['Previous_Due']; ?></strong> are still pending. We kindly request you to settle the outstanding amount before Ashara Mubarakah and share the payment screenshot or receipt on <a href="https://wa.me/+917499860950 "><strong>+91 74998 60950</strong></a> so that we may update our records accordingly. Please note that if the dues remain unpaid after Ashara Mubarakah, thali home delivery may be temporarily suspended and the thali will need to be collected from Faiz.<h6>
                             </div>
                             <div class="col-3 text-end">
                                 <a class="btn btn-light btn-sm mb-0" href="upi://pay?pa=dbjt-fmb-kalimi@ybl&pn=D B J T TRUST K M POONA - FMB&cu=INR" id="__UPI_BUTTON__">Pay Now</a>
