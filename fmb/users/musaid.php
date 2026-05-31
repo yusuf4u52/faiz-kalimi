@@ -81,10 +81,17 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 												<td><?php echo $values['tiffinno']; ?></td>
 												<td>
 													<?php
-													$msg = "Salaam " . $values['NAME'] . ",
-														%0A%0AAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Iltemas che k aapni previous year pending hoob jald si jald ada kariye ane hamne FMB khidmat team ne yaari aapiye.
-														%0A%0ASabil - " . $values['Thali'] . "
-														%0APending Hoob - " . $values['Previous_Due']
+													$msg = "Salaam " . $values['NAME'] . "," .
+													"%0A%0A*Previous Year FMB Hoob Pending Reminder*" .
+													"%0A%0AAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Aapni previous year ni hoob baki che, je ni tafseel niche aapi che." .
+													"%0A%0ASabil No: " . $values['Thali'] .
+													"%0AITS No: " . $values['ITS_NO'] .
+													"%0APending Hoob: " . $values['Previous_Due'] .
+													"%0A%0AAap si iltemas che ke aap *Ashara Mubarakah* pehla aa pending hoob ada kari ne FMB khidmat team ne yaari aapiye. Jo koi wajah si Ashara pehla hoob clear na thai sake, to Ashara pachi thali ni barakat ni home delivery mawqoof rakhva ma aavshe ane aapne thali *Faiz* mathi collect karvi padse." .
+													"%0A%0AAgar aap aa hoob already ada kari chuka ho, to meherbani kari payment ni receipt athwa app transfer nu screenshot hamne mokli aapsho jethi amara records update kari shakay." .
+													"%0A%0AShukran." .
+													"%0A%0AWas Salaam," .
+													"%0AFMB Khidmat Team";
 													?>
 													<a target="_blank"
 														href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo ($msg); ?>">WhatsApp</a>
