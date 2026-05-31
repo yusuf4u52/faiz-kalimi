@@ -81,7 +81,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 												<td><?php echo $values['tiffinno']; ?></td>
 												<td>
 													<?php
-													$msg = "Salaam " . $values['NAME'] . ",\n\n";
+													$msg = "*Salaam " . $values['NAME'] . "*,\n\n";
 													$msg .= "*Previous Year FMB Hoob Pending Reminder*\n\n";
 													$msg .= "Aapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Aapni previous year ni hoob baki che, je ni tafseel niche aapi che.\n\n";
 													$msg .= "*Sabil No:* " . $values['Thali'] . "\n";
