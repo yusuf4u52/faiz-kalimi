@@ -88,7 +88,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 													$msg .= "*ITS No:* " . $values['ITS_No'] . "\n";
 													$msg .= "*Pending Hoob:* " . $values['Previous_Due'] . "\n\n";
 													$msg .= "Aap si iltemas che ke aap *Ashara Mubarakah* pehla aa pending hoob ada kari ne FMB khidmat team ne yaari aapiye. Jo koi wajah si Ashara pehla hoob clear na thai sake, to Ashara pachi thali ni barakat ni home delivery mawqoof rakhva ma aavshe ane aapne thali *Faiz* mathi collect karvi padse.\n\n";
-													$msg .= "Agar aap aa hoob already ada kari chuka ho, to meherbani kari payment ni receipt athwa app transfer nu screenshot hamne mokli aapsho jethi amara records update kari shakay.\n\n";
+													$msg .= "Agar aap aa already ada kari chuka chu thu app transfer nu screenshot mokaliyeah take hame records update kari shakay.\n\n";
 													$msg .= "Shukran.\n\n";
 													$msg .= "Was Salaam,\n";
 													$msg .= "*FMB Khidmat Team*";
