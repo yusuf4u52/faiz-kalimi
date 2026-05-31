@@ -94,7 +94,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 													"%0AFMB Khidmat Team";
 													?>
 													<a target="_blank"
-														href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo ($msg); ?>">WhatsApp</a>
+														href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo urlencode($msg); ?>">WhatsApp</a>
 												</td>
 												<td><?php echo $values['sabeelType'] ?></td>
 												<td><?php echo $values['NAME']; ?></td>
