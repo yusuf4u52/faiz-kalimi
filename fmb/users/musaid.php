@@ -85,7 +85,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 													$msg .= "*Previous Year FMB Hoob Pending Reminder*\n\n";
 													$msg .= "Aapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Aapni previous year ni hoob baki che, je ni tafseel niche aapi che.\n\n";
 													$msg .= "*Sabil No:* " . $values['Thali'] . "\n";
-													$msg .= "*ITS No:* " . $values['ITS'] . "\n";
+													$msg .= "*ITS No:* " . $values['ITS_No'] . "\n";
 													$msg .= "*Pending Hoob:* " . $values['Previous_Due'] . "\n\n";
 													$msg .= "Aap si iltemas che ke aap *Ashara Mubarakah* pehla aa pending hoob ada kari ne FMB khidmat team ne yaari aapiye. Jo koi wajah si Ashara pehla hoob clear na thai sake, to Ashara pachi thali ni barakat ni home delivery mawqoof rakhva ma aavshe ane aapne thali *Faiz* mathi collect karvi padse.\n\n";
 													$msg .= "Agar aap aa hoob already ada kari chuka ho, to meherbani kari payment ni receipt athwa app transfer nu screenshot hamne mokli aapsho jethi amara records update kari shakay.\n\n";
