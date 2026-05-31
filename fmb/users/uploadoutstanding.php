@@ -51,11 +51,13 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                                 $prev = $outstanding - $takmeem;
                                 $paid = 0;
                             }
-                            if(empty($row[2])) {
-                                $sql = "UPDATE  thalilist SET `Previous_Due` = '" . $prev . "', `yearly_hub` = '" . $takmeem . "', `Paid` = '" . $paid . "' WHERE `ITS_No` = '".$its."'";
-                            } else {
-                                $sql = "UPDATE  thalilist SET `Thali` = '" . $row[2] . "', `Previous_Due` = '" . $prev . "', `yearly_hub` = '" . $takmeem . "', `Paid` = '" . $paid . "' WHERE `ITS_No` = '".$its."'";
+                            if(!empty($row[2])) {
+                                $sql = "UPDATE  thalilist SET `Thali` = '" . $row[2] . "' WHERE `ITS_No` = '".$its."'";
                             }
+                            if(!empty($row[3])) {
+                                $sql = "UPDATE  thalilist SET `sabeelType` = 'Kalimi ITS' WHERE `ITS_No` = '".$its."'";
+                            }
+                            $sql = "UPDATE  thalilist SET `Previous_Due` = '" . $prev . "', `yearly_hub` = '" . $takmeem . "', `Paid` = '" . $paid . "' WHERE `ITS_No` = '".$its."'";
                             mysqli_query($link,$sql) or die(mysqli_error($link));
                             echo '<h4>'.$its.' data updated successfully</h4>';
                         }
