@@ -69,28 +69,32 @@ function content_display()
                 echo '<tbody>';
                     foreach ($records as $row) {
                         echo "<tr><td><div class='form-check mb-3'>";
-                            $selected = $row['its_id'] === $row['attendee'] ? ' checked' : ''; 
+                            $selected = $row['its_id'] === $row['attendee'] ? ' checked' : '';
                             echo "<input class='form-check-input mt-2' type='checkbox' $selected value='{$row['its_id']}' name='family_its_list[]' id='family_its_list[]'></td>";
                             foreach ($cols as $col) {
                                 echo "<td><label class='form-check-label'>{$row["$col"]}</label></td>";
                             }
-                            if( $row['mohallah'] === 'Other' && $row['hof_id'] != $row['its_id']) { ?>
-                                    <td><form method="post" action="delete_member">
-                                        <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id" id="miqaat_id">
-                                        <input type="hidden" value="<?= $hof_id ?>" name="hof_id" id="hof_id">
-                                        <input type="hidden" value="<?= $row['its_id'] ?>" name="its_id" id="its_id">
-                                        <input type="hidden" value="show" name="action" id="action">
-                                        <button type="submit" class="btn btn-light"><i class="bi bi-trash"></i></button>
-                                    </form></td>
-                            <?php }    
+                            if( $row['mohallah'] === 'Other' && $row['hof_id'] != $row['its_id']) {
+                                $form_id = 'delete-form-' . $row['its_id'];
+                                echo "<td><button type='submit' form='{$form_id}' class='btn btn-light'><i class='bi bi-trash'></i></button></td>";
+                            }
                         echo "</div>";
-                    } 
+                    }
                 echo '</tbody>'; ?>
             </table>
         </div>
         <div class="mb-3">
             <button type="submit" class="btn btn-light">Save</button>
         </div>
-    </form> 
+    </form>
+    <?php foreach ($records as $row):
+        if ($row['mohallah'] === 'Other' && $row['hof_id'] != $row['its_id']): ?>
+        <form id="delete-form-<?= $row['its_id'] ?>" method="post" action="delete_member">
+            <input type="hidden" value="<?= $miqaat_id ?>" name="miqaat_id">
+            <input type="hidden" value="<?= $hof_id ?>" name="hof_id">
+            <input type="hidden" value="<?= $row['its_id'] ?>" name="its_id">
+            <input type="hidden" value="show" name="action">
+        </form>
+    <?php endif; endforeach; ?> 
     <?php
 } ?>
