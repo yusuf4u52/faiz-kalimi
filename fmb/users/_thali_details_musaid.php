@@ -78,6 +78,7 @@ if ($val !== FALSE) {
 															<th>Receipt No</th>
 															<th>Amount</th>
 															<th>Date</th>
+															<th>Takmeem Year</th>
 														</tr>
 													</thead>
 													<tbody>
@@ -92,6 +93,7 @@ if ($val !== FALSE) {
 															echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
 															echo "<td>" . nl2br($row['Amount']) . "</td>";
 															echo "<td>" . date('d M Y', strtotime($row['Date'])) . "</td>";
+															echo "<td>" . $row['takmeem_year']; . "</td>";
 															echo "</tr>";
 														}
 														?>
@@ -137,6 +139,7 @@ if ($val !== FALSE) {
 														<th>Receipt No</th>
 														<th>Amount</th>
 														<th>Date</th>
+														<th>Takhmem Year</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -151,6 +154,7 @@ if ($val !== FALSE) {
 														echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
 														echo "<td>" . nl2br($row['Amount']) . "</td>";
 														echo "<td>" . date('d M Y', strtotime($row['Date'])) . "</td>";
+														echo "<td>" . $row['takmeem_year']; . "</td>";
 														echo "</tr>";
 													}
 													?>
