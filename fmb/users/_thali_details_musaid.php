@@ -91,7 +91,7 @@ if ($val !== FALSE) {
 															echo "<tr>";
 															echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
 															echo "<td>" . nl2br($row['Amount']) . "</td>";
-															echo "<td class=\"hijridate\">" . nl2br($row['Date']) . "</td>";
+															echo "<td>" . date('d M Y', strtotime($row['Date'])) . "</td>";
 															echo "</tr>";
 														}
 														?>
@@ -150,7 +150,7 @@ if ($val !== FALSE) {
 														echo "<tr>";
 														echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
 														echo "<td>" . nl2br($row['Amount']) . "</td>";
-														echo "<td class=\"hijridate\">" . nl2br($row['Date']) . "</td>";
+														echo "<td>" . date('d M Y', strtotime($row['Date'])) . "</td>";
 														echo "</tr>";
 													}
 													?>
