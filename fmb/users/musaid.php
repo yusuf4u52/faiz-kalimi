@@ -57,9 +57,11 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 										<th scope="col">Sabeel No</th>
 										<th scope="col">Thali No</th>
 										<th scope="col">Action</th>
+										<th scope="col">Thali Size</th>
 										<th scope="col">Sabeel Type</th>
 										<th scope="col">Name</th>
 										<th scope="col">Previous Due</th>
+										<th scope="col">Previous Hub</th>
 										<th scope="col">Current Hub</th>
 										<th scope="col">Pending</th>
 										<th scope="col">Paid %</th>
@@ -97,9 +99,11 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 														WhatsApp
 													</a>
 												</td>
+												<td><?php echo $values['thalisize']; ?></td>
 												<td><?php echo $values['sabeelType'] ?></td>
 												<td><?php echo $values['NAME']; ?></td>
 												<td><?php echo $values['Previous_Due']; ?></td>
+												<td><?php echo $values['previous_hub']; ?></td>
 												<td><?php echo $values['yearly_hub']; ?></td>
 												<td><?php echo $values['Total_Pending']; ?></td>
 												<td><?php echo $values['Paid %']; ?></td>
