@@ -20,18 +20,21 @@ if (isset($_POST)) {
     mysqli_query($link, $change_musaid_query);
     $action = 'cmusaid';
     $cmusaid = $clean_musaid;
+    $thali = $_POST['thali'];
   }
 
   if (isset($_POST['action']) && $_POST['action'] == 'extra_roti' && isset($_POST['extraRoti'])) {
     mysqli_query($link, "UPDATE thalilist set extraRoti='" . $_POST['extraRoti'] . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
     $action = 'eroti';
     $eroti = $_POST['extraRoti'];
+    $thali = $_POST['thali'];
   }
 
   if (isset($_POST['action']) && $_POST['action'] == 'less_rice' && isset($_POST['lessRice'])) {
     mysqli_query($link, "UPDATE thalilist set lessRice='" . $_POST['lessRice'] . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
     $action = 'erice';
     $erice = $_POST['lessRice'];
+    $thali = $_POST['thali'];
   }
 
   if (isset($_POST['action']) && $_POST['action'] == 'change_email' && isset($_POST['Email_ID'])) {
@@ -43,6 +46,7 @@ if (isset($_POST)) {
       mysqli_query($link, "UPDATE thalilist set Email_ID='" . $_POST['Email_ID'] . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
       $action = 'cemail';
       $cemail = $_POST['Email_ID'];
+      $thali = $_POST['thali'];
     }
   }
 
@@ -52,6 +56,7 @@ if (isset($_POST)) {
     mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`,`processed`) VALUES ('" . $_POST['thali'] . "','" . $_POST['id'] . "', 'Change Size','" . $today . "',0)") or die(mysqli_error($link));
     $action = 'csize';
     $csize = $_POST['thalisize'];
+    $thali = $_POST['thali'];
   }
   unset($_POST);
 }
@@ -68,7 +73,7 @@ if (isset($_GET['year'])) {
     $receipts_tablename = "receipts_" . $_GET['year'];
   }
 
-  $query = "SELECT id, Thali, tiffinno, NAME, CONTACT, WhatsApp, Active, Transporter, thalisize, wingflat, sabeelType, sector, society, extraRoti, lessRice, previous_hub, yearly_hub, Zabihat, ITS_No, Email_ID, SEmail_ID, thalicount, Thali_start_date, Thali_stop_date, Full_Address, musaid, Paid, (Previous_Due + yearly_hub - Paid) AS Total_Pending FROM thalilist";
+  $query = "SELECT id, Thali, tiffinno, NAME, CONTACT, WhatsApp, Active, Transporter, thalisize, wingflat, sabeelType, sector, society, extraRoti, lessRice, previous_hub, yearly_hub, Zabihat, ITS_No, Email_ID, SEmail_ID, thalicount, Thali_start_date, Thali_stop_date, Full_Address, musaid, Paid, hardstop, (Previous_Due + yearly_hub - Paid) AS Total_Pending FROM thalilist";
   if (!empty($_GET['thalino'])) {
     $query .= " WHERE Thali LIKE '" . addslashes($_GET['thalino']) . "'";
   } else if (!empty($_GET['tiffinno'])) {
@@ -101,25 +106,25 @@ if (isset($_GET['year'])) {
     if (isset($action) && $action == 'csize') { ?>
       <div class="alert alert-success" role="alert">Thali size is changes to
         <strong><?php echo $csize; ?></strong> for sabeel no
-        <strong><?php echo $_GET['thalino']; ?></strong>.
+        <strong><?php echo $thali; ?></strong>.
       </div>
     <?php }
     if (isset($action) && $action == 'eroti') { ?>
       <div class="alert alert-success" role="alert">Extra Roti
         <strong><?php echo $eroti; ?></strong> is added for sabeel no
-        <strong><?php echo $_GET['thalino']; ?></strong>.
+        <strong><?php echo $thali; ?></strong>.
       </div>
     <?php }
     if (isset($action) && $action == 'erice') { ?>
       <div class="alert alert-success" role="alert">Less Rice
         <strong><?php echo $erice; ?></strong> is added for sabeel no
-        <strong><?php echo $_GET['thalino']; ?></strong>.
+        <strong><?php echo $thali; ?></strong>.
       </div>
     <?php }
     if (isset($action) && $action == 'cemail') { ?>
       <div class="alert alert-success" role="alert">Email Id change to
         <strong><?php echo $cemail; ?></strong> for sabeel no
-        <strong><?php echo $_GET['thalino']; ?></strong>.
+        <strong><?php echo $thali; ?></strong>.
       </div>
     <?php }
     if (isset($action) && $action == 'remail') { ?>
@@ -468,8 +473,8 @@ if (isset($_GET['year'])) {
         <input type="hidden" name="action" value="stop_permanant" />
         <input type="hidden" name="id" value="<?php echo $values['id']; ?>" />
         <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
-        <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
-        <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
+        <input type="hidden" name="thalino" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
         <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
         <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
         <div class="modal-header">
@@ -650,28 +655,35 @@ grouped_dates AS (
 )
 SELECT `id`, `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date;") or die(mysqli_error($link));
 if (isset($stop_dates) && $stop_dates->num_rows > 0) {
-  while ($values = mysqli_fetch_assoc($stop_dates)) { ?>
-    <div class="modal fade" id="startthali-<?php echo $values['id']; ?>">
+  while ($start_values = mysqli_fetch_assoc($stop_dates)) { ?>
+    <div class="modal fade" id="startthali-<?php echo $start_values['id']; ?>">
       <div class="modal-dialog">
         <div class="modal-content">
-          <form id="startthali-<?php echo $values['id']; ?>" class="form-horizontal" method="post" action="stopthali.php"
+          <form id="startthali-<?php echo $start_values['id']; ?>" class="form-horizontal" method="post" action="stopthali.php"
             autocomplete="off">
             <input type="hidden" name="action" value="admin_start_thali" />
             <input type="hidden" name="thali" value="<?php echo $values['id']; ?>" />
-            <input type="hidden" name="thalino" value="<?php echo $_GET['thalino']; ?>" />
-            <input type="hidden" name="tiffinno" value="<?php echo $_GET['tiffinno']; ?>" />
+            <input type="hidden" name="thalino" value="<?php echo $values['Thali']; ?>" />
+            <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
             <input type="hidden" name="general" value="<?php echo $_GET['general']; ?>" />
             <input type="hidden" name="year" value="<?php echo $_GET['year']; ?>" />
-            <input type="hidden" name="start_date" value="<?php echo $values['start_date']; ?>" />
-            <input type="hidden" name="end_date" value="<?php echo $values['end_date']; ?>" />
+            <?php if(date('Y-m-d') >= $start_values['start_date']) { ?>
+              <input type="hidden" name="start_date" value="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" />
+            <?php } else { ?>
+              <input type="hidden" name="start_date" value="<?php echo $start_values['start_date']; ?>" />
+            <?php } ?>
+            <input type="hidden" name="end_date" value="<?php echo $start_values['end_date']; ?>" />
             <div class="modal-header">
-              <h4 class="modal-title">Delete Stop Thali Dates</h4>
+              <h4 class="modal-title">Delete Stop Dates</h4>
               <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
                   class="bi bi-x-lg"></i></button>
             </div>
             <div class="modal-body">
-              <p> Are you sure you want to delete the stop dates?
-              </p>
+              <?php if(date('Y-m-d') >= $start_values['start_date']) { ?>
+                <p>Are you sure you want to delete the stop dates from <strong><?php echo date('d M Y', strtotime('+1 day')); ?></strong> to <strong><?php echo date('d M Y', strtotime($start_values['end_date'])); ?></strong>. The thali will be start from tomorrow <strong><?php echo date('d M Y', strtotime('+1 day')); ?></strong>.</p>
+              <?php } else { ?>
+                <p>Are you sure you want to delete the stop dates from <strong><?php echo date('d M Y', strtotime($start_values['start_date'])); ?></strong> to <strong><?php echo date('d M Y', strtotime($start_values['end_date'])); ?></strong>.</p>
+              <?php } ?>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-light">Delete</button>

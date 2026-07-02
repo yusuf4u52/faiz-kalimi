@@ -15,7 +15,7 @@ $hijridate = getHijriDate($tomorrow_date);
 $stop_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` = '" . $tomorrow_date . "'");
 if ($stop_thali->num_rows > 0) {
 	while ($stop = mysqli_fetch_assoc($stop_thali)) {
-		$start_list = mysqli_query($link, "SELECT `id`, `Thali` FROM thalilist WHERE `id` = '" . $stop['thali'] . "' AND `Active` = '1' LIMIT 1");
+		$start_list = mysqli_query($link, "SELECT `id`, `Thali`, `NAME`, `Email_ID` FROM thalilist WHERE `id` = '" . $stop['thali'] . "' AND `Active` = '1' LIMIT 1");
 		if ($start_list->num_rows > 0) {
 			$list = $start_list->fetch_assoc();
 			$update_stop = "UPDATE thalilist SET `Active` = '0', `Thali_stop_date` = '" . $hijridate . "' WHERE `id` = '" . $list['id'] . "'";
@@ -23,6 +23,11 @@ if ($stop_thali->num_rows > 0) {
 
 			mysqli_query($link, "update change_table set processed = 1 where userid = '" . $list['id'] . "' and `Operation` in ('Start Thali','Stop Thali','Start Transport','Stop Transport') and processed = 0") or die(mysqli_error($link));
 			mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`,`Operation`, `Date`) VALUES ('" . $list['Thali'] . "','" . $list['id'] . "', 'Stop Thali','" . $hijridate . "')") or die(mysqli_error($link));
+
+			$email_subject = "Thali Stop Notification";
+			$email_body = "Salaam " . $list['NAME'] . ",<br><br>Your thali has been stopped from tomorrow till the date you selected in the FMB Website.<br><br> Note: If your thali is stopped by mistake, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
+			$email_to = $list['Email_ID'];
+			sendEmail($email_to, $email_subject, $email_body, null, null, true);
 		}
 	}
 }
@@ -40,6 +45,11 @@ if ($chk_stop_thali->num_rows > 0) {
 
 				mysqli_query($link, "update change_table set processed = 1 where userid = '" . $list['id'] . "' and `Operation` in ('Start Thali','Stop Thali','Update Address', 'Change Size') and processed = 0") or die(mysqli_error($link));
 				mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('" . $list['Thali'] . "','" . $list['id'] . "', 'Start Thali','" . $hijridate . "')") or die(mysqli_error($link));
+
+				$email_subject = "Thali Start Notification";
+				$email_body = "Salaam " . $list['NAME'] . ",<br><br>Your thali has been started from tomorrow.<br><br>Note: If your thali is started by mistake or you wish to extend the period, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
+				$email_to = $list['Email_ID'];
+				sendEmail($email_to, $email_subject, $email_body, null, null, true);
 			}
 		}
 	}
@@ -47,7 +57,15 @@ if ($chk_stop_thali->num_rows > 0) {
 
 $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` = 'thaali' LIMIT 1");
 if ($menu_item->num_rows == 0) {
-	echo "Skipping email as no thali on Miqaat or any other reason.";
+	echo $skipmsg = "Skipping email as no thali available for " . $tomorrow_date . ".";
+	$skipemails = [
+		"kalimimohallapoona@gmail.com",
+		"yusuf4u52@gmail.com",
+		"mulla.moiz@gmail.com",
+		"moizlife@gmail.com",
+		"tinwalaabizer@gmail.com",
+	];
+	sendEmail($skipemails, 'No Thaali Update ' . $tomorrow_date, $skipmsg, null, null, true);
 	exit;
 }
 
@@ -57,7 +75,7 @@ $sql = mysqli_query($link, "SELECT t.id, c.Thali, t.tiffinno, t.thalisize, t.NAM
 		WHERE c.processed = 0 ORDER BY t.Transporter");
 $request = array();
 $processed = array();
-$msg = '';
+$msg = '<h3>Start Stop update for ' . $tomorrow_date . ' - ' . $hijridate . ' - ' . $day . "</h3>\n\n";
 $transporterDailyRows = array();
 $dailyThaliCountRow = null;
 while ($row = mysqli_fetch_assoc($sql)) {

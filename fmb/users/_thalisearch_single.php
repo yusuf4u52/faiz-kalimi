@@ -237,14 +237,14 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="modal" href="#stop_thali">Stop By Dates</a>
           </li>
-          <li class="nav-item"><?php
-                                if ($values['Active'] == '1') { ?>
-              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a>
+          <li class="nav-item">
+            <?php if ($values['Active'] == '1') { ?>
+              <!--<a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a>-->
             <?php } else { ?>
               <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a>
             <?php } ?>
           </li>
-          <?php if ($values['Active'] != '2') { ?>
+          <?php if ($values['hardstop'] != '1') { ?>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="modal" href="#stop_permanent">Stop Permanent</a>
             </li>
@@ -274,11 +274,13 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
           <tbody>
             <?php while ($stop_values = mysqli_fetch_assoc($stop_dates)) {
               $stop_date = new DateTime($stop_values['start_date'] . '00:00:00');
-              $stop_date = $stop_date->format('Y-m-d H:i:s'); ?>
+              $stop_date = $stop_date->format('Y-m-d H:i:s');
+              $start_date = new DateTime($stop_values['end_date'] . '00:00:00');
+              $start_date = $start_date->format('Y-m-d H:i:s'); ?>
               <tr>
                 <td data-sort="<?php echo strtotime($stop_values['start_date']); ?>"><?php echo date('d M Y', strtotime($stop_values['start_date'])); ?></td>
                 <td data-sort="<?php echo strtotime($stop_values['end_date']); ?>"><?php echo date('d M Y', strtotime($stop_values['end_date'])); ?></td>
-                <td><?php if (date('Y-m-d H:i:s') < $stop_date) { ?><button type="button"
+                <td><?php if (date('Y-m-d H:i:s') < $start_date) { ?><button type="button"
                       class="btn btn-light"
                       data-bs-target="#startthali-<?php echo $stop_values['id']; ?>"
                       data-bs-toggle="modal" style="margin-bottom:5px">Delete</button><?php } else { ?> <button type="button"
