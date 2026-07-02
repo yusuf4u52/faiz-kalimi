@@ -57,7 +57,7 @@ if ($chk_stop_thali->num_rows > 0) {
 
 $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` = 'thaali' LIMIT 1");
 if ($menu_item->num_rows == 0) {
-	echo $skipmsg = "Skipping email as no thali available for " . $tomorrow_date . ".";
+	$skipmsg = "Skipping email as no thali available for " . $tomorrow_date . ".";
 	$skipemails = [
 		"kalimimohallapoona@gmail.com",
 		"yusuf4u52@gmail.com",
@@ -226,4 +226,6 @@ if ($mailSent) {
 	}
 
 	mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
+
+	echo 'Email Sent Successfully'.
 }
