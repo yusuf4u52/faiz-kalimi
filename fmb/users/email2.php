@@ -27,7 +27,7 @@ if ($stop_thali->num_rows > 0) {
 
 			$email_subject = "Thali Stop Notification";
 			$email_body = "Salaam " . $list['NAME'] . ",<br><br>Your thali has been stopped from tomorrow till the date you selected in the FMB Website.<br><br> Note: If your thali is stopped by mistake, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
-			$email_to = = [ 
+			$email_to = [ 
 				$list['Email_ID'],
 			];
 			sendEmail($email_to, $email_subject, $email_body, null, null, true);
