@@ -6,7 +6,8 @@ include '../backup/_email_backup.php';
 require_once '_sendMail.php';
 //include('emailmenu.php');
 
-error_reporting(0);
+error_reporting(E_ALL);
+ini_set('display_errors',1);
 $today_date = date("Y-m-d");
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $day = date("l", strtotime($tomorrow_date));
@@ -227,5 +228,5 @@ if ($mailSent) {
 
 	mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
 
-	echo 'Email Sent Successfully'.
+	echo "Email Sent Successfully";
 }
