@@ -110,7 +110,7 @@ if ($menuCheck->num_rows > 0) {
 
 	if (
 		isset($menuData['roti']['item']) &&
-		!empty($menuData['roti']['item'])
+		trim($menuData['roti']['item']) === 'Roti'
 	) {
 		$hasRoti = true;
 	}
