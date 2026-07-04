@@ -92,7 +92,6 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 													$msg .= "Aap si adab sathe iltemas che ke aap aa pending hoob *Syedi Fakhruddin Shaheed (RA) na Urus Mubarak (11 July)* sudhi ada kari ne FMB khidmat team ne yaari aapiye.\n\n";
 													$msg .= "Agar koi sabab 11 July sudhi pending hoob clear nahi thay, to *13 July Monday* thali si home delivery mawqoof rakhva ma aavshe ane aapne thali *Faiz* mathi collect karvi padse.\n\n";
 													$msg .= "Agar aap aa hoob pehla thi ada kari chuka ho, to payment ni receipt ya transfer nu screenshot hamne mokli aapsho taake hame apna records update kari shakay.\n\n";
-													$msg .= "Aapna taawun ane samajdari badal shukran.\n\n";
 													$msg .= "Was Salaam,\n";
 													$msg .= "*FMB Khidmat Team*";
 
