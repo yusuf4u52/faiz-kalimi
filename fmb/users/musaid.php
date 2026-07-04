@@ -84,16 +84,18 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 												<td>
 													<?php
 													$msg = "*Salaam " . $values['NAME'] . "*,\n\n";
-													$msg .= "*Previous Year FMB Hoob Pending Reminder*\n\n";
+													$msg .= "*Final Reminder - Previous Year FMB Hoob Pending*\n\n";
 													$msg .= "Aapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Aapni previous year ni hoob baki che, je ni tafseel niche aapi che.\n\n";
 													$msg .= "*Sabil No:* " . $values['Thali'] . "\n";
 													$msg .= "*ITS No:* " . $values['ITS_No'] . "\n";
-													$msg .= "*Pending Hoob:* " . $values['Previous_Due'] . "\n\n";
-													$msg .= "Aap si iltemas che ke aap *Ashara Mubarakah* pehla aa pending hoob ada kari ne FMB khidmat team ne yaari aapiye. Jo koi wajah si Ashara pehla hoob clear na thai sake, to Ashara pachi thali ni barakat ni home delivery mawqoof rakhva ma aavshe ane aapne thali *Faiz* mathi collect karvi padse.\n\n";
-													$msg .= "Agar aap aa already ada kari chuka chu thu app transfer nu screenshot mokaliyeah take hame records update kari shakay.\n\n";
-													$msg .= "Shukran.\n\n";
+													$msg .= "*Pending Hoob:* ₹" . number_format($values['Previous_Due']) . "\n\n";
+													$msg .= "Aap si adab sathe iltemas che ke aap aa pending hoob *Syedi Fakhruddin Shaheed (RA) na Urus Mubarak (11 July)* sudhi ada kari ne FMB khidmat team ne yaari aapiye.\n\n";
+													$msg .= "Agar koi sabab 11 July sudhi pending hoob clear nahi thay, to *13 July Monday* thali si home delivery mawqoof rakhva ma aavshe ane aapne thali *Faiz* mathi collect karvi padse.\n\n";
+													$msg .= "Agar aap aa hoob pehla thi ada kari chuka ho, to payment ni receipt ya transfer nu screenshot hamne mokli aapsho taake hame apna records update kari shakay.\n\n";
+													$msg .= "Aapna taawun ane samajdari badal shukran.\n\n";
 													$msg .= "Was Salaam,\n";
 													$msg .= "*FMB Khidmat Team*";
+
 													?>
 													<a href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo urlencode($msg); ?>" target="_blank">
 														WhatsApp
