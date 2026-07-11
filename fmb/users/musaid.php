@@ -32,7 +32,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 
 <div class="accordion" id="accordionMusaid">
 	<?php foreach ($musaid_list as $musaid) {
-		$result = mysqli_query($link, "SELECT * FROM thalilist where Previous_Due > 3 AND Transporter IS NOT NULL AND musaid='" . $musaid['email'] . "' AND hardstop !=1 order by `Paid %`");
+		$result = mysqli_query($link, "SELECT * FROM thalilist where Previous_Due > 4 AND Transporter IS NOT NULL AND musaid='" . $musaid['email'] . "' AND hardstop !=1 order by `Paid %`");
 		$thali_details = mysqli_fetch_all($result, MYSQLI_ASSOC);
 		$musaid_thali_count = count($thali_details);
 		if ($musaid_thali_count > 0) { ?>
@@ -59,6 +59,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 										<th scope="col">Action</th>
 										<th scope="col">Thali Size</th>
 										<th scope="col">Sabeel Type</th>
+										<th scope="col">Transporter</th>
 										<th scope="col">Name</th>
 										<th scope="col">Previous Due</th>
 										<th scope="col">Previous Hub</th>
@@ -102,6 +103,7 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] === 'superadmin' || $_SESSION
 												</td>
 												<td><?php echo $values['thalisize']; ?></td>
 												<td><?php echo $values['sabeelType'] ?></td>
+												<td><?php echo $values['Transporter'] ?></td>
 												<td><?php echo $values['NAME']; ?></td>
 												<td><?php echo $values['Previous_Due']; ?></td>
 												<td><?php echo $values['previous_hub']; ?></td>
