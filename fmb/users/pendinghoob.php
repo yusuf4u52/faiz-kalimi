@@ -8,9 +8,8 @@ include('../navbar.php');
         <div class="row">
             <div class="col-12">
                 <h2 class="mb-3">Pending Hoob</h2>
-                <?php $result = mysqli_query($link, "SELECT * FROM thalilist where Previous_Due > 4 AND Transporter IS NOT NULL AND hardstop !=1 order by `Previous_Due` DESC");
-		        $thali_details = mysqli_fetch_all($result, MYSQLI_ASSOC);
-                if (count($thali_details) > 0) { ?>
+                <?php $pendinghoob = mysqli_query($link, "SELECT * FROM thalilist WHERE Previous_Due > 4 AND hardstop !=1 ORDER BY Previous_Due DESC");
+                if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="transporterlist" class="table table-striped table-hover">
                             <thead>
@@ -29,7 +28,7 @@ include('../navbar.php');
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($start_list = mysqli_fetch_assoc($start_thali)) { ?>
+                                <?php while ($values = mysqli_fetch_assoc($pendinghoob)) { ?>
                                     <tr>
                                         <td><?php echo $values['Thali']; ?></td>
                                         <td><?php echo $values['tiffinno']; ?></td>
@@ -42,7 +41,6 @@ include('../navbar.php');
                                         <td><?php echo $values['previous_hub']; ?></td>
                                         <td><?php echo $values['yearly_hub']; ?></td>
                                         <td><?php echo $values['Total_Pending']; ?></td>
-                                        <td><?php echo $values['Paid %']; ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -62,7 +60,7 @@ include('../navbar.php');
                         </table>
                     </div>
                 <?php } else {
-                    echo '<h4 class="text-center mt-5">No thali is started on this date.</h4>';
+                    echo '<h4 class="text-center mt-5">No Previous Year Pending Hoob.</h4>';
                 } ?>
             </div>
         </div>
