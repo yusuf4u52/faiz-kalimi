@@ -39,6 +39,7 @@ include('navbar.php');
                                         <td><?php echo $values['Previous_Due']; ?></td>
                                         <td><?php echo $values['previous_hub']; ?></td>
                                         <td><?php echo $values['yearly_hub']; ?></td>
+                                        <td><?php echo $values['Pending']; ?></td>
                                         <td><?php echo $values['thalisize']; ?></td>
                                         <td><?php echo $values['sabeelType'] ?></td>
                                         <td><?php echo $values['Transporter']; ?></td>
