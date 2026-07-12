@@ -1,6 +1,6 @@
 <?php
-include('../header.php');
-include('../navbar.php');
+include('header.php');
+include('navbar.php');
 ?>
 
 <div class="card">
@@ -67,4 +67,4 @@ include('../navbar.php');
     </div>
 </div>
 
-<?php include('../footer.php'); ?>
+<?php include('footer.php'); ?>
