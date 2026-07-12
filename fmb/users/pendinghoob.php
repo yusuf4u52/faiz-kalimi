@@ -18,13 +18,14 @@ include('navbar.php');
                                     <th scope="col">Thali No</th>
                                     <th scope="col">Contact</th>
                                     <th scope="col">Whatsapp</th>
-                                    <th scope="col">Thali Size</th>
-                                    <th scope="col">Sabeel Type</th>
                                     <th scope="col">Name</th>
                                     <th scope="col">Previous Due</th>
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
                                     <th scope="col">Pending</th>
+                                    <th scope="col">Thali Size</th>
+                                    <th scope="col">Sabeel Type</th>
+                                    <th scope="col">Transporter</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -34,27 +35,30 @@ include('navbar.php');
                                         <td><?php echo $values['tiffinno']; ?></td>
                                         <td><?php echo $values['CONTACT']; ?></td>
                                         <td><?php echo $values['WhatsApp']; ?></td>
-                                        <td><?php echo $values['thalisize']; ?></td>
-                                        <td><?php echo $values['sabeelType'] ?></td>
                                         <td><?php echo $values['NAME']; ?></td>
                                         <td><?php echo $values['Previous_Due']; ?></td>
                                         <td><?php echo $values['previous_hub']; ?></td>
                                         <td><?php echo $values['yearly_hub']; ?></td>
-                                        <td><?php echo $values['Total_Pending']; ?></td>
+                                        <td><?php echo $values['thalisize']; ?></td>
+                                        <td><?php echo $values['sabeelType'] ?></td>
+                                        <td><?php echo $values['Transporter']; ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th>Sr No.</th>
-                                    <th>Transporter</th>
-                                    <th>Tiffin No</th>
-                                    <th>Tiffin Size</th>
-                                    <th>Flat</th>
-                                    <th>Society</th>
-                                    <th>Name</th>
-                                    <th>Contact</th>
-                                    <th>Sabeel No</th>
+                                    <th scope="col">Sabeel No</th>
+                                    <th scope="col">Thali No</th>
+                                    <th scope="col">Contact</th>
+                                    <th scope="col">Whatsapp</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Previous Due</th>
+                                    <th scope="col">Previous Hub</th>
+                                    <th scope="col">Current Hub</th>
+                                    <th scope="col">Pending</th>
+                                    <th scope="col">Thali Size</th>
+                                    <th scope="col">Sabeel Type</th>
+                                    <th scope="col">Transporter</th>
                                 </tr>
                             </tfoot>
                         </table>
