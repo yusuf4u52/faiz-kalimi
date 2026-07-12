@@ -8,7 +8,7 @@ include('navbar.php');
         <div class="row">
             <div class="col-12">
                 <h2 class="mb-3">Pending Hoob</h2>
-                <?php $pendinghoob = mysqli_query($link, "SELECT * FROM thalilist WHERE Previous_Due > 4 AND hardstop !=1 ORDER BY Previous_Due DESC");
+                <?php $pendinghoob = mysqli_query($link, "SELECT * FROM thalilist WHERE Previous_Due > 4 AND thalisize is NOT NULL AND hardstop !=1 ORDER BY Previous_Due DESC");
                 if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="transporterlist" class="table table-striped table-hover">
