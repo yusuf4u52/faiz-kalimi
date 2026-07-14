@@ -41,6 +41,8 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
           <!--<li class="nav-item"><a class="nav-link" href="#" data-key="payhoob" data-thali="<?php echo $values['Thali']; ?>">Pay Hoob</a></li>-->
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeMusaid">Change Masool</a>
           </li>
+          <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeTransporter">Change Transporter</a>
+          </li>
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#extraRoti">Extra Roti</a>
           </li>
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#lessRice">Less Rice</a>

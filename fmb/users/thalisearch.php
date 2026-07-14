@@ -23,6 +23,28 @@ if (isset($_POST)) {
     $thali = $_POST['thali'];
   }
 
+  if (isset($_POST['action']) && $_POST['action'] == 'change_transporter' && isset($_POST['transporter'])) {
+    $update = mysqli_query($link, "UPDATE thalilist set Active='0' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
+    $update = mysqli_query($link, "UPDATE thalilist set Thali_stop_date='" . $today . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
+
+    mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_POST['id'] . "' and `Operation` in ('Stop Thali') and processed = 0") or die(mysqli_error($link));
+    mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`,`Operation`, `Date`) VALUES ('" . $_POST['thali'] . "','" . $_POST['id'] . "', 'Stop Thali','" . $today . "')") or die(mysqli_error($link));
+
+    $clean_transporter = htmlentities(strip_tags($_POST['transporter']), ENT_QUOTES, 'UTF-8');
+    $change_transporter_query = "UPDATE `thalilist` SET `Transporter` = '$clean_transporter' WHERE id = '" . $_POST['id'] . "'";
+    mysqli_query($link, $change_transporter_query);
+
+    mysqli_query($link, "UPDATE thalilist set Active='1' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
+    mysqli_query($link, "UPDATE thalilist set Thali_start_date='" . $today . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
+
+    mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_POST['id'] . "' and `Operation` in ('Start Thali','Update Address', 'Change Size') and processed = 0") or die(mysqli_error($link));
+    mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('" . $_POST['thali'] . "','" . $_POST['id'] . "', 'Start Thali','" . $today . "')") or die(mysqli_error($link));
+
+    $action = 'ctransporter';
+    $ctransporter = $clean_transporter;
+    $thali = $_POST['thali'];
+  }
+
   if (isset($_POST['action']) && $_POST['action'] == 'extra_roti' && isset($_POST['extraRoti'])) {
     mysqli_query($link, "UPDATE thalilist set extraRoti='" . $_POST['extraRoti'] . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
     $action = 'eroti';
@@ -96,6 +118,9 @@ if (isset($_GET['year'])) {
     <h2 class="mb-3">Thali Search</h2>
     <?php if (isset($action) && $action == 'cmusaid') { ?>
       <div class="alert alert-success" role="alert">Musaid change to <strong><?php echo $cmusaid; ?></strong>.
+      </div>
+    <?php } if (isset($action) && $action == 'ctransporter') { ?>
+      <div class="alert alert-success" role="alert">Transporter change to <strong><?php echo $ctransporter; ?></strong>.
       </div>
     <?php }
     if (isset($action) && $action == 'comment') { ?>
@@ -325,6 +350,45 @@ if (isset($_GET['year'])) {
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="changeTransporter">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" autocomplete="off">
+        <input type="hidden" name="action" value="change_transporter" />
+        <input type="hidden" name="id" value="<?php echo $values['id']; ?>">
+        <input type="hidden" name="thali" value="<?php echo $values['Thali']; ?>" />
+        <input type="hidden" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" />
+        <div class="modal-header">
+          <h4 class="modal-title">Change Transporter</h4>
+          <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
+              class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <select name="transporter" required='required' class="form-select">
+            <option value=''>Select</option>
+            <option value='Balasinor'>Balasinor</option>
+            <option value='Imran'>Imran</option>
+            <option value='Mauwala'>Mauwala</option>
+            <option value='Molana'>Molana</option>
+            <option value='Murtaza'>Murtaza</option>
+            <option value='Murtaza (Cloud9)'>Murtaza (Cloud9)</option>
+            <option value='Shahid'>Shahid</option>
+            <option value='SUHB'>SUHB</option>
+            <option value='Zainuddin'>Zainuddin</option>
+            <option value='Zuhair'>Zuhair</option>
+            <option value='Pick Up'>Pick Up</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-light">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 
 <div class="modal fade" id="changeThalisize">
   <div class="modal-dialog">
