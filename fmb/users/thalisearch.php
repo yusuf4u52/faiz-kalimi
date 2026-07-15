@@ -24,21 +24,13 @@ if (isset($_POST)) {
   }
 
   if (isset($_POST['action']) && $_POST['action'] == 'change_transporter' && isset($_POST['transporter'])) {
-    $update = mysqli_query($link, "UPDATE thalilist set Active='0' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
-    $update = mysqli_query($link, "UPDATE thalilist set Thali_stop_date='" . $today . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
-
-    mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_POST['id'] . "' and `Operation` in ('Stop Thali') and processed = 0") or die(mysqli_error($link));
-    mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`,`Operation`, `Date`) VALUES ('" . $_POST['thali'] . "','" . $_POST['id'] . "', 'Stop Thali','" . $today . "')") or die(mysqli_error($link));
 
     $clean_transporter = htmlentities(strip_tags($_POST['transporter']), ENT_QUOTES, 'UTF-8');
     $change_transporter_query = "UPDATE `thalilist` SET `Transporter` = '$clean_transporter' WHERE id = '" . $_POST['id'] . "'";
     mysqli_query($link, $change_transporter_query);
 
-    mysqli_query($link, "UPDATE thalilist set Active='1' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
-    mysqli_query($link, "UPDATE thalilist set Thali_start_date='" . $today . "' WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
-
-    mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_POST['id'] . "' and `Operation` in ('Start Thali','Update Address', 'Change Size') and processed = 0") or die(mysqli_error($link));
-    mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('" . $_POST['thali'] . "','" . $_POST['id'] . "', 'Start Thali','" . $today . "')") or die(mysqli_error($link));
+    mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_POST['id'] . "' and `Operation` in ('Update Transporter', 'Update Address', 'Change Size') and processed = 0") or die(mysqli_error($link));
+    mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('" . $_POST['thali'] . "','" . $_POST['id'] . "', 'Update Transporter','" . $today . "')") or die(mysqli_error($link));
 
     $action = 'ctransporter';
     $ctransporter = $clean_transporter;
@@ -117,10 +109,10 @@ if (isset($_GET['year'])) {
   <div class="card-body">
     <h2 class="mb-3">Thali Search</h2>
     <?php if (isset($action) && $action == 'cmusaid') { ?>
-      <div class="alert alert-success" role="alert">Musaid change to <strong><?php echo $cmusaid; ?></strong>.
+      <div class="alert alert-success" role="alert">Musaid change to <strong><?php echo $cmusaid; ?></strong> for sabeel no <strong><?php echo $thali; ?></strong>.
       </div>
     <?php } if (isset($action) && $action == 'ctransporter') { ?>
-      <div class="alert alert-success" role="alert">Transporter change to <strong><?php echo $ctransporter; ?></strong>.
+      <div class="alert alert-success" role="alert">Transporter change to <strong><?php echo $ctransporter; ?> for sabeel no <?php echo $thali; ?></strong>.
       </div>
     <?php }
     if (isset($action) && $action == 'comment') { ?>

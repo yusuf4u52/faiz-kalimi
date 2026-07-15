@@ -6,8 +6,7 @@ include '../backup/_email_backup.php';
 require_once '_sendMail.php';
 //include('emailmenu.php');
 
-error_reporting(E_ALL);
-ini_set('display_errors',1);
+error_reporting(0);
 $today_date = date("Y-m-d");
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $day = date("l", strtotime($tomorrow_date));
@@ -27,9 +26,7 @@ if ($stop_thali->num_rows > 0) {
 
 			$email_subject = "Thali Stop Notification";
 			$email_body = "Salaam " . $list['NAME'] . ",<br><br>Your thali has been stopped from tomorrow till the date you selected in the FMB Website.<br><br> Note: If your thali is stopped by mistake, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
-			$email_to = [ 
-				$list['Email_ID'],
-			];
+			$email_to = $list['Email_ID'];
 			sendEmail($email_to, $email_subject, $email_body, null, null, true);
 		}
 	}
@@ -40,7 +37,7 @@ if ($chk_stop_thali->num_rows > 0) {
 	while ($chk_stop_list = mysqli_fetch_assoc($chk_stop_thali)) {
 		$start_thali = mysqli_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` = '" . $tomorrow_date . "' AND `thali` = '" . $chk_stop_list['thali'] . "'");
 		if ($start_thali->num_rows <= 0) {
-			$stop_list = mysqli_query($link, "SELECT `id`, `Thali`, `NAME`, `Email_ID` FROM thalilist WHERE `id` = '" . $chk_stop_list['thali'] . "' AND `Active` = '0' LIMIT 1");
+			$stop_list = mysqli_query($link, "SELECT `id`, `Thali` FROM thalilist WHERE `id` = '" . $chk_stop_list['thali'] . "' AND `Active` = '0' LIMIT 1");
 			if ($stop_list->num_rows > 0) {
 				$list = $stop_list->fetch_assoc();
 				$update_start = "UPDATE thalilist SET `Active` = '1', `Thali_start_date` = '" . $hijridate . "' WHERE `id` = '" . $list['id'] . "'";
@@ -51,9 +48,7 @@ if ($chk_stop_thali->num_rows > 0) {
 
 				$email_subject = "Thali Start Notification";
 				$email_body = "Salaam " . $list['NAME'] . ",<br><br>Your thali has been started from tomorrow.<br><br>Note: If your thali is started by mistake or you wish to extend the period, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
-				$email_to = [ 
-					$list['Email_ID'],
-				];
+				$email_to = $list['Email_ID'];
 				sendEmail($email_to, $email_subject, $email_body, null, null, true);
 			}
 		}
@@ -61,7 +56,167 @@ if ($chk_stop_thali->num_rows > 0) {
 }
 
 $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` = 'thaali' LIMIT 1");
-if ($menu_item->num_rows == 0) {
+if ($menu_item->num_rows > 0) {
+
+	$sql = mysqli_query($link, "SELECT t.id, c.Thali, t.tiffinno, t.thalisize, t.NAME, t.CONTACT, t.Transporter,t.wingflat, t.society, t.Full_Address, c.Operation,c.id 
+			from change_table as c inner 
+			join thalilist as t on (c.userid = t.id) 
+			WHERE c.processed = 0 ORDER BY t.Transporter");
+	$request = array();
+	$processed = array();
+	$msg = '<h3>Start Stop update for ' . $tomorrow_date . ' - ' . $hijridate . ' - ' . $day . "</h3>\n\n";
+	$transporterDailyRows = array();
+	$dailyThaliCountRow = null;
+	while ($row = mysqli_fetch_assoc($sql)) {
+		$request[$row['Transporter']][$row['Operation']][] = $row;
+		$processed[] = $row['id'];
+	}
+	foreach ($request as $transporter_name => $thalis) {
+		$msg .= "<b>" . $transporter_name . "</b>\n";
+		foreach ($thalis as $operation_type => $thali_details) {
+			$msg .= "<b>" . $operation_type . "</b>\n";
+			foreach ($thali_details as $thaliuser) {
+				$msg .= sprintf("%s - %s - %s - %s - %s - %s\n", $thaliuser['tiffinno'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
+				$msg .= "\n";
+			}
+		}
+		$msg .= "\n";
+	}
+
+	// Check if tomorrow menu has roti
+	$hasRoti = false;
+
+	$menuCheck = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` = 'thaali' LIMIT 1");
+
+	if ($menuCheck->num_rows > 0) {
+		$menuRow = mysqli_fetch_assoc($menuCheck);
+		$menuData = unserialize($menuRow['menu_item']);
+
+		if (
+			isset($menuData['roti']['item']) &&
+			!empty($menuData['roti']['item'])
+		) {
+			$hasRoti = true;
+		}
+	}
+
+	//----------------- Transporter wise count daily----------------------
+	$msg .= "\n<b>Transporter Count $hijridate $day - $tomorrow_date</b>\n";
+	$sql = mysqli_query($link, "SELECT
+						(case when Transporter IS NULL then 'No Transport' else Transporter end) AS Transporter,
+						count(*) as tcount,
+						sum(case when thalisize = 'Large' then 1 else 0 end) AS largecount,
+						sum(case when thalisize = 'Medium' then 1 else 0 end) AS mediumcount,
+						sum(case when thalisize = 'Small' then 1 else 0 end) AS smallcount,
+						sum(case when thalisize = 'Mini' then 1 else 0 end) AS minicount,
+						sum(case when thalisize = 'Friday' then 1 else 0 end) AS fridaycount,
+						sum(case when thalisize = 'Roti' then 1 else 0 end) AS roticount,
+						sum(case when thalisize = 'Barnamaj' then 1 else 0 end) AS barnamajcount,
+						sum(case when thalisize IS NULL then 1 else 0 end) AS nullcount
+						FROM `thalilist` WHERE Active = 1 group by Transporter");
+	$pivot = array();
+	$transporters = array();
+	while ($row = mysqli_fetch_assoc($sql)) {
+		$transporters[$row['Transporter']] = 1;
+		$pivot["large"][$row['Transporter']] = $row['largecount'];
+		$pivot["medium"][$row['Transporter']] = $row['mediumcount'];
+		$pivot["small"][$row['Transporter']] = $row['smallcount'];
+		$pivot["mini"][$row['Transporter']] = $row['minicount'];
+		$pivot["friday"][$row['Transporter']] = $row['fridaycount'];
+		if ($hasRoti) {
+			$pivot["roti"][$row['Transporter']] = $row['roticount'];
+		}
+		$pivot["barnamaj"][$row['Transporter']] = $row['barnamajcount'];
+		$pivot["no size"][$row['Transporter']] = $row['nullcount'];
+		if ($hasRoti) {
+			$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['roticount'] + (int) $row['fridaycount'] + (int) $row['barnamajcount'];
+		} else {
+			$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['fridaycount'] + (int) $row['barnamajcount'];
+		}
+		$transporterDailyRows[] = $row;
+	}
+	$transporters["total"] = 1;
+
+	//-------------------------------------------------------------------
+	$totalcountonsize = mysqli_query($link, "SELECT
+						count(*) as tcount,
+						sum(case when thalisize = 'Large' then 1 else 0 end) AS large,
+						sum(case when thalisize = 'Medium' then 1 else 0 end) AS medium,
+						sum(case when thalisize = 'Small' then 1 else 0 end) AS small,
+						sum(case when thalisize = 'Mini' then 1 else 0 end) AS mini,
+						sum(case when thalisize = 'Friday' then 1 else 0 end) AS friday,
+						sum(case when thalisize = 'Roti' then 1 else 0 end) AS roti,
+						sum(case when thalisize = 'Barnamaj' then 1 else 0 end) AS barnamaj,
+						sum(case when thalisize IS NULL then 1 else 0 end) AS none
+						FROM `thalilist` WHERE Active = 1");
+
+	$result = mysqli_fetch_row($totalcountonsize);
+	$pivot["large"]["total"] = $result[1];
+	$pivot["medium"]["total"] = $result[2];
+	$pivot["small"]["total"] = $result[3];
+	$pivot["mini"]["total"] = $result[4];
+	$pivot["friday"]["total"] = $result[5];
+	if ($hasRoti) {
+		$pivot["roti"]["total"] = $result[6];
+	}
+	$pivot["barnamaj"]["total"] = $result[7];
+	$pivot["no size"]["total"] = $result[8];
+	$pivot["total"]["total"] = $result[0];
+	$dailyThaliCountRow = $result;
+
+	mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
+	$msg = str_replace("\n", "<br>", $msg);
+
+	$pivotTable = "<table border='1' ><tr><td></td>";
+	foreach ($transporters as $tname => $value) {
+		$pivotTable .= "<td style='padding: 2px 10px 2px 10px;'>" . $tname . "</td>";
+	}
+	$pivotTable .= "</tr>";
+
+	foreach ($pivot as $size => $tcountArr) {
+		$pivotTable .= "<tr><td style='padding: 2px 10px 2px 10px;'>" . $size . "</td>";
+		foreach ($transporters as $tname => $value) {
+			$pivotTable .= "<td style='padding: 2px 10px 2px 10px;'>" . $tcountArr[$tname] . "</td>";
+		}
+		$pivotTable .= "</tr>";
+	}
+	$pivotTable .= "</table>";
+
+	$msg .= $pivotTable;
+
+	// add total registered count
+	$registered_but_not_active = mysqli_query($link, "SELECT * FROM thalilist WHERE Active='0' and (Transporter <> '' or Transporter is not null)");
+	$total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered_but_not_active);
+	$msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
+
+	// send email
+	$emails = [
+		"kalimimohallapoona@gmail.com",
+		"yusuf4u52@gmail.com",
+		"mulla.moiz@gmail.com",
+		"moizlife@gmail.com",
+		"abbas.saifee5@gmail.com",
+		"tinwalaabizer@gmail.com",
+		"gheewalamf@gmail.com",
+		"itsammara@gmail.com",
+		"hussainbarnagarwala14@gmail.com",
+		"kanchwalaabizer@gmail.com",
+		"moula1981sk@gmail.com"
+	];
+	$mailSent = sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
+	if ($mailSent) {
+		foreach ($transporterDailyRows as $row) {
+			$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`, `friday`, `roti`, `barnamaj`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['fridaycount'] . "', '" . $row['roticount'] . "', '" . $row['barnamajcount'] . "', '" . $row['tcount'] . "')";
+			mysqli_query($link, $insert_sql) or die(mysqli_error($link));
+		}
+
+		if ($dailyThaliCountRow !== null) {
+			mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `barnamaj`, `roti`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $dailyThaliCountRow[7] . "','" . $dailyThaliCountRow[6] . "','" . $dailyThaliCountRow[5] . "','" . $dailyThaliCountRow[4] . "','" . $dailyThaliCountRow[3] . "','" . $dailyThaliCountRow[2] . "','" . $dailyThaliCountRow[1] . "','" . $dailyThaliCountRow[0] . "')") or die(mysqli_error($link));
+		}
+
+		mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
+	}
+} else {
 	$skipmsg = "Skipping email as no thali available for " . $tomorrow_date . ".";
 	$skipemails = [
 		"kalimimohallapoona@gmail.com",
@@ -72,165 +227,4 @@ if ($menu_item->num_rows == 0) {
 	];
 	sendEmail($skipemails, 'No Thaali Update ' . $tomorrow_date, $skipmsg, null, null, true);
 	exit;
-}
-
-$sql = mysqli_query($link, "SELECT t.id, c.Thali, t.tiffinno, t.thalisize, t.NAME, t.CONTACT, t.Transporter,t.wingflat, t.society, t.Full_Address, c.Operation,c.id 
-		from change_table as c inner 
-		join thalilist as t on (c.userid = t.id) 
-		WHERE c.processed = 0 ORDER BY t.Transporter");
-$request = array();
-$processed = array();
-$msg = '<h3>Start Stop update for ' . $tomorrow_date . ' - ' . $hijridate . ' - ' . $day . "</h3>\n\n";
-$transporterDailyRows = array();
-$dailyThaliCountRow = null;
-while ($row = mysqli_fetch_assoc($sql)) {
-	$request[$row['Transporter']][$row['Operation']][] = $row;
-	$processed[] = $row['id'];
-}
-foreach ($request as $transporter_name => $thalis) {
-	$msg .= "<b>" . $transporter_name . "</b>\n";
-	foreach ($thalis as $operation_type => $thali_details) {
-		$msg .= "<b>" . $operation_type . "</b>\n";
-		foreach ($thali_details as $thaliuser) {
-			$msg .= sprintf("%s - %s - %s - %s - %s - %s\n", $thaliuser['tiffinno'], $thaliuser['thalisize'], $thaliuser['NAME'], $thaliuser['CONTACT'], $thaliuser['wingflat'], $thaliuser['society']);
-			$msg .= "\n";
-		}
-	}
-	$msg .= "\n";
-}
-
-// Check if tomorrow menu has roti
-$hasRoti = false;
-
-$menuCheck = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` = 'thaali' LIMIT 1");
-
-if ($menuCheck->num_rows > 0) {
-	$menuRow = mysqli_fetch_assoc($menuCheck);
-	$menuData = unserialize($menuRow['menu_item']);
-
-	if (
-		isset($menuData['roti']['item']) &&
-		trim($menuData['roti']['item']) === 'Roti'
-	) {
-		$hasRoti = true;
-	}
-}
-
-//----------------- Transporter wise count daily----------------------
-$msg .= "\n<b>Transporter Count $hijridate $day - $tomorrow_date</b>\n";
-$sql = mysqli_query($link, "SELECT
-					(case when Transporter IS NULL then 'No Transport' else Transporter end) AS Transporter,
-					count(*) as tcount,
-    				sum(case when thalisize = 'Large' then 1 else 0 end) AS largecount,
-					sum(case when thalisize = 'Medium' then 1 else 0 end) AS mediumcount,
-					sum(case when thalisize = 'Small' then 1 else 0 end) AS smallcount,
-					sum(case when thalisize = 'Mini' then 1 else 0 end) AS minicount,
-					sum(case when thalisize = 'Friday' then 1 else 0 end) AS fridaycount,
-					sum(case when thalisize = 'Roti' then 1 else 0 end) AS roticount,
-					sum(case when thalisize = 'Barnamaj' then 1 else 0 end) AS barnamajcount,
-					sum(case when thalisize IS NULL then 1 else 0 end) AS nullcount
-					FROM `thalilist` WHERE Active = 1 group by Transporter");
-$pivot = array();
-$transporters = array();
-while ($row = mysqli_fetch_assoc($sql)) {
-	$transporters[$row['Transporter']] = 1;
-	$pivot["large"][$row['Transporter']] = $row['largecount'];
-	$pivot["medium"][$row['Transporter']] = $row['mediumcount'];
-	$pivot["small"][$row['Transporter']] = $row['smallcount'];
-	$pivot["mini"][$row['Transporter']] = $row['minicount'];
-	$pivot["friday"][$row['Transporter']] = $row['fridaycount'];
-	if ($hasRoti) {
-		$pivot["roti"][$row['Transporter']] = $row['roticount'];
-	}
-	$pivot["barnamaj"][$row['Transporter']] = $row['barnamajcount'];
-	$pivot["no size"][$row['Transporter']] = $row['nullcount'];
-	if ($hasRoti) {
-		$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['roticount'] + (int) $row['fridaycount'] + (int) $row['barnamajcount'];
-	} else {
-		$pivot["total"][$row['Transporter']] = (int) $row['minicount'] + (int) $row['smallcount'] + (int) $row['mediumcount'] + (int) $row['largecount'] + (int) $row['nullcount'] + (int) $row['fridaycount'] + (int) $row['barnamajcount'];
-	}
-	$transporterDailyRows[] = $row;
-}
-$transporters["total"] = 1;
-
-//-------------------------------------------------------------------
-$totalcountonsize = mysqli_query($link, "SELECT
-					count(*) as tcount,
-    				sum(case when thalisize = 'Large' then 1 else 0 end) AS large,
-					sum(case when thalisize = 'Medium' then 1 else 0 end) AS medium,
-					sum(case when thalisize = 'Small' then 1 else 0 end) AS small,
-					sum(case when thalisize = 'Mini' then 1 else 0 end) AS mini,
-					sum(case when thalisize = 'Friday' then 1 else 0 end) AS friday,
-					sum(case when thalisize = 'Roti' then 1 else 0 end) AS roti,
-					sum(case when thalisize = 'Barnamaj' then 1 else 0 end) AS barnamaj,
-					sum(case when thalisize IS NULL then 1 else 0 end) AS none
-					FROM `thalilist` WHERE Active = 1");
-
-$result = mysqli_fetch_row($totalcountonsize);
-$pivot["large"]["total"] = $result[1];
-$pivot["medium"]["total"] = $result[2];
-$pivot["small"]["total"] = $result[3];
-$pivot["mini"]["total"] = $result[4];
-$pivot["friday"]["total"] = $result[5];
-if ($hasRoti) {
-	$pivot["roti"]["total"] = $result[6];
-}
-$pivot["barnamaj"]["total"] = $result[7];
-$pivot["no size"]["total"] = $result[8];
-$pivot["total"]["total"] = $result[0];
-$dailyThaliCountRow = $result;
-
-mysqli_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active='1'");
-$msg = str_replace("\n", "<br>", $msg);
-
-$pivotTable = "<table border='1' ><tr><td></td>";
-foreach ($transporters as $tname => $value) {
-	$pivotTable .= "<td style='padding: 2px 10px 2px 10px;'>" . $tname . "</td>";
-}
-$pivotTable .= "</tr>";
-
-foreach ($pivot as $size => $tcountArr) {
-	$pivotTable .= "<tr><td style='padding: 2px 10px 2px 10px;'>" . $size . "</td>";
-	foreach ($transporters as $tname => $value) {
-		$pivotTable .= "<td style='padding: 2px 10px 2px 10px;'>" . $tcountArr[$tname] . "</td>";
-	}
-	$pivotTable .= "</tr>";
-}
-$pivotTable .= "</table>";
-
-$msg .= $pivotTable;
-
-// add total registered count
-$registered_but_not_active = mysqli_query($link, "SELECT * FROM thalilist WHERE Active='0' and (Transporter <> '' or Transporter is not null)");
-$total_registered_thali = $pivot["total"]["total"] + mysqli_num_rows($registered_but_not_active);
-$msg .= "<br><strong>Total Registered Thali: " . $total_registered_thali . "</strong>";
-
-// send email
-$emails = [
-	"kalimimohallapoona@gmail.com",
-	"yusuf4u52@gmail.com",
-	"mulla.moiz@gmail.com",
-	"moizlife@gmail.com",
-	"abbas.saifee5@gmail.com",
-	"tinwalaabizer@gmail.com",
-	"gheewalamf@gmail.com",
-	"itsammara@gmail.com",
-	"hussainbarnagarwala14@gmail.com",
-	"kanchwalaabizer@gmail.com",
-	"moula1981sk@gmail.com"
-];
-$mailSent = sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
-if ($mailSent) {
-	foreach ($transporterDailyRows as $row) {
-		$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`, `friday`, `roti`, `barnamaj`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['fridaycount'] . "', '" . $row['roticount'] . "', '" . $row['barnamajcount'] . "', '" . $row['tcount'] . "')";
-		mysqli_query($link, $insert_sql) or die(mysqli_error($link));
-	}
-
-	if ($dailyThaliCountRow !== null) {
-		mysqli_query($link, "INSERT INTO daily_thali_count (`Date`, `Hijridate`, `barnamaj`, `roti`, `friday`, `mini`, `small`, `medium`, `large`, `Count`) VALUES ('" . $tomorrow_date . "','" . $hijridate . "','" . $dailyThaliCountRow[7] . "','" . $dailyThaliCountRow[6] . "','" . $dailyThaliCountRow[5] . "','" . $dailyThaliCountRow[4] . "','" . $dailyThaliCountRow[3] . "','" . $dailyThaliCountRow[2] . "','" . $dailyThaliCountRow[1] . "','" . $dailyThaliCountRow[0] . "')") or die(mysqli_error($link));
-	}
-
-	mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
-
-	echo "Email Sent Successfully";
 }
