@@ -57,7 +57,6 @@ if ($chk_stop_thali->num_rows > 0) {
 
 $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $tomorrow_date . "' AND `menu_type` = 'thaali' LIMIT 1");
 if ($menu_item->num_rows > 0) {
-echo 'test'; die;
 	$sql = mysqli_query($link, "SELECT t.id, c.Thali, t.tiffinno, t.thalisize, t.NAME, t.CONTACT, t.Transporter,t.wingflat, t.society, t.Full_Address, c.Operation,c.id 
 			from change_table as c inner 
 			join thalilist as t on (c.userid = t.id) 
@@ -205,6 +204,7 @@ echo 'test'; die;
 	];
 	$mailSent = sendEmail($emails, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
 	if ($mailSent) {
+		echo "Email sent successfully";
 		foreach ($transporterDailyRows as $row) {
 			$insert_sql = "REPLACE INTO transporter_daily_count (`date`, `name`,`small`,`medium`,`large`,`mini`, `friday`, `roti`, `barnamaj`, `count`) VALUES ('" . $tomorrow_date . "','" . $row['Transporter'] . "', '" . $row['smallcount'] . "', '" . $row['mediumcount'] . "', '" . $row['largecount'] . "','" . $row['minicount'] . "', '" . $row['fridaycount'] . "', '" . $row['roticount'] . "', '" . $row['barnamajcount'] . "', '" . $row['tcount'] . "')";
 			mysqli_query($link, $insert_sql) or die(mysqli_error($link));
@@ -217,7 +217,6 @@ echo 'test'; die;
 		mysqli_query($link, "update change_table set processed = 1 where id in (" . implode(',', $processed) . ")");
 	}
 } else {
-	echo 'test 2'; die;
 	$skipmsg = "Skipping email as no thali available for " . $tomorrow_date . ".";
 	$skipemails = [
 		"kalimimohallapoona@gmail.com",
