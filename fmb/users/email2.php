@@ -1,7 +1,7 @@
 <?php
 include('connection.php');
 include('getHijriDate.php');
-//include '../backup/_email_backup.php';
+include '../backup/_email_backup.php';
 //include '../sms/_sms_automation.php';
 require_once '_sendMail.php';
 //include('emailmenu.php');
@@ -27,7 +27,7 @@ if ($stop_thali->num_rows > 0) {
 			$email_subject = "Thali Stop Notification";
 			$email_body = "Salaam " . $list['NAME'] . ",<br><br>Your thali has been stopped from tomorrow till the date you selected in the FMB Website.<br><br> Note: If your thali is stopped by mistake, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
 			$email_to = $list['Email_ID'];
-			//sendEmail($email_to, $email_subject, $email_body, null, null, true);
+			sendEmail($email_to, $email_subject, $email_body, null, null, true);
 		}
 	}
 }
@@ -49,7 +49,7 @@ if ($chk_stop_thali->num_rows > 0) {
 				$email_subject = "Thali Start Notification";
 				$email_body = "Salaam " . $list['NAME'] . ",<br><br>Your thali has been started from tomorrow.<br><br>Note: If your thali is started by mistake or you wish to extend the period, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
 				$email_to = $list['Email_ID'];
-				//sendEmail($email_to, $email_subject, $email_body, null, null, true);
+				sendEmail($email_to, $email_subject, $email_body, null, null, true);
 			}
 		}
 	}
