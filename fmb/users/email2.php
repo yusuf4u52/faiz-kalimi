@@ -5,7 +5,7 @@ include '../backup/_email_backup.php';
 //include '../sms/_sms_automation.php';
 require_once '_sendMail.php';
 //include('emailmenu.php');
-
+echo 'test'; die;
 error_reporting(1);
 $today_date = date("Y-m-d");
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
