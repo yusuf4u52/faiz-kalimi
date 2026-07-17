@@ -6,7 +6,7 @@ include('getHijriDate.php');
 require_once '_sendMail.php';
 //include('emailmenu.php');
 
-error_reporting(0);
+error_reporting(1);
 $today_date = date("Y-m-d");
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $day = date("l", strtotime($tomorrow_date));
