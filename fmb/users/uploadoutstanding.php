@@ -43,8 +43,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 						$sabeelNo    = trim($row[2]);
                         $outstanding = str_replace(',', '', $row[7]);
                         $outstanding = intval($outstanding);
-                        $takmeem = intval($row[10]); 
-                        if( $takmeem > 0 && $row[5] === '1447-1448' ) {
+						if($row[5] === '1447-1448') {	
+                        	$takmeem = intval($row[10]); 
+						} elseif($row[10] !== 0 ) {
+							$takmeem = 1;
+						}
+                        if( $takmeem > 0 ) {
                             if( $takmeem > $outstanding ) {
                                 $prev = 0;
                                 $paid = $takmeem - $outstanding;
