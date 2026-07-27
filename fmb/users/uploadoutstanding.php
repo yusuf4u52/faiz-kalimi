@@ -5,7 +5,6 @@ require '../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-error_reporting(1);
 ?>
 
 <div class="card">
@@ -35,19 +34,24 @@ error_reporting(1);
                     $filePath = $_FILES['import_reciept']['tmp_name'];
 
                     // Load the XLSX file
-                    $spreadsheet = IOFactory::load($filePath);
+                    try {
+					    $spreadsheet = IOFactory::load($filePath);
+					} catch (Exception $e) {
+					    die($e->getMessage());
+					}
                     $sheet = $spreadsheet->getActiveSheet();
                     $rows = $sheet->toArray();
                     $headers = array_shift($rows);
                     // Skip header row and loop through the data
-                    foreach ($rows as $row) {
-                        $its         = trim($row[0]);
-						$sabeelNo    = trim($row[2]);
+                    foreach ($rows as $index => $row)
+                        $its 		 = trim((string)$row[0]);
+						$sabeelNo    = trim($row[3]);
                         $outstanding = str_replace(',', '', $row[7]);
                         $outstanding = intval($outstanding);
-						if($row[5] === '1447-1448') {	
+						$takmeem = 0;
+						if(trim($row[5]) === '1447-1448') {	
                         	$takmeem = intval($row[10]); 
-						} elseif($row[10] !== 0 ) {
+						} elseif((int)$row[10] > 0 ) {
 							$takmeem = 1;
 						}
                         if( $takmeem > 0 ) {
