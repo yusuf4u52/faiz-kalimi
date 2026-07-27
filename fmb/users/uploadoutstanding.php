@@ -4,6 +4,8 @@ include('navbar.php');
 require '../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+
+error_reporting(1);
 ?>
 
 <div class="card">
