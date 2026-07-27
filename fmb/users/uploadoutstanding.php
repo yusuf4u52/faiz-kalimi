@@ -73,7 +73,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 							} else {
 								
-								if (!empty($row[2])) {
+								if (!empty($row[3])) {
 									$checkSabeel = mysqli_query($link, "SELECT id FROM thalilist WHERE Thali='$sabeelNo' LIMIT 1");
 
 									if (mysqli_num_rows($checkSabeel) > 0) {
@@ -89,11 +89,11 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 							$update = [];
 
-							if (!empty($row[2])) {
-								$update[] = "Thali='" . mysqli_real_escape_string($link, $row[2]) . "'";
+							if (!empty($row[3])) {
+								$update[] = "Thali='" . mysqli_real_escape_string($link, $row[3]) . "'";
 							}
 
-							if (!empty($row[3])) {
+							if (!empty($row[2])) {
 								$update[] = "sabeelType='Kalimi ITS'";
 							}
 
