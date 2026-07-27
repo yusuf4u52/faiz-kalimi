@@ -43,7 +43,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                     $rows = $sheet->toArray();
                     $headers = array_shift($rows);
                     // Skip header row and loop through the data
-                    foreach ($rows as $index => $row)
+                    foreach ($rows as $index => $row) {
                         $its 		 = trim((string)$row[0]);
 						$sabeelNo    = trim($row[3]);
                         $outstanding = str_replace(',', '', $row[7]);
