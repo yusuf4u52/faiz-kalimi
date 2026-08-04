@@ -45,7 +45,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                     // Skip header row and loop through the data
                     foreach ($rows as $index => $row) {
                         $its 		 = trim((string)$row[0]);
-						$sabeelNo    = trim($row[3]);
+						$sabeelNo    = trim($row[2]);
                         $outstanding = str_replace(',', '', $row[7]);
                         $outstanding = intval($outstanding);
 						$takmeem = 0;
@@ -73,7 +73,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 							} else {
 								
-								if (!empty($row[3])) {
+								if (!empty($row[2])) {
 									$checkSabeel = mysqli_query($link, "SELECT id FROM thalilist WHERE Thali='$sabeelNo' LIMIT 1");
 
 									if (mysqli_num_rows($checkSabeel) > 0) {
@@ -89,11 +89,11 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 							$update = [];
 
-							if (!empty($row[3])) {
-								$update[] = "Thali='" . mysqli_real_escape_string($link, $row[3]) . "'";
+							if (!empty($row[2])) {
+								$update[] = "Thali='" . mysqli_real_escape_string($link, $row[2]) . "'";
 							}
 
-							if (!empty($row[2])) {
+							if (!empty($row[3])) {
 								$update[] = "sabeelType='Kalimi ITS'";
 							}
 
