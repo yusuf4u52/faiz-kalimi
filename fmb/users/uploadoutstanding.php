@@ -94,7 +94,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 							}
 
 							if (!empty($row[3])) {
-								$update[] = "sabeelType='Kalimi ITS'";
+								//$update[] = "sabeelType='Kalimi ITS'";
 							}
 
 							$update[] = "Previous_Due='$prev'";
