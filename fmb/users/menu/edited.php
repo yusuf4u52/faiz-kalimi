@@ -93,9 +93,6 @@ function menuDiffersIgnoringRoti(array $baseMenu, array $customMenu): bool
                                         if ($user_menu->num_rows > 0) {
                                             $row_user = $user_menu->fetch_assoc();
                                             $user_menu_item = unserialize($row_user['menu_item']);
-                                            if (!menuDiffersIgnoringRoti($menu_item, $user_menu_item)) {
-                                                continue;
-                                            }
                                 ?>
                                             <tr>
                                                 <td><?php echo $row['Thali']; ?></td>
