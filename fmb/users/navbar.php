@@ -178,7 +178,7 @@ if ($curr_page != 'events.php') {
         </div>
     </nav>
 </header>
-<?php if($values['Previous_Due'] > 3) { ?>
+<?php if($values['Total_Pending'] >= $values['yearly_hub'] && $values['Total_Pending'] > 4) { ?>
     <div class="payment-reminder mt-3">
         <div class="container-fluid">
             <div class="row">
@@ -187,7 +187,7 @@ if ($curr_page != 'events.php') {
                         <div class="row align-items-center">
                             <div class="col-9">
                                 <h6 class="mb-0">
-    								Your previous year's FMB dues of <strong>₹<?php echo number_format($values['Previous_Due']); ?></strong> are still pending. We kindly request you to settle the outstanding amount on or before <strong>11 July (Syedi Fakhruddin Shaheed (RA) Urus Mubarak)</strong> and share the payment screenshot or receipt on <a href="https://wa.me/917499860950"><strong>+91 74998 60950</strong></a> so that we may update our records accordingly. Please note that if the dues remain unpaid after <strong>11 July</strong>, <strong>from 13 July onwards</strong>, thali home delivery will be temporarily suspended and the thali will need to be collected from <strong>Faiz</strong>.
+    								Your FMB dues of <strong>₹<?php echo number_format($values['Total_Pending']); ?></strong> are still pending. As the sixth Miqaat, <strong>Chelum Imam Husain (AS)</strong>, has now passed, we humbly request you to kindly clear your outstanding FMB dues at the earliest. Timely payment helps us continue the smooth operation of Faiz and related services Once the payment is made, please  share the payment screenshot or receipt on <a href="https://wa.me/917499860950"><strong>+91 74998 60950</strong></a> so that we may update our records.
 								</h6>
                             </div>
                             <div class="col-3 text-end">

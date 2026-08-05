@@ -24,7 +24,7 @@
       "type": "image/png"
     },
     {
-      "src": "/fmb/assets/img/logo-maskable.png",
+      "src": "/fmb/assets/img/logo-512x512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
