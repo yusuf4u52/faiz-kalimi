@@ -89,7 +89,7 @@ function menuDiffersIgnoringRoti(array $baseMenu, array $customMenu): bool
                                     $tarkari = 0;
                                     $rice = 0;
                                     while ($row = mysqli_fetch_assoc($thali)) {
-                                        $user_menu = mysqli_query($link, "SELECT * FROM user_menu as u left join thalilist as t on u.thali = t.id WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['id'] . "' ORDER BY t.thalisize ASC");
+                                        $user_menu = mysqli_query($link, "SELECT * FROM user_menu as u left join thalilist as t on u.thali = t.id WHERE `u.menu_date` = '" . $_GET['menu_date'] . "' AND `u.thali` = '" . $row['id'] . "' ORDER BY t.thalisize ASC");
                                         if ($user_menu->num_rows > 0) {
                                             $row_user = $user_menu->fetch_assoc();
                                             $user_menu_item = unserialize($row_user['menu_item']);
