@@ -5,6 +5,15 @@ include('../navbar.php');
 if (isset($_GET['menu_date'])) {
     $menu_list = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $_GET['menu_date'] . "' LIMIT 1");
 }
+
+function menuDiffersIgnoringRoti(array $baseMenu, array $customMenu): bool
+{
+    $base = $baseMenu;
+    $custom = $customMenu;
+    unset($base['roti'], $custom['roti']);
+
+    return $base != $custom;
+}
 ?>
 
 <div class="card">
@@ -80,10 +89,14 @@ if (isset($_GET['menu_date'])) {
                                     $tarkari = 0;
                                     $rice = 0;
                                     while ($row = mysqli_fetch_assoc($thali)) {
-                                        $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['id'] . "' ORDER BY thali");
+                                        $user_menu = mysqli_query($link, "SELECT * FROM user_menu as u left join thalilist as t on u.thali = t.id WHERE `menu_date` = '" . $_GET['menu_date'] . "' AND `thali` = '" . $row['id'] . "' ORDER BY t.thalisize ASC");
                                         if ($user_menu->num_rows > 0) {
                                             $row_user = $user_menu->fetch_assoc();
-                                            $user_menu_item = unserialize($row_user['menu_item']); ?>
+                                            $user_menu_item = unserialize($row_user['menu_item']);
+                                            if (!menuDiffersIgnoringRoti($menu_item, $user_menu_item)) {
+                                                continue;
+                                            }
+                                ?>
                                             <tr>
                                                 <td><?php echo $row['Thali']; ?></td>
                                                 <td><?php echo $row['tiffinno']; ?></td>
