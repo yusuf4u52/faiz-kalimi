@@ -2,7 +2,7 @@
 include('connection.php');
 include('getHijriDate.php');
 require_once '_sendMail.php';
-##include('emailroti.php');
+include('emailroti.php');
 
 if (isset($_GET['menu_date'])) {
     $tomorrow_date = $_GET['menu_date'];
@@ -72,7 +72,7 @@ if ($menu_item->num_rows > 0) {
 							<tr>
 						</thead>
 						<tbody>';
-            $thali = mysqli_query($link, "SELECT id, Thali, tiffinno, `NAME`, CONTACT, thalisize, wingflat, society from thalilist WHERE `Transporter` LIKE '" . $row_trans['Transporter'] . "' AND id IN (" . $thaliid . ") AND `hardstop` != 1 AND Active != 0 AND thalisize != 'Roti' ORDER BY Transporter");
+            $thali = mysqli_query($link, "SELECT id, Thali, tiffinno, `NAME`, CONTACT, thalisize, wingflat, society from thalilist WHERE `Transporter` LIKE '" . $row_trans['Transporter'] . "' AND id IN (" . $thaliid . ") AND `hardstop` != 1 AND Active != 0 AND thalisize != 'Roti' ORDER BY Transporter, thalisize, tiffinno");
             while ($row = mysqli_fetch_assoc($thali)) {
                 $user_menu = mysqli_query($link, "SELECT * FROM user_menu as u Left JOIN thalilist as t ON u.thali = t.id WHERE u.menu_date = '" . $tomorrow_date . "' AND u.thali = '" . $row['id'] . "' ORDER BY t.thalisize");
                 if ($user_menu->num_rows > 0) {
