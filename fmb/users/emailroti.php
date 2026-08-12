@@ -80,9 +80,11 @@ if ($menu_item->num_rows > 0) {
 			$thaliSize["friday"][$transporter] = ((int)$result['fridaycount'] * $small) + (int)$result['friday_extra'];
 			$thaliSize["barnamaj"][$transporter] = ((int)$result['barnamajcount'] * $small) + (int)$result['barnamaj_extra'];
 			$thaliSize["no size"][$transporter] = (int)$result['nullcount'] + (int)$result['null_extra'];
-			$thaliSize["Total"][$transporter] = $thaliSize["mini"][$transporter] + $thaliSize["small"][$transporter] + $thaliSize["medium"][$transporter] + $thaliSize["large"][$transporter] + $thaliSize["friday"][$transporter] + $thaliSize["barnamaj"][$transporter] + $thaliSize["no size"][$transporter];
 			if ($roti === 'Roti') {
 				$thaliSize["roti"][$transporter] = (int)$result['roticount'] + (int)$result['roti_extra'];
+			}
+			$thaliSize["Total"][$transporter] = $thaliSize["mini"][$transporter] + $thaliSize["small"][$transporter] + $thaliSize["medium"][$transporter] + $thaliSize["large"][$transporter] + $thaliSize["friday"][$transporter] + $thaliSize["barnamaj"][$transporter] + $thaliSize["no size"][$transporter];
+			if ($roti === 'Roti') {
 				$thaliSize["Total"][$transporter] += $thaliSize["roti"][$transporter];
 			}
 		}
