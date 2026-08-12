@@ -25,9 +25,9 @@ if ($menu_item->num_rows > 0) {
 				$msgroti .= "<b>" . $row_extra['Transporter'] . "</b><br/>";
 				while ($row = mysqli_fetch_assoc($sql)) {
 					if ($row['thalisize'] == 'Mini' || $row['thalisize'] == 'Small') {
-						$msgroti .= "<b>" . 1 + $row['extraRoti'] . " Roti</b> - ";
+						$msgroti .= "<b>" . (1 + (int)$row['extraRoti']) . " Roti</b> - ";
 					} elseif ($row['thalisize'] == 'Medium' || $row['thalisize'] == 'Large') {
-						$msgroti .= "<b>" . 2 + $row['extraRoti'] . " Roti</b> - ";
+						$msgroti .= "<b>" . (2 + (int)$row['extraRoti']) . " Roti</b> - ";
 					} else {
 						$msgroti .= "<b>" . $row['extraRoti'] . " Roti</b> - ";
 					}
@@ -60,23 +60,30 @@ if ($menu_item->num_rows > 0) {
 			sum(case when thalisize = 'Friday' then 1 else 0 end) AS fridaycount,
 			sum(case when thalisize = 'Barnamaj' then 1 else 0 end) AS barnamajcount,
 			sum(case when thalisize IS NULL then 1 else 0 end) AS nullcount,
-			SUM(extraRoti) AS extracount,
-			sum(case when thalisize = 'Roti' then 1 else 0 end) AS roticount
+			sum(case when thalisize = 'Roti' then 1 else 0 end) AS roticount,
+			
+			SUM(CASE WHEN thalisize = 'Mini' THEN extraRoti ELSE 0 END) AS mini_extra,
+			SUM(CASE WHEN thalisize = 'Small' THEN extraRoti ELSE 0 END) AS small_extra,
+			SUM(CASE WHEN thalisize = 'Medium' THEN extraRoti ELSE 0 END) AS medium_extra,
+			SUM(CASE WHEN thalisize = 'Large' THEN extraRoti ELSE 0 END) AS large_extra,
+			SUM(CASE WHEN thalisize = 'Friday' THEN extraRoti ELSE 0 END) AS friday_extra,
+			SUM(CASE WHEN thalisize = 'Barnamaj' THEN extraRoti ELSE 0 END) AS barnamaj_extra,
+			SUM(CASE WHEN thalisize IS NULL THEN extraRoti ELSE 0 END) AS null_extra,
+			SUM(CASE WHEN thalisize = 'Roti' THEN extraRoti ELSE 0 END) AS roti_extra
+			
 			FROM `thalilist` WHERE Active = 1 AND `Transporter` LIKE '" . $transporter . "'");
-			$result = mysqli_fetch_row($thaliCount);
-			$thaliSize["mini"][$transporter] = $result[0] * $mini;
-			$thaliSize["small"][$transporter] = $result[1] * $small;
-			$thaliSize["medium"][$transporter] = $result[2] * $medium;
-			$thaliSize["large"][$transporter] = $result[3] * $large;
-			$thaliSize["friday"][$transporter] = $result[4] * $small;
-			$thaliSize["barnamaj"][$transporter] = $result[5] * $small;
-			$thaliSize["no size"][$transporter] = $result[6];
+			$result = mysqli_fetch_assoc($thaliCount);
+			$thaliSize["mini"][$transporter] = ((int)$result['minicount'] * $mini) + (int)$result['mini_extra'];
+			$thaliSize["small"][$transporter] = ((int)$result['smallcount'] * $small) + (int)$result['small_extra'];
+			$thaliSize["medium"][$transporter] = ((int)$result['mediumcount'] * $medium) + (int)$result['medium_extra'];
+			$thaliSize["large"][$transporter] = ((int)$result['largecount'] * $large) + (int)$result['large_extra'];
+			$thaliSize["friday"][$transporter] = ((int)$result['fridaycount'] * $small) + (int)$result['friday_extra'];
+			$thaliSize["barnamaj"][$transporter] = ((int)$result['barnamajcount'] * $small) + (int)$result['barnamaj_extra'];
+			$thaliSize["no size"][$transporter] = (int)$result['nullcount'] + (int)$result['null_extra'];
+			$thaliSize["Total"][$transporter] = $thaliSize["mini"][$transporter] + $thaliSize["small"][$transporter] + $thaliSize["medium"][$transporter] + $thaliSize["large"][$transporter] + $thaliSize["friday"][$transporter] + $thaliSize["barnamaj"][$transporter] + $thaliSize["no size"][$transporter];
 			if ($roti === 'Roti') {
-				$thaliSize["extra"][$transporter] = $result[7];
-				$thaliSize["roti"][$transporter] = $result[8];
-				$thaliSize["Total"][$transporter] = (int) $result[0] * $mini + (int) $result['1'] * $small + (int) $result['2'] * $medium + (int) $result['3'] * $large + (int) $result['4'] * $small + (int) $result['5'] * $small + (int) $result['6'] + (int) $result['7'] + (int) $result['8'];
-			} else {
-				$thaliSize["Total"][$transporter] = (int) $result[0] * $mini + (int) $result['1'] * $small + (int) $result['2'] * $medium + (int) $result['3'] * $large + (int) $result['4'] * $small + (int) $result['5'] * $small + (int) $result['6'];
+				$thaliSize["roti"][$transporter] = (int)$result['roticount'] + (int)$result['roti_extra'];
+				$thaliSize["Total"][$transporter] += $thaliSize["roti"][$transporter];
 			}
 		}
 		$rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>Total</td></tr>";
@@ -105,9 +112,6 @@ if ($menu_item->num_rows > 0) {
 			$totalCount += array_sum($thaliSize["barnamaj"]) * 2;
 			$totalCount += array_sum($thaliSize["no size"]) * 2;
 			$totalCount += array_sum($thaliSize["roti"]) * 4;
-			if (isset($thaliSize["extra"])) {
-				$totalCount += array_sum($thaliSize["extra"]) * 4;
-			}
 		} else {
 			$totalCount = $totalSizeCount;
 		}
