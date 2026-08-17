@@ -1,0 +1,164 @@
+<?php
+// Partial include, expected to run inside emailmenu.php's scope (connection,
+// helpers, and getHijriDate are already included there). Falls back to
+// resolving menu_date from $_GET itself so it still behaves sensibly if
+// included on its own.
+
+$tomorrow_date = $_GET['menu_date'] ?? date('Y-m-d', strtotime('+ 1 day'));
+if (!DateTime::createFromFormat('Y-m-d', $tomorrow_date)) {
+    $tomorrow_date = date('Y-m-d', strtotime('+ 1 day'));
+}
+
+$day = date('l', strtotime($tomorrow_date));
+
+// Default roti quantity for a given thalisize, from the day's base menu.
+// Friday/Barnamaj thalis use the "small" quantity, and thalis with no
+// recognised size (including the standalone "Roti" thalisize) default to 1.
+function defaultRotiQtyForSize(?string $thalisize, int $mini, int $small, int $medium, int $large): int
+{
+    return match ($thalisize) {
+        'Mini' => $mini,
+        'Small' => $small,
+        'Medium' => $medium,
+        'Large' => $large,
+        'Friday', 'Barnamaj' => $small,
+        default => 1,
+    };
+}
+
+// Maps a thalisize to the bucket key used in $thaliSize / the report table.
+function rotiBucketForSize(?string $thalisize): string
+{
+    return match ($thalisize) {
+        'Mini' => 'mini',
+        'Small' => 'small',
+        'Medium' => 'medium',
+        'Large' => 'large',
+        'Friday' => 'friday',
+        'Barnamaj' => 'barnamaj',
+        'Roti' => 'roti',
+        default => 'no size',
+    };
+}
+
+/**
+ * Effective roti quantity for one thali: the user's own customization (if
+ * they saved one) from $overridesByThaliId, otherwise the day's default
+ * for their size. $overridesByThaliId is built with a single query up
+ * front instead of one query per thali.
+ */
+function effectiveRotiQty(array $overridesByThaliId, string $thaliId, int $defaultQty): int
+{
+    return $overridesByThaliId[$thaliId] ?? $defaultQty;
+}
+
+$menu_item_result = db_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = ? AND `menu_type` = 'thaali' LIMIT 1", "s", [$tomorrow_date]);
+
+if ($menu_item_result->num_rows > 0) {
+    $row_menu = $menu_item_result->fetch_assoc();
+    $menu_item = decode_menu_item($row_menu['menu_item']);
+    $roti = $menu_item['roti']['item'] ?? '';
+
+    if (!empty($roti)) {
+        $mini = (int) ($menu_item['roti']['tqty'] ?? 0);
+        $small = (int) ($menu_item['roti']['sqty'] ?? 0);
+        $medium = (int) ($menu_item['roti']['mqty'] ?? 0);
+        $large = (int) ($menu_item['roti']['lqty'] ?? 0);
+        $msgroti = '';
+
+        // Build the per-thali roti overrides once, instead of one query per thali.
+        $overridesByThaliId = [];
+        $overrideResult = db_query($link, "SELECT thali, menu_item FROM user_menu WHERE menu_date = ?", "s", [$tomorrow_date]);
+        while ($row = mysqli_fetch_assoc($overrideResult)) {
+            $item = decode_menu_item($row['menu_item']);
+            if (!empty($item['roti']['item']) && isset($item['roti']['qty'])) {
+                $overridesByThaliId[$row['thali']] = (int) $item['roti']['qty'];
+            }
+        }
+
+        $transporterResult = db_query($link, "SELECT DISTINCT `Transporter` FROM thalilist WHERE Active = 1 ORDER BY Transporter");
+        $transporters = [];
+        while ($row_trans = mysqli_fetch_assoc($transporterResult)) {
+            $transporters[] = $row_trans['Transporter'];
+        }
+
+        $buckets = ['mini', 'small', 'medium', 'large', 'friday', 'barnamaj', 'no size'];
+        if ($roti === 'Roti') {
+            $buckets[] = 'roti';
+        }
+
+        $thaliSize = [];
+        $hijridate = getHijriDate($tomorrow_date);
+        $msgroti .= "<br/><b>" . e($roti) . " Count on " . e($hijridate) . " " . e($day) . " - " . e($tomorrow_date) . "</b><br/>";
+        $rotiTable = "<table border='1'><tr><td style='padding: 2px 10px 2px 10px;'>Size</td>";
+
+        foreach ($transporters as $transporterName) {
+            $rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>" . e((string) $transporterName) . "</td>";
+
+            foreach ($buckets as $bucket) {
+                $thaliSize[$bucket][$transporterName] = 0;
+            }
+
+            $thaliRows = db_query(
+                $link,
+                "SELECT id, thalisize FROM thalilist WHERE Active = 1 AND `Transporter` = ?",
+                "s",
+                [$transporterName]
+            );
+            while ($row = mysqli_fetch_assoc($thaliRows)) {
+                $bucket = rotiBucketForSize($row['thalisize']);
+                if (!in_array($bucket, $buckets, true)) {
+                    continue; // e.g. a 'Roti' thalisize thali on a day the roti item isn't literally "Roti"
+                }
+
+                $defaultQty = defaultRotiQtyForSize($row['thalisize'], $mini, $small, $medium, $large);
+                $qty = effectiveRotiQty($overridesByThaliId, $row['id'], $defaultQty);
+
+                $thaliSize[$bucket][$transporterName] += $qty;
+            }
+
+            $thaliSize["Total"][$transporterName] = array_sum(array_map(
+                fn($bucket) => $thaliSize[$bucket][$transporterName],
+                $buckets
+            ));
+        }
+        $rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>Total</td></tr>";
+
+        foreach ($thaliSize as $size => $sizeCount) {
+            $totalSizeCount = 0;
+            $rotiTable .= "<tr><td style='padding: 2px 10px 2px 10px;'>" . e($size) . "</td>";
+            foreach ($transporters as $transporterName) {
+                $totalSizeCount += $sizeCount[$transporterName];
+                $rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>" . e((string) $sizeCount[$transporterName]) . "</td>";
+            }
+            $rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>" . e((string) $totalSizeCount) . "</td></tr>";
+        }
+
+        $rotiTable .= "</table>";
+        $msgroti .= $rotiTable;
+
+        if ($roti === 'Roti') {
+            $totalCount = 0;
+            $totalCount += array_sum($thaliSize["mini"]) * 2;
+            $totalCount += array_sum($thaliSize["small"]) * 4;
+            $totalCount += array_sum($thaliSize["medium"]) * 4;
+            $totalCount += array_sum($thaliSize["large"]) * 4;
+            $totalCount += array_sum($thaliSize["friday"]) * 4;
+            $totalCount += array_sum($thaliSize["barnamaj"]) * 2;
+            $totalCount += array_sum($thaliSize["no size"]) * 2;
+            $totalCount += array_sum($thaliSize["roti"]) * 4;
+        } else {
+            $totalCount = $totalSizeCount ?? 0;
+        }
+
+        $msgroti .= "<br/><b>Total " . e($roti) . " Count is " . e((string) $totalCount) . "</b>";
+
+        $subject = $roti . ' update ' . $tomorrow_date;
+        sendEmail(ROTI_UPDATE_EMAILS, $subject, $msgroti, null, null, true);
+    } else {
+        echo "Tomorrow no roti.";
+    }
+} else {
+    echo "Skipping email as no thali on Miqaat or any other reason.";
+    exit;
+}
