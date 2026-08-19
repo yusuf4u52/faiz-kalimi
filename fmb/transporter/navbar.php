@@ -1,24 +1,33 @@
-<?php 
+<?php
 require_once('../users/connection.php');
-if (!isset($_SESSION)) {
-	session_start();
+require_once('../users/helpers.php');
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
 }
-if(!isset($_SESSION['email'])) {
+if (!isset($_SESSION['email'])) {
     header('Location: /fmb/index.php');
     exit;
 }
-$query = mysqli_query($link , "SELECT * FROM transporters where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
-if ($query->num_rows > 0 ) {
-    $values = $query->fetch_assoc();
+
+try {
+    $transporterResult = db_query($link, "SELECT * FROM `transporters` WHERE `Email` = ?", "s", [$_SESSION['email']]);
+} catch (RuntimeException $e) {
+    error_log('[navbar.php] ' . $e->getMessage());
+    http_response_code(500);
+    exit('Sorry, something went wrong loading this page. Please try again in a moment.');
+}
+
+if ($transporterResult->num_rows > 0) {
+    $values = $transporterResult->fetch_assoc();
     $_SESSION['transporterid'] = $values['id'];
     $_SESSION['transporter'] = $values['Name'];
 } else {
-  $some_email = $_SESSION['email'];
-  session_unset();
-  session_destroy();
-  $status = "Sorry! Either $some_email is not registered with us OR your are not a transporter of kalimi mohallah. Send an email to kalimimohallapoona@gmail.com";
-  header("Location: index.php?status=$status");
-  exit;
+    session_unset();
+    session_destroy();
+    $status = 'Sorry! Either that email is not registered with us OR you are not a transporter of Kalimi Mohallah. Send an email to kalimimohallapoona@gmail.com';
+    header('Location: index.php?status=' . urlencode($status));
+    exit;
 }
 ?>
 <header class="header">
@@ -28,7 +37,7 @@ if ($query->num_rows > 0 ) {
                 <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/assets/img/logo.avif" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
             </div>
             <div class="col-8 text-end">
-                <p class="text-capitalize m-0 fw-bold fst-italic">Salaam, <?php echo strtolower($_SESSION['transporter']); ?> Bhai</p>
+                <p class="text-capitalize m-0 fw-bold fst-italic">Salaam, <?php echo e(strtolower($_SESSION['transporter'])); ?> Bhai</p>
             </div>
         </div>
     </div>
@@ -41,13 +50,27 @@ if ($query->num_rows > 0 ) {
             </button>
             <div class="collapse navbar-collapse" id="headernavbar">
                 <ul class="navbar-nav me-auto mx-xl-auto">
-                    <?php $query = mysqli_query($link, "SELECT * FROM thalilist WHERE (Email_ID = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "') AND Active IS NOT NULL AND hardstop != 1") or die(mysqli_error($link));
-                    if($query->num_rows > 0) {
-                        echo '<li class="nav-item"><a class="nav-link" href="/fmb/users/index.php">User Panel</a></li>';
-                    } ?>
+                    <?php
+                    try {
+                        $userPanelResult = db_query(
+                            $link,
+                            "SELECT id FROM `thalilist` WHERE (`Email_ID` = ? OR `SEmail_ID` = ?) AND `Active` IS NOT NULL AND `hardstop` != 1",
+                            "ss",
+                            [$_SESSION['email'], $_SESSION['email']]
+                        );
+                        if ($userPanelResult->num_rows > 0) {
+                            echo '<li class="nav-item"><a class="nav-link" href="/fmb/users/index.php">User Panel</a></li>';
+                        }
+                    } catch (RuntimeException $e) {
+                        error_log('[navbar.php] ' . $e->getMessage());
+                        // Non-fatal: simply skip showing the "User Panel" link if this lookup fails.
+                    }
+                    ?>
                     <li class="nav-item"><a class="nav-link" href="/fmb/transporter/start_thali.php">Active Thali</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="/fmb/transporter/stop_thali.php">Inactive Thali</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/fmb/transporter/report.php">Report</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="/fmb/users/logout.php">Logout</a></li>
                 </ul>

@@ -1,21 +1,28 @@
 <?php
 include('_authCheck.php');
 include('_common.php');
+require_once('helpers.php');
 
 $curr_page = basename($_SERVER['PHP_SELF']);
 
-$query = mysqli_query($link, "SELECT * FROM thalilist WHERE (Email_ID = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "') AND Active IS NOT NULL AND hardstop != 1") or die(mysqli_error($link));
+$query = db_query(
+    $link,
+    "SELECT * FROM thalilist WHERE (Email_ID = ? OR SEmail_ID = ?) AND Active IS NOT NULL AND hardstop != 1",
+    "ss",
+    [$_SESSION['email'], $_SESSION['email']]
+);
 
-if($query->num_rows > 0) {
+if ($query->num_rows > 0) {
     $values = $query->fetch_assoc();
 
-    $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobile FROM users where email = '" . $values['musaid'] . "'"));
+    $musaid_result = db_query($link, "SELECT username, mobile FROM users WHERE email = ?", "s", [$values['musaid'] ?? '']);
+    $musaid_details = mysqli_fetch_assoc($musaid_result);
 
     $_SESSION['thaliid'] = $values['id'];
     $_SESSION['thali'] = $values['Thali'];
 } else {
-    // Check if users gmail id is registered with us and he is a transporter against it
-    $transporter = mysqli_query($link, "SELECT * FROM transporters where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
+    // Check if user's gmail id is registered with us and they are a transporter against it
+    $transporter = db_query($link, "SELECT id FROM transporters WHERE Email = ?", "s", [$_SESSION['email']]);
     if ($transporter->num_rows > 0) {
         header("Location: /fmb/transporter/home.php");
         exit;
@@ -24,36 +31,35 @@ if($query->num_rows > 0) {
         session_unset();
         session_destroy();
         $status = "Sorry! Either $some_email is not registered with us or you are not taking barakat from Kalimi Mohallah. Please contact on below helpline numbers.";
-        header("Location: /fmb/index.php?status=$status");
+        header("Location: /fmb/index.php?status=" . urlencode($status));
         exit;
     }
 }
 
 // Redirect users to update details page if any details are missing
-if ($curr_page != 'update_details.php') {
+if ($curr_page !== 'update_details.php') {
     if (!empty($values['Thali']) && (empty($values['ITS_No']) || empty($values['CONTACT']) || empty($values['WhatsApp']) || empty($values['wingflat']) || empty($values['society']))) {
         header("Location: update_details.php?update_pending_info");
         exit;
     }
 }
 
-// Check if there is any enabled event that needs users response
-if ($curr_page != 'events.php') {
-    $query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_ID = '" . $_SESSION['email'] . "'";
-    $takesFmb = mysqli_num_rows(mysqli_query($link, $query));
-    $result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
+// Check if there is any enabled event that needs the user's response
+if ($curr_page !== 'events.php') {
+    $takesFmbResult = db_query(
+        $link,
+        "SELECT id FROM thalilist WHERE Transporter IS NOT NULL AND Active IN (0, 1) AND Email_ID = ?",
+        "s",
+        [$_SESSION['email']]
+    );
+    $takesFmb = mysqli_num_rows($takesFmbResult);
+
+    $result = db_query($link, "SELECT id FROM events WHERE showonpage = 1 ORDER BY id");
     while ($values1 = mysqli_fetch_assoc($result)) {
-        // $showToNonFmbOnly = $values1['showtononfmb'];
-        // skip redirects to events for fmb holder if the database flag is set to do so
-        // if ($showToNonFmbOnly == 1) {
         if (!isResponseReceived($values1['id'])) {
             header("Location: events.php");
             exit;
         }
-        //  } else if (!isResponseReceived($values['id'])) {
-        // header("Location: events.php");
-        // exit;
-        //   }
     }
 }
 ?>
@@ -64,19 +70,30 @@ if ($curr_page != 'events.php') {
                 <a href="/fmb/users/index.php"><img class="img-fluid" src="/fmb/assets/img/logo.avif" alt="Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla)" width="121" height="121" /></a>
             </div>
             <div class="col-8 text-end">
-                <p class="text-capitalize m-0 fw-bold fst-italic">Salaam, <?php echo strtolower($values['NAME']); ?></p>
+                <p class="text-capitalize m-0 fw-bold fst-italic">Salaam, <?php echo e(strtolower($values['NAME'] ?? '')); ?></p>
                 <?php if (!empty($values['yearly_hub'])) {
                     if ($values['Active'] == 1) {
-                        echo '<p class="m-0">Thali No: <strong>' . $values['tiffinno'] . '</strong> | Thali Status: <strong class="text-success">Start</strong></p> ';
+                        echo '<p class="m-0">Thali No: <strong>' . e($values['tiffinno']) . '</strong> | Thali Status: <strong class="text-success">Start</strong></p> ';
                     } else {
-                        echo '<p class="m-0">Thali No: <strong>' . $values['tiffinno'] . '</strong> | Thali Status: <strong class="text-danger">Stop</strong></p> ';
-                        $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-						SELECT `id`, `thali`, DATE(`stop_date`) AS stop_date, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY DATE(`stop_date`)) AS row_num FROM `stop_thali` WHERE `thali` = '" . $_SESSION['thali'] . "' AND DATE(`stop_date`) >= CURDATE()),
-						grouped_dates AS (SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates)
-						SELECT `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date, DATE_ADD(MAX(`stop_date`), INTERVAL 1 DAY) AS next_active_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date ASC LIMIT 1;") or die(mysqli_error($link));
-                        if (isset($stop_dates) && $stop_dates->num_rows > 0) {
+                        echo '<p class="m-0">Thali No: <strong>' . e($values['tiffinno']) . '</strong> | Thali Status: <strong class="text-danger">Stop</strong></p> ';
+
+                        $stop_dates = db_query(
+                            $link,
+                            "WITH ranked_dates AS (
+                                SELECT `id`, `thali`, DATE(`stop_date`) AS stop_date, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY DATE(`stop_date`)) AS row_num
+                                FROM `stop_thali` WHERE `thali` = ? AND DATE(`stop_date`) >= CURDATE()
+                             ),
+                             grouped_dates AS (
+                                SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
+                             )
+                             SELECT `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date, DATE_ADD(MAX(`stop_date`), INTERVAL 1 DAY) AS next_active_date
+                             FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date ASC LIMIT 1",
+                            "s",
+                            [$_SESSION['thali']]
+                        );
+                        if ($stop_dates->num_rows > 0) {
                             $row = mysqli_fetch_assoc($stop_dates);
-                            echo '<p class="m-0">Thali Start Date: <strong class="text-success">' . date("d M Y", strtotime($row['next_active_date'])) . '</strong></p>';
+                            echo '<p class="m-0">Thali Start Date: <strong class="text-success">' . e(date("d M Y", strtotime($row['next_active_date']))) . '</strong></p>';
                         }
                     }
                 } ?>
@@ -95,20 +112,29 @@ if ($curr_page != 'events.php') {
                     <?php if (isset($_SESSION['role'])) { ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/musaid.php">Musaid</a></li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizagasiyawala@gmail.com', 'tinwalaabizer@gmail.com', 'saminabarnagarwala2812@gmail.com', 'itsammara@gmail.com'))) { ?>
+                    <?php if (user_email_in(FOLLOW_UP_ACCESS_EMAILS)) { ?>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Follow Up</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/fmb/users/follow-up/local.php">Local Pending</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/follow-up/non-local.php">Non-Local Pending</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/follow-up/previous.php">Previous Year Pending</a></li>
+                            </ul>
+                        </li>
+                    <?php } ?>
+                    <?php if (user_email_in(THALISEARCH_ACCESS_EMAILS)) { ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/thalisearch.php">Thaali Search</a></li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com', 'ahmedi.murtaza@gmail.com'))) { ?>
+                    <?php if (user_email_in(SPECIAL_THALI_ACCESS_EMAILS)) { ?>
                         <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Speacial Thalis</a>
+                            <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Special Thalis</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/fmb/users/special/friday.php">Friday Thalis</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/special/barnamaj.php">Barnamaj Thalis</a></li>
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com', 'aliasgaraurangabadwala@gmail.com'))) {
-                    ?>
+                    <?php if (user_email_in(MENU_MANAGEMENT_ACCESS_EMAILS)) { ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Menu Management</a>
                             <ul class="dropdown-menu">
@@ -119,7 +145,7 @@ if ($curr_page != 'events.php') {
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com', 'hussainbarnagarwala14@gmail.com', 'abbas.saifee5@gmail.com', 'saminabarnagarwala2812@gmail.com', 'gheewalamf@gmail.com', 'zahradhorajiwala0@gmail.com'))) { ?>
+                    <?php if (user_email_in(ROTI_MANAGEMENT_ACCESS_EMAILS)) { ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Roti Management</a>
                             <ul class="dropdown-menu">
@@ -130,7 +156,7 @@ if ($curr_page != 'events.php') {
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com', 'taherhafiji@gmail.com', 'saminabarnagarwala2812@gmail.com', 'itsammara@gmail.com'))) { ?>
+                    <?php if (user_email_in(TRANSPORTER_MANAGEMENT_ACCESS_EMAILS)) { ?>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Transporter Management</a>
                             <ul class="dropdown-menu">
@@ -143,7 +169,7 @@ if ($curr_page != 'events.php') {
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizagasiyawala@gmail.com', 'tinwalaabizer@gmail.com', 'itsammara@gmail.com'))) { ?>
+                    <?php if (user_email_in(BACKEND_ACCESS_EMAILS)) { ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/pendingactions.php">Pending Actions</a></li>
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Backend</a>
@@ -160,10 +186,10 @@ if ($curr_page != 'events.php') {
                                 <li><a class="dropdown-item" href="/fmb/users/admin_scripts.php">Scripts</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link" target="_blank" href="/fmb/sms/index.php">SMS</a></li>
+                        <li class="nav-item"><a class="nav-link" target="_blank" rel="noopener noreferrer" href="/fmb/sms/index.php">SMS</a></li>
                     <?php } ?>
-                    <?php $transporter = mysqli_query($link, "SELECT * FROM transporters where Email = '" . $_SESSION['email'] . "'") or die(mysqli_error($link));
-                    if ($transporter->num_rows > 0) {
+                    <?php $transporterNav = db_query($link, "SELECT id FROM transporters WHERE Email = ?", "s", [$_SESSION['email']]);
+                    if ($transporterNav->num_rows > 0) {
                         echo '<li class="nav-item"><a class="nav-link" href="/fmb/transporter/home.php">Transporter Panel</a></li>';
                     } ?>
                     <li class="nav-item"><a class="nav-link" href="/fmb/users/hub_details.php">Hub details</a></li>
@@ -178,16 +204,16 @@ if ($curr_page != 'events.php') {
         </div>
     </nav>
 </header>
-<?php if($values['Total_Pending'] >= $values['yearly_hub'] && $values['Total_Pending'] > 4) { ?>
+<?php if (($values['Total_Pending'] ?? 0) >= ($values['yearly_hub'] ?? 0) && ($values['Total_Pending'] ?? 0) > 4) { ?>
     <div class="payment-reminder mt-3">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="alert alert-danger<?php //echo( ($values['yearly_hub'] > $values['Total_Pending']) ? 'alert-info' : 'alert-danger'); ?> mb-0" role="alert">
+                    <div class="alert alert-danger mb-0" role="alert">
                         <div class="row align-items-center">
                             <div class="col-9">
                                 <h6 class="mb-0">
-    								Your FMB dues of <strong>₹<?php echo number_format($values['Total_Pending']); ?></strong> are still pending. As the sixth Miqaat, <strong>Chelum Imam Husain (AS)</strong>, has now passed, we humbly request you to kindly clear your outstanding FMB dues at the earliest. Timely payment helps us continue the smooth operation of Faiz and related services Once the payment is made, please  share the payment screenshot or receipt on <a href="https://wa.me/917499860950"><strong>+91 74998 60950</strong></a> so that we may update our records.
+									Your FMB dues of <strong>₹<?php echo e(number_format((float) $values['Total_Pending'])); ?></strong> are still pending. As the sixth Miqaat, <strong>Chelum Imam Husain (AS)</strong>, has now passed, we humbly request you to kindly clear your outstanding FMB dues at the earliest. Timely payment helps us continue the smooth operation of Faiz and related services Once the payment is made, please  share the payment screenshot or receipt on <a href="https://wa.me/917499860950"><strong>+91 74998 60950</strong></a> so that we may update our records.
 								</h6>
                             </div>
                             <div class="col-3 text-end">
@@ -201,7 +227,7 @@ if ($curr_page != 'events.php') {
     </div>
 <?php } ?>
 
-<div class="content mt-3">
+<main id="main-content" class="content mt-3" tabindex="-1">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">

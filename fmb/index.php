@@ -1,10 +1,34 @@
-<?php session_start();
+<?php
+session_set_cookie_params([
+	'lifetime' => 0,
+	'path' => '/',
+	'domain' => '',
+	'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
+	'httponly' => true,
+	'samesite' => 'Lax',
+]);
+session_start();
 
+// Log everything, but never display raw errors/stack traces to visitors —
+// this is the public-facing login page, reachable by anyone.
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
 
 include('users/connection.php');
+require_once('users/helpers.php');
 require_once('users/libraries/Google/autoload.php');
+
+function clear_login_session(): void
+{
+	$_SESSION = [];
+	if (ini_get('session.use_cookies')) {
+		$params = session_get_cookie_params();
+		setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+	}
+	session_unset();
+	session_destroy();
+}
 
 /***********************************************
   Make an API request on behalf of a user. In
@@ -36,12 +60,32 @@ If we have a code back from the OAuth 2.0 flow,
 we need to exchange that with the authenticate()
 function. We store the resultant access token
 bundle in the session, and redirect to ourself.
+
+The state check guards against login CSRF: without
+it, an attacker could trick a victim's browser into
+completing an OAuth flow bound to the attacker's own
+Google account, silently logging the victim in as
+someone else.
  *************************************************/
 if (isset($_GET['code'])) {
-	$client->authenticate($_GET['code']);
-	$_SESSION['access_token'] = $client->getAccessToken();
-	header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
-	exit;
+	$expectedState = $_SESSION['oauth2state'] ?? null;
+	unset($_SESSION['oauth2state']);
+
+	if ($expectedState === null || !isset($_GET['state']) || !hash_equals($expectedState, (string) $_GET['state'])) {
+		header('Location: ' . $redirect_uri . '?status=' . rawurlencode('Login request could not be verified. Please try again.'));
+		exit;
+	}
+
+	try {
+		$client->authenticate($_GET['code']);
+		$_SESSION['access_token'] = $client->getAccessToken();
+		header('Location: ' . $redirect_uri);
+		exit;
+	} catch (Exception $e) {
+		error_log('[index.php] OAuth code exchange failed: ' . $e->getMessage());
+		header('Location: ' . $redirect_uri . '?status=' . rawurlencode('Login failed. Please try again.'));
+		exit;
+	}
 }
 
 /************************************************
@@ -51,13 +95,14 @@ requests, else we generate an authentication URL.
 if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
 	$client->setAccessToken($_SESSION['access_token']);
 	if ($client->isAccessTokenExpired()) {
-		unset($_SESSION['access_token']);
-		session_destroy();
-
-		header('Location: ' . $redirect_uri . '?status=Session expired. Please login again.');
+		clear_login_session();
+		header('Location: ' . $redirect_uri . '?status=' . rawurlencode('Session expired. Please login again.'));
 		exit;
 	}
 } else {
+	$oauthState = bin2hex(random_bytes(16));
+	$_SESSION['oauth2state'] = $oauthState;
+	$client->setState($oauthState);
 	$authUrl = $client->createAuthUrl();
 }
 
@@ -74,7 +119,7 @@ if (isset($authUrl) || isset($_GET['status'])) {
 							<hr>
 							<?php if (isset($_GET['status'])) { ?>
 								<div class="alert alert-danger" role="alert">
-									<?php echo $_GET['status']; ?>
+									<?php echo e((string) $_GET['status']); ?>
 								</div>
 							<?php } ?>
 							<img class="img-fluid mx-auto d-block" src="assets/img/sakat-hoi.avif" alt="sakat hoi"
@@ -83,28 +128,27 @@ if (isset($authUrl) || isset($_GET['status'])) {
 								height="254" />
 							<hr>
 							<h3>Already have Kalimi Mohalla Sabil?</h3>
-							<a class="btn btn-light btn-lg" href="<?php echo $authUrl; ?>"><i class="bi bi-google"></i> Login with Google</a>
+							<?php if (isset($authUrl)) { ?>
+								<a class="btn btn-light btn-lg" href="<?php echo e($authUrl); ?>"><i class="bi bi-google"></i> Login with Google</a>
+							<?php } ?>
 						</div>
 					</div>
 
 				<?php include('users/footer.php');
-			} else {
+} else {
+	// A valid, unexpired access token is already in the session — confirm
+	// the identity it belongs to and drop the user straight into the app.
+	try {
+		$user = $service->userinfo->get();
 
-				try {
-
-					$user = $service->userinfo->get();
-
-					$_SESSION['fromLogin'] = "true";
-					$_SESSION['email'] = $user->email;
-					header('Location: users/index.php');
-					exit;
-				} catch (Exception $e) {
-					// Token expired or invalid → clear session
-					unset($_SESSION['access_token']);
-					session_destroy();
-
-					// Redirect to login again
-					header('Location: ' . $redirect_uri . '?status=Session expired. Please login again.');
-					exit;
-				}
-			} ?>
+		$_SESSION['fromLogin'] = "true";
+		$_SESSION['email'] = $user->email;
+		header('Location: users/index.php');
+		exit;
+	} catch (Exception $e) {
+		error_log('[index.php] userinfo lookup failed: ' . $e->getMessage());
+		clear_login_session();
+		header('Location: ' . $redirect_uri . '?status=' . rawurlencode('Session expired. Please login again.'));
+		exit;
+	}
+}

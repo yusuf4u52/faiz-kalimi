@@ -1,19 +1,20 @@
 <?php
-include '../../vendor/autoload.php';
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use GeniusTS\HijriDate\Date;
 use GeniusTS\HijriDate\Hijri;
 
-function getTodayDateHijri()
+function getTodayDateHijri(): string
 {
-	$toStringFormat = 'Y-m-d';
-	Date::setToStringFormat($toStringFormat);
-	return Date::today();
+    Date::setToStringFormat('Y-m-d');
+    return (string) Date::today();
 }
 
-function getHijriDate($date)
+function getHijriDate(string $date): string
 {
-	$toStringFormat = 'Y-m-d';
-	Date::setToStringFormat($toStringFormat);
-	return Hijri::convertToHijri($date);
+    Date::setToStringFormat('Y-m-d');
+    return (string) Hijri::convertToHijri($date);
 }

@@ -1,74 +1,79 @@
 <?php
-$val = mysqli_query($link, "SELECT id, Thali, NAME, CONTACT, yearly_hub, Total_Pending, Previous_Due, Paid, thalicount, WhatsApp FROM $previous_thalilist where Thali='" . $values['Thali'] . "'");
-if ($val !== FALSE) {
-	$previous_values = mysqli_fetch_assoc($val);
+// Table name interpolation here is unavoidable (table names can't be bound
+// as query parameters); $previous_thalilist is built from an int-cast year
+// in musaid.php, not from request input.
+$stmt = mysqli_prepare($link, "SELECT id, Thali, NAME, CONTACT, yearly_hub, Total_Pending, Previous_Due, Paid, thalicount, WhatsApp FROM `$previous_thalilist` WHERE Thali = ?");
+if ($stmt !== false) {
+    mysqli_stmt_bind_param($stmt, "s", $values['Thali']);
+    mysqli_stmt_execute($stmt);
+    $previous_values = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 } else {
-	$previous_values = null;
+    $previous_values = null;
 }
 ?>
 
-<div class="modal fade" id="details-<?php echo $values['Thali']; ?>" tabindex="-1"
-	aria-labelledby="details-<?php echo $values['Thali']; ?>-Label" aria-hidden="true">
+<div class="modal fade" id="details-<?php echo e($values['Thali']); ?>" tabindex="-1"
+	aria-labelledby="details-<?php echo e($values['Thali']); ?>-Label" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title fs-5">Details - Thali# <?php echo $values['Thali']; ?> <?php echo $values['NAME']; ?></h4>
+				<h4 class="modal-title fs-5">Details - Thali# <?php echo e($values['Thali']); ?> <?php echo e($values['NAME']); ?></h4>
 				<button type="button" class="btn ms-auto" data-bs-dismiss="modal"
 					aria-label="Close"><i class="bi bi-x-lg"></i></button>
 			</div>
 			<div class="modal-body">
-				<div class="accordion" id="accordion<?php echo $values['Thali']; ?>Details">
+				<div class="accordion" id="accordion<?php echo e($values['Thali']); ?>Details">
 					<div class="accordion-item">
-						<h2 class="accordion-header" id="heading<?php echo $values['Thali']; ?>">
+						<h2 class="accordion-header" id="heading<?php echo e($values['Thali']); ?>">
 							<button class="accordion-button" type="button" data-bs-toggle="collapse"
-								data-bs-target="#collapse-<?php echo $values['Thali']; ?>" aria-expanded="true"
-								aria-controls="collapse<?php echo $values['Thali']; ?>">
+								data-bs-target="#collapse-<?php echo e($values['Thali']); ?>" aria-expanded="true"
+								aria-controls="collapse<?php echo e($values['Thali']); ?>">
 								Thali Details
 							</button>
 						</h2>
-						<div id="collapse-<?php echo $values['Thali']; ?>"
+						<div id="collapse-<?php echo e($values['Thali']); ?>"
 							class="accordion-collapse collapse show"
-							data-bs-parent="#accordion<?php echo $values['Thali']; ?>Details">
+							data-bs-parent="#accordion<?php echo e($values['Thali']); ?>Details">
 							<div class="accordion-body">
 								<ul class="list-group list-group-flush">
 									<li class="list-group-item">
 										<div class="fw-bold">ITS No</div>
-										<?php echo $values['ITS_No']; ?>
+										<?php echo e($values['ITS_No']); ?>
 									</li>
 									<li class="list-group-item">
 										<div class="fw-bold">Contact</div>
-										<?php echo $values['CONTACT']; ?>
+										<?php echo e($values['CONTACT']); ?>
 									</li>
 								</ul>
 							</div>
 						</div>
 					</div>
 
-					<?php if (!is_null($previous_values)) { ?>
+					<?php if ($previous_values !== null) { ?>
 						<div class="accordion-item">
-							<h2 class="accordion-header" id="heading<?php echo $values['Thali']; ?><?php echo $previous_year; ?>">
+							<h2 class="accordion-header" id="heading<?php echo e($values['Thali']); ?><?php echo (int) $previous_year; ?>">
 								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-									data-bs-target="#collapse-<?php echo $values['Thali']; ?><?php echo $previous_year; ?>" aria-expanded="true"
-									aria-controls="collapse<?php echo $values['Thali']; ?><?php echo $previous_year; ?>">
-									Year <?php echo $previous_year; ?>
+									data-bs-target="#collapse-<?php echo e($values['Thali']); ?><?php echo (int) $previous_year; ?>" aria-expanded="true"
+									aria-controls="collapse<?php echo e($values['Thali']); ?><?php echo (int) $previous_year; ?>">
+									Year <?php echo (int) $previous_year; ?>
 								</button>
 							</h2>
-							<div id="collapse-<?php echo $values['Thali']; ?><?php echo $previous_year; ?>"
+							<div id="collapse-<?php echo e($values['Thali']); ?><?php echo (int) $previous_year; ?>"
 								class="accordion-collapse collapse"
-								data-bs-parent="#accordion<?php echo $values['Thali']; ?>Details">
+								data-bs-parent="#accordion<?php echo e($values['Thali']); ?>Details">
 								<div class="accordion-body">
 									<ul class="list-group list-group-flush">
 										<li class="list-group-item">
 											<div class="fw-bold">Hub Pending (Yearly Takhmeen + Previous
 												Due - Paid = Total Pending)</div>
-											<?php echo $previous_values['yearly_hub']; ?> +
-											<?php echo $previous_values['Previous_Due']; ?> -
-											<?php echo $previous_values['Paid']; ?> =
-											<?php echo $previous_values['Total_Pending']; ?>
+											<?php echo e((string) $previous_values['yearly_hub']); ?> +
+											<?php echo e((string) $previous_values['Previous_Due']); ?> -
+											<?php echo e((string) $previous_values['Paid']); ?> =
+											<?php echo e((string) $previous_values['Total_Pending']); ?>
 										</li>
 										<li class="list-group-item">
 											<div class="fw-bold">Thali Delivered</div>
-											<?php echo ($max_days_previous[0] > 0) ? round($previous_values['thalicount'] * 100 / $max_days_previous[0]) . '%' : '0%'; ?> of days
+											<?php echo (($max_days_previous[0] ?? 0) > 0) ? round($previous_values['thalicount'] * 100 / $max_days_previous[0]) . '%' : '0%'; ?> of days
 										</li>
 										<li class="list-group-item">
 											<div class="table-responsive">
@@ -83,20 +88,24 @@ if ($val !== FALSE) {
 													</thead>
 													<tbody>
 														<?php
-														$query = "SELECT r.* FROM $previous_receipts r, $previous_thalilist t WHERE r.userid = t.id and t.id ='" . $previous_values['id'] . "' ORDER BY Date ASC";
-														$result = mysqli_query($link, $query);
-														while ($row = mysqli_fetch_assoc($result)) {
-															foreach ($row as $key => $value) {
-																$row[$key] = stripslashes($value);
-															}
-															echo "<tr>";
-															echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-															echo "<td>" . nl2br($row['Amount']) . "</td>";
-															echo "<td>" . date('d M Y', strtotime($row['Date'])) . "</td>";
-															echo "<td>" . nl2br($row['takmeem_year']) . "</td>";
-															echo "</tr>";
-														}
-														?>
+                                                        // Table name interpolation unavoidable — same as above, not
+                                                        // attacker-influenced.
+                                                        $stmt = mysqli_prepare(
+                                                            $link,
+                                                            "SELECT r.* FROM `$previous_receipts` r, `$previous_thalilist` t WHERE r.userid = t.id AND t.id = ? ORDER BY r.Date ASC"
+                                                        );
+                                                        mysqli_stmt_bind_param($stmt, "s", $previous_values['id']);
+                                                        mysqli_stmt_execute($stmt);
+                                                        $result = mysqli_stmt_get_result($stmt);
+                                                        while ($row = mysqli_fetch_assoc($result)) {
+                                                            echo "<tr>";
+                                                            echo "<td>" . nl2br(e($row['Receipt_No'])) . "</td>";
+                                                            echo "<td>" . nl2br(e((string) $row['Amount'])) . "</td>";
+                                                            echo "<td>" . e(date('d M Y', strtotime($row['Date']))) . "</td>";
+                                                            echo "<td>" . nl2br(e($row['takmeem_year'])) . "</td>";
+                                                            echo "</tr>";
+                                                        }
+                                                        ?>
 													</tbody>
 												</table>
 											</div>
@@ -108,28 +117,28 @@ if ($val !== FALSE) {
 					<?php } ?>
 
 					<div class="accordion-item">
-						<h2 class="accordion-header" id="heading<?php echo $values['Thali']; ?><?php echo $current_year['value']; ?>">
+						<h2 class="accordion-header" id="heading<?php echo e($values['Thali']); ?><?php echo e((string) $current_year['value']); ?>">
 							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-								data-bs-target="#collapse-<?php echo $values['Thali']; ?><?php echo $current_year['value']; ?>" aria-expanded="true"
-								aria-controls="collapse<?php echo $values['Thali']; ?><?php echo $current_year['value']; ?>">
-								Year <?php echo $current_year['value']; ?>
+								data-bs-target="#collapse-<?php echo e($values['Thali']); ?><?php echo e((string) $current_year['value']); ?>" aria-expanded="true"
+								aria-controls="collapse<?php echo e($values['Thali']); ?><?php echo e((string) $current_year['value']); ?>">
+								Year <?php echo e((string) $current_year['value']); ?>
 							</button>
 						</h2>
-						<div id="collapse-<?php echo $values['Thali']; ?><?php echo $current_year['value']; ?>"
+						<div id="collapse-<?php echo e($values['Thali']); ?><?php echo e((string) $current_year['value']); ?>"
 							class="accordion-collapse collapse"
-							data-bs-parent="#accordion<?php echo $values['Thali']; ?>Details">
+							data-bs-parent="#accordion<?php echo e($values['Thali']); ?>Details">
 							<div class="accordion-body">
 								<ul class="list-group list-group-flush">
 									<li class="list-group-item">
 										<div class="fw-bold">Hub Pending (Yearly Takhmeen + Previous
 											Due - Paid = Total Pending)</div>
-										<?php echo $values['yearly_hub']; ?> +
-										<?php echo $values['Previous_Due']; ?> - <?php echo $values['Paid']; ?> =
-										<?php echo $values['Total_Pending']; ?>
+										<?php echo e((string) $values['yearly_hub']); ?> +
+										<?php echo e((string) $values['Previous_Due']); ?> - <?php echo e((string) $values['Paid']); ?> =
+										<?php echo e((string) $values['Total_Pending']); ?>
 									</li>
 									<li class="list-group-item">
 										<div class="fw-bold">Thali Delivered</div>
-										<?php echo ($max_days[0] > 0) ? round($values['thalicount'] * 100 / $max_days[0]) . '%' : '0%'; ?> of days
+										<?php echo (($max_days[0] ?? 0) > 0) ? round($values['thalicount'] * 100 / $max_days[0]) . '%' : '0%'; ?> of days
 									</li>
 									<li class="list-group-item">
 										<div class="table-responsive">
@@ -144,20 +153,21 @@ if ($val !== FALSE) {
 												</thead>
 												<tbody>
 													<?php
-													$query = "SELECT r.* FROM receipts r, thalilist t WHERE r.userid = t.id and t.id ='" . $values['id'] . "' ORDER BY Date ASC";
-													$result = mysqli_query($link, $query);
-													while ($row = mysqli_fetch_assoc($result)) {
-														foreach ($row as $key => $value) {
-															$row[$key] = stripslashes($value);
-														}
-														echo "<tr>";
-														echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-														echo "<td>" . nl2br($row['Amount']) . "</td>";
-														echo "<td>" . date('d M Y', strtotime($row['Date'])) . "</td>";
-														echo "<td>" . nl2br($row['takmeem_year']) . "</td>";
-														echo "</tr>";
-													}
-													?>
+                                                    $result = db_query(
+                                                        $link,
+                                                        "SELECT r.* FROM receipts r, thalilist t WHERE r.userid = t.id AND t.id = ? ORDER BY r.Date ASC",
+                                                        "s",
+                                                        [$values['id']]
+                                                    );
+                                                    while ($row = mysqli_fetch_assoc($result)) {
+                                                        echo "<tr>";
+                                                        echo "<td>" . nl2br(e($row['Receipt_No'])) . "</td>";
+                                                        echo "<td>" . nl2br(e((string) $row['Amount'])) . "</td>";
+                                                        echo "<td>" . e(date('d M Y', strtotime($row['Date']))) . "</td>";
+                                                        echo "<td>" . nl2br(e($row['takmeem_year'])) . "</td>";
+                                                        echo "</tr>";
+                                                    }
+                                                    ?>
 												</tbody>
 											</table>
 										</div>

@@ -1,8 +1,9 @@
 <?php
 include('header.php');
 include('navbar.php');
+require_once('helpers.php');
 
-$transporters = mysqli_query($link, "SELECT * FROM transporters WHERE `Name` = '" . $values['Transporter'] . "'") or die(mysqli_error($link));
+$transporters = db_query($link, "SELECT * FROM transporters WHERE `Name` = ?", "s", [$values['Transporter'] ?? '']);
 $transvalues = $transporters->fetch_assoc();
 ?>
 
@@ -12,60 +13,60 @@ $transvalues = $transporters->fetch_assoc();
 		<ul class="list-group list-group-flush">
 			<li class="list-group-item">
 				<div class="fw-bold">Sabeel Number</div>
-				<?php echo $values['Thali']; ?>
+				<?php echo e($values['Thali']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Tiffin Number</div>
-				<?php echo $values['tiffinno']; ?>
+				<?php echo e($values['tiffinno']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Thali Type</div>
-				<?php echo $values['thalisize']; ?>
+				<?php echo e($values['thalisize']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">HOF ITS No</div>
-				<?php echo $values['ITS_No']; ?>
+				<?php echo e($values['ITS_No']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Name</div>
-				<?php echo $values['NAME']; ?>
+				<?php echo e($values['NAME']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Mobile Number</div>
-				<?php echo $values['CONTACT']; ?>
+				<?php echo e($values['CONTACT']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Email Address</div>
-				<a href="mailto:<?php echo $values['Email_ID']; ?>"><?php echo $values['Email_ID']; ?></a> <?php if (!empty($values['SEmail_ID'])) : ?>| <a
-					href="mailto:<?php echo $values['SEmail_ID']; ?>"><?php echo $values['SEmail_ID']; ?></a> <?php endif; ?>
+				<a href="mailto:<?php echo e($values['Email_ID']); ?>"><?php echo e($values['Email_ID']); ?></a> <?php if (!empty($values['SEmail_ID'])) : ?>| <a
+					href="mailto:<?php echo e($values['SEmail_ID']); ?>"><?php echo e($values['SEmail_ID']); ?></a> <?php endif; ?>
 			</li>
-			<?php if ($musaid_details) { ?>
+			<?php if (!empty($musaid_details)) { ?>
 				<li class="list-group-item">
 					<div class="fw-bold">Masool</div>
-					<?php echo $musaid_details['username']; ?> | <a
-						href="https://wa.me/+91<?php echo $musaid_details['mobile']; ?>"><?php echo $musaid_details['mobile']; ?></a>
+					<?php echo e($musaid_details['username']); ?> | <a
+						href="https://wa.me/+91<?php echo e($musaid_details['mobile']); ?>"><?php echo e($musaid_details['mobile']); ?></a>
 				</li>
 			<?php } ?>
 			<li class="list-group-item">
 				<div class="fw-bold">Previous Year Takhmeen</div>
-				<?php echo '₹ ' . $values['previous_hub']; ?>
+				<?php echo '₹ ' . e((string) $values['previous_hub']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Previous Due</div>
-				<?php echo '₹ ' . $values['Previous_Due']; ?>
+				<?php echo '₹ ' . e((string) $values['Previous_Due']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Current Year Takhmeen</div>
-				<?php echo '₹ ' . $values['yearly_hub']; ?>
+				<?php echo '₹ ' . e((string) $values['yearly_hub']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Zabihat Niyat</div>
-				<?php echo $values['Zabihat']; ?>
+				<?php echo e($values['Zabihat']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Hub Pending</div>
-				₹<?php echo $values['Total_Pending'] + $values['Paid']; ?> -
-				₹<?php echo $values['Paid']; ?> = ₹<?php echo $values['Total_Pending']; ?>
+				₹<?php echo e((string) ($values['Total_Pending'] + $values['Paid'])); ?> -
+				₹<?php echo e((string) $values['Paid']); ?> = ₹<?php echo e((string) $values['Total_Pending']); ?>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Is Active?</div>
@@ -75,13 +76,13 @@ $transvalues = $transporters->fetch_assoc();
 			<li class="list-group-item">
 				<div class="fw-bold">Transporter</div>
 				<p class="list-group-item-text">
-					<?php echo  $values['Transporter']; ?> <?php if (!empty($transvalues['Mobile'])) : ?>| <a
-						href="https://wa.me/+91<?php echo $transvalues['Mobile']; ?>"><?php echo $transvalues['Mobile']; ?></a> <?php endif; ?>
+					<?php echo e($values['Transporter']); ?> <?php if (!empty($transvalues['Mobile'])) : ?>| <a
+						href="https://wa.me/+91<?php echo e($transvalues['Mobile']); ?>"><?php echo e($transvalues['Mobile']); ?></a> <?php endif; ?>
 				</p>
 			</li>
 			<li class="list-group-item">
 				<div class="fw-bold">Full Address</div>
-				<p class="list-group-item-text"><?php echo $values['wingflat']; ?>, <?php echo $values['society']; ?>, <?php echo $values['Full_Address']; ?></p>
+				<p class="list-group-item-text"><?php echo e($values['wingflat']); ?>, <?php echo e($values['society']); ?>, <?php echo e($values['Full_Address']); ?></p>
 			</li>
 
 			<?php
@@ -89,7 +90,7 @@ $transvalues = $transporters->fetch_assoc();
 			?>
 				<li class="list-group-item">
 					<div class="fw-bold">Start Date</div>
-					<p class="list-group-item-text hijridate"><?php echo $values['Thali_Start_Date']; ?></p>
+					<p class="list-group-item-text hijridate"><?php echo e($values['Thali_Start_Date']); ?></p>
 				</li>
 
 			<?php
@@ -97,7 +98,7 @@ $transvalues = $transporters->fetch_assoc();
 			?>
 				<li class="list-group-item">
 					<div class="fw-bold">Stop Date</div>
-					<p class="list-group-item-text hijridate"><?php echo $values['Thali_Stop_Date']; ?></p>
+					<p class="list-group-item-text hijridate"><?php echo e($values['Thali_Stop_Date']); ?></p>
 				</li>
 			<?php } ?>
 		</ul>

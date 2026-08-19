@@ -1,8 +1,40 @@
 <?php
-error_reporting(0);
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
 include('header.php');
 include('navbar.php');
+require_once('helpers.php');
 include('getHijriDate.php');
+
+/**
+ * Render one receipts table for the given table name and email.
+ * $table is never user input (always one of the two literals below), so
+ * it's safe to interpolate directly — table/column names can't be bound
+ * as query parameters in mysqli.
+ */
+function render_receipts_table(mysqli $link, string $table, string $email): void
+{
+    $query = "SELECT r.* FROM `$table` r, thalilist t WHERE r.userid = t.id AND t.Email_ID = ? ORDER BY r.Date ASC";
+    $result = db_query($link, $query, "s", [$email]);
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        // NOTE: the original code ran stripslashes() on every field here —
+        // a leftover from PHP's "magic quotes" feature, which was removed
+        // in PHP 5.4. With magic quotes gone, that stripslashes() call was
+        // silently corrupting any receipt data that happened to contain a
+        // genuine backslash (e.g. in a name or a Windows-style path).
+        echo "<tr>";
+        echo "<td data-sort=" . strtotime($row['Date']) . ">" . e(date('d M Y', strtotime($row['Date']))) . "</td>";
+        echo "<td>" . e(getHijriFullDate($row['Date'])) . "</td>";
+        echo "<td>" . nl2br(e($row['Receipt_No'])) . "</td>";
+        echo "<td>" . nl2br(e($row['name'])) . "</td>";
+        echo "<td>" . nl2br(e((string) $row['Amount'])) . "</td>";
+        echo "<td>" . nl2br(e($row['payment_type'])) . "</td>";
+        echo "<td>" . nl2br(e($row['transaction_id'])) . "</td>";
+        echo "<td>" . nl2br(e($row['takmeem_year'])) . "</td>";
+        echo "</tr>";
+    }
+}
 ?>
 
 <div class="card">
@@ -23,25 +55,7 @@ include('getHijriDate.php');
 					</tr>
 				</thead>
 				<tbody>
-					<?php
-					$query = "SELECT r.* FROM receipts r, thalilist t WHERE r.userid = t.id and t.Email_ID ='" . $_SESSION['email'] . "' ORDER BY Date ASC";
-					$result = mysqli_query($link, $query);
-					while ($row = mysqli_fetch_assoc($result)) {
-						foreach ($row as $key => $value) {
-							$row[$key] = stripslashes($value);
-						}
-						echo "<tr>";
-						echo "<td data-sort=" . strtotime($row['Date']) . ">" . date('d M Y', strtotime($row['Date'])) . "</td>";
-						echo "<td>" . getHijriFullDate($row['Date']) . "</td>";
-						echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-						echo "<td>" . nl2br($row['name']) . "</td>";
-						echo "<td>" . nl2br($row['Amount']) . "</td>";
-						echo "<td>" . nl2br($row['payment_type']) . "</td>";
-						echo "<td>" . nl2br($row['transaction_id']) . "</td>";
-						echo "<td>" . nl2br($row['takmeem_year']) . "</td>";
-						echo "</tr>";
-					}
-					?>
+					<?php render_receipts_table($link, 'receipts', $_SESSION['email']); ?>
 				</tbody>
 			</table>
 		</div>
@@ -62,25 +76,7 @@ include('getHijriDate.php');
 					</tr>
 				</thead>
 				<tbody>
-					<?php
-					$query = "SELECT r.* FROM receipts_1447 r, thalilist t WHERE r.userid = t.id and t.Email_ID ='" . $_SESSION['email'] . "' ORDER BY Date ASC";
-					$result = mysqli_query($link, $query);
-					while ($row = mysqli_fetch_assoc($result)) {
-						foreach ($row as $key => $value) {
-							$row[$key] = stripslashes($value);
-						}
-						echo "<tr>";
-						echo "<td data-sort=" . strtotime($row['Date']) . ">" . date('d M Y', strtotime($row['Date'])) . "</td>";
-						echo "<td>" . getHijriFullDate($row['Date']) . "</td>";
-						echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-						echo "<td>" . nl2br($row['name']) . "</td>";
-						echo "<td>" . nl2br($row['Amount']) . "</td>";
-						echo "<td>" . nl2br($row['payment_type']) . "</td>";
-						echo "<td>" . nl2br($row['transaction_id']) . "</td>";
-						echo "<td>" . nl2br($row['takmeem_year']) . "</td>";
-						echo "</tr>";
-					}
-					?>
+					<?php render_receipts_table($link, 'receipts_1447', $_SESSION['email']); ?>
 				</tbody>
 			</table>
 		</div>

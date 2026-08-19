@@ -1,19 +1,25 @@
 <?php
 include('../connection.php');
 include('../_authCheck.php');
-include('getHijriDate.php');
+require_once('../helpers.php');
+include('../getHijriDate.php');
 
 $tomorrow_date = date("Y-m-d", strtotime("+ 1 day"));
 $hijridate = getHijriDate($tomorrow_date);
 
-if (isset($_POST['action']) && $_POST['action'] == 'stop_friday') {
-    $stop_friday = "UPDATE thalilist SET `Active` = '0', `Thali_stop_date` = '" . $hijridate . "' WHERE `thalisize` = 'Friday'";
-    mysqli_query($link,$stop_friday) or die(mysqli_error($link));
+$action = $_POST['action'] ?? null;
+
+if ($action === 'stop_friday') {
+    db_query($link, "UPDATE thalilist SET `Active` = 0, `Thali_stop_date` = ? WHERE `thalisize` = 'Friday'", "s", [$hijridate]);
     header("Location: /fmb/users/special/friday.php?action=delete");
+    exit;
 }
 
-if (isset($_POST['action']) && $_POST['action'] == 'stop_barnamaj') {
-    $stop_barnamaj = "UPDATE thalilist SET `Active` = '0', `Thali_stop_date` = '" . $hijridate . "' WHERE `thalisize` = 'Barnamaj'";
-    mysqli_query($link,$stop_barnamaj) or die(mysqli_error($link));
+if ($action === 'stop_barnamaj') {
+    db_query($link, "UPDATE thalilist SET `Active` = 0, `Thali_stop_date` = ? WHERE `thalisize` = 'Barnamaj'", "s", [$hijridate]);
     header("Location: /fmb/users/special/barnamaj.php?action=delete");
+    exit;
 }
+
+header("Location: /fmb/users/index.php");
+exit;

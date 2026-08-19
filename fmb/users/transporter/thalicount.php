@@ -1,9 +1,10 @@
 <?php
 include('../header.php');
 include('../navbar.php');
-include('getHijriDate.php');
+require_once('../helpers.php');
+include('../getHijriDate.php');
 
-$result = mysqli_query($link, "SELECT * FROM transporter_daily_count order by `date` DESC") or die(mysqli_error($link));
+$result = db_query($link, "SELECT * FROM transporter_daily_count ORDER BY `date` DESC");
 ?>
 
 <div class="card">
@@ -36,16 +37,16 @@ $result = mysqli_query($link, "SELECT * FROM transporter_daily_count order by `d
                                 $hijridate = getHijriDate($values['date']);
                                 $day = date('l', strtotime($values['date'])); ?>
                                 <tr>
-                                    <td data-sort="<?php echo strtotime($values['date']); ?>"><?php echo date('d M Y', strtotime($values['date'])) .' - '.$hijridate . ' (' . $day . ')'; ?></td>
-                                    <td><?php echo $values['name']; ?></td>
-                                    <td><?php echo $values['mini']; ?></td>
-                                    <td><?php echo $values['small']; ?></td>
-                                    <td><?php echo $values['medium']; ?></td>
-                                    <td><?php echo $values['large']; ?></td>
-                                    <td><?php echo $values['friday']; ?></td>
-                                    <td><?php echo $values['roti']; ?></td>
-                                    <td><?php echo $values['barnamaj']; ?></td>
-                                    <td><?php echo $values['count']; ?></td>
+                                    <td data-sort="<?php echo strtotime($values['date']); ?>"><?php echo e(date('d M Y', strtotime($values['date'])) . ' - ' . $hijridate . ' (' . $day . ')'); ?></td>
+                                    <td><?php echo e($values['name']); ?></td>
+                                    <td><?php echo (int) $values['mini']; ?></td>
+                                    <td><?php echo (int) $values['small']; ?></td>
+                                    <td><?php echo (int) $values['medium']; ?></td>
+                                    <td><?php echo (int) $values['large']; ?></td>
+                                    <td><?php echo (int) $values['friday']; ?></td>
+                                    <td><?php echo (int) $values['roti']; ?></td>
+                                    <td><?php echo (int) $values['barnamaj']; ?></td>
+                                    <td><?php echo (int) $values['count']; ?></td>
                                 </tr>
                             <?php }
                             mysqli_free_result($result); ?>

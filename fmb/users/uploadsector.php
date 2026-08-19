@@ -1,9 +1,12 @@
 <?php
 include('header.php');
 include('navbar.php');
-require '../vendor/autoload.php';
+require_once('helpers.php');
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+
+$canImport = user_email_in(SECTOR_IMPORT_EMAILS);
 ?>
 
 <div class="card">
@@ -15,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
         </div>
         <div class="row">
             <div class="col-12">
-                <?php if (in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'moizagasiyawala@gmail.com'))) { ?>
+                <?php if ($canImport) { ?>
                     <form id="uploadsector" class="form-horizontal my-3" method="POST"
                         action="uploadsector.php" enctype="multipart/form-data" autocomplete="off">
                         <div class="mb-3 row">
@@ -29,37 +32,48 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                         </div>
                     </form>
                 <?php } ?>
-                <?php if (isset($_POST['import']) && isset($_FILES['import_sector'])) {
+                <?php if ($canImport && isset($_POST['import']) && isset($_FILES['import_sector'])) {
                     $filePath = $_FILES['import_sector']['tmp_name'];
 
-                    // Load the XLSX file
                     $spreadsheet = IOFactory::load($filePath);
                     $sheet = $spreadsheet->getActiveSheet();
                     $rows = $sheet->toArray();
-                    $headers = array_shift($rows);
-                    // Skip header row and loop through the data
+                    array_shift($rows); // header row
+
                     foreach ($rows as $row) {
-                        if ($row[15] == 'Transfer') {
-                            $sql = "UPDATE  thalilist SET `Active` = '0', `hardstop` = '1', `hardstop_comment` = '" . $row[16] . "' WHERE `ITS_No` = '" . $row[1] . "'";
-                            mysqli_query($link, $sql) or die(mysqli_error($link));
-                            echo '<h4 class="text-danger">' . $row[1] . ' Transfer successfully</h4>';
-                        } elseif (is_numeric($row[12]) && $row[12] > 0) {
-                            if (empty($row[13]) && $row[13] == '') {
-                                $Zabihat = 0;
-                            } else {
-                                $Zabihat = $row[13];
-                            }
-                            $sql = "UPDATE thalilist SET `Active` = '1', `yearly_hub` = '" . $row[12] . "', `Zabihat` = '" . $Zabihat . "' WHERE `ITS_No` = '" . $row[1] . "'";
-                            mysqli_query($link, $sql) or die(mysqli_error($link));
-                            echo '<h4 class="text-success">' . $row[1] . ' updated successfully</h4>';
+                        $itsNo = trim((string) ($row[1] ?? ''));
+                        if ($itsNo === '') {
+                            continue;
+                        }
+
+                        if (($row[15] ?? '') === 'Transfer') {
+                            db_query(
+                                $link,
+                                "UPDATE thalilist SET `Active` = 0, `hardstop` = 1, `hardstop_comment` = ? WHERE `ITS_No` = ?",
+                                "ss",
+                                [(string) ($row[16] ?? ''), $itsNo]
+                            );
+                            echo '<h4 class="text-danger">' . e($itsNo) . ' Transfer successfully</h4>';
+                        } elseif (is_numeric($row[12] ?? null) && (float) $row[12] > 0) {
+                            $zabihat = (empty($row[13]) && $row[13] === '') ? 0 : (float) $row[13];
+
+                            db_query(
+                                $link,
+                                "UPDATE thalilist SET `Active` = 1, `yearly_hub` = ?, `Zabihat` = ? WHERE `ITS_No` = ?",
+                                "dds",
+                                [(float) $row[12], $zabihat, $itsNo]
+                            );
+                            echo '<h4 class="text-success">' . e($itsNo) . ' updated successfully</h4>';
                         } else {
-                            $sql = "UPDATE  thalilist SET `Active` = '0', `yearly_hub` = '0', `Zabihat` = '0' WHERE `ITS_No` = '" . $row[1] . "'";
-                            mysqli_query($link, $sql) or die(mysqli_error($link));
-                            echo '<h4 class="text-warning">' . $row[1] . ' Stopped successfully</h4>';
+                            db_query(
+                                $link,
+                                "UPDATE thalilist SET `Active` = 0, `yearly_hub` = 0, `Zabihat` = 0 WHERE `ITS_No` = ?",
+                                "s",
+                                [$itsNo]
+                            );
+                            echo '<h4 class="text-warning">' . e($itsNo) . ' Stopped successfully</h4>';
                         }
                     }
-                } else {
-                    //echo "No file uploaded.";
                 } ?>
             </div>
         </div>

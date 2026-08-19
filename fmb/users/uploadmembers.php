@@ -1,9 +1,12 @@
 <?php
 include('header.php');
 include('navbar.php');
-require '../vendor/autoload.php';
+require_once('helpers.php');
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+
+$canImport = user_email_in(DATA_IMPORT_EMAILS);
 ?>
 
 <div class="card">
@@ -15,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
         </div>
         <div class="row">
             <div class="col-12">
-                <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com'))) { ?>
+                <?php if ($canImport) { ?>
                     <form id="uploadmembers" class="form-horizontal my-3" method="POST"
                         action="uploadmembers.php" enctype="multipart/form-data" autocomplete="off">
                         <div class="mb-3 row">
@@ -29,37 +32,62 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                         </div>
                     </form>
                 <?php } ?>
-                <?php if (isset($_POST['import']) && isset($_FILES['import_members'])) {
+                <?php
+                // The allowlist above only controlled whether the upload
+                // *form* was shown — the code that actually processed a
+                // submitted file ran for any request with the right POST
+                // fields, regardless of who sent it. Re-checking $canImport
+                // here closes that gap.
+                if ($canImport && isset($_POST['import']) && isset($_FILES['import_members'])) {
                     $filePath = $_FILES['import_members']['tmp_name'];
 
-                    // Load the XLSX file
                     $spreadsheet = IOFactory::load($filePath);
                     $sheet = $spreadsheet->getActiveSheet();
                     $rows = $sheet->toArray();
-                    $headers = array_shift($rows);
-                    // Skip header row and loop through the data
+                    array_shift($rows); // header row
+
                     foreach ($rows as $row) {
-                        $hof_its = $row[0];
-						$its_no = $row[1];
-                        $date = date('Y-m-d', strtotime($row[1]));
-                        $thalilist = mysqli_query($link, "SELECT * FROM thalilist WHERE `ITS_No` = '" . $hof_its . "' LIMIT 1");
-                        if ($thalilist->num_rows > 0) {
-                            $thali = mysqli_fetch_assoc($thalilist);
-                            $thalilist_members = mysqli_query($link, "SELECT * FROM thalilist_members WHERE `its_no` = '" . $its_no . "' LIMIT 1");
-                            if ($thalilist_members->num_rows > 0) {
-                                $members = mysqli_fetch_assoc($thalilist_members);  
-                                $sql = "UPDATE thalilist_members SET `thalilist_id` = '" . $thali['id'] . "', `member_type` = '" . $row[2] . "', `full_name` = '" . $row[4] . "', `age` = '" . $row[5] . "', `gender` = '" . $row[6] . "', `mobile` = '" . $row[8] . "' WHERE `its_no` = '" . $its_no . "'";
-                                mysqli_query($link,$sql) or die(mysqli_error($link));
-                                echo '<h4>'.$its_no.' details updated successfully</h4>';
-                            } else {
-                                $sql = "INSERT INTO thalilist_members (`thalilist_id`, `its_no`, `member_type`, `full_name`, `age`, `gender`, `mobile`) VALUES ('" . $thali['id'] . "', '" . $its_no . "', '" . $row[2] . "', '" . $row[4] . "', '" . $row[5] . "', '" . $row[6] . "', '" . $row[8] . "')";
-                                mysqli_query($link,$sql) or die(mysqli_error($link));
-                                echo '<h4>'.$its_no.' details inserted successfully</h4>';
-                            }
+                        $hof_its = trim((string) ($row[0] ?? ''));
+                        $its_no = trim((string) ($row[1] ?? ''));
+                        if ($hof_its === '' || $its_no === '') {
+                            continue;
+                        }
+
+                        $thalilistResult = db_query($link, "SELECT id FROM thalilist WHERE `ITS_No` = ? LIMIT 1", "s", [$hof_its]);
+                        if ($thalilistResult->num_rows > 0) {
+                            $thali = mysqli_fetch_assoc($thalilistResult);
+
+                            $memberParams = [
+                                (int) $thali['id'],
+                                (string) ($row[2] ?? ''),
+                                (string) ($row[4] ?? ''),
+                                (int) ($row[5] ?? 0),
+                                (string) ($row[6] ?? ''),
+                                (string) ($row[8] ?? ''),
+                            ];
+
+                            // Single upsert instead of SELECT-then-branch.
+                            // Requires UNIQUE KEY (its_no) on thalilist_members
+                            // — see schema-modernization.sql.
+                            db_query(
+                                $link,
+                                "INSERT INTO thalilist_members (`thalilist_id`, `its_no`, `member_type`, `full_name`, `age`, `gender`, `mobile`)
+                                 VALUES (?, ?, ?, ?, ?, ?, ?)
+                                 ON DUPLICATE KEY UPDATE
+                                    `thalilist_id` = VALUES(`thalilist_id`),
+                                    `member_type` = VALUES(`member_type`),
+                                    `full_name` = VALUES(`full_name`),
+                                    `age` = VALUES(`age`),
+                                    `gender` = VALUES(`gender`),
+                                    `mobile` = VALUES(`mobile`)",
+                                "isssiss",
+                                [$memberParams[0], $its_no, $memberParams[1], $memberParams[2], $memberParams[3], $memberParams[4], $memberParams[5]]
+                            );
+
+                            $wasUpdate = mysqli_affected_rows($link) > 1;
+                            echo '<h4>' . e($its_no) . ' details ' . ($wasUpdate ? 'updated' : 'inserted') . ' successfully</h4>';
                         }
                     }
-                } else {
-                    //echo "No file uploaded.";
                 } ?>
             </div>
         </div>

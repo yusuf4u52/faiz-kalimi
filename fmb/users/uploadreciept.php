@@ -1,9 +1,12 @@
 <?php
 include('header.php');
 include('navbar.php');
-require '../vendor/autoload.php';
+require_once('helpers.php');
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+
+$canImport = user_email_in(DATA_IMPORT_EMAILS);
 ?>
 
 <div class="card">
@@ -15,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
         </div>
         <div class="row">
             <div class="col-12">
-                <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com'))) { ?>
+                <?php if ($canImport) { ?>
                     <form id="uploadreciept" class="form-horizontal my-3" method="POST"
                         action="uploadreciept.php" enctype="multipart/form-data" autocomplete="off">
                         <div class="mb-3 row">
@@ -29,37 +32,63 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                         </div>
                     </form>
                 <?php } ?>
-                <?php if (isset($_POST['import']) && isset($_FILES['import_reciept'])) {
+                <?php if ($canImport && isset($_POST['import']) && isset($_FILES['import_reciept'])) {
                     $filePath = $_FILES['import_reciept']['tmp_name'];
 
-                    // Load the XLSX file
                     $spreadsheet = IOFactory::load($filePath);
                     $sheet = $spreadsheet->getActiveSheet();
                     $rows = $sheet->toArray();
-                    $headers = array_shift($rows);
-                    // Skip header row and loop through the data
+                    array_shift($rows); // header row
+
                     foreach ($rows as $row) {
-                        $Receipt_No  = $row[0];
-                        $its = $row[2];
-                        $date = date('Y-m-d', strtotime($row[1]));
-                        $thalilist = mysqli_query($link, "SELECT * FROM thalilist WHERE `ITS_No` = '" . $its . "' LIMIT 1");
-                        if ($thalilist->num_rows > 0) {
-                            $thali = mysqli_fetch_assoc($thalilist);
-                            $receipts = mysqli_query($link, "SELECT * FROM receipts WHERE `Receipt_No` = '" . $Receipt_No . "' AND `userid` = '" . $thali['id'] . "'  AND `Date` = '" . $date . "'LIMIT 1");
-                            if ($receipts->num_rows > 0) {
-                                $rec = mysqli_fetch_assoc($receipts);  
-                                $sql = "UPDATE receipts SET `Thali_No` = '" . $thali['Thali'] . "', `userid` = '" . $thali['id'] . "', `name` = '" . $row[4] . "', `Amount` = '" . $row[6] . "', `received_by` = 'saminabarnagarwala2812@gmail.com', `payment_type` = '" . $row[9] . "', `transaction_id` = '" . $row[14] . "', `takmeem_year` = '" . $row[15] . "' WHERE `Receipt_No` = '" . $Receipt_No . "' AND `Date` = '" . $date . "'";
-                                mysqli_query($link,$sql) or die(mysqli_error($link));
-                                echo '<h4>'.$its.' reciept updated successfully</h4>';
-                            } else {
-                                $sql = "INSERT INTO receipts (`Receipt_No`, `Thali_No`, `userid`, `name`, `Amount`, `Date`, `received_by`, `payment_type`, `transaction_id`, `takmeem_year`) VALUES ('" . $Receipt_No . "', '" . $thali['Thali'] . "', '" . $thali['id'] . "', '" . $row[4] . "', '" . $row[6] . "', '" . $date . "', 'saminabarnagarwala2812@gmail.com', '" . $row[9] . "', '" . $row[14] . "', '" . $row[15] . "')";
-                                mysqli_query($link,$sql) or die(mysqli_error($link));
-                                echo '<h4>'.$its.' reciept inserted successfully</h4>';
-                            }
+                        $Receipt_No = trim((string) ($row[0] ?? ''));
+                        $its = trim((string) ($row[2] ?? ''));
+                        $date = date('Y-m-d', strtotime((string) ($row[1] ?? '')));
+
+                        if ($Receipt_No === '' || $its === '') {
+                            continue;
                         }
+
+                        $thalilistResult = db_query($link, "SELECT id, Thali FROM thalilist WHERE `ITS_No` = ? LIMIT 1", "s", [$its]);
+                        if ($thalilistResult->num_rows === 0) {
+                            continue;
+                        }
+                        $thali = mysqli_fetch_assoc($thalilistResult);
+
+                        // Single upsert instead of SELECT-then-branch.
+                        // Requires UNIQUE KEY (Receipt_No, Date) on receipts
+                        // — see schema-modernization.sql.
+                        db_query(
+                            $link,
+                            "INSERT INTO receipts
+                                (`Receipt_No`, `Thali_No`, `userid`, `name`, `Amount`, `Date`, `received_by`, `payment_type`, `transaction_id`, `takmeem_year`)
+                             VALUES (?, ?, ?, ?, ?, ?, 'saminabarnagarwala2812@gmail.com', ?, ?, ?)
+                             ON DUPLICATE KEY UPDATE
+                                `Thali_No` = VALUES(`Thali_No`),
+                                `userid` = VALUES(`userid`),
+                                `name` = VALUES(`name`),
+                                `Amount` = VALUES(`Amount`),
+                                `received_by` = VALUES(`received_by`),
+                                `payment_type` = VALUES(`payment_type`),
+                                `transaction_id` = VALUES(`transaction_id`),
+                                `takmeem_year` = VALUES(`takmeem_year`)",
+                            "ssisdssss",
+                            [
+                                $Receipt_No,
+                                (string) $thali['Thali'],
+                                (int) $thali['id'],
+                                (string) ($row[4] ?? ''),
+                                (float) ($row[6] ?? 0),
+                                $date,
+                                (string) ($row[9] ?? ''),
+                                (string) ($row[14] ?? ''),
+                                (string) ($row[15] ?? ''),
+                            ]
+                        );
+
+                        $wasUpdate = mysqli_affected_rows($link) > 1;
+                        echo '<h4>' . e($its) . ' reciept ' . ($wasUpdate ? 'updated' : 'inserted') . ' successfully</h4>';
                     }
-                } else {
-                    //echo "No file uploaded.";
                 } ?>
             </div>
         </div>

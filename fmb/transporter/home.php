@@ -11,34 +11,57 @@ include('navbar.php');
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <div class="fw-bold">Name</div>
-                        <?php echo $values['Name']; ?>
+                        <?php echo e((string) $values['Name']); ?>
                     </li>
                     <li class="list-group-item">
                         <div class="fw-bold">Contact</div>
-                        <?php echo $values['Mobile']; ?>
+                        <?php echo e((string) $values['Mobile']); ?>
                     </li>
                     <li class="list-group-item">
                         <div class="fw-bold">Email</div>
-                        <?php echo $values['Email']; ?>
+                        <?php echo e((string) $values['Email']); ?>
                     </li>
-                    <?php $count = mysqli_query($link, "SELECT count(*) as count FROM thalilist WHERE Transporter LIke '%".$_SESSION['transporter']."%'");
-                    if($count->num_rows > 0) {
-                        $count = mysqli_fetch_assoc($count)['count']; ?>
+                    <?php
+                    try {
+                        $countResult = db_query(
+                            $link,
+                            "SELECT count(*) as count FROM `thalilist` WHERE `Transporter` LIKE CONCAT('%', ?, '%')",
+                            "s",
+                            [$_SESSION['transporter']]
+                        );
+                        $totalThalis = $countResult->num_rows > 0 ? (int) $countResult->fetch_assoc()['count'] : 0;
+                    } catch (RuntimeException $e) {
+                        error_log('[home.php] ' . $e->getMessage());
+                        $totalThalis = null;
+                    }
+                    if ($totalThalis !== null) { ?>
                         <li class="list-group-item">
                             <div class="fw-bold">Total Thalis</div>
-                            <?php echo $count; ?>
+                            <?php echo (int) $totalThalis; ?>
                         </li>
                     <?php } ?>
                     <li class="list-group-item">
                         <div class="fw-bold">Society</div>
-                        <?php $details = mysqli_query($link, "SELECT DISTINCT Society FROM thalilist WHERE Transporter LIke '%".$_SESSION['transporter']."%' ORDER BY Society ASC");
-                        if($details->num_rows > 0) {
-                            echo '<ul class="list-unstyled">';
-                                while ($values = mysqli_fetch_assoc($details)) { ?>
-                                    <?php echo '<li>'.$values['Society'].'</li>'; ?>
-                                <?php } 
-                            echo '</ul>';
-                        } ?>
+                        <?php
+                        try {
+                            $societyResult = db_query(
+                                $link,
+                                "SELECT DISTINCT `Society` FROM `thalilist` WHERE `Transporter` LIKE CONCAT('%', ?, '%') ORDER BY `Society` ASC",
+                                "s",
+                                [$_SESSION['transporter']]
+                            );
+                            if ($societyResult->num_rows > 0) {
+                                echo '<ul class="list-unstyled">';
+                                while ($societyRow = mysqli_fetch_assoc($societyResult)) {
+                                    echo '<li>' . e((string) $societyRow['Society']) . '</li>';
+                                }
+                                echo '</ul>';
+                            }
+                        } catch (RuntimeException $e) {
+                            error_log('[home.php] ' . $e->getMessage());
+                            echo '<p class="text-muted mb-0">Unable to load societies right now.</p>';
+                        }
+                        ?>
                     </li>
                 </ul>
             </div>
