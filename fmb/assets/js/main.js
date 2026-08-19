@@ -1,9 +1,16 @@
-(function ($) {
-  $("a[href='#']").click(function (e) {
-    e.preventDefault();
-  });
+(($) => {
+  "use strict";
 
-  $(document).ready(function () {
+  $("a[href='#']").click((e) => e.preventDefault());
+
+  // -----------------------------------------------------------------------
+  // Select2 dropdowns
+  // -----------------------------------------------------------------------
+  $(document).ready(() => {
+    if (!$.fn.select2) {
+      return;
+    }
+
     $("#addrdistribute .form-select").select2({
       dropdownParent: $("div#addrdistribute"),
       theme: "bootstrap-5",
@@ -12,8 +19,69 @@
       dropdownParent: $("div#addrrecieved"),
       theme: "bootstrap-5",
     });
+    $("#society").select2({
+      theme: "bootstrap-5",
+    });
   });
 
+  // -----------------------------------------------------------------------
+  // Shared DataTables config helpers
+  // -----------------------------------------------------------------------
+  const exportButtonsLayout = () => ({
+    topStart: {
+      buttons: [
+        { extend: "excelHtml5", className: "btn-light" },
+        { extend: "print", className: "btn-light" },
+      ],
+    },
+  });
+
+  // Turns each column's footer cell into a live search box.
+  // (Behaviour, including the existing keyup-guard, is unchanged.)
+  function attachFooterSearch(tableApi) {
+    tableApi.columns().every(function () {
+      const column = this;
+      const title = column.footer().textContent;
+
+      const input = document.createElement("input");
+      input.placeholder = title;
+      input.className = "form-control form-control-sm";
+      column.footer().replaceChildren(input);
+
+      input.addEventListener("keyup", () => {
+        if (column.search() !== this.value) {
+          column.search(input.value).draw();
+        }
+      });
+    });
+  }
+
+  // Inserts a "<strong>group</strong>" divider row whenever column 0 changes.
+  function groupRowDrawCallback(colspan) {
+    return function () {
+      const api = this.api();
+      const rows = api.rows({ page: "current" }).nodes();
+      let last = null;
+
+      api
+        .column(0, { page: "current" })
+        .data()
+        .each((group, i) => {
+          if (last !== group) {
+            $(rows)
+              .eq(i)
+              .before(
+                `<tr class="group"><td colspan="${colspan}"><strong>${group}</strong></td></tr>`,
+              );
+            last = group;
+          }
+        });
+    };
+  }
+
+  // -----------------------------------------------------------------------
+  // DataTables
+  // -----------------------------------------------------------------------
   new DataTable("table.display", {
     responsive: true,
     order: [[0, "desc"]],
@@ -22,249 +90,91 @@
   new DataTable("table#rotireport", {
     displayLength: 25,
     responsive: true,
-    layout: {
-      topStart: {
-        buttons: [
-          {
-            extend: "excelHtml5",
-            className: "btn-light",
-          },
-          {
-            extend: "print",
-            className: "btn-light",
-          },
-        ],
-      },
-    },
+    layout: exportButtonsLayout(),
   });
 
   const transporterlist = new DataTable("table#transporterlist", {
     displayLength: 25,
     responsive: true,
-    columnDefs: [
-      {
-        searchable: false,
-        orderable: false,
-        targets: 0,
-      },
-    ],
+    columnDefs: [{ searchable: false, orderable: false, targets: 0 }],
     order: [[1, "asc"]],
-    layout: {
-      topStart: {
-        buttons: [
-          {
-            extend: "excelHtml5",
-            className: "btn-light",
-          },
-          {
-            extend: "print",
-            className: "btn-light",
-          },
-        ],
-      },
-    },
-    initComplete: function () {
-      this.api()
-        .columns()
-        .every(function () {
-          let column = this;
-          let title = column.footer().textContent;
-
-          // Create input element
-          let input = document.createElement("input");
-          input.placeholder = title;
-          input.className = "form-control form-control-sm";
-          column.footer().replaceChildren(input);
-
-          // Event listener for user input
-          input.addEventListener("keyup", () => {
-            if (column.search() !== this.value) {
-              column.search(input.value).draw();
-            }
-          });
-        });
+    layout: exportButtonsLayout(),
+    initComplete() {
+      attachFooterSearch(this.api());
     },
   });
 
   transporterlist.on("draw.dt", function () {
-    let PageInfo = transporterlist.page.info();
+    const pageInfo = transporterlist.page.info();
     transporterlist
       .column(0, { page: "current" })
       .nodes()
-      .each(function (cell, i) {
-        cell.innerHTML = i + 1 + PageInfo.start;
+      .each((cell, i) => {
+        cell.innerHTML = i + 1 + pageInfo.start;
       });
   });
 
   new DataTable("table#userfeedmenu", {
     displayLength: 25,
     responsive: true,
-    layout: {
-      topStart: {
-        buttons: [
-          {
-            extend: "excelHtml5",
-            className: "btn-light",
-          },
-          {
-            extend: "print",
-            className: "btn-light",
-          },
-        ],
-      },
-    },
-    initComplete: function () {
-      this.api()
-        .columns()
-        .every(function () {
-          let column = this;
-          let title = column.footer().textContent;
-
-          // Create input element
-          let input = document.createElement("input");
-          input.placeholder = title;
-          input.className = "form-control form-control-sm";
-          column.footer().replaceChildren(input);
-
-          // Event listener for user input
-          input.addEventListener("keyup", () => {
-            if (column.search() !== this.value) {
-              column.search(input.value).draw();
-            }
-          });
-        });
+    layout: exportButtonsLayout(),
+    initComplete() {
+      attachFooterSearch(this.api());
     },
   });
 
-  $("table#roti").DataTable({
+  new DataTable("table#roti", {
     columnDefs: [{ visible: false, targets: 0 }],
     order: [[0, "desc"]],
     displayLength: 25,
     responsive: true,
-    layout: {
-      topStart: {
-        buttons: [
-          {
-            extend: "excelHtml5",
-            className: "btn-light",
-          },
-          {
-            extend: "print",
-            className: "btn-light",
-          },
-        ],
-      },
-    },
-    drawCallback: function (settings) {
-      var api = this.api();
-      var rows = api.rows({ page: "current" }).nodes();
-      var last = null;
-
-      api
-        .column(0, { page: "current" })
-        .data()
-        .each(function (group, i) {
-          if (last !== group) {
-            $(rows)
-              .eq(i)
-              .before(
-                '<tr class="group"><td colspan="6"><strong>' +
-                  group +
-                  "</strong></td></tr>",
-              );
-
-            last = group;
-          }
-        });
-    },
+    layout: exportButtonsLayout(),
+    drawCallback: groupRowDrawCallback(6),
   });
 
-  $("table#thalicount").DataTable({
+  new DataTable("table#thalicount", {
     columnDefs: [{ visible: false, targets: 0 }],
     order: [[0, "desc"]],
     displayLength: 25,
     responsive: true,
-    layout: {
-      topStart: {
-        buttons: [
-          {
-            extend: "excelHtml5",
-            className: "btn-light",
-          },
-          {
-            extend: "print",
-            className: "btn-light",
-          },
-        ],
-      },
-    },
-    drawCallback: function (settings) {
-      var api = this.api();
-      var rows = api.rows({ page: "current" }).nodes();
-      var last = null;
-
-      api
-        .column(0, { page: "current" })
-        .data()
-        .each(function (group, i) {
-          if (last !== group) {
-            $(rows)
-              .eq(i)
-              .before(
-                '<tr class="group"><td colspan="9"><strong>' +
-                  group +
-                  "</strong></td></tr>",
-              );
-
-            last = group;
-          }
-        });
-    },
+    layout: exportButtonsLayout(),
+    drawCallback: groupRowDrawCallback(9),
   });
 
-  $(document).ready(function () {
-    var now = new Date();
-
-    // Define tomorrow's date
-    var tomorrow = new Date();
+  // -----------------------------------------------------------------------
+  // Stop-thali date pickers (user vs admin cutoff times)
+  // -----------------------------------------------------------------------
+  function initStopDatepicker(
+    selector,
+    cutoffHour,
+    cutoffMinute,
+    cutoffSecond,
+  ) {
+    const now = new Date();
+    const tomorrow = new Date();
     tomorrow.setDate(now.getDate() + 1);
-
-    var dayAfterTomorrow = new Date();
+    const dayAfterTomorrow = new Date();
     dayAfterTomorrow.setDate(now.getDate() + 2);
 
-    // Define the time limit for today
-    var cutoffTime = new Date();
-    cutoffTime.setHours(17, 0, 0); // 5:00 pm
+    const cutoffTime = new Date();
+    cutoffTime.setHours(cutoffHour, cutoffMinute, cutoffSecond);
 
-    var acutoffTime = new Date();
-    acutoffTime.setHours(23, 59, 59); // 12:00 pm
+    const startDate = now < cutoffTime ? tomorrow : dayAfterTomorrow;
 
-    // Determine if tomorrow should be selectable
-    var startDate = now < cutoffTime ? tomorrow : dayAfterTomorrow;
-
-    var astartDate = now < acutoffTime ? tomorrow : dayAfterTomorrow;
-
-    // Initialize datepicker
-    $("#user_stop .input-daterange").datepicker({
-      startDate: startDate,
+    $(`${selector} .input-daterange`).datepicker({
+      startDate,
       autoclose: true,
       daysOfWeekDisabled: 0,
     });
 
-    $("#admin_stop .input-daterange").datepicker({
-      startDate: astartDate,
-      autoclose: true,
-      daysOfWeekDisabled: 0,
-    });
-
-    // Disable tomorrow if after cutoff time
     if (now >= cutoffTime) {
-      $("#user_stop .input-daterange").datepicker("setDate", dayAfterTomorrow); // Reset selected date if after 8 pm
+      $(`${selector} .input-daterange`).datepicker("setDate", dayAfterTomorrow);
     }
+  }
 
-    if (now >= acutoffTime) {
-      $("#admin_stop .input-daterange").datepicker("setDate", dayAfterTomorrow); // Reset selected date if after 8 pm
-    }
+  $(document).ready(() => {
+    initStopDatepicker("#user_stop", 17, 0, 0); // 5:00 pm cutoff
+    initStopDatepicker("#admin_stop", 23, 59, 59); // end-of-day cutoff
   });
 
   $("#rotipayment .input-daterange").datepicker({
@@ -272,58 +182,53 @@
     daysOfWeekDisabled: 0,
   });
 
-  $(document).ready(function () {
-    function toggleSocietyFields() {
-      if ($("#society").val() === "Other") {
-        $("#society_name_wrapper, #society_address_wrapper").show();
-        $("#society_name_input, #society_address_input").prop("required", true);
-      } else {
-        $("#society_name_wrapper, #society_address_wrapper").hide();
-        $("#society_name_input, #society_address_input").prop(
-          "required",
-          false,
-        );
-      }
-    }
+  // -----------------------------------------------------------------------
+  // Society "Other" field toggle
+  // -----------------------------------------------------------------------
+  $(document).ready(() => {
+    const toggleSocietyFields = () => {
+      const isOther = $("#society").val() === "Other";
+      $("#society_name_wrapper, #society_address_wrapper").toggle(isOther);
+      $("#society_name_input, #society_address_input").prop(
+        "required",
+        isOther,
+      );
+    };
 
-    // Run on page load
     toggleSocietyFields();
-
-    // Run on change
-    $("#society").change(function () {
-      toggleSocietyFields();
-    });
+    $("#society").change(toggleSocietyFields);
   });
 
-  $('[data-key="LazyLoad" ]').removeClass("hidden");
-  var els = $(".gregdate");
-  for (var i = 0; i < els.length; i++) {
-    var el = els[i];
-    var prop = el.tagName == "INPUT" ? "value" : "innerText";
-    var greg = el[prop];
-    var hijri = HijriDate.fromGregorian(new Date(greg));
-    el[prop] = hijri.year + "-" + (+hijri.month + +1) + "-" + hijri.day;
-    el[prop] = moment(el[prop], "YYYY-MM-DD").format("YYYY-MM-DD");
-  }
+  // -----------------------------------------------------------------------
+  // Gregorian / Hijri date field conversion
+  // -----------------------------------------------------------------------
+  $(".gregdate").each(function () {
+    const prop = this.tagName === "INPUT" ? "value" : "innerText";
+    const hijri = HijriDate.fromGregorian(new Date(this[prop]));
+    const isoLike = `${hijri.year}-${+hijri.month + 1}-${hijri.day}`;
+    this[prop] = moment(isoLike, "YYYY-MM-DD").format("YYYY-MM-DD");
+  });
 
-  var els = $(".hijridate");
-  for (var i = 0; i < els.length; i++) {
-    var el = els[i];
-    var prop = el.tagName == "INPUT" ? "value" : "innerText";
-    var hijri = el[prop];
-    el[prop] = moment(hijri, "iYYYY-iM-iD").format("iD iMMMM iYYYY");
-  }
+  $(".hijridate").each(function () {
+    const prop = this.tagName === "INPUT" ? "value" : "innerText";
+    this[prop] = moment(this[prop], "iYYYY-iM-iD").format("iD iMMMM iYYYY");
+  });
 
+  $('[data-key="LazyLoad"]').removeClass("hidden");
+
+  // -----------------------------------------------------------------------
+  // Menu type toggle (thaali / miqaat)
+  // -----------------------------------------------------------------------
   $(".menu_type").click(function () {
-    var type = $(this).val();
-    $(this).closest("form").find("div.thaali").addClass("d-none");
-    $(this).closest("form").find("div.miqaat").addClass("d-none");
-    $(this)
-      .closest("form")
-      .find("div." + type)
-      .removeClass("d-none");
+    const type = $(this).val();
+    const $form = $(this).closest("form");
+    $form.find("div.thaali, div.miqaat").addClass("d-none");
+    $form.find(`div.${type}`).removeClass("d-none");
   });
 
+  // -----------------------------------------------------------------------
+  // Stop thali (admin)
+  // -----------------------------------------------------------------------
   $('[data-key="stopthaali"]').click(function () {
     stopThali_admin(
       $(this).attr("data-thali"),
@@ -334,26 +239,19 @@
   });
 
   $('[data-key="stoppermanant"]').click(function () {
-    var c = confirm("Are you sure you want to permanently stop this thali?");
-    if (c == false) {
+    if (!confirm("Are you sure you want to permanently stop this thali?"))
       return;
-    }
-    var clearHub;
-    var r = confirm(
+
+    const clearHub = confirm(
       "Press OK to clear pending hub or CANCEL to go ahead with stop permanent without clearing!",
-    );
-    if (r == true) {
-      clearHub = "true";
-    } else {
-      clearHub = "false";
-    }
+    )
+      ? "true"
+      : "false";
+
     $.post(
       "stop_permanant.php",
-      {
-        Thaliid: $(this).data("thali"),
-        clear: clearHub,
-      },
-      function (data, status) {
+      { Thaliid: $(this).data("thali"), clear: clearHub },
+      () => {
         alert("Thali Stopped Successfully and Number released to be re-used");
         location.reload();
       },
@@ -362,38 +260,33 @@
 })(jQuery);
 
 function stopThali_admin(thaaliId, active, hardStop, hardStopComment) {
-  var data = "thaali_id=" + thaaliId + "&active=" + active;
+  let data = `thaali_id=${thaaliId}&active=${active}`;
   if (hardStop) {
-    data += "&hardstop=1&hardstopcomment=" + hardStopComment;
+    data += `&hardstop=1&hardstopcomment=${hardStopComment}`;
   }
+
   $.ajax({
     method: "post",
     url: "/fmb/users/_stop_thali_admin.php",
     async: true,
-    data: data,
-    success: function (data) {
+    data,
+    success(data) {
       if (data.includes("success")) {
-        alert("Thaali #" + thaaliId + " Operation Successfull!");
+        alert(`Thaali #${thaaliId} Operation Successfull!`);
       } else if (data === "404") {
         alert(
-          "Thaali #" +
-            thaaliId +
-            " does not exists or is already stopped. Contact Mustafa Manawar or Yusuf Rampur for further details.",
+          `Thaali #${thaaliId} does not exists or is already stopped. Contact Mustafa Manawar or Yusuf Rampur for further details.`,
         );
       } else {
         alert(
-          "Something went wrong while stopping thaali #" +
-            thaaliId +
-            ". Please contact Mustafa Manawar or Yusuf Rampur",
+          `Something went wrong while stopping thaali #${thaaliId}. Please contact Mustafa Manawar or Yusuf Rampur`,
         );
       }
       location.reload();
     },
-    error: function () {
+    error() {
       alert(
-        "Something went wrong while stopping thaali #" +
-          thaaliId +
-          ". Please contact Mustafa Manawar or Yusuf Rampur",
+        `Something went wrong while stopping thaali #${thaaliId}. Please contact Mustafa Manawar or Yusuf Rampur`,
       );
       location.reload();
     },
