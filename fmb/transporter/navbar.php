@@ -66,9 +66,9 @@ if ($transporterResult->num_rows > 0) {
                         // Non-fatal: simply skip showing the "User Panel" link if this lookup fails.
                     }
                     ?>
-                    <li class="nav-item"><a class="nav-link" href="/fmb/transporter/start_thali.php">Active Thali</a>
+                    <li class="nav-item"><a class="nav-link" href="/fmb/transporter/active_thali.php">Active Thali</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="/fmb/transporter/stop_thali.php">Inactive Thali</a>
+                    <li class="nav-item"><a class="nav-link" href="/fmb/transporter/inactive_thali.php">Inactive Thali</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="/fmb/transporter/report.php">Report</a>
                     </li>

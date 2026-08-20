@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Faiz ul Mawaidil Burhaniyah (Kalimi Mohalla - Poona)</title>
+    <?php
+    $scriptPath = $_SERVER['SCRIPT_NAME'] ?? '';
+    $pageSlug = pathinfo($scriptPath, PATHINFO_FILENAME);
+    $pageTitle = $pageTitle ?? ucwords(str_replace(['_', '-'], ' ', $pageSlug));
+    ?>
+    <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?> - FMB Kalimi</title>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
