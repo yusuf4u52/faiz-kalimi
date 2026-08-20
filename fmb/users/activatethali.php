@@ -1,39 +1,63 @@
 <?php
-
 include('connection.php');
 include('_authCheck.php');
+require_once('helpers.php');
 include('getHijriDate.php');
 require '_sendMail.php';
 
-
 $today = getTodayDateHijri();
-// print_r($_POST); exit;
-$values[] = "Thali = '" . addslashes($_POST['sabeelno']) . "'";
-$values[] = "tiffinno = '" . addslashes($_POST['thalino']) . "'";
-$values[] = "thalisize = '" . addslashes($_POST['thalisize']) . "'";
-$values[] = "Active = '1'";
-$values[] = "Thali_Start_Date = '" . ($today) . "'";
-$values[] = "yearly_hub = '" . addslashes($_POST['hub']) . "'";
+
+$columns = ['Thali', 'tiffinno', 'thalisize', 'Active', 'Thali_Start_Date', 'yearly_hub'];
+$values = [
+    (string) ($_POST['sabeelno'] ?? ''),
+    (string) ($_POST['thalino'] ?? ''),
+    (string) ($_POST['thalisize'] ?? ''),
+    '1',
+    $today,
+    (string) ($_POST['hub'] ?? ''),
+];
 
 if (isset($_POST['transporter'])) {
-	$values[] = "Transporter = '" . addslashes($_POST['transporter']) . "'";
+    $columns[] = 'Transporter';
+    $values[] = (string) $_POST['transporter'];
 }
 
 if (isset($_POST['sector'])) {
-	$values[] = "sector = '" . addslashes($_POST['sector']) . "'";
-	$musaiddata = "Select musaid from `thalilist` where sector='" . $_POST['sector'] . "' limit 1";
-	$musaidresult = mysqli_query($link, $musaiddata);
-	if (mysqli_num_rows($musaidresult) > 0) {
-		$musaidrow = mysqli_fetch_assoc($musaidresult);
-		$musaid = $musaidrow['musaid'];
-		$values[] = "musaid = '" . addslashes($musaid) . "'";
-	}
+    $columns[] = 'sector';
+    $values[] = (string) $_POST['sector'];
+
+    $musaidResult = db_query($link, "SELECT musaid FROM `thalilist` WHERE sector = ? LIMIT 1", "s", [$_POST['sector']]);
+    if ($musaidResult->num_rows > 0) {
+        $musaidRow = mysqli_fetch_assoc($musaidResult);
+        $columns[] = 'musaid';
+        $values[] = (string) $musaidRow['musaid'];
+    }
 }
 
-mysqli_query($link, "UPDATE thalilist set " . implode(',', $values) . " WHERE id = '" . $_POST['id'] . "'") or die(mysqli_error($link));
-mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`,`processed`) VALUES ('" . $_POST['thalino'] . "','" . $_POST['id'] . "', 'New Thali','" . $today . "',0)") or die(mysqli_error($link));
-mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`,`processed`) VALUES ('" . $_POST['thalino'] . "','" . $_POST['id'] . "', 'Start Thali','" . $today . "',1)") or die(mysqli_error($link));
-mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_POST['id'] . "' and `Operation` in ('Stop Permanent') and processed = 0") or die(mysqli_error($link));
+$setClause = implode(', ', array_map(fn($col) => "`$col` = ?", $columns));
+$types = str_repeat('s', count($values)) . 's';
+$params = [...$values, (string) ($_POST['id'] ?? '')];
+
+db_query($link, "UPDATE thalilist SET $setClause WHERE id = ?", $types, $params);
+
+db_query(
+    $link,
+    "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`, `processed`) VALUES (?, ?, 'New Thali', ?, 0)",
+    "sss",
+    [$_POST['thalino'] ?? '', $_POST['id'] ?? '', $today]
+);
+db_query(
+    $link,
+    "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`, `processed`) VALUES (?, ?, 'Start Thali', ?, 1)",
+    "sss",
+    [$_POST['thalino'] ?? '', $_POST['id'] ?? '', $today]
+);
+db_query(
+    $link,
+    "UPDATE change_table SET processed = 1 WHERE userid = ? AND `Operation` IN ('Stop Permanent') AND processed = 0",
+    "s",
+    [$_POST['id'] ?? '']
+);
 
 
 $msgvar = "Salaam %name%,<br><br>
@@ -65,7 +89,15 @@ We request your kind cooperation in following the above guidelines so that the K
 Abeede Sayedna (TUS)<br>
 FMB Khidmat Team";
 
-$msgvar = str_replace(array('%thali%', '%name%', '%email%'), array($_POST['thalino'], $_POST['name'], $_POST['email']), $msgvar);
-sendEmail([$_POST['email']], 'Thali Activated', $msgvar, null);
+$msgvar = str_replace(
+    ['%thali%', '%name%', '%email%'],
+    [$_POST['thalino'] ?? '', $_POST['name'] ?? '', $_POST['email'] ?? ''],
+    $msgvar
+);
+
+if (!empty($_POST['email'])) {
+    sendEmail([$_POST['email']], 'Thali Activated', $msgvar, null);
+}
 
 header("Location: pendingactions.php");
+exit;
