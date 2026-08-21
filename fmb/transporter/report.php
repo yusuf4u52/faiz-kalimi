@@ -105,8 +105,7 @@ if ($transporterId !== null) {
                     $link,
                     "SELECT `date`, SUM(`mini`) as total_mini, SUM(`small`) as total_small,
                             SUM(`medium`) as total_medium, SUM(`large`) as total_large,
-                            SUM(`friday`) as total_friday, SUM(`barnamaj`) as total_barnamaj,
-                            SUM(`count`) as total_count
+                            SUM(`friday`) as total_friday, SUM(`barnamaj`) as total_barnamaj, SUM(`roti`) as total_roti, SUM(`count`) as total_count
                      FROM `transporter_daily_count`
                      WHERE `name` = ? AND `date` BETWEEN ? AND ?
                      GROUP BY `date`
@@ -134,6 +133,7 @@ if ($transporterId !== null) {
                     $totals['large'] += (int) $row['total_large'];
                     $totals['friday'] += (int) $row['total_friday'];
                     $totals['barnamaj'] += (int) $row['total_barnamaj'];
+                    $totals['roti'] += (int) $row['total_roti'];
                     $totals['count'] += (int) $row['total_count'];
                 }
                 mysqli_free_result($daily_count);
@@ -186,6 +186,7 @@ if ($transporterId !== null) {
                                 <th>Large</th>
                                 <th>Friday</th>
                                 <th>Barnamaj</th>
+                                <th>Roti</th>
                                 <th>Thali</th>
                                 <th>Amount</th>
                             </tr>
@@ -200,6 +201,7 @@ if ($transporterId !== null) {
                                     <td><?php echo (int) $row['total_large']; ?></td>
                                     <td><?php echo (int) $row['total_friday']; ?></td>
                                     <td><?php echo (int) $row['total_barnamaj']; ?></td>
+                                    <td><?php echo (int) $row['total_roti']; ?></td>
                                     <td><?php echo (int) $row['total_count']; ?></td>
                                     <td>
                                         <?php
@@ -222,6 +224,7 @@ if ($transporterId !== null) {
                                 <td><?php echo $totals['large']; ?></td>
                                 <td><?php echo $totals['friday']; ?></td>
                                 <td><?php echo $totals['barnamaj']; ?></td>
+                                <td><?php echo $totals['roti']; ?></td>
                                 <td><?php echo $totals['count']; ?></td>
                                 <td><?php echo $totalAmount !== null ? '&#8377;' . e(number_format($totalAmount, 2)) : 'N/A'; ?></td>
                             </tr>
