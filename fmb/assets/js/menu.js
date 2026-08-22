@@ -1,8 +1,13 @@
 (($) => {
   "use strict";
 
-  const ROTI_SIZE_FIELDS = { Mini: "tqty", Medium: "mqty", Large: "lqty" };
-  const rotiSizeField = (size) => ROTI_SIZE_FIELDS[size] || "sqty";
+  const ROTI_SIZE_FIELDS = { mini: "tqty", medium: "mqty", large: "lqty" };
+  const rotiSizeField = (size) =>
+    ROTI_SIZE_FIELDS[
+      String(size || "")
+        .trim()
+        .toLowerCase()
+    ] || "sqty";
   const ratingSlug = (rating) => rating?.toLowerCase().replace(" ", "-");
 
   // ---------------------------------------------------------------------
