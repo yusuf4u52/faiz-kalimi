@@ -10,7 +10,7 @@ include('navbar.php');
 		try {
 			$start_thali = db_query(
 				$link,
-				"SELECT * FROM `thalilist` WHERE `Active` = 1 AND `hardstop` != 1 AND `Transporter` LIKE CONCAT('%', ?, '%') ORDER BY `thalisize`, `tiffinno` ASC",
+				"SELECT * FROM `thalilist` WHERE `Active` = 1 AND `hardstop` != 1 AND `Transporter` COLLATE utf8mb4_unicode_ci LIKE CONCAT('%', ?, '%') ORDER BY `thalisize`, `tiffinno` ASC",
 				"s",
 				[$_SESSION['transporter']]
 			);
