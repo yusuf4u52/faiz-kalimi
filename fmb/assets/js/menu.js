@@ -188,9 +188,14 @@
         maxItem.item === "Roti"
           ? baseLimit + Number(schedule.extraRoti || 0)
           : baseLimit;
-      qtyButtons.find(".btn-plus").prop("disabled", !(currentQty < limit));
+      const boundedLimit = Math.max(0, limit);
+      currentQty = Math.min(Math.max(0, currentQty), boundedLimit);
+      editQtyInput.val(currentQty);
+      qtyButtons
+        .find(".btn-plus")
+        .prop("disabled", !(currentQty < boundedLimit));
       qtyButtons.find(".btn-minus").prop("disabled", !(currentQty > 0));
-      editQtyInput.attr("max", limit);
+      editQtyInput.attr("max", boundedLimit);
     } else {
       qtyButtons.find(".btn-plus").prop("disabled", true);
       editQtyInput.attr("max", currentQty);

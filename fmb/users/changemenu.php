@@ -71,13 +71,20 @@ if (in_array($action, ['change_menu', 'admin_change_menu'], true) && !empty($Cur
                 default => 'sqty',
             };
             $rotiQuantity = (int) ($menu_item['roti']['qty'] ?? $menu_item['roti'][$rotiSizeField] ?? 0);
+            $rotiMaxQuantity = (int) ($menu_item['roti'][$rotiSizeField] ?? 0);
             if (strcasecmp(trim((string) ($menu_item['roti']['item'] ?? '')), 'Roti') === 0) {
-                $rotiQuantity += (int) ($thaliData['extraRoti'] ?? 0);
+                $rotiMaxQuantity += (int) ($thaliData['extraRoti'] ?? 0);
             }
+            $rotiMaxQuantity = max(0, $rotiMaxQuantity);
+            $rotiQuantity = min(max(0, $rotiQuantity), $rotiMaxQuantity);
 
             foreach (['sabji' => &$sstop, 'tarkari' => &$tstop, 'rice' => &$rstop, 'roti' => &$rotiStop] as $course => &$stopFlag) {
                 if (!empty($menu_item[$course]['item'])) {
                     $postedQty = (int) ($_POST['menu_item'][$course]['qty'] ?? 0);
+                    if ($course === 'roti') {
+                        $postedQty = min(max(0, $postedQty), $rotiMaxQuantity);
+                        $_POST['menu_item']['roti']['qty'] = $postedQty;
+                    }
                     if ($postedQty === 0) {
                         $stopFlag = 'yes';
                         $change = 'yes';
