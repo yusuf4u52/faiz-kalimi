@@ -16,12 +16,12 @@ $day = date('l', strtotime($tomorrow_date));
 // recognised size (including the standalone "Roti" thalisize) default to 1.
 function defaultRotiQtyForSize(?string $thalisize, int $mini, int $small, int $medium, int $large): int
 {
-    return match ($thalisize) {
-        'Mini' => $mini,
-        'Small' => $small,
-        'Medium' => $medium,
-        'Large' => $large,
-        'Friday', 'Barnamaj' => $small,
+    return match (strtolower(trim((string) $thalisize))) {
+        'mini' => $mini,
+        'small' => $small,
+        'medium' => $medium,
+        'large' => $large,
+        'friday', 'barnamaj' => $small,
         default => 1,
     };
 }
@@ -29,14 +29,14 @@ function defaultRotiQtyForSize(?string $thalisize, int $mini, int $small, int $m
 // Maps a thalisize to the bucket key used in $thaliSize / the report table.
 function rotiBucketForSize(?string $thalisize): string
 {
-    return match ($thalisize) {
-        'Mini' => 'mini',
-        'Small' => 'small',
-        'Medium' => 'medium',
-        'Large' => 'large',
-        'Friday' => 'friday',
-        'Barnamaj' => 'barnamaj',
-        'Roti' => 'roti',
+    return match (strtolower(trim((string) $thalisize))) {
+        'mini' => 'mini',
+        'small' => 'small',
+        'medium' => 'medium',
+        'large' => 'large',
+        'friday' => 'friday',
+        'barnamaj' => 'barnamaj',
+        'roti' => 'roti',
         default => 'no size',
     };
 }
@@ -49,7 +49,8 @@ function rotiBucketForSize(?string $thalisize): string
  */
 function effectiveRotiQty(array $overridesByThaliId, string $thaliId, int $defaultQty): int
 {
-    return $overridesByThaliId[$thaliId] ?? $defaultQty;
+    $quantity = $overridesByThaliId[$thaliId] ?? $defaultQty;
+    return min(max(0, (int) $quantity), max(0, $defaultQty));
 }
 
 $menu_item_result = db_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = ? AND `menu_type` = 'thaali' LIMIT 1", "s", [$tomorrow_date]);
@@ -101,7 +102,7 @@ if ($menu_item_result->num_rows > 0) {
 
             $thaliRows = db_query(
                 $link,
-                "SELECT id, thalisize FROM thalilist WHERE Active = 1 AND `Transporter` = ?",
+                "SELECT id, thalisize, extraRoti FROM thalilist WHERE Active = 1 AND `Transporter` = ?",
                 "s",
                 [$transporterName]
             );
@@ -112,6 +113,9 @@ if ($menu_item_result->num_rows > 0) {
                 }
 
                 $defaultQty = defaultRotiQtyForSize($row['thalisize'], $mini, $small, $medium, $large);
+                if (strcasecmp(trim((string) $roti), 'Roti') === 0) {
+                    $defaultQty += max(0, (int) ($row['extraRoti'] ?? 0));
+                }
                 $qty = effectiveRotiQty($overridesByThaliId, $row['id'], $defaultQty);
 
                 $thaliSize[$bucket][$transporterName] += $qty;

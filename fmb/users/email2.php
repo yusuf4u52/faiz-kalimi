@@ -160,7 +160,7 @@ try {
         if ($menuCheck->num_rows > 0) {
             $menuRow = $menuCheck->fetch_assoc();
             $menuData = decode_menu_item($menuRow['menu_item']);
-            if (!empty($menuData['roti']['item']) && $menuData['roti']['item'] === 'Roti') {
+            if (strcasecmp(trim((string) ($menuData['roti']['item'] ?? '')), 'Roti') === 0) {
                 $hasRoti = true;
             }
         }
@@ -336,6 +336,10 @@ try {
                 db_query($link, "UPDATE change_table SET processed = 1 WHERE id IN " . $in['sql'], $in['types'], $in['params']);
             }
         }
+
+            // Send the edited-menu and transporter-wise roti reports after the
+            // scheduled stop/start changes above have updated Active status.
+            include __DIR__ . '/emailmenu.php';
     } else {
         $skipmsg = "Skipping email as no thali available for " . e($tomorrow_date) . ".";
         $smailSent = sendEmail(SKIP_NOTICE_EMAILS, 'No Thaali Update ' . $tomorrow_date, $skipmsg, null, null, true);
