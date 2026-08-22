@@ -25,14 +25,13 @@ include('navbar.php');
                     try {
                         $countResult = db_query(
                             $link,
-                            "SELECT count(*) as count FROM `thalilist` WHERE `Transporter` LIKE CONCAT('%', ?, '%')",
+                            "SELECT count(*) as count FROM `thalilist` WHERE `Transporter` COLLATE utf8mb4_unicode_ci LIKE CONCAT('%', ?, '%')",
                             "s",
                             [$_SESSION['transporter']]
                         );
                         $totalThalis = $countResult->num_rows > 0 ? (int) $countResult->fetch_assoc()['count'] : 0;
                     } catch (RuntimeException $e) {
                         error_log('[home.php] ' . $e->getMessage());
-                        echo $e->getMessage();
                         $totalThalis = null;
                     }
                     if ($totalThalis !== null) { ?>
@@ -47,7 +46,7 @@ include('navbar.php');
                         try {
                             $societyResult = db_query(
                                 $link,
-                                "SELECT DISTINCT `Society` FROM `thalilist` WHERE `Transporter` LIKE CONCAT('%', ?, '%') ORDER BY `Society` ASC",
+                                "SELECT DISTINCT `Society` FROM `thalilist` WHERE `Transporter` COLLATE utf8mb4_unicode_ci LIKE CONCAT('%', ?, '%') ORDER BY `Society` ASC",
                                 "s",
                                 [$_SESSION['transporter']]
                             );
