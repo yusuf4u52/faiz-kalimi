@@ -16,6 +16,20 @@ function getAllDates(string $startingDate, string $endingDate): array
     return $datesArray;
 }
 
+function parsePostedDate(mixed $value): ?string
+{
+    $value = trim((string) $value);
+    foreach (['Y-m-d', 'm/d/Y', 'd/m/Y'] as $format) {
+        $date = DateTime::createFromFormat('!' . $format, $value);
+        $errors = DateTime::getLastErrors();
+        if ($date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))) {
+            return $date->format('Y-m-d');
+        }
+    }
+
+    return null;
+}
+
 /**
  * Restore the Roti override for restarted dates when a thali has extra Roti.
  * Existing user_menu rows are custom choices and must not be changed.
@@ -76,14 +90,13 @@ function restoreExtraRotiMenus(mysqli $link, string $thali, string $startDate, s
 
 $action = $_POST['action'] ?? null;
 $thali = $_POST['thali'] ?? null;
-$startDate = $_POST['start_date'] ?? null;
-$endDate = $_POST['end_date'] ?? null;
+$startDate = parsePostedDate($_POST['start_date'] ?? null);
+$endDate = parsePostedDate($_POST['end_date'] ?? null);
 
 $selfServiceActions = ['stop_thali', 'start_thali', 'stop_date_thali'];
 $adminActions = ['admin_stop_thali', 'admin_start_thali'];
 
-if (!$action || !$thali || !$startDate || !$endDate
-    || !DateTime::createFromFormat('Y-m-d', $startDate) || !DateTime::createFromFormat('Y-m-d', $endDate)) {
+if (!$action || !$thali || !$startDate || !$endDate) {
     header("Location: /fmb/users/index.php");
     exit;
 }
