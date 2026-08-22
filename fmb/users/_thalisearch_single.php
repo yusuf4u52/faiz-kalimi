@@ -1,9 +1,17 @@
-<?php $values = mysqli_fetch_assoc($result);
-$comments_query = "SELECT `comments`.*, `thalilist`.`NAME` FROM `comments` INNER JOIN `thalilist` on `comments`.`author_id` = `thalilist`.`id`
-WHERE `comments`.`user_id` = '" . $values['id'] . "' ORDER BY `comments`.`created` DESC ";
-$comments_result = mysqli_query($link, $comments_query);
-$musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobile FROM users where email = '" .
-  $values['musaid'] . "'")); ?>
+<?php
+// $values, $adminMenuEntries, and $stopDateRanges are all set by
+// thalisearch.php before this file is included — see
+// build_admin_menu_entries() / get_stop_date_ranges() there, which
+// replaced this file's own (and thalisearch.php's separate) per-date
+// menu_list/user_menu/stop_thali queries with a single shared batch fetch.
+
+$musaid_details = null;
+if (!empty($values['musaid'])) {
+    $musaid_details = mysqli_fetch_assoc(
+        db_query($link, "SELECT username, mobile FROM users WHERE email = ?", "s", [$values['musaid']])
+    );
+}
+?>
 <ul class="nav nav-tabs mb-4" id="thaaliTab" role="thalilist">
   <li class="nav-item" role="presentation">
     <button class="nav-link active" id="thaali-tab" data-bs-toggle="tab" data-bs-target="#thaali" type="button"
@@ -25,10 +33,6 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
     <button class="nav-link" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab"
       aria-controls="members" aria-selected="false">Members</button>
   </li>
-  <!--<li class="nav-item" role="presentation">
-    <button class="nav-link" id="comment-tab" data-bs-toggle="tab" data-bs-target="#comment" type="button" role="tab"
-      aria-controls="comment" aria-selected="false">Comments</button>
-  </li>-->
 </ul>
 <div class="tab-content" id="thaaliTabContent">
   <div class="tab-pane fade show active" id="thaali" role="tabpanel" aria-labelledby="thaali-tab">
@@ -38,7 +42,6 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
       </li>
       <li class="list-group-item">
         <ul class="nav nav-underline">
-          <!--<li class="nav-item"><a class="nav-link" href="#" data-key="payhoob" data-thali="<?php echo $values['Thali']; ?>">Pay Hoob</a></li>-->
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeMusaid">Change Masool</a>
           </li>
           <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" href="#changeTransporter">Change Transporter</a>
@@ -54,99 +57,102 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Sabeel Number</div>
-        <?php echo $values['Thali']; ?>
+        <?php echo e($values['Thali']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Sabeel Type</div>
-        <?php echo $values['sabeelType']; ?>
+        <?php echo e($values['sabeelType']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Tiffin Number</div>
-        <?php echo $values['tiffinno']; ?>
+        <?php echo e($values['tiffinno']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Thali Size</div>
-        <?php echo $values['thalisize']; ?>
+        <?php echo e($values['thalisize']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Extra Roti</div>
-        <?php echo $values['extraRoti']; ?>
+        <?php echo e((string) $values['extraRoti']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Less Rice</div>
-        <?php echo $values['lessRice']; ?>
+        <?php echo e((string) $values['lessRice']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">HOF ITS No</div>
-        <?php echo $values['ITS_No']; ?>
+        <?php echo e($values['ITS_No']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Name</div>
-        <?php echo $values['NAME']; ?>
+        <?php echo e($values['NAME']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Mobile No</div>
-        <a href="tel:<?php echo $values['CONTACT']; ?>"><?php echo $values['CONTACT']; ?></a>
+        <a href="tel:<?php echo e($values['CONTACT']); ?>"><?php echo e($values['CONTACT']); ?></a>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Email Address</div>
-        <a href="mailto:<?php echo $values['Email_ID']; ?>"><?php echo $values['Email_ID']; ?></a> <?php if (!empty($values['SEmail_ID'])) : ?>| <a
-          href="mailto:<?php echo $values['SEmail_ID']; ?>"><?php echo $values['SEmail_ID']; ?></a> <?php endif; ?>
+        <a href="mailto:<?php echo e($values['Email_ID']); ?>"><?php echo e($values['Email_ID']); ?></a> <?php if (!empty($values['SEmail_ID'])) : ?>| <a
+          href="mailto:<?php echo e($values['SEmail_ID']); ?>"><?php echo e($values['SEmail_ID']); ?></a> <?php endif; ?>
       </li>
       <?php if ($musaid_details) { ?>
         <li class="list-group-item">
           <div class="fw-bold">Masool</div>
-          <?php echo $musaid_details['username']; ?> | <a
-            href="tel:<?php echo $musaid_details['mobile']; ?>"><?php echo $musaid_details['mobile']; ?></a></strong>
-          </p>
+          <?php echo e($musaid_details['username']); ?> | <a
+            href="tel:<?php echo e($musaid_details['mobile']); ?>"><?php echo e($musaid_details['mobile']); ?></a>
         </li>
       <?php } ?>
       <li class="list-group-item">
         <div class="fw-bold">Active</div>
-        <?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></strong>
-        </p>
+        <?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Transporter</div>
-        <?php echo $values['Transporter']; ?>
+        <?php echo e($values['Transporter']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Full Address</div>
-        <?php echo $values['wingflat']; ?>, <?php echo $values['society']; ?>, <?php echo $values['Full_Address']; ?>
+        <?php echo e($values['wingflat']); ?>, <?php echo e($values['society']); ?>, <?php echo e($values['Full_Address']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Start Date</div>
-        <span class="hijridate"><?php echo $values['Thali_start_date']; ?></span>
+        <span class="hijridate"><?php echo e($values['Thali_start_date']); ?></span>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Stop Date</div>
-        <span class="hijridate"><?php echo $values['Thali_stop_date']; ?></span>
+        <span class="hijridate"><?php echo e($values['Thali_stop_date']); ?></span>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Previous Year Hub</div>
-        ₹<?php echo $values['previous_hub']; ?>
+        ₹<?php echo e((string) $values['previous_hub']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Current Year Hub</div>
-        ₹<?php echo $values['yearly_hub']; ?>
+        ₹<?php echo e((string) $values['yearly_hub']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Zabihat Niyat</div>
-        <?php echo $values['Zabihat']; ?>
+        <?php echo e($values['Zabihat']); ?>
       </li>
       <li class="list-group-item">
         <div class="fw-bold">Hub Pending</div>
-        ₹<?php echo $values['Total_Pending'] + $values['Paid']; ?> -
-        ₹<?php echo $values['Paid']; ?> = ₹<?php echo $values['Total_Pending']; ?>
+        ₹<?php echo e((string) ($values['Total_Pending'] + $values['Paid'])); ?> -
+        ₹<?php echo e((string) $values['Paid']); ?> = ₹<?php echo e((string) $values['Total_Pending']); ?>
       </li>
       <?php if ($values['Total_Pending'] > 0) { ?>
         <li class="list-group-item">
           <div class="fw-bold">Whatsapp Mumin for Hub</div>
-          <?php $msg = "Salaam " . $values['NAME'] . ", %0A%0AAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Iltemas che k aapni pending hoob jald si jald ada kariye ane hamne FMB khidmat team ne yaari aapiye.
-          %0A%0ASabil - " . $values['Thali'] . "
-    			%0APending Hoob - " . $values['Total_Pending']
+          <?php
+          // Build the message as plain text with real newlines, then let
+          // rawurlencode() handle ALL the URL escaping — the original
+          // manually spliced in literal "%0A" for newlines but left the
+          // rest of the string (including the member's own name) totally
+          // unencoded, so a name containing "&" or "#" could break the
+          // wa.me URL's query string.
+          $msg = "Salaam " . $values['NAME'] . ", \n\nAapna ghare *Faiz ul Mawaid il Burhaniyah* ni barakat pohchi rahi che. Iltemas che k aapni pending hoob jald si jald ada kariye ane hamne FMB khidmat team ne yaari aapiye.\n\nSabil - " . $values['Thali'] . "\nPending Hoob - " . $values['Total_Pending'];
           ?>
-          <a target="_blank" href="https://wa.me/91<?php echo $values['WhatsApp']; ?>?text=<?php echo ($msg); ?>">WhatsApp</a>
+          <a target="_blank" href="https://wa.me/91<?php echo e($values['WhatsApp']); ?>?text=<?php echo rawurlencode($msg); ?>">WhatsApp</a>
         </li>
       <?php } ?>
       <li class="list-group-item">
@@ -165,7 +171,6 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         <h4 class="mb-3">Menu Details</h4>
       </li>
     </ul>
-    <?php $menu_list = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` >= '" . date('Y-m-d') . "' AND `menu_type` = 'thaali' order by `menu_date` DESC") or die(mysqli_error($link)); ?>
     <div class="table-responsive">
       <table class="table table-striped display" width="100%">
         <thead>
@@ -177,54 +182,24 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
           </tr>
         </thead>
         <tbody>
-          <?php while ($menu_values = mysqli_fetch_assoc($menu_list)) {
-            $menu_id = $menu_values['id'];
-            $menu_date = $menu_values['menu_date'];
-            $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_values['menu_date'] . "' AND `thali` = '" . $values['id'] . "'") or die(mysqli_error($link));
-            if ($user_menu->num_rows > 0) {
-              $row = $user_menu->fetch_assoc();
-              $menu_item = unserialize($row['menu_item']);
-              if (!empty($menu_item['roti']['qty'])) {
-                $roti_qty = $menu_item['roti']['qty'];
-              }
-              $target = 'adminusermenu-' . $menu_id;
-            } else {
-              $menu_item = unserialize($menu_values['menu_item']);
-              if ($values['thalisize'] == 'Mini' && !empty($menu_item['roti']['tqty'])) {
-                $roti_qty = $menu_item['roti']['tqty'];
-              } elseif ($values['thalisize'] == 'Small' && !empty($menu_item['roti']['sqty'])) {
-                $roti_qty = $menu_item['roti']['sqty'];
-              } elseif ($values['thalisize'] == 'Medium' && !empty($menu_item['roti']['mqty'])) {
-                $roti_qty = $menu_item['roti']['mqty'];
-              } elseif ($values['thalisize'] == 'Large' && !empty($menu_item['roti']['lqty'])) {
-                $roti_qty = $menu_item['roti']['lqty'];
-              }
-              $target = 'adminmenu-' . $menu_id;
-            }
-            $stopthali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu_values['menu_date'] . "' AND `thali` = '" . $values['id'] . "'") or die(mysqli_error($link));
-            if ($stopthali->num_rows > 0) {
-              $status = '<span style="color:#dc3545;">Stop</span>';
-            } else {
-              $status = '<span style="color:#198754;">Start</span>';
-            } ?>
+          <?php foreach ($adminMenuEntries as $entry) {
+            $menu_item = $entry['menu_item']; ?>
             <tr>
-              <td><?php echo date('d M Y', strtotime($menu_date)); ?></td>
+              <td><?php echo e(date('d M Y', strtotime($entry['date']))); ?></td>
               <td>
-                <?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] . '  (' . $menu_item['sabji']['qty'] . ')<br/>' : ''); ?>
-                <?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] . '  (' . $menu_item['tarkari']['qty'] . ')<br/>' : ''); ?>
-                <?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] . '  (' . $menu_item['rice']['qty'] . ')<br/>' : ''); ?>
-                <?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] . '  (' . $roti_qty . ')<br/>' : ''); ?>
+                <?php echo (!empty($menu_item['sabji']['item']) ? e($menu_item['sabji']['item']) . '  (' . e((string) $menu_item['sabji']['qty']) . ')<br/>' : ''); ?>
+                <?php echo (!empty($menu_item['tarkari']['item']) ? e($menu_item['tarkari']['item']) . '  (' . e((string) $menu_item['tarkari']['qty']) . ')<br/>' : ''); ?>
+                <?php echo (!empty($menu_item['rice']['item']) ? e($menu_item['rice']['item']) . '  (' . e((string) $menu_item['rice']['qty']) . ')<br/>' : ''); ?>
+                <?php echo (!empty($menu_item['roti']['item']) ? e($menu_item['roti']['item']) . '  (' . e((string) $entry['roti_qty']) . ')<br/>' : ''); ?>
               </td>
-              <td><?php echo $status; ?></td>
-              <td><?php if (date('Y-m-d') < $menu_date) { ?><button type="button" class="btn btn-light"
-                    data-bs-target="#<?php echo $target; ?>" data-bs-toggle="modal"><i
+              <td><?php echo $entry['status'] === 'stop' ? '<span style="color:#dc3545;">Stop</span>' : '<span style="color:#198754;">Start</span>'; ?></td>
+              <td><?php if (date('Y-m-d') < $entry['date']) { ?><button type="button" class="btn btn-light"
+                    data-bs-target="#<?php echo e($entry['target']); ?>" data-bs-toggle="modal"><i
                       class="bi bi-pencil-square"></i></button><?php } else { ?> <button type="button" class="btn btn-light"
                     disabled>RSVP Ended</button><?php } ?>
               </td>
             </tr>
-          <?php mysqli_free_result($user_menu);
-          }
-          mysqli_free_result($menu_list); ?>
+          <?php } ?>
         </tbody>
       </table>
     </div>
@@ -240,10 +215,8 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
             <a class="nav-link" data-bs-toggle="modal" href="#stop_thali">Stop By Dates</a>
           </li>
           <li class="nav-item">
-            <?php if ($values['Active'] == '1') { ?>
-              <!--<a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="0">Stop Thaali</a>-->
-            <?php } else { ?>
-              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo $values['Thali']; ?>" data-active="1">Start Thaali</a>
+            <?php if ($values['Active'] != '1') { ?>
+              <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo e($values['Thali']); ?>" data-active="1">Start Thaali</a>
             <?php } ?>
           </li>
           <?php if ($values['hardstop'] != '1') { ?>
@@ -254,16 +227,7 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         </ul>
       </li>
     </ul>
-    <?php
-    date_default_timezone_set('Asia/Kolkata');
-    $stop_dates = mysqli_query($link, "WITH ranked_dates AS (
-        SELECT `id`, `thali`, `stop_date`, ROW_NUMBER() OVER (PARTITION BY `thali` ORDER BY `stop_date`) AS row_num FROM `stop_thali` where `thali` = '" . $values['id'] . "'
-    ),
-    grouped_dates AS (
-        SELECT `id`, `thali`, `stop_date`, DATE_SUB(`stop_date`, INTERVAL row_num DAY) AS group_key FROM ranked_dates
-    )
-    SELECT `id`, `thali`, MIN(`stop_date`) AS start_date, MAX(`stop_date`) AS end_date FROM grouped_dates GROUP BY `thali`, group_key ORDER BY start_date DESC;") or die(mysqli_error($link));
-    if (isset($stop_dates) && $stop_dates->num_rows > 0) { ?>
+    <?php if (!empty($stopDateRanges)) { ?>
       <div class="table-responsive">
         <table class="table table-striped display" width="100%">
           <thead>
@@ -274,17 +238,14 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
             </tr>
           </thead>
           <tbody>
-            <?php while ($stop_values = mysqli_fetch_assoc($stop_dates)) {
-              $stop_date = new DateTime($stop_values['start_date'] . '00:00:00');
-              $stop_date = $stop_date->format('Y-m-d H:i:s');
-              $start_date = new DateTime($stop_values['end_date'] . '00:00:00');
-              $start_date = $start_date->format('Y-m-d H:i:s'); ?>
+            <?php foreach ($stopDateRanges as $stop_values) {
+              $endDateTime = (new DateTime($stop_values['end_date'] . ' 00:00:00'))->format('Y-m-d H:i:s'); ?>
               <tr>
-                <td data-sort="<?php echo strtotime($stop_values['start_date']); ?>"><?php echo date('d M Y', strtotime($stop_values['start_date'])); ?></td>
-                <td data-sort="<?php echo strtotime($stop_values['end_date']); ?>"><?php echo date('d M Y', strtotime($stop_values['end_date'])); ?></td>
-                <td><?php if (date('Y-m-d H:i:s') < $start_date) { ?><button type="button"
+                <td data-sort="<?php echo strtotime($stop_values['start_date']); ?>"><?php echo e(date('d M Y', strtotime($stop_values['start_date']))); ?></td>
+                <td data-sort="<?php echo strtotime($stop_values['end_date']); ?>"><?php echo e(date('d M Y', strtotime($stop_values['end_date']))); ?></td>
+                <td><?php if (date('Y-m-d H:i:s') < $endDateTime) { ?><button type="button"
                       class="btn btn-light"
-                      data-bs-target="#startthali-<?php echo $stop_values['id']; ?>"
+                      data-bs-target="#startthali-<?php echo (int) $stop_values['id']; ?>"
                       data-bs-toggle="modal" style="margin-bottom:5px">Delete</button><?php } else { ?> <button type="button"
                       class="btn btn-light" disabled>RSVP Ended</button> <?php } ?>
                 </td>
@@ -293,10 +254,9 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
           </tbody>
         </table>
       </div>
-    <?php } else {
-      echo '<h5 class="text-center mb-3">Currently you has no stop dates.</h5>';
-    }
-    mysqli_free_result($stop_dates); ?>
+    <?php } else { ?>
+      <h5 class="text-center mb-3">Currently you has no stop dates.</h5>
+    <?php } ?>
   </div>
   <div class="tab-pane fade" id="receipt" role="tabpanel" aria-labelledby="receipt-tab">
     <h4 class="mb-3">Receipt Details</h4>
@@ -315,23 +275,31 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         </thead>
         <tbody>
           <?php
-          $query = "SELECT r.* FROM $receipts_tablename r, thalilist t WHERE r.userid = t.id and t.id ='" . $values['id'] . "' ORDER BY Date ASC";
-          $result = mysqli_query($link, $query);
-          while ($row = mysqli_fetch_assoc($result)) {
-            foreach ($row as $key => $value) {
-              $row[$key] = stripslashes($value);
-            }
+          // Table name interpolation here is unavoidable (table names
+          // can't be bound as query parameters); $receipts_tablename can
+          // now only ever be 'receipts' or 'receipts_<validated 4-digit
+          // year>' — see the validation in thalisearch.php.
+          $stmt = mysqli_prepare($link, "SELECT r.* FROM `$receipts_tablename` r, thalilist t WHERE r.userid = t.id AND t.id = ? ORDER BY r.Date ASC");
+          mysqli_stmt_bind_param($stmt, "s", $values['id']);
+          mysqli_stmt_execute($stmt);
+          $receiptResult = mysqli_stmt_get_result($stmt);
+          while ($row = mysqli_fetch_assoc($receiptResult)) {
+            // NOTE: the original code ran stripslashes() on every field
+            // here — a leftover from PHP's "magic quotes" feature, removed
+            // in PHP 5.4. With magic quotes gone, that call was silently
+            // corrupting any receipt data that happened to contain a
+            // genuine backslash.
             echo "<tr>";
-            echo "<td data-sort=" . strtotime($row['Date']) . ">" . date('d M Y', strtotime($row['Date'])) . "</td>";
-            echo "<td>" . getHijriFullDate($row['Date']) . "</td>";
-            echo "<td>" . nl2br($row['Receipt_No']) . "</td>";
-            echo "<td>" . nl2br($row['name']) . "</td>";
-            echo "<td>" . nl2br($row['Amount']) . "</td>";
-            echo "<td>" . nl2br($row['payment_type']) . "</td>";
-            echo "<td>" . nl2br($row['takmeem_year']) . "</td>";
+            echo "<td data-sort=" . strtotime($row['Date']) . ">" . e(date('d M Y', strtotime($row['Date']))) . "</td>";
+            echo "<td>" . e(getHijriFullDate($row['Date'])) . "</td>";
+            echo "<td>" . nl2br(e($row['Receipt_No'])) . "</td>";
+            echo "<td>" . nl2br(e($row['name'])) . "</td>";
+            echo "<td>" . nl2br(e((string) $row['Amount'])) . "</td>";
+            echo "<td>" . nl2br(e($row['payment_type'])) . "</td>";
+            echo "<td>" . nl2br(e($row['takmeem_year'])) . "</td>";
             echo "</tr>";
           }
-          mysqli_free_result($result);
+          mysqli_free_result($receiptResult);
           ?>
         </tbody>
       </table>
@@ -355,15 +323,14 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
         </thead>
         <tbody>
           <?php
-          $members = "SELECT * FROM thalilist_members WHERE thalilist_id ='" . $values['id'] . "' ORDER BY age DESC";
-          $res_members = mysqli_query($link, $members);
+          $res_members = db_query($link, "SELECT * FROM thalilist_members WHERE thalilist_id = ? ORDER BY age DESC", "s", [$values['id']]);
           while ($row_members = mysqli_fetch_assoc($res_members)) {
             echo "<tr>";
-            echo "<td>" . nl2br($row_members['its_no']) . "</td>";
-            echo "<td>" . nl2br($row_members['member_type']) . "</td>";
-            echo "<td>" . nl2br($row_members['full_name']) . "</td>";
-            echo "<td>" . nl2br($row_members['age']) . "</td>";
-            echo "<td>" . nl2br($row_members['gender']) . "</td>";
+            echo "<td>" . nl2br(e($row_members['its_no'])) . "</td>";
+            echo "<td>" . nl2br(e($row_members['member_type'])) . "</td>";
+            echo "<td>" . nl2br(e($row_members['full_name'])) . "</td>";
+            echo "<td>" . nl2br(e((string) $row_members['age'])) . "</td>";
+            echo "<td>" . nl2br(e($row_members['gender'])) . "</td>";
             echo "</tr>";
           }
           mysqli_free_result($res_members);
@@ -376,32 +343,6 @@ $musaid_details = mysqli_fetch_assoc(mysqli_query($link, "SELECT username, mobil
     </div>
   </div>
 
-  <!--<div class="tab-pane fade" id="comment" role="tabpanel" aria-labelledby="comment-tab">
-    <h4 class="mb-3">Comments</h4>
-    <form method="post" autocomplete="off">
-      <textarea name="comment" class="form-control" placeholder="Write a comment..." rows="3"></textarea>
-      <input type="hidden" name="user_id" value="<?php echo $values['id']; ?>">
-      <br>
-      <button type="submit" class="btn btn-light pull-right">Post</button>
-    </form>
-    <hr>
-    <ul class="media-list">
-      <?php while ($comment = mysqli_fetch_assoc($comments_result)) { ?>
-        <li class="media">
-          <div class="media-body">
-            <span class="text-muted pull-right">
-              <small class="text-muted"><?php echo $comment['created']; ?></small>
-            </span>
-            <strong class="text-success"><?php echo $comment['NAME']; ?></strong>
-            <p><?php echo $comment['comment']; ?></p>
-          </div>
-        </li>
-        <?php
-      }
-        ?>
-    </ul>
-  </div>
-</div>-->
   <script>
     function printTabs() {
       var originalContents = document.body.innerHTML; // Store original content

@@ -1,47 +1,65 @@
 <?php
 include('connection.php');
+require_once('helpers.php');
 include('getHijriDate.php');
 
-$today = getTodayDateHijri();
-session_start();
-if ($_POST['fromLogin']) {
-  $_SESSION['fromLogin'] = $_POST['fromLogin'];
-  $_SESSION['thaliid'] = $_POST['thaliid'];
-}
-if (is_null($_SESSION['fromLogin'])) {
-  //send them back\
-  header("Location: /fmb/index.php");
-  exit;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// check if request is in cut off time
+// SECURITY FIX: see stop_thali.php — this no longer trusts POST fields to
+// establish session identity, only an already-authenticated session.
+if (empty($_SESSION['fromLogin']) || empty($_SESSION['thaliid'])) {
+    header("Location: /fmb/index.php");
+    exit;
+}
+
 date_default_timezone_set('Asia/Kolkata');
-$cutoffTime = '20:00'; //Cut off at 8 pm
-$startTime = '23:59'; //reset back to open at midnight
+$cutoffTime = '20:00'; // Cut off at 8 pm
+$startTime = '23:59'; // reset back to open at midnight
 
-$time = new DateTime($cutoffTime);
-$time1 = date_format($time, 'H:i');
-$time = new DateTime($startTime);
-$time2 = date_format($time, 'H:i');
-
+$time1 = (new DateTime($cutoffTime))->format('H:i');
+$time2 = (new DateTime($startTime))->format('H:i');
 $current = date("H:i");
+
 if ($current > $time1 && $current < $time2) {
-  $cutoffmessage =  'Start thali not allowed post 8 PM.';
-  header("Location: index.php?status=$cutoffmessage");
-  exit;
+    header("Location: index.php?status=" . urlencode('Start thali not allowed post 8 PM.'));
+    exit;
 }
 
-$query = "SELECT * FROM thalilist where id = '" . $_SESSION['thaliid'] . "'";
-$values = mysqli_fetch_assoc(mysqli_query($link, $query));
+$today = getTodayDateHijri();
+$thaliId = $_SESSION['thaliid'];
 
-if ($values['hardstop'] == 1) exit;
+$result = db_query($link, "SELECT id, Thali, hardstop FROM thalilist WHERE id = ?", "s", [$thaliId]);
+$values = mysqli_fetch_assoc($result);
 
-mysqli_query($link, "UPDATE thalilist set Active='1' WHERE id = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
-mysqli_query($link, "UPDATE thalilist set Thali_start_date='" . $today . "' WHERE id = '" . $values['id'] . "'") or die(mysqli_error($link));
+if (!$values) {
+    header("Location: index.php?status=" . urlencode('Thali not found.'));
+    exit;
+}
 
+if ($values['hardstop'] == 1) {
+    header("Location: index.php?status=" . urlencode('Your thali is currently on hard stop and cannot be started from here. Please contact us.'));
+    exit;
+}
 
-mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_SESSION['thaliid'] . "' and `Operation` in ('Start Thali','Stop Thali','Update Address', 'Change Size') and processed = 0") or die(mysqli_error($link));
-mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES ('" . $values['Thali'] . "','" . $_SESSION['thaliid'] . "', 'Start Thali','" . $today . "')") or die(mysqli_error($link));
+db_query($link, "UPDATE thalilist SET Active = 1, Thali_start_date = ? WHERE id = ?", "ss", [$today, $values['id']]);
+db_query(
+    $link,
+    "UPDATE change_table SET processed = 1 WHERE userid = ?
+     AND (`Operation` IN ('Start Thali','Stop Thali','Update Address','Change Size')
+          OR `Operation` LIKE 'Update Address from %'
+          OR `Operation` LIKE 'Change Size from %')
+     AND processed = 0",
+    "s",
+    [$thaliId]
+);
+db_query(
+    $link,
+    "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES (?, ?, 'Start Thali', ?)",
+    "sss",
+    [$values['Thali'], $thaliId, $today]
+);
 
-$status = 'Start Thali Successful';
-header("Location: index.php?status=$status");
+header("Location: index.php?status=" . urlencode('Start Thali Successful'));
+exit;

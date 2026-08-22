@@ -1,176 +1,201 @@
 <?php
 include('connection.php');
 include('_authCheck.php');
+require_once('helpers.php');
 
-if (isset($_POST['menu_id']) && isset($_POST['thali'])) {
+if (!isset($_POST['menu_id'], $_POST['thali']) || !ctype_digit((string) $_POST['menu_id'])) {
+    header("Location: /fmb/users/index.php");
+    exit;
+}
 
-    $menu_list = mysqli_query($link, "SELECT `menu_date` FROM menu_list WHERE `id` = '" . $_POST['menu_id'] . "'") or die(mysqli_error($link));
-    if (isset($menu_list) && $menu_list->num_rows > 0) {
-        $menu_date = $menu_list->fetch_assoc();
-        $menu_date = $menu_date['menu_date'];
-    }
+$action = $_POST['action'] ?? null;
+$thali = (string) $_POST['thali'];
 
-    date_default_timezone_set('Asia/Kolkata');
-    if (isset($_POST['action']) && $_POST['action'] == 'change_menu') {
-        $GivenDate = new DateTime($menu_date . '17:00:00');
-        $GivenDate->modify('-1 day');
-        $GivenDate = $GivenDate->format('Y-m-d H:i:s');
-        $CurrentDate = date('Y-m-d H:i:s');
-    }
+// Self-service actions may only ever act on the caller's own thali.
+if (in_array($action, ['change_menu', 'feedback_menu'], true) && $thali !== (string) ($_SESSION['thaliid'] ?? '')) {
+    header("Location: /fmb/users/index.php");
+    exit;
+}
 
-    if (isset($_POST['action']) && $_POST['action'] == 'admin_change_menu') {
-        $GivenDate = new DateTime($menu_date . '23:00:00');
-        $CurrentDate = date('Y-m-d H:i:s');
-    }
+// The admin action edits an arbitrary thali by design, so it needs its own
+// privilege check rather than relying on ownership.
+if ($action === 'admin_change_menu' && !user_email_in(THALISEARCH_ACCESS_EMAILS)) {
+    header("Location: /fmb/users/index.php");
+    exit;
+}
 
-    if (!empty($CurrentDate) && !empty($GivenDate) && $CurrentDate < $GivenDate) {
-        if (isset($_POST['status'])) {
-            $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $menu_date . "'") or die(mysqli_error($link));
-            if ($menu_item->num_rows > 0) {
-                $menu_item = $menu_item->fetch_assoc();
-                $menu_item = unserialize($menu_item['menu_item']);
-                $change = 'no';
-                $sstop = 'no';
-                $tstop = 'no';
-                $rstop = 'no';
-                if (!empty($menu_item['sabji']['item'])) {
-                    if ($_POST['menu_item']['sabji']['qty'] == 0) {
-                        $sstop = 'yes';
-                        $change = 'yes';
-                    } elseif ($menu_item['sabji']['qty'] !== $_POST['menu_item']['sabji']['qty']) {
-                        $change = 'yes';
-                    }
-                } else {
-                    $sstop = 'yes';
-                }
-                if (!empty($menu_item['tarkari']['item'])) {
-                    if ($_POST['menu_item']['tarkari']['qty'] == 0) {
-                        $tstop = 'yes';
-                        $change = 'yes';
-                    } elseif ($menu_item['tarkari']['qty'] !== $_POST['menu_item']['tarkari']['qty']) {
-                        $change = 'yes';
-                    }
-                } else {
-                    $tstop = 'yes';
-                }
-                if (!empty($menu_item['rice']['item'])) {
-                    if ($_POST['menu_item']['rice']['qty'] == 0) {
-                        $rstop = 'yes';
-                        $change = 'yes';
-                    } elseif ($menu_item['rice']['qty'] !== $_POST['menu_item']['rice']['qty']) {
-                        $change = 'yes';
-                    }
-                } else {
-                    $rstop = 'yes';
-                }
+$menu_list = db_query($link, "SELECT `menu_date` FROM menu_list WHERE `id` = ?", "i", [(int) $_POST['menu_id']]);
+if ($menu_list->num_rows === 0) {
+    header("Location: /fmb/users/index.php");
+    exit;
+}
+$menu_date = $menu_list->fetch_assoc()['menu_date'];
+
+date_default_timezone_set('Asia/Kolkata');
+
+if ($action === 'change_menu') {
+    $GivenDate = new DateTime($menu_date . ' 17:00:00');
+    $GivenDate->modify('-1 day');
+    $GivenDate = $GivenDate->format('Y-m-d H:i:s');
+    $CurrentDate = date('Y-m-d H:i:s');
+}
+
+if ($action === 'admin_change_menu') {
+    $GivenDate = (new DateTime($menu_date . ' 23:00:00'))->format('Y-m-d H:i:s');
+    $CurrentDate = date('Y-m-d H:i:s');
+}
+
+if (in_array($action, ['change_menu', 'admin_change_menu'], true) && !empty($CurrentDate) && !empty($GivenDate) && $CurrentDate < $GivenDate) {
+    if (isset($_POST['status'])) {
+        $menu_item = [];
+        $change = 'no';
+        $sstop = 'no';
+        $tstop = 'no';
+        $rstop = 'no';
+        $rotiStop = 'no';
+
+        $menu_item_result = db_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = ?", "s", [$menu_date]);
+        if ($menu_item_result->num_rows > 0) {
+            $menu_item = decode_menu_item($menu_item_result->fetch_assoc()['menu_item']);
+
+            $existingUserMenuResult = db_query($link, "SELECT `menu_item` FROM user_menu WHERE `menu_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
+            $existingUserMenu = $existingUserMenuResult->fetch_assoc() ?: null;
+            $currentMenuItem = $existingUserMenu !== null ? decode_menu_item($existingUserMenu['menu_item']) : $menu_item;
+
+            $thaliResult = db_query($link, "SELECT `thalisize`, `extraRoti` FROM thalilist WHERE `id` = ? LIMIT 1", "i", [(int) $thali]);
+            $thaliData = $thaliResult->fetch_assoc() ?: [];
+            $rotiSizeField = match (strtolower((string) ($thaliData['thalisize'] ?? ''))) {
+                'mini' => 'tqty',
+                'medium' => 'mqty',
+                'large' => 'lqty',
+                default => 'sqty',
+            };
+            $rotiQuantity = (int) ($menu_item['roti']['qty'] ?? $menu_item['roti'][$rotiSizeField] ?? 0);
+            if (strcasecmp(trim((string) ($menu_item['roti']['item'] ?? '')), 'Roti') === 0) {
+                $rotiQuantity += (int) ($thaliData['extraRoti'] ?? 0);
             }
 
-            $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
+            foreach (['sabji' => &$sstop, 'tarkari' => &$tstop, 'rice' => &$rstop, 'roti' => &$rotiStop] as $course => &$stopFlag) {
+                if (!empty($menu_item[$course]['item'])) {
+                    $postedQty = (int) ($_POST['menu_item'][$course]['qty'] ?? 0);
+                    if ($postedQty === 0) {
+                        $stopFlag = 'yes';
+                        $change = 'yes';
+                    } elseif ((int) ($currentMenuItem[$course]['qty'] ?? ($course === 'roti' ? $rotiQuantity : $menu_item[$course]['qty'] ?? 0)) !== $postedQty) {
+                        // BUG FIX: this used to compare with strict !== against
+                        // a raw (string) POST value, so an int(2) from the DB
+                        // vs a string "2" from the form were never equal —
+                        // $change ended up 'yes' on almost every submission
+                        // regardless of whether the quantity actually changed.
+                        $change = 'yes';
+                    }
+                } else {
+                    $stopFlag = 'yes';
+                }
+            }
+            unset($stopFlag);
+        }
+
+        $stop_thali = db_query($link, "SELECT id FROM stop_thali WHERE `stop_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
+        $msg = null;
+        if ($stop_thali->num_rows > 0) {
+            db_query($link, "DELETE FROM stop_thali WHERE `stop_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
+            $msg = 'start';
+        }
+
+        if ($sstop === 'yes' && $tstop === 'yes' && $rstop === 'yes') {
+            $stop_thali = db_query($link, "SELECT id FROM stop_thali WHERE `stop_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
             if ($stop_thali->num_rows > 0) {
-                $delete_stop = "DELETE FROM stop_thali WHERE `stop_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                mysqli_query($link, $delete_stop) or die(mysqli_error($link));
-                $msg = 'start';
+                db_query($link, "DELETE FROM user_menu WHERE `menu_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
+                $resultAction = 'astop';
+            } else {
+                db_query(
+                    $link,
+                    "INSERT INTO `stop_thali` (`thali`, `stop_date`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `stop_date` = VALUES(`stop_date`)",
+                    "ss",
+                    [$thali, $menu_date]
+                );
+                db_query($link, "DELETE FROM user_menu WHERE `menu_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
+                $resultAction = 'stop';
+            }
+        } elseif ($change === 'yes') {
+            db_query(
+                $link,
+                "INSERT INTO `user_menu` (`thali`, `menu_date`, `menu_item`) VALUES (?, ?, ?)
+                 ON DUPLICATE KEY UPDATE `menu_item` = VALUES(`menu_item`)",
+                "sss",
+                [$thali, $menu_date, encode_menu_item($_POST['menu_item'] ?? [])]
+            );
+            $resultAction = ($msg === 'start') ? 'sedit' : 'edit';
+        } elseif ($msg === 'start') {
+            if ($existingUserMenu === null && !empty($menu_item['roti']['item'])
+                && strcasecmp(trim((string) $menu_item['roti']['item']), 'Roti') === 0
+                && (int) ($thaliData['extraRoti'] ?? 0) !== 0) {
+                $restartMenuItem = $menu_item;
+                $restartMenuItem['roti']['qty'] = $rotiQuantity;
+
+                db_query(
+                    $link,
+                    "INSERT INTO `user_menu` (`thali`, `menu_date`, `menu_item`) VALUES (?, ?, ?)",
+                    "sss",
+                    [$thali, $menu_date, encode_menu_item($restartMenuItem)]
+                );
             }
 
-            if ($sstop == 'yes' &&  $tstop == 'yes' && $rstop == 'yes') {
-                $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-                if ($stop_thali->num_rows > 0) {
-                    $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-                    if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
-                        $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                        mysqli_query($link, $user_del) or die(mysqli_error($link));
-                    }
-                    $action = 'astop';
-                    $date = $menu_date;
-                } else {
-                    $insert_stop = "INSERT INTO `stop_thali` (`thali`,`stop_date`) VALUES ('" . $_POST['thali'] . "', '" . $menu_date . "')";
-                    mysqli_query($link, $insert_stop) or die(mysqli_error($link));
-                    $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-                    if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
-                        $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                        mysqli_query($link, $user_del) or die(mysqli_error($link));
-                    }
-                    $action = 'stop';
-                    $date = $menu_date;
-                }
-            } elseif (isset($change) && $change == 'yes') {
-                $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-                if ($user_menu->num_rows > 0) {
-                    $row = $user_menu->fetch_assoc();
-                    $sql = "UPDATE `user_menu` SET `menu_item` = '" . serialize($_POST['menu_item']) . "' WHERE `id` = '" . $row['id'] . "'";
-                } else {
-                    $sql = "INSERT INTO `user_menu` (`thali`,`menu_date`,`menu_item`) VALUES ('" . $_POST['thali'] . "', '" . $menu_date . "', '" . serialize($_POST['menu_item']) . "')";
-                }
-                mysqli_query($link, $sql) or die(mysqli_error($link));
-                if (isset($msg) && $msg == 'start') {
-                    $action = 'sedit';
-                } else {
-                    $action = 'edit';
-                }
-                $date = $menu_date;
-            } else {
-                $user_r_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-                if (isset($user_r_menu) && $user_r_menu->num_rows > 0) {
-                    $sql = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                    mysqli_query($link, $sql) or die(mysqli_error($link));
-                }
-                if (isset($msg) && $msg == 'start') {
-                    $action = 'snochange';
-                } else {
-                    $action = 'nochange';
-                }
-                $date = $menu_date;
-            }
+            $resultAction = 'snochange';
         } else {
-            $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-            if ($stop_thali->num_rows > 0) {
-                $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-                if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
-                    $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                    mysqli_query($link, $user_del) or die(mysqli_error($link));
-                }
-                $action = 'astop';
-                $date = $menu_date;
-            } else {
-                $insert_stop = "INSERT INTO `stop_thali` (`thali`,`stop_date`) VALUES ('" . $_POST['thali'] . "', '" . $menu_date . "')";
-                mysqli_query($link, $insert_stop) or die(mysqli_error($link));
-                $user_s_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-                if (isset($user_s_menu) && $user_s_menu->num_rows > 0) {
-                    $user_del = "DELETE FROM user_menu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'";
-                    mysqli_query($link, $user_del) or die(mysqli_error($link));
-                }
-                $action = 'stop';
-                $date = $menu_date;
-            }
+            db_query($link, "DELETE FROM user_menu WHERE `menu_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
+            $resultAction = ($msg === 'start') ? 'snochange' : 'nochange';
         }
     } else {
-        $action = 'rsvp';
-        $date = $menu_date;
-    }
-
-    if (isset($_POST['action']) && $_POST['action'] == 'change_menu') {
-        header("Location: /fmb/users/index.php?action=" . $action . "&date=" . $menu_date);
-        exit;
-    }
-
-    if (isset($_POST['action']) && $_POST['action'] == 'admin_change_menu') {
-        header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thalino'] . "&tiffinno=" . $_POST['tiffinno'] .  "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=" . $action . "&date=" . $menu_date);
-        exit;
-    }
-
-    if (isset($_POST['action']) && $_POST['action'] == 'feedback_menu') {
-        $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $menu_date . "' AND `thali` = '" . $_POST['thali'] . "'") or die(mysqli_error($link));
-        if ($user_feedmenu->num_rows > 0) {
-            $row = $user_feedmenu->fetch_assoc();
-            $sql = "UPDATE `user_feedmenu` SET `menu_feed` = '" . serialize($_POST['menu_item']) . "', `feedback` = '" . $_POST['feedback'] . "' WHERE `id` = '" . $row['id'] . "'";
-            $action = 'editfeed';
+        $stop_thali = db_query($link, "SELECT id FROM stop_thali WHERE `stop_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
+        if ($stop_thali->num_rows > 0) {
+            db_query($link, "DELETE FROM user_menu WHERE `menu_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
+            $resultAction = 'astop';
         } else {
-            $sql = "INSERT INTO `user_feedmenu` (`thali`,`menu_date`,`menu_feed`,`feedback`) VALUES ('" . $_POST['thali'] . "', '" . $menu_date . "', '" . serialize($_POST['menu_item']) . "', '" . $_POST['feedback'] . "')";
-            $action = 'addfeed';
+            db_query(
+                $link,
+                "INSERT INTO `stop_thali` (`thali`, `stop_date`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `stop_date` = VALUES(`stop_date`)",
+                "ss",
+                [$thali, $menu_date]
+            );
+            db_query($link, "DELETE FROM user_menu WHERE `menu_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
+            $resultAction = 'stop';
         }
-        mysqli_query($link, $sql) or die(mysqli_error($link));
-        $date = $menu_date;
-        header("Location: /fmb/users/index.php?action=" . $action . "&date=" . $menu_date);
-        exit;
     }
+} else {
+    $resultAction = 'rsvp';
 }
+
+if ($action === 'change_menu') {
+    header("Location: /fmb/users/index.php?action=" . urlencode($resultAction) . "&date=" . urlencode($menu_date));
+    exit;
+}
+
+if ($action === 'admin_change_menu') {
+    header("Location: /fmb/users/thalisearch.php?thalino=" . urlencode($_POST['thalino'] ?? '')
+        . "&tiffinno=" . urlencode($_POST['tiffinno'] ?? '')
+        . "&general=" . urlencode($_POST['general'] ?? '')
+        . "&year=" . urlencode($_POST['year'] ?? '')
+        . "&action=" . urlencode($resultAction) . "&date=" . urlencode($menu_date));
+    exit;
+}
+
+if ($action === 'feedback_menu') {
+    $user_feedmenu = db_query($link, "SELECT id FROM user_feedmenu WHERE `menu_date` = ? AND `thali` = ?", "ss", [$menu_date, $thali]);
+    $feedbackAction = $user_feedmenu->num_rows > 0 ? 'editfeed' : 'addfeed';
+
+    db_query(
+        $link,
+        "INSERT INTO `user_feedmenu` (`thali`, `menu_date`, `menu_feed`, `feedback`) VALUES (?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE `menu_feed` = VALUES(`menu_feed`), `feedback` = VALUES(`feedback`)",
+        "ssss",
+        [$thali, $menu_date, encode_menu_item($_POST['menu_item'] ?? []), (string) ($_POST['feedback'] ?? '')]
+    );
+
+    header("Location: /fmb/users/index.php?action=" . urlencode($feedbackAction) . "&date=" . urlencode($menu_date));
+    exit;
+}
+
+header("Location: /fmb/users/index.php");
+exit;

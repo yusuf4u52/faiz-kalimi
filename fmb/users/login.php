@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 include('connection.php');
 require_once('libraries/Google/autoload.php');
@@ -34,10 +36,10 @@ bundle in the session, and redirect to ourself.
  ***********************************************/
 
 if (isset($_GET['code'])) {
-  $client->authenticate($_GET['code']);
-  $_SESSION['access_token'] = $client->getAccessToken();
-  header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
-  exit;
+    $client->authenticate($_GET['code']);
+    $_SESSION['access_token'] = $client->getAccessToken();
+    header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+    exit;
 }
 
 /************************************************
@@ -45,18 +47,27 @@ If we have an access token, we can make
 requests, else we generate an authentication URL.
  *************************************************/
 if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
-  $client->setAccessToken($_SESSION['access_token']);
+    $client->setAccessToken($_SESSION['access_token']);
 } else {
-  $authUrl = $client->createAuthUrl();
+    $authUrl = $client->createAuthUrl();
 }
 
 if (isset($authUrl)) {
-  header('Location: /fmb/index.php');
+    header('Location: /fmb/index.php');
+    exit;
 } elseif (isset($_GET['status'])) {
-  header('Location: /fmb/index.php?status=' . $_GET['status']);
+    header('Location: /fmb/index.php?status=' . urlencode($_GET['status']));
+    exit;
 } else {
-  $user = $service->userinfo->get();
-  $_SESSION['fromLogin'] = "true";
-  $_SESSION['email'] = $user->email;
-  header('Location: index.php');
+    $user = $service->userinfo->get();
+
+    // Regenerate the session ID now that the user's privilege level has
+    // changed (anonymous -> authenticated), so a session ID an attacker
+    // may have fixed/observed before login can't be reused afterward.
+    session_regenerate_id(true);
+
+    $_SESSION['fromLogin'] = "true";
+    $_SESSION['email'] = $user->email;
+    header('Location: index.php');
+    exit;
 }

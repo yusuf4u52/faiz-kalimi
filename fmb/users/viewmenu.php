@@ -1,92 +1,105 @@
 <?php
-$takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SESSION['thaliid'] . "' AND `hardstop` != 1 AND thalisize != 'Roti'") or die(mysqli_error($link));
+require_once('helpers.php');
+
+$takesFmbResult = db_query(
+    $link,
+    "SELECT * FROM thalilist WHERE `id` = ? AND `hardstop` != 1 AND thalisize IN ('Mini', 'Small', 'Medium', 'Large', 'Friday')",
+    "s",
+    [$_SESSION['thaliid'] ?? '']
+);
 ?>
 
-<?php if (isset($takesFmb) && $takesFmb->num_rows > 0) {
+<?php if ($takesFmbResult->num_rows > 0) {
 
-  if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
-    <div class="alert alert-success" role="alert">Thali of <strong>
-        <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-      </strong> is edited successfully.</div>
+  $flashAction = $_GET['action'] ?? null;
+  $flashDate = $_GET['date'] ?? null;
+  $flashDateFormatted = $flashDate ? e(date('d M Y', strtotime($flashDate))) : '';
+
+  if ($flashAction === 'edit') { ?>
+    <div class="alert alert-success" role="alert">Thali of <strong><?php echo $flashDateFormatted; ?></strong> is edited successfully.</div>
   <?php }
-  if (isset($_GET['action']) && $_GET['action'] == 'sedit') { ?>
-    <div class="alert alert-success" role="alert">Thali of <strong>
-        <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-      </strong> is started & edited successfully.</div>
+  if ($flashAction === 'sedit') { ?>
+    <div class="alert alert-success" role="alert">Thali of <strong><?php echo $flashDateFormatted; ?></strong> is started & edited successfully.</div>
   <?php }
-  if (isset($_GET['action']) && $_GET['action'] == 'nochange') { ?>
-    <div class="alert alert-warning" role="alert">You have't change anything on thali of <strong>
-        <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-      </strong>.</div>
+  if ($flashAction === 'nochange') { ?>
+    <div class="alert alert-warning" role="alert">You have't change anything on thali of <strong><?php echo $flashDateFormatted; ?></strong>.</div>
   <?php }
-  if (isset($_GET['action']) && $_GET['action'] == 'snochange') { ?>
-    <div class="alert alert-success" role="alert">Thali of <strong>
-        <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-      </strong> is started successfully.</div>
+  if ($flashAction === 'snochange') { ?>
+    <div class="alert alert-success" role="alert">Thali of <strong><?php echo $flashDateFormatted; ?></strong> is started successfully.</div>
   <?php }
-  if (isset($_GET['action']) && $_GET['action'] == 'astop') { ?>
-    <div class="alert alert-warning" role="alert">Thali of <strong>
-        <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-      </strong> is already stopped.</div>
+  if ($flashAction === 'astop') { ?>
+    <div class="alert alert-warning" role="alert">Thali of <strong><?php echo $flashDateFormatted; ?></strong> is already stopped.</div>
   <?php }
-  if (isset($_GET['action']) && $_GET['action'] == 'stop') { ?>
-    <div class="alert alert-danger" role="alert">Thali of <strong>
-        <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-      </strong> is stopped successfully.</div>
+  if ($flashAction === 'stop') { ?>
+    <div class="alert alert-danger" role="alert">Thali of <strong><?php echo $flashDateFormatted; ?></strong> is stopped successfully.</div>
   <?php }
-  if (isset($_GET['action']) && $_GET['action'] == 'rsvp') { ?>
+  if ($flashAction === 'rsvp') { ?>
     <div class="alert alert-danger" role="alert">You can't edit the thali now because RSVP time for editing thali of
-      <strong>
-        <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-      </strong> is finished.
+      <strong><?php echo $flashDateFormatted; ?></strong> is finished.
     </div>
   <?php }
-  if (isset($_GET['action']) && $_GET['action'] == 'addfeed') { ?>
+  if (in_array($flashAction, ['addfeed', 'editfeed'], true)) { ?>
     <div class="alert alert-success" role="alert">Thank you for your valuable feedback for thali on
-      <strong>
-        <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-      </strong>.
-    </div>
-  <?php }
-  if (isset($_GET['action']) && $_GET['action'] == 'editfeed') { ?>
-    <div class="alert alert-success" role="alert">Thank you for your valuable feedback for thali on
-      <strong>
-        <?php echo date('d M Y', strtotime($_GET['date'])); ?>
-      </strong>.
+      <strong><?php echo $flashDateFormatted; ?></strong>.
     </div>
   <?php } ?>
 
-  <?php $takesFmb = $takesFmb->fetch_assoc();
+  <?php
+  $takesFmb = $takesFmbResult->fetch_assoc();
   $thalisize = $takesFmb['thalisize'];
-  $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));
+  $extraRoti = $takesFmb['extraRoti'];
+  $thaliId = $_SESSION['thaliid'];
+
+  $result = db_query($link, "SELECT * FROM menu_list ORDER BY `menu_date` DESC");
+  $menuRows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+  // Fetch this thali's user_menu / user_feedmenu / stop_thali rows ONCE,
+  // instead of one query per historical menu entry (was 3-4 queries per
+  // row — on a mohalla with months of menu history that's hundreds of
+  // queries on every single homepage load).
+  $userMenuByDate = [];
+  $userMenuResult = db_query($link, "SELECT * FROM user_menu WHERE `thali` = ?", "s", [$thaliId]);
+  while ($row = mysqli_fetch_assoc($userMenuResult)) {
+      $userMenuByDate[$row['menu_date']] = $row;
+  }
+
+  $feedbackByDate = [];
+  $feedResult = db_query($link, "SELECT * FROM user_feedmenu WHERE `thali` = ?", "s", [$thaliId]);
+  while ($row = mysqli_fetch_assoc($feedResult)) {
+      $feedbackByDate[$row['menu_date']] = $row;
+  }
+
+  $stoppedDates = [];
+  $stopResult = db_query($link, "SELECT `stop_date` FROM stop_thali WHERE `thali` = ?", "s", [$thaliId]);
+  while ($row = mysqli_fetch_assoc($stopResult)) {
+      $stoppedDates[$row['stop_date']] = true;
+  }
+
   $sched_res = [];
-  while ($menu = mysqli_fetch_assoc($result)) {
-    $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
-    if ($user_menu->num_rows > 0) {
-      $row = $user_menu->fetch_assoc();
-      $menu_item = mysqli_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = '" . $row['menu_date'] . "'") or die(mysqli_error($link));
-      $max_item = $menu_item->fetch_assoc();
-      $menu['max_item'] = unserialize($max_item['menu_item']);
-      $menu['menu_item'] = unserialize($row['menu_item']);
-      $menu['sdate'] = date("F d, Y h:i A", strtotime($row['menu_date']));
+  foreach ($menuRows as $menu) {
+    $userMenuRow = $userMenuByDate[$menu['menu_date']] ?? null;
+
+    if ($userMenuRow !== null) {
+      // The un-edited/base menu for this date is just $menu itself — no
+      // need for the extra "max_item" query the original ran here, since
+      // $menu already came from the same menu_list row.
+      $menu['max_item'] = decode_menu_item($menu['menu_item']);
+      $menu['menu_item'] = decode_menu_item($userMenuRow['menu_item']);
+      $menu['sdate'] = date("F d, Y h:i A", strtotime($userMenuRow['menu_date']));
     } else {
-      $menu['max_item'] = unserialize($menu['menu_item']);
-      $menu['menu_item'] = unserialize($menu['menu_item']);
+      $menu['max_item'] = decode_menu_item($menu['menu_item']);
+      $menu['menu_item'] = decode_menu_item($menu['menu_item']);
       $menu['sdate'] = date("F d, Y h:i A", strtotime($menu['menu_date']));
     }
-    $user_feedmenu = mysqli_query($link, "SELECT * FROM user_feedmenu WHERE `menu_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
-    if ($user_feedmenu->num_rows > 0) {
-      $rowfeed = $user_feedmenu->fetch_assoc();
-      $menu['menu_feed'] = unserialize($rowfeed['menu_feed']);
-      $menu['feedback'] = $rowfeed['feedback'];
+
+    if (isset($feedbackByDate[$menu['menu_date']])) {
+      $menu['menu_feed'] = decode_menu_item($feedbackByDate[$menu['menu_date']]['menu_feed']);
+      $menu['feedback'] = $feedbackByDate[$menu['menu_date']]['feedback'];
     }
-    $stop_thali = mysqli_query($link, "SELECT * FROM stop_thali WHERE `stop_date` = '" . $menu['menu_date'] . "' AND `thali` = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
-    if ($stop_thali->num_rows > 0) {
-      $menu['status'] = 'stop';
-    } else {
-      $menu['status'] = 'start';
-    }
+
+    $menu['status'] = isset($stoppedDates[$menu['menu_date']]) ? 'stop' : 'start';
     $menu['thalisize'] = $thalisize;
+    $menu['extraRoti'] = $extraRoti;
     $sched_res[$menu['id']] = $menu;
   } ?>
 
@@ -98,8 +111,9 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
         <form id="changemenu" class="form-horizontal" method="post" action="changemenu.php" autocomplete="off">
           <input type="hidden" name="action" value="change_menu" />
           <input type="hidden" id="menu_id" name="menu_id" value="" />
-          <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thaliid']; ?>" />
-          <input type="hidden" id="thalisize" name="thalisize" value="<?php echo $thalisize; ?>" />
+          <input type="hidden" id="thali" name="thali" value="<?php echo e($thaliId); ?>" />
+          <input type="hidden" id="thalisize" name="thalisize" value="<?php echo e($thalisize); ?>" />
+          <input type="hidden" id="extraRoti" name="extraRoti" value="<?php echo e($extraRoti); ?>" />
           <div class="modal-header">
             <h4 class="modal-title"></h4>
             <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
@@ -122,8 +136,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
                   <input type="hidden" class="form-control" name="menu_item[sabji][item]" id="sabji" value="">
                   <div class="input-group">
                     <button class="btn btn-light btn-minus" type="button">-</button>
-                    <input type="number" class="form-control" name="menu_item[sabji][qty]" id="sabjiqty" value="" min="0"
-                      readonly>
+                    <input type="number" class="form-control" name="menu_item[sabji][qty]" id="sabjiqty" value="" min="0" step="0.5" readonly>
                     <button class="btn btn-light btn-plus" type="button">+</button>
                   </div>
                 </div>
@@ -134,8 +147,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
                   <input type="hidden" class="form-control" name="menu_item[tarkari][item]" id="tarkari" value="">
                   <div class="input-group">
                     <button class="btn btn-light btn-minus" type="button">-</button>
-                    <input type="number" class="form-control" name="menu_item[tarkari][qty]" id="tarkariqty" value=""
-                      min="0" readonly>
+                    <input type="number" class="form-control" name="menu_item[tarkari][qty]" id="tarkariqty" value="" min="0" step="0.5" readonly>
                     <button class="btn btn-light btn-plus" type="button">+</button>
                   </div>
                 </div>
@@ -146,8 +158,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
                   <input type="hidden" class="form-control" name="menu_item[rice][item]" id="rice" value="">
                   <div class="input-group">
                     <button class="btn btn-light btn-minus" type="button">-</button>
-                    <input type="number" class="form-control" name="menu_item[rice][qty]" id="riceqty" value="" min="0"
-                      readonly>
+                    <input type="number" class="form-control" name="menu_item[rice][qty]" id="riceqty" value="" min="0" step="0.5" readonly>
                     <button class="btn btn-light btn-plus" type="button">+</button>
                   </div>
                 </div>
@@ -156,14 +167,18 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
                 <label for="roti" class="col-6 control-label" id="roti">Roti/Bread Item</label>
                 <div class="col-6">
                   <input type="hidden" class="form-control" name="menu_item[roti][item]" id="roti" value="">
-                  <input type="text" class="form-control" name="menu_item[roti][qty]" id="rotiqty" value="" readonly>
+                  <div class="input-group">
+                    <button class="btn btn-light btn-minus" type="button">-</button>
+                    <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty" value="" min="0" step="1" readonly>
+                    <button class="btn btn-light btn-plus" type="button">+</button>
+                  </div>
                 </div>
               </div>
               <div id="extra" class="mb-3 row d-none">
                 <label for="extra" class="col-6 control-label" id="extra">Extra Item</label>
                 <div class="col-6">
                   <input type="hidden" class="form-control" name="menu_item[extra][item]" id="extra" value="">
-                  <input type="text" class="form-control" name="menu_item[extra][qty]" id="extraqty" value="" readonly>
+                  <input type="text" class="form-control" name="menu_item[extra][qty]" id="extraqty" value="" min="0" step="1" readonly>
                 </div>
               </div>
               <p class="mb-0 text-danger"><strong>Note:</strong> Menu Editing will end at 5 PM one day before.</p>
@@ -190,8 +205,8 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
         <form id="feedbackmenu" class="form-horizontal" method="post" action="changemenu.php" autocomplete="off">
           <input type="hidden" name="action" value="feedback_menu" />
           <input type="hidden" id="menu_id" name="menu_id" value="" />
-          <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thaliid']; ?>" />
-          <input type="hidden" id="thalisize" name="thalisize" value="<?php echo $thalisize; ?>" />
+          <input type="hidden" id="thali" name="thali" value="<?php echo e($thaliId); ?>" />
+          <input type="hidden" id="thalisize" name="thalisize" value="<?php echo e($thalisize); ?>" />
           <div class="modal-header">
             <h4 class="modal-title"></h4>
             <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
@@ -344,7 +359,7 @@ $takesFmb = mysqli_query($link, "SELECT * FROM thalilist where `id` = '" . $_SES
     </div>
   </div>
   <script>
-    var scheds = <?php echo json_encode($sched_res); ?>;
+    var scheds = <?php echo json_encode($sched_res, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
   </script>
 <?php } else {
   echo '<h3>You are not allowed to view or edit menu.</h3>';

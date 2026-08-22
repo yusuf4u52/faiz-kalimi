@@ -1,22 +1,39 @@
 <?php
 include('connection.php');
 include('_authCheck.php');
-extract($_POST);
+require_once('helpers.php');
 
-if (isset($transporter)) {
-    $update_query = "UPDATE thalilist SET
-    tiffinno = '" . mysqli_real_escape_string($link, $tiffinno) . "',
-    thalisize = '" . mysqli_real_escape_string($link, $thalisize) . "',
-    Transporter = '" . mysqli_real_escape_string($link, $transporter) . "'
-    WHERE Thali = '" . mysqli_real_escape_string($link, $Thali) . "'";
-} else {
-    $update_query = "UPDATE thalilist SET
-    tifinno = '" . mysqli_real_escape_string($link, $tiffinno) . "',
-    thalisize = '" . mysqli_real_escape_string($link, $thalisize) . "'
-    WHERE Thali = '" . mysqli_real_escape_string($link, $Thali) . "'";
+// Was extract($_POST) — dumps every POST key straight into local scope,
+// letting a request overwrite any variable the rest of the script uses
+// (including $link). Reading the specific fields we need instead.
+$tiffinno = (string) ($_POST['tiffinno'] ?? '');
+$thalisize = (string) ($_POST['thalisize'] ?? '');
+$transporter = $_POST['transporter'] ?? null;
+$thali = (string) ($_POST['Thali'] ?? '');
+
+if ($thali === '') {
+    header("Location: pendingactions.php");
+    exit;
 }
 
-$result = mysqli_query($link, $update_query) or die(mysqli_error($link));
+if ($transporter !== null) {
+    db_query(
+        $link,
+        "UPDATE thalilist SET tiffinno = ?, thalisize = ?, Transporter = ? WHERE Thali = ?",
+        "ssss",
+        [$tiffinno, $thalisize, (string) $transporter, $thali]
+    );
+} else {
+    // BUG FIX: the original column name here was `tifinno` (missing an
+    // 'f') instead of `tiffinno` — a typo that would make this branch
+    // fail outright whenever no transporter was supplied.
+    db_query(
+        $link,
+        "UPDATE thalilist SET tiffinno = ?, thalisize = ? WHERE Thali = ?",
+        "sss",
+        [$tiffinno, $thalisize, $thali]
+    );
+}
 
 header("Location: pendingactions.php");
 exit;

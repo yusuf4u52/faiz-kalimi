@@ -1,149 +1,191 @@
 <?php
 include('../connection.php');
 include('../_authCheck.php');
+require_once('helpers.php');
 
-if (isset($_POST['menu_type']) && isset($_POST['menu_item'])) {
+$menuType = $_POST['menu_type'] ?? null;
+$menuItemInput = $_POST['menu_item'] ?? [];
 
-    $menu_item = array();
+$menu_item = [];
 
-    if ($_POST['menu_type'] == 'miqaat') {
-
-        if (!empty($_POST['menu_item']['miqaat'])) {
-            $menu_item['miqaat'] = $_POST['menu_item']['miqaat'];
-        }
-    } elseif ($_POST['menu_type'] == 'thaali') {
-
-        if (!empty($_POST['menu_item']['sabji']['item'])) {
-            $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_name` = '" . $_POST['menu_item']['sabji']['item'] . "' AND `dish_type` = '1'") or die(mysqli_error($link));
-            if ($result->num_rows == 0) {
-                $sql = "INSERT INTO food_list (`dish_name`, `dish_type`) VALUES ('" . $_POST['menu_item']['sabji']['item'] . "', '1')";
-                mysqli_query($link, $sql) or die(mysqli_error($link));
-            }
-            mysqli_free_result($result);
-            $menu_item['sabji']['item'] = $_POST['menu_item']['sabji']['item'];
-            $menu_item['sabji']['qty'] = $_POST['menu_item']['sabji']['qty'];
-        }
-
-        if (!empty($_POST['menu_item']['tarkari']['item'])) {
-            $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_name` = '" . $_POST['menu_item']['tarkari']['item'] . "' AND `dish_type` = '2'") or die(mysqli_error($link));
-            if ($result->num_rows == 0) {
-                $sql = "INSERT INTO food_list (`dish_name`, `dish_type`) VALUES ('" . $_POST['menu_item']['tarkari']['item'] . "', '2')";
-                mysqli_query($link, $sql) or die(mysqli_error($link));
-            }
-            mysqli_free_result($result);
-            $menu_item['tarkari']['item'] = $_POST['menu_item']['tarkari']['item'];
-            $menu_item['tarkari']['qty'] = $_POST['menu_item']['tarkari']['qty'];
-        }
-
-        if (!empty($_POST['menu_item']['rice']['item'])) {
-            $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_name` = '" . $_POST['menu_item']['rice']['item'] . "' AND `dish_type` = '3'") or die(mysqli_error($link));
-            if ($result->num_rows == 0) {
-                $sql = "INSERT INTO food_list (`dish_name`, `dish_type`) VALUES ('" . $_POST['menu_item']['rice']['item'] . "', '3')";
-                mysqli_query($link, $sql) or die(mysqli_error($link));
-            }
-            mysqli_free_result($result);
-            $menu_item['rice']['item'] = $_POST['menu_item']['rice']['item'];
-            $menu_item['rice']['qty'] = $_POST['menu_item']['rice']['qty'];
-        }
-
-        if (!empty($_POST['menu_item']['roti']['item'])) {
-            $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_name` = '" . $_POST['menu_item']['roti']['item'] . "' AND `dish_type` = '4'") or die(mysqli_error($link));
-            if ($result->num_rows == 0) {
-                $sql = "INSERT INTO food_list (`dish_name`, `dish_type`) VALUES ('" . $_POST['menu_item']['roti']['item'] . "', '4')";
-                mysqli_query($link, $sql) or die(mysqli_error($link));
-            }
-            mysqli_free_result($result);
-            $menu_item['roti']['item'] = $_POST['menu_item']['roti']['item'];
-            $menu_item['roti']['tqty'] = $_POST['menu_item']['roti']['tqty'];
-            $menu_item['roti']['sqty'] = $_POST['menu_item']['roti']['sqty'];
-            $menu_item['roti']['mqty'] = $_POST['menu_item']['roti']['mqty'];
-            $menu_item['roti']['lqty'] = $_POST['menu_item']['roti']['lqty'];
-        }
-
-        if (!empty($_POST['menu_item']['extra']['item'])) {
-            $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_name` = '" . $_POST['menu_item']['extra']['item'] . "' AND `dish_type` = '1'") or die(mysqli_error($link));
-            if ($result->num_rows == 0) {
-                $sql = "INSERT INTO food_list (`dish_name`, `dish_type`) VALUES ('" . $_POST['menu_item']['extra']['item'] . "', '1')";
-                mysqli_query($link, $sql) or die(mysqli_error($link));
-            }
-            mysqli_free_result($result);
-            $menu_item['extra']['item'] = $_POST['menu_item']['extra']['item'];
-            $menu_item['extra']['qty'] = $_POST['menu_item']['extra']['qty'];
-        }
-    }
-}
-
-if (isset($_POST['action']) && $_POST['action'] == 'add_menu') {
-    $user_menu_date = mysqli_query($link, "SELECT `menu_date` FROM menu_list WHERE `menu_date` = '" . $_POST['menu_date'] . "'") or die(mysqli_error($link));
-    if (isset($user_menu_date) && $user_menu_date->num_rows > 0) {
-        header("Location: /fmb/users/menu/list.php?action=existed&date=" . $_POST['menu_date']);
-        exit;
-    } else {
-        $sql = "INSERT INTO menu_list (`menu_date`,`menu_type`,`menu_item`) VALUES ('" . $_POST['menu_date'] . "', '" . $_POST['menu_type'] . "', '" . serialize($menu_item) . "')";
-        mysqli_query($link, $sql) or die(mysqli_error($link));
-        handleLessRiceUsers($link, $menu_item, $_POST['menu_date']);
-        header("Location: /fmb/users/menu/list.php?action=add&date=" . $_POST['menu_date']);
-        exit;
-    }
-}
-
-if (isset($_POST['action']) && $_POST['action'] == 'edit_menu') {
-    if ($_POST['menu_type'] == 'miqaat') {
-        $sqluser = "DELETE FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "'";
-        mysqli_query($link, $sqluser) or die(mysqli_error($link));
-    } else {
-        $user_menu = mysqli_query($link, "SELECT * FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "'") or die(mysqli_error($link));
-        if ($user_menu->num_rows > 0) {
-            while ($menu_values = mysqli_fetch_assoc($user_menu)) {
-            
-                $menu_item_values = unserialize($menu_values['menu_item']);
-                if (!empty($menu_item_values['sabji']['item'])) {
-                    if ($menu_item_values['sabji']['item'] != $_POST['menu_item']['sabji']['item']) {
-                        $menu_item_values['sabji']['item'] = $_POST['menu_item']['sabji']['item'];
-                        $menu_item_values['sabji']['qty'] = $_POST['menu_item']['sabji']['qty'];
-                    }
-                }
-                if (!empty($menu_item_values['tarkari']['item'])) {
-                    if ($menu_item_values['tarkari']['item'] != $_POST['menu_item']['tarkari']['item']) {
-                        $menu_item_values['tarkari']['item'] = $_POST['menu_item']['tarkari']['item'];
-                        $menu_item_values['tarkari']['qty'] = $_POST['menu_item']['tarkari']['qty'];
-                    }
-                }
-                if (!empty($menu_item_values['rice']['item'])) {
-                    if ($menu_item_values['rice']['item'] != $_POST['menu_item']['rice']['item']) {
-                        $menu_item_values['rice']['item'] = $_POST['menu_item']['rice']['item'];
-                        $menu_item_values['rice']['qty'] = $_POST['menu_item']['rice']['qty'];
-                    }
-                }
-                $sqluser = "UPDATE user_menu SET `menu_item` = '" . serialize($menu_item_values) . "' WHERE `id` = '" . $menu_values['id'] . "'";
-                mysqli_query($link, $sqluser) or die(mysqli_error($link));
-            }
-        }
-        mysqli_free_result($user_menu);
-    }
-    $sql = "UPDATE menu_list SET `menu_date` = '" . $_POST['menu_date'] . "', `menu_type` = '" . $_POST['menu_type'] . "', `menu_item` = '" . serialize($menu_item) . "' WHERE `id` = '" . $_POST['menu_id'] . "'";
-    mysqli_query($link, $sql) or die(mysqli_error($link));
-    handleLessRiceUsers($link, $menu_item, $_POST['menu_date']);
-    header("Location: /fmb/users/menu/list.php?action=edit&date=" . $_POST['menu_date']);
+if ($menuType !== null && !in_array($menuType, VALID_MENU_TYPES, true)) {
+    header("Location: /fmb/users/menu/list.php?action=error");
     exit;
 }
 
-if (isset($_POST['action']) && $_POST['action'] == 'delete_menu') {
-    $sql = "DELETE FROM menu_list WHERE `id` = '" . $_POST['menu_id'] . "'";
-    mysqli_query($link, $sql) or die(mysqli_error($link));
+if ($menuType === 'miqaat') {
+    if (!empty($menuItemInput['miqaat'])) {
+        $menu_item['miqaat'] = trim((string) $menuItemInput['miqaat']);
+    }
+} elseif ($menuType === 'thaali') {
 
-    $sqluser = "DELETE FROM user_menu WHERE `menu_date` = '" . $_POST['menu_date'] . "'";
-    mysqli_query($link, $sqluser) or die(mysqli_error($link));
-    header("Location: /fmb/users/menu/list.php?action=delete&date=" . $_POST['menu_date']);
+    /**
+     * Ensure a dish exists in food_list, inserting it if new — as a single
+     * atomic upsert instead of SELECT-then-INSERT. Relies on the
+     * UNIQUE KEY (dish_name, dish_type) added in schema-modernization.sql;
+     * the ON DUPLICATE KEY UPDATE clause is a harmless no-op write that
+     * exists only to make this a valid upsert (MySQL requires the clause
+     * to do *something* — id=id is the standard idiom for "match and skip").
+     */
+    $ensureDish = function (string $dishName, string $dishType) use ($link): void {
+        db_query(
+            $link,
+            "INSERT INTO food_list (`dish_name`, `dish_type`) VALUES (?, ?)
+             ON DUPLICATE KEY UPDATE `id` = `id`",
+            "ss",
+            [$dishName, $dishType]
+        );
+    };
+
+    if (!empty($menuItemInput['sabji']['item'])) {
+        $item = trim((string) $menuItemInput['sabji']['item']);
+        $ensureDish($item, '1');
+        $menu_item['sabji']['item'] = $item;
+        $menu_item['sabji']['qty'] = (int) ($menuItemInput['sabji']['qty'] ?? 0);
+    }
+
+    if (!empty($menuItemInput['tarkari']['item'])) {
+        $item = trim((string) $menuItemInput['tarkari']['item']);
+        $ensureDish($item, '2');
+        $menu_item['tarkari']['item'] = $item;
+        $menu_item['tarkari']['qty'] = (int) ($menuItemInput['tarkari']['qty'] ?? 0);
+    }
+
+    if (!empty($menuItemInput['rice']['item'])) {
+        $item = trim((string) $menuItemInput['rice']['item']);
+        $ensureDish($item, '3');
+        $menu_item['rice']['item'] = $item;
+        $menu_item['rice']['qty'] = (int) ($menuItemInput['rice']['qty'] ?? 0);
+    }
+
+    if (!empty($menuItemInput['roti']['item'])) {
+        $item = trim((string) $menuItemInput['roti']['item']);
+        $ensureDish($item, '4');
+        $menu_item['roti']['item'] = $item;
+        $menu_item['roti']['tqty'] = (int) ($menuItemInput['roti']['tqty'] ?? 0);
+        $menu_item['roti']['sqty'] = (int) ($menuItemInput['roti']['sqty'] ?? 0);
+        $menu_item['roti']['mqty'] = (int) ($menuItemInput['roti']['mqty'] ?? 0);
+        $menu_item['roti']['lqty'] = (int) ($menuItemInput['roti']['lqty'] ?? 0);
+    }
+
+    if (!empty($menuItemInput['extra']['item'])) {
+        $item = trim((string) $menuItemInput['extra']['item']);
+        // Preserved from the original: extras are stored under dish_type '1' too.
+        $ensureDish($item, '1');
+        $menu_item['extra']['item'] = $item;
+        $menu_item['extra']['qty'] = (int) ($menuItemInput['extra']['qty'] ?? 0);
+    }
+}
+
+$action = $_POST['action'] ?? null;
+
+if ($action === 'add_menu') {
+    $menuDate = (string) ($_POST['menu_date'] ?? '');
+
+    if ($menuDate === '' || !DateTime::createFromFormat('Y-m-d', $menuDate)) {
+        header("Location: /fmb/users/menu/list.php?action=error");
+        exit;
+    }
+
+    // Attempt the insert directly and rely on the UNIQUE KEY (menu_date) from
+    // schema-modernization.sql to reject a duplicate date, instead of a
+    // separate SELECT-then-INSERT (which leaves a race window between two
+    // people saving the same date at once).
+    try {
+        db_query(
+            $link,
+            "INSERT INTO menu_list (`menu_date`, `menu_type`, `menu_item`) VALUES (?, ?, ?)",
+            "sss",
+            [$menuDate, $menuType, encode_menu_item($menu_item)]
+        );
+    } catch (RuntimeException $e) {
+        if (mysqli_errno($link) === 1062) { // ER_DUP_ENTRY
+            header("Location: /fmb/users/menu/list.php?action=existed&date=" . urlencode($menuDate));
+            exit;
+        }
+        throw $e;
+    }
+
+    handleLessRiceUsers($link, $menu_item, $menuDate);
+    header("Location: /fmb/users/menu/list.php?action=add&date=" . urlencode($menuDate));
     exit;
 }
 
-function isRiceItem($item)
+if ($action === 'edit_menu') {
+    $menuDate = (string) ($_POST['menu_date'] ?? '');
+    $menuId = (int) ($_POST['menu_id'] ?? 0);
+
+    if ($menuDate === '' || $menuId <= 0 || !DateTime::createFromFormat('Y-m-d', $menuDate)) {
+        header("Location: /fmb/users/menu/list.php?action=error");
+        exit;
+    }
+
+    if ($menuType === 'miqaat') {
+        db_query($link, "DELETE FROM user_menu WHERE `menu_date` = ?", "s", [$menuDate]);
+    } else {
+        $userMenus = db_query($link, "SELECT `id`, `menu_item` FROM user_menu WHERE `menu_date` = ?", "s", [$menuDate]);
+        while ($menu_values = mysqli_fetch_assoc($userMenus)) {
+            $menu_item_values = decode_menu_item($menu_values['menu_item']);
+
+            if (!empty($menu_item_values['sabji']['item']) && !empty($menu_item['sabji']['item'])
+                && $menu_item_values['sabji']['item'] !== $menu_item['sabji']['item']) {
+                $menu_item_values['sabji'] = $menu_item['sabji'];
+            }
+            if (!empty($menu_item_values['tarkari']['item']) && !empty($menu_item['tarkari']['item'])
+                && $menu_item_values['tarkari']['item'] !== $menu_item['tarkari']['item']) {
+                $menu_item_values['tarkari'] = $menu_item['tarkari'];
+            }
+            if (!empty($menu_item_values['rice']['item']) && !empty($menu_item['rice']['item'])
+                && $menu_item_values['rice']['item'] !== $menu_item['rice']['item']) {
+                $menu_item_values['rice'] = $menu_item['rice'];
+            }
+
+            db_query(
+                $link,
+                "UPDATE user_menu SET `menu_item` = ? WHERE `id` = ?",
+                "si",
+                [encode_menu_item($menu_item_values), (int) $menu_values['id']]
+            );
+        }
+        mysqli_free_result($userMenus);
+    }
+
+    db_query(
+        $link,
+        "UPDATE menu_list SET `menu_date` = ?, `menu_type` = ?, `menu_item` = ? WHERE `id` = ?",
+        "sssi",
+        [$menuDate, $menuType, encode_menu_item($menu_item), $menuId]
+    );
+    handleLessRiceUsers($link, $menu_item, $menuDate);
+    header("Location: /fmb/users/menu/list.php?action=edit&date=" . urlencode($menuDate));
+    exit;
+}
+
+if ($action === 'delete_menu') {
+    $menuId = (int) ($_POST['menu_id'] ?? 0);
+    $menuDate = (string) ($_POST['menu_date'] ?? '');
+
+    if ($menuId <= 0 || $menuDate === '') {
+        header("Location: /fmb/users/menu/list.php?action=error");
+        exit;
+    }
+
+    db_query($link, "DELETE FROM menu_list WHERE `id` = ?", "i", [$menuId]);
+    db_query($link, "DELETE FROM user_menu WHERE `menu_date` = ?", "s", [$menuDate]);
+    header("Location: /fmb/users/menu/list.php?action=delete&date=" . urlencode($menuDate));
+    exit;
+}
+
+// No recognised action.
+header("Location: /fmb/users/menu/list.php");
+exit;
+
+function isRiceItem(string $item): bool
 {
-    $item = trim($item); // remove extra spaces
-    $riceitems = ['biryani', 'chawal', 'rice', 'pulav', 'pulao', 'khichdi'];
+    $item = trim($item);
+    $riceItems = ['biryani', 'chawal', 'rice', 'pulav', 'pulao', 'khichdi'];
 
-    foreach ($riceitems as $rice) {
+    foreach ($riceItems as $rice) {
         if (stripos($item, $rice) !== false) {
             return true;
         }
@@ -152,45 +194,69 @@ function isRiceItem($item)
     return false;
 }
 
-function getDefaultRice($menu, $thaliData)
+function getDefaultRice(array $menu, array $thaliData): int
 {
-    $qty = isset($menu['rice']['qty']) ? (int)$menu['rice']['qty'] : 0;
-    $qty -= (int)$thaliData['lessRice'];
+    $qty = (int) ($menu['rice']['qty'] ?? 0);
+    $qty -= (int) ($thaliData['lessRice'] ?? 0);
     return max(0, $qty);
 }
 
-function handleLessRiceUsers($link, $menu_item, $menu_date) {
+function getDefaultRoti(array $menu, array $thaliData): int
+{
+    $qty = match (strtolower(trim((string) $thaliData['thalisize']))) {
+        'mini' => (int) ($menu['roti']['tqty'] ?? 0),
+        'small' => (int) ($menu['roti']['sqty'] ?? 0),
+        'medium' => (int) ($menu['roti']['mqty'] ?? 0),
+        'large' => (int) ($menu['roti']['lqty'] ?? 0),
+        default => (int) ($menu['roti']['sqty'] ?? 0),
+    };
 
-    if (empty($menu_item['rice']['item'])) return;
+    // Apply extraRoti only for plain "Roti"
+    if (strcasecmp(trim((string) ($menu['roti']['item'] ?? '')), 'Roti') === 0) {
+        $qty += (int) ($thaliData['extraRoti'] ?? 0);
+    }
+
+    return max(0, $qty);
+}
+
+function handleLessRiceUsers(mysqli $link, array $menu_item, string $menu_date): void
+{
+    if (empty($menu_item['rice']['item'])) {
+        return;
+    }
 
     $riceItem = $menu_item['rice']['item'];
 
-    if (!isRiceItem($riceItem)) return;
+    if (!isRiceItem($riceItem)) {
+        return;
+    }
 
-    $users = mysqli_query($link, "SELECT * FROM thalilist WHERE lessRice > 0");
+    $users = db_query($link, "SELECT `id`, `lessRice`, `extraRoti`, `thalisize` FROM thalilist WHERE lessRice > 0 OR extraRoti != 0");
 
     while ($row = mysqli_fetch_assoc($users)) {
-
         $temp = $menu_item;
 
         $temp['rice'] = [
             'item' => $menu_item['rice']['item'],
-            'qty'  => max(0, getDefaultRice($menu_item, $row))
+            'qty' => max(0, getDefaultRice($menu_item, $row)),
         ];
 
-        // Prevent duplicate
-        $check = mysqli_query($link, "SELECT id FROM user_menu 
-            WHERE thali = '".$row['id']."' 
-            AND menu_date = '".$menu_date."'");
-
-        if ($check->num_rows > 0) {
-            mysqli_query($link, "UPDATE user_menu 
-                SET menu_item = '" . serialize($temp) . "' 
-                WHERE thali = '" . $row['id'] . "' 
-                AND menu_date = '" . $menu_date . "'");
-        } else {
-            mysqli_query($link, "INSERT INTO user_menu (thali, menu_date, menu_item) 
-                VALUES ('" . $row['id'] . "', '" . $menu_date . "', '" . serialize($temp) . "')");
+        if (!empty($menu_item['roti']['item']) && strcasecmp(trim($menu_item['roti']['item']), 'Roti') === 0) {
+            $temp['roti'] = [
+                'item' => $menu_item['roti']['item'],
+                'qty' => getDefaultRoti($menu_item, $row),
+            ];
         }
+
+        // Single atomic upsert instead of SELECT-then-branch. Relies on the
+        // UNIQUE KEY (menu_date, thali) added in schema-modernization.sql.
+        db_query(
+            $link,
+            "INSERT INTO user_menu (thali, menu_date, menu_item) VALUES (?, ?, ?)
+             ON DUPLICATE KEY UPDATE menu_item = VALUES(menu_item)",
+            "iss",
+            [(int) $row['id'], $menu_date, encode_menu_item($temp)]
+        );
     }
+    mysqli_free_result($users);
 }

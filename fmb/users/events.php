@@ -1,6 +1,9 @@
 <?php
 include('header.php');
 include('navbar.php');
+require_once('helpers.php');
+
+$isEventAdmin = user_email_in(EVENT_NOT_REGISTERED_VIEWER_EMAILS);
 ?>
 <div class="card">
 	<div class="card-body">
@@ -50,59 +53,60 @@ include('navbar.php');
 				<tr>
 					<th>Name</th>
 					<th>Details</th>
-					<!-- <th>Comments</th> -->
-					<!-- <th>Thalisize</th> -->
 					<th>Response</th>
 					<th>Action</th>
-					<!-- <th>Actions</th> -->
-					<?php if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com'))) {
-						?>
+					<?php if ($isEventAdmin) { ?>
 						<th>Admin</th>
 					<?php } ?>
 				</tr>
 			</thead>
 			<tbody>
 				<?php
-				$query = "SELECT * FROM thalilist where Transporter is not null and Active in (0,1) and Email_id = '" . $_SESSION['email'] . "' OR SEmail_ID = '" . $_SESSION['email'] . "'";
-				$takesFmb = mysqli_num_rows(mysqli_query($link, $query));
-				$result = mysqli_query($link, "SELECT * FROM events where showonpage='1' order by id");
+				// BUG FIX: the original WHERE clause was
+				//   Transporter is not null and Active in (0,1) and Email_id = ? OR SEmail_ID = ?
+				// Without parentheses, SQL's AND binds tighter than OR, so this
+				// actually evaluated as
+				//   (Transporter is not null and Active in (0,1) and Email_id = ?) OR (SEmail_ID = ?)
+				// meaning a SEmail_ID match alone counted as "takes FMB" even for
+				// an inactive thali with no transporter. Explicit parens fix it.
+				$takesFmbResult = db_query(
+					$link,
+					"SELECT id FROM thalilist WHERE Transporter IS NOT NULL AND Active IN (0, 1) AND (Email_id = ? OR SEmail_ID = ?)",
+					"ss",
+					[$_SESSION['email'], $_SESSION['email']]
+				);
+				$takesFmb = mysqli_num_rows($takesFmbResult);
+
+				$result = db_query($link, "SELECT * FROM events WHERE showonpage = 1 ORDER BY id");
 				while ($values = mysqli_fetch_assoc($result)) {
 					$response = getResponse($values['id']);
 					$showToNonFmbOnly = $values['showtononfmb'];
-					// skip events for fmb holder if the database flag is set to do so
+					// skip events for fmb holders if the database flag is set to do so
+					// BUG FIX: this used to `exit;` here, which — since this is
+					// mid-loop, mid-<table> — would cut off the rest of the page
+					// entirely (remaining events, </table>, footer, and the JS
+					// block at the bottom) the moment it hit the first
+					// FMB-holder-only event. `continue;` skips just this one event.
 					if ($showToNonFmbOnly == 0 && $takesFmb == 0) {
-						exit;
+						continue;
 					}
 					?>
 					<tr>
-						<th scope="row"><?php echo $values['name']; ?></th>
-						<td><?php echo $values['venue']; ?></td>
-						<?php echo isResponseReceived($values['id']) ? '<td>You Said ["' . $response['response'] . '"]</td>' : 'No Response'; ?>
+						<th scope="row"><?php echo e($values['name']); ?></th>
+						<td><?php echo e($values['venue']); ?></td>
+						<?php echo isResponseReceived($values['id']) ? '<td>You Said ["' . e($response['response'] ?? '') . '"]</td>' : '<td>No Response</td>'; ?>
 						<td>
 							<button type="button" <?php echo $values['enabled'] == 0 ? 'disabled' : ''; ?>
-								data-eventid="<?php echo $values['id']; ?>"
-								data-thaliid="<?php echo $_SESSION['thaliid']; ?>" data-response="yes"
-								class="btn btn-light btn-sm btn-response me-2 mb-2 action-<?php echo $values['id']; ?>">Yes</button>
+								data-eventid="<?php echo (int) $values['id']; ?>"
+								data-thaliid="<?php echo e($_SESSION['thaliid'] ?? ''); ?>" data-response="yes"
+								class="btn btn-light btn-sm btn-response me-2 mb-2 action-<?php echo (int) $values['id']; ?>">Yes</button>
 							<button type="button" <?php echo $values['enabled'] == 0 ? 'disabled' : ''; ?>
-								data-eventid="<?php echo $values['id']; ?>"
-								data-thaliid="<?php echo $_SESSION['thaliid']; ?>" data-response="no"
-								class="btn btn-light btn-sm mb-2 btn-response action-<?php echo $values['id']; ?>">No</button>
+								data-eventid="<?php echo (int) $values['id']; ?>"
+								data-thaliid="<?php echo e($_SESSION['thaliid'] ?? ''); ?>" data-response="no"
+								class="btn btn-light btn-sm mb-2 btn-response action-<?php echo (int) $values['id']; ?>">No</button>
 						</td>
-						<!-- <td>
-							<button type="button" data-eventid="<?php echo $values['id']; ?>" data-thaliid="<?php echo $_SESSION['thaliid']; ?>" class="btn btn-light btn-sm add_friend">Add Friend</button>
-							<?php
-							$result1 = mysqli_query($link, "select * from event_response where reference_id=" . $_SESSION['thaliid'] . " and eventid=" . $values['id']);
-							echo "<br>Registered Friends:<br>";
-							echo "<p class=\"text-muted\">";
-							while ($values1 = mysqli_fetch_assoc($result1)) {
-								echo $values1['name'] . "<br>";
-							}
-							echo "</p>";
-							?>
-						</td> -->
-						<?php if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'moizlife@gmail.com'))) {
-							?>
-							<td><a href="event_get_not_registered_users.php?eventid=<?php echo $values['id']; ?>">Not Registered</a></td>
+						<?php if ($isEventAdmin) { ?>
+							<td><a href="event_get_not_registered_users.php?eventid=<?php echo (int) $values['id']; ?>">Not Registered</a></td>
 						<?php } ?>
 					</tr>
 				<?php } ?>
