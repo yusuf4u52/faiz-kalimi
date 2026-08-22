@@ -164,6 +164,7 @@
     $(`${selector} .input-daterange`).datepicker({
       startDate,
       autoclose: true,
+      format: "yyyy-mm-dd",
       daysOfWeekDisabled: 0,
     });
 
