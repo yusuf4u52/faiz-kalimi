@@ -32,6 +32,7 @@ include('navbar.php');
                         $totalThalis = $countResult->num_rows > 0 ? (int) $countResult->fetch_assoc()['count'] : 0;
                     } catch (RuntimeException $e) {
                         error_log('[home.php] ' . $e->getMessage());
+                        echo $e->getMessage();
                         $totalThalis = null;
                     }
                     if ($totalThalis !== null) { ?>
