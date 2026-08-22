@@ -1,7 +1,7 @@
 <?php
 include('header.php');
 include('navbar.php');
-include('helpers.php');
+require_once('helpers.php');
 include('getHijriDate.php');
 
 $today = getTodayDateHijri();
@@ -200,6 +200,7 @@ $musaid_list = mysqli_fetch_all(db_query($link, "SELECT username, email FROM use
 
 $values = null;
 $result = null;
+$resultCount = null;
 $max_days = null;
 $thalilist_tablename = 'thalilist';
 $receipts_tablename = 'receipts';
@@ -260,7 +261,9 @@ if (isset($_GET['year'])) {
     // ever be 'thalilist' or 'thalilist_<validated 4-digit year>'.
     $max_days = mysqli_fetch_row(mysqli_query($link, "SELECT MAX(thalicount) as max FROM `$thalilist_tablename`"));
 
-    if ($result->num_rows === 1) {
+    $resultCount = $result->num_rows;
+
+    if ($resultCount === 1) {
         $values = mysqli_fetch_assoc($result);
         mysqli_free_result($result);
         $adminMenuEntries = build_admin_menu_entries($link, (string) $values['id'], $values['thalisize']);
@@ -437,9 +440,9 @@ if (isset($_GET['year'])) {
     <div class="card-body">
       <h2 class="mb-3">Thali Info</h2>
       <?php
-      if ($result->num_rows > 1):
+      if ($resultCount > 1):
         include('_thalisearch_multiple.php');
-      elseif ($result->num_rows === 1):
+      elseif ($resultCount === 1):
         include('_thalisearch_single.php');
       else:
         echo "No records found";

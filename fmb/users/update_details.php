@@ -1,4 +1,5 @@
 <?php
+ob_start();
 include('header.php');
 include('navbar.php');
 require_once('helpers.php');
@@ -9,6 +10,7 @@ $errormsg = null;
 $msg = null;
 
 if ($_POST) {
+	$name = trim((string) ($_POST['name'] ?? ''));
     $contact = trim((string) ($_POST['contact'] ?? ''));
     $its = trim((string) ($_POST['its'] ?? ''));
     $wingflat = trim((string) ($_POST['wingflat'] ?? ''));
@@ -16,11 +18,20 @@ if ($_POST) {
     $whatsapp = trim((string) ($_POST['whatsapp'] ?? ''));
     $secondEmail = trim((string) ($_POST['second_email'] ?? ''));
 
-    if (!preg_match('/^[0-9]{10}$/', $contact) || !preg_match('/^[0-9]{8}$/', $its)
-        || $wingflat === '' || $society === '' || !preg_match('/^[0-9]{10}$/', $whatsapp)) {
+	if ($name === '' || !preg_match('/^[0-9]{10}$/', $contact) || !preg_match('/^[0-9]{8}$/', $its)
+		|| $wingflat === '' || $society === '' || !preg_match('/^[0-9]{10}$/', $whatsapp)
+		|| ($secondEmail !== '' && !preg_match('/^[a-z0-9._%+\-]+@gmail\.com$/i', $secondEmail))) {
         header("Location: update_details.php?status=" . urlencode('Please check the details you entered and try again.'));
         exit;
     }
+
+	if ($secondEmail !== '' && $secondEmail !== ($_SESSION['old_semail'] ?? null)) {
+		$checkemail = db_query($link, "SELECT id FROM thalilist WHERE (Email_ID = ? OR `SEmail_ID` = ?) AND id <> ?", "ssi", [$secondEmail, $secondEmail, (int) $_SESSION['thaliid']]);
+		if ($checkemail->num_rows > 0) {
+			header("Location: update_details.php?status=" . urlencode('That secondary email is already registered. Try another Gmail ID.'));
+			exit;
+		}
+	}
 
     $currentDetailsResult = db_query(
         $link,
@@ -39,9 +50,9 @@ if ($_POST) {
 
     db_query(
         $link,
-        "UPDATE thalilist SET CONTACT = ?, ITS_No = ?, wingflat = ?, society = ?, WhatsApp = ? WHERE Thali = ?",
-        "ssssss",
-        [$contact, $its, $wingflat, $society, $whatsapp, $_SESSION['thali']]
+		"UPDATE thalilist SET NAME = ?, CONTACT = ?, ITS_No = ?, wingflat = ?, society = ?, WhatsApp = ? WHERE id = ?",
+		"ssssssi",
+		[$name, $contact, $its, $wingflat, $society, $whatsapp, (int) $_SESSION['thaliid']]
     );
 
     if ($society !== $currentDetails['society']) {
@@ -79,26 +90,16 @@ if ($_POST) {
     }
 
     if ($secondEmail !== '') {
-        if (!preg_match('/^[a-z0-9._%+\-]+@gmail\.com$/i', $secondEmail)) {
-            header("Location: update_details.php?status=" . urlencode('Secondary email must be a Gmail address.'));
-            exit;
-        }
-
         if ($secondEmail !== ($_SESSION['old_semail'] ?? null)) {
-            $checkemail = db_query($link, "SELECT id FROM thalilist WHERE Email_ID = ? OR `SEmail_ID` = ?", "ss", [$secondEmail, $secondEmail]);
-            if ($checkemail->num_rows > 0) {
-                $errormsg = 'registered';
-            } else {
-                db_query($link, "UPDATE thalilist SET SEmail_ID = ? WHERE Thali = ?", "ss", [$secondEmail, $_SESSION['thali']]);
+			db_query($link, "UPDATE thalilist SET SEmail_ID = ? WHERE id = ?", "si", [$secondEmail, (int) $_SESSION['thaliid']]);
 
-                if ($_SESSION['email'] !== $secondEmail) {
-                    $first_email = $_SESSION['email'];
-                    session_unset();
-                    session_destroy();
-                    $status = "Great! $secondEmail is registered successfully with us and $first_email is unregistered. Please login again.";
-                    header("Location: https://kalimijamaatpoona.org/fmb/index.php?status=" . urlencode($status));
-                    exit;
-                }
+			if ($_SESSION['email'] === ($_SESSION['old_semail'] ?? null)) {
+				$first_email = $_SESSION['email'];
+				session_unset();
+				session_destroy();
+				$status = "Great! $secondEmail is registered successfully with us and $first_email is unregistered. Please login again.";
+				header("Location: https://kalimijamaatpoona.org/fmb/index.php?status=" . urlencode($status));
+				exit;
             }
         }
     }
@@ -110,7 +111,7 @@ if ($_POST) {
     unset($_SESSION['old_society'], $_SESSION['active'], $_SESSION['old_semail']);
 }
 
-$data = mysqli_fetch_assoc(db_query($link, "SELECT * FROM thalilist WHERE Thali = ?", "s", [$_SESSION['thali']]));
+$data = mysqli_fetch_assoc(db_query($link, "SELECT * FROM thalilist WHERE id = ?", "i", [(int) $_SESSION['thaliid']]));
 
 $_SESSION['old_society'] = $data['society'];
 $_SESSION['old_semail'] = $data['SEmail_ID'];
@@ -145,7 +146,7 @@ $_SESSION['active'] = $data['Active'];
 	  <div class="mb-3 row">
 		<label for="inputName" class="col-3 control-label">Secondary Email</label>
 		<div class="col-9">
-		  <input type="email" class="form-control" id="inputEmail" placeholder="Email" required='required'
+		  <input type="email" class="form-control" id="inputEmail" placeholder="Email"
 			name="second_email" value='<?php echo e($data['SEmail_ID'] ?? ''); ?>' pattern="[a-z0-9._%+\-]+@gmail.com$">
 			<p class="help-block mb-0 text-danger text-end"><small>(Only Gmail)</small></p>
 		</div>
