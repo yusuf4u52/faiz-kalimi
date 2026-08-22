@@ -77,7 +77,7 @@ function restoreExtraRotiMenus(mysqli $link, string $thali, string $startDate, s
         }
 
         $menuItem['roti']['qty'] = (int) ($menuItem['roti']['qty'] ?? $menuItem['roti'][$rotiSizeField] ?? 0)
-            + (int) $thaliData['extraRoti'];
+            + max(0, (int) $thaliData['extraRoti']);
 
         db_query(
             $link,

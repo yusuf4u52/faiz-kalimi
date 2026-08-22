@@ -177,23 +177,28 @@
     editDiv.removeClass("d-none");
     editInput.prop("disabled", false).val(item.item);
     editQtyInput.prop("disabled", false);
+    editQtyInput.attr("step", "1");
     editLabel.html(item.item);
 
     let currentQty =
       item.qty !== undefined ? Number(item.qty) : Number(item[sizeField] || 0);
     if (item.qty === undefined && item.item?.trim().toLowerCase() === "roti") {
-      currentQty += Number(schedule.extraRoti || 0);
+      currentQty += Math.max(0, Number(schedule.extraRoti || 0));
     }
     editQtyInput.val(currentQty);
 
     const qtyButtons = editQtyInput.parent();
     if (maxItem?.item !== undefined) {
-      const baseLimit = Number(maxItem[sizeField] || 0);
-      const limit =
-        maxItem.item === "Roti"
-          ? baseLimit + Number(schedule.extraRoti || 0)
-          : baseLimit;
-      const boundedLimit = Math.max(0, limit);
+      const configuredLimit = Number(schedule.rotiMaxQty);
+      const fallbackLimit =
+        Number(maxItem[sizeField] || 0) +
+        (maxItem.item.trim().toLowerCase() === "roti"
+          ? Math.max(0, Number(schedule.extraRoti || 0))
+          : 0);
+      const boundedLimit = Math.max(
+        0,
+        Number.isFinite(configuredLimit) ? configuredLimit : fallbackLimit,
+      );
       currentQty = Math.min(Math.max(0, currentQty), boundedLimit);
       editQtyInput.val(currentQty);
       qtyButtons

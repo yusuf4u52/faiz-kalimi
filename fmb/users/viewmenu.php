@@ -92,6 +92,17 @@ $takesFmbResult = db_query(
       $menu['sdate'] = date("F d, Y h:i A", strtotime($menu['menu_date']));
     }
 
+    $rotiSizeField = match (strtolower(trim((string) $thalisize))) {
+      'mini' => 'tqty',
+      'medium' => 'mqty',
+      'large' => 'lqty',
+      default => 'sqty',
+    };
+    $menu['rotiMaxQty'] = max(0, (int) ($menu['max_item']['roti'][$rotiSizeField] ?? 0));
+    if (strcasecmp(trim((string) ($menu['max_item']['roti']['item'] ?? '')), 'Roti') === 0) {
+      $menu['rotiMaxQty'] += max(0, (int) $extraRoti);
+    }
+
     if (isset($feedbackByDate[$menu['menu_date']])) {
       $menu['menu_feed'] = decode_menu_item($feedbackByDate[$menu['menu_date']]['menu_feed']);
       $menu['feedback'] = $feedbackByDate[$menu['menu_date']]['feedback'];

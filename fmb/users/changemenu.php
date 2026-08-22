@@ -73,7 +73,7 @@ if (in_array($action, ['change_menu', 'admin_change_menu'], true) && !empty($Cur
             $rotiQuantity = (int) ($menu_item['roti']['qty'] ?? $menu_item['roti'][$rotiSizeField] ?? 0);
             $rotiMaxQuantity = (int) ($menu_item['roti'][$rotiSizeField] ?? 0);
             if (strcasecmp(trim((string) ($menu_item['roti']['item'] ?? '')), 'Roti') === 0) {
-                $rotiMaxQuantity += (int) ($thaliData['extraRoti'] ?? 0);
+                $rotiMaxQuantity += max(0, (int) ($thaliData['extraRoti'] ?? 0));
             }
             $rotiMaxQuantity = max(0, $rotiMaxQuantity);
             $rotiQuantity = min(max(0, $rotiQuantity), $rotiMaxQuantity);
