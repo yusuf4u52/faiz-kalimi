@@ -135,13 +135,13 @@ if ($menu_item_result->num_rows > 0) {
 										<td align="center">' . e($row['tiffinno']) . '</td>
 										<td align="center">' . e($row['thalisize']) . '</td>';
                 if (!empty($user_menu_item['sabji']['item'])) {
-                    $msgmenu .= '<td align="center">' . (int) $user_menu_item['sabji']['qty'] . '</td>';
+                    $msgmenu .= '<td align="center">' . (float) $user_menu_item['sabji']['qty'] . '</td>';
                 }
                 if (!empty($user_menu_item['tarkari']['item'])) {
-                    $msgmenu .= '<td align="center">' . (int) $user_menu_item['tarkari']['qty'] . '</td>';
+                    $msgmenu .= '<td align="center">' . (float) $user_menu_item['tarkari']['qty'] . '</td>';
                 }
                 if (!empty($user_menu_item['rice']['item'])) {
-                    $msgmenu .= '<td align="center">' . (int) $user_menu_item['rice']['qty'] . '</td>';
+                    $msgmenu .= '<td align="center">' . (float) $user_menu_item['rice']['qty'] . '</td>';
                 }
                 $msgmenu .= '<td align="center">' . e($row['NAME']) . '</td>
 										<td align="center">' . e($row['wingflat'] . ' ' . $row['society']) . '</td>

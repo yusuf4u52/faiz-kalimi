@@ -3,7 +3,6 @@ include('connection.php');
 require_once('helpers.php');
 include('getHijriDate.php');
 include '../backup/_email_backup.php';
-//include '../sms/_sms_automation.php';
 require_once '_sendMail.php';
 //include('emailmenu.php');
 
@@ -67,7 +66,7 @@ try {
     // stop_thali row, so they are deliberately excluded from this process.
     $chk_stop_thali = db_query(
         $link,
-        "SELECT `id`, `Thali`, `NAME`, `Email_ID`
+        "SELECT t.`id`, t.`Thali`, t.`NAME`, t.`Email_ID`
          FROM thalilist t
          INNER JOIN stop_thali stopped_today
              ON stopped_today.`thali` = t.`id` AND stopped_today.`stop_date` = ?
@@ -125,7 +124,7 @@ try {
 
         $request = [];
         $processed = [];
-        $msg = '<h3>Start Stop update for ' . e($tomorrow_date) . ' - ' . e($hijridate) . ' - ' . e($day) . "</h3>\n\n";
+        $msg = '<h3>Start Stop update for ' . e($tomorrow_date) . ' - ' . e($hijridate) . ' - ' . e($day) . "</h3>\n";
         $transporterDailyRows = [];
         $dailyThaliCountRow = null;
 
@@ -339,7 +338,7 @@ try {
 
             // Send the edited-menu and transporter-wise roti reports after the
             // scheduled stop/start changes above have updated Active status.
-            include __DIR__ . '/emailmenu.php';
+            //include __DIR__ . '/emailmenu.php';
     } else {
         $skipmsg = "Skipping email as no thali available for " . e($tomorrow_date) . ".";
         $smailSent = sendEmail(SKIP_NOTICE_EMAILS, 'No Thaali Update ' . $tomorrow_date, $skipmsg, null, null, true);

@@ -41,6 +41,15 @@ function rotiBucketForSize(?string $thalisize): string
     };
 }
 
+function standardRotiQtyForSize(?string $thalisize): int
+{
+    return match (strtolower(trim((string) $thalisize))) {
+        'mini', 'small', 'barnamaj' => 1,
+        'friday', 'medium', 'large' => 2,
+        default => 1,
+    };
+}
+
 /**
  * Effective roti quantity for one thali: the user's own customization (if
  * they saved one) from $overridesByThaliId, otherwise the day's default
@@ -89,6 +98,8 @@ if ($menu_item_result->num_rows > 0) {
         }
 
         $thaliSize = [];
+        $rotiDetails = '';
+        $rotiDetailTransporters = [];
         $hijridate = getHijriDate($tomorrow_date);
         $msgroti .= "<br/><b>" . e($roti) . " Count on " . e($hijridate) . " " . e($day) . " - " . e($tomorrow_date) . "</b><br/>";
         $rotiTable = "<table border='1'><tr><td style='padding: 2px 10px 2px 10px;'>Size</td>";
@@ -102,7 +113,8 @@ if ($menu_item_result->num_rows > 0) {
 
             $thaliRows = db_query(
                 $link,
-                "SELECT id, thalisize, extraRoti FROM thalilist WHERE Active = 1 AND `Transporter` = ?",
+                "SELECT id, tiffinno, thalisize, extraRoti, `NAME`, CONTACT, wingflat, society
+                 FROM thalilist WHERE Active = 1 AND `Transporter` = ? ORDER BY tiffinno",
                 "s",
                 [$transporterName]
             );
@@ -119,6 +131,23 @@ if ($menu_item_result->num_rows > 0) {
                 $qty = effectiveRotiQty($overridesByThaliId, $row['id'], $defaultQty);
 
                 $thaliSize[$bucket][$transporterName] += $qty;
+
+                if ($qty > 0 && $qty !== standardRotiQtyForSize($row['thalisize'])) {
+                    if (!isset($rotiDetailTransporters[$transporterName])) {
+                        $rotiDetails .= "<b>" . e((string) $transporterName) . "</b><br/>";
+                        $rotiDetailTransporters[$transporterName] = true;
+                    }
+                    $rotiDetails .= "<b>" . e((string) $qty) . " Roti</b> - ";
+                    $detailFields = [
+                        $row['tiffinno'],
+                        $row['thalisize'],
+                        $row['NAME'],
+                        $row['CONTACT'],
+                        $row['wingflat'],
+                        $row['society'],
+                    ];
+                    $rotiDetails .= e(implode(' - ', $detailFields)) . "<br/><br/>";
+                }
             }
 
             $thaliSize["Total"][$transporterName] = array_sum(array_map(
@@ -127,6 +156,10 @@ if ($menu_item_result->num_rows > 0) {
             ));
         }
         $rotiTable .= "<td style='padding: 2px 10px 2px 10px;'>Total</td></tr>";
+
+        if ($rotiDetails !== '') {
+            $msgroti .= $rotiDetails;
+        }
 
         foreach ($thaliSize as $size => $sizeCount) {
             $totalSizeCount = 0;
