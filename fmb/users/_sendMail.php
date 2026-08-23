@@ -4,7 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once 'connection.php';
+require_once __DIR__ . '/connection.php';
 
 /**
  * Every call site in this codebase already passes 4-6 positional args
@@ -13,7 +13,7 @@ require_once 'connection.php';
  * were passing were silently discarded by PHP rather than doing anything.
  * This signature matches what's actually being called everywhere.
  */
-function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = null, ?array $bcc = null, bool $isHtml = true): bool
+function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = null, ?array $bcc = null, bool $isHtml = true, ?array $attachments = null): bool
 {
     global $link;
     $mail = new PHPMailer(true);
@@ -45,12 +45,15 @@ function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = nu
         $mail->Subject = $subject;
         $mail->Body    = $bodyHtml;
         $mail->AltBody = $isHtml ? strip_tags($bodyHtml) : $bodyHtml;
+        foreach ($attachments ?? [] as $attachment) {
+            $mail->addStringAttachment($attachment['data'], $attachment['name']);
+        }
 
         $mail->send();
         $mail->SMTPKeepAlive = false;
         $mail->smtpClose();
         return true;
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         error_log('[sendEmail] PHPMailer error: ' . $mail->ErrorInfo);
         return false;
     }

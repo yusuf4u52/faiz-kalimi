@@ -1,7 +1,7 @@
 <?php
 
-require_once '../users/_sendMail.php';
-require '../sms/_credentials.php';
+require_once __DIR__ . '/../users/_sendMail.php';
+require __DIR__ . '/../sms/_credentials.php';
 //ENTER THE RELEVANT INFO BELOW
 $mysqlUserName      = $username;
 $mysqlPassword      = $password;
@@ -80,5 +80,8 @@ $emails = [
     'yusuf4u52@gmail.com',
     'moizlife@gmail.com'
 ];
-sendEmail([$emails], $subject, "Please find the attachment", $content);
+sendEmail($emails, $subject, "Please find the attachment", null, null, true, [[
+    'data' => $content,
+    'name' => $backup_name,
+]]);
 echo "########## backup completed ##############";
