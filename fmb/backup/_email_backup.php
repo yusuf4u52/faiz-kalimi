@@ -80,5 +80,5 @@ $emails = [
     'yusuf4u52@gmail.com',
     'moizlife@gmail.com'
 ];
-sendEmail($emails, $subject, "Please find the attachment", $content);
+sendEmail([$emails], $subject, "Please find the attachment", $content);
 echo "########## backup completed ##############";
