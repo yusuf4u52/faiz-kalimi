@@ -43,6 +43,8 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                     foreach ($rows as $row) {
                         $Receipt_No = trim((string) ($row[0] ?? ''));
                         $its = trim((string) ($row[2] ?? ''));
+                        $takhmeemYear = trim((string) ($row[15] ?? ''));
+                        $receiptsTable = $takhmeemYear === '1447-1448' ? 'receipts' : 'receipts_1447';
                         $date = date('Y-m-d', strtotime((string) ($row[1] ?? '')));
 
                         if ($Receipt_No === '' || $its === '') {
@@ -56,11 +58,9 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                         $thali = mysqli_fetch_assoc($thalilistResult);
 
                         // Single upsert instead of SELECT-then-branch.
-                        // Requires UNIQUE KEY (Receipt_No, Date) on receipts
-                        // — see schema-modernization.sql.
                         db_query(
                             $link,
-                            "INSERT INTO receipts
+                            "INSERT INTO `$receiptsTable`
                                 (`Receipt_No`, `Thali_No`, `userid`, `name`, `Amount`, `Date`, `received_by`, `payment_type`, `transaction_id`, `takmeem_year`)
                              VALUES (?, ?, ?, ?, ?, ?, 'saminabarnagarwala2812@gmail.com', ?, ?, ?)
                              ON DUPLICATE KEY UPDATE
