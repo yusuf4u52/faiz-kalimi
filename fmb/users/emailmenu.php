@@ -84,6 +84,50 @@ if ($menu_item_result->num_rows > 0) {
         }
 
         while ($row_trans = mysqli_fetch_assoc($transporter)) {
+            $thaliRows = db_query(
+                $link,
+                "SELECT id, Thali, tiffinno, `NAME`, CONTACT, thalisize, wingflat, society FROM thalilist
+                 WHERE `Transporter` = ? AND id IN " . $in['sql'] . " AND `hardstop` != 1 AND Active != 0 AND thalisize != 'Roti'
+                 ORDER BY Transporter, thalisize, tiffinno",
+                's' . $in['types'],
+                array_merge([$row_trans['Transporter']], $in['params'])
+            );
+
+            $transporterRows = '';
+            while ($row = mysqli_fetch_assoc($thaliRows)) {
+                $user_menu_item = $userMenuByThaliId[$row['id']] ?? null;
+
+                if ($user_menu_item === null) {
+                    continue;
+                }
+
+                // Skip this thali entirely if the only customization is
+                // to the roti quantity - that's covered by emailroti.php.
+                if (!menuDiffersIgnoringRoti($menu_item, $user_menu_item)) {
+                    continue;
+                }
+
+				$transporterRows .= '<tr>
+										<td align="center">' . e($row['tiffinno']) . '</td>
+										<td align="center">' . e($row['thalisize']) . '</td>';
+                if (!empty($user_menu_item['sabji']['item'])) {
+                    $transporterRows .= '<td align="center">' . (float) $user_menu_item['sabji']['qty'] . '</td>';
+                }
+                if (!empty($user_menu_item['tarkari']['item'])) {
+                    $transporterRows .= '<td align="center">' . (float) $user_menu_item['tarkari']['qty'] . '</td>';
+                }
+                if (!empty($user_menu_item['rice']['item'])) {
+                    $transporterRows .= '<td align="center">' . (float) $user_menu_item['rice']['qty'] . '</td>';
+                }
+                $transporterRows .= '<td align="center">' . e($row['NAME']) . '</td>
+										<td align="center">' . e($row['wingflat'] . ' ' . $row['society']) . '</td>
+									<tr>';
+            }
+
+            if ($transporterRows === '') {
+                continue;
+            }
+
             $msgmenu .= '<table border="1" width="720" cellpadding="10" cellspacing="0" bgcolor="#c36d29" style="color:#FFFFFF;border-color:#548484;margin-top:1rem;">
 						<tr>
 							<th align="center"><strong>' . e($row_trans['Transporter']) . '</strong></th>
@@ -107,47 +151,7 @@ if ($menu_item_result->num_rows > 0) {
 								<th>Flat/Society</th>
 							<tr>
 						</thead>
-						<tbody>';
-
-            $thaliRows = db_query(
-                $link,
-                "SELECT id, Thali, tiffinno, `NAME`, CONTACT, thalisize, wingflat, society FROM thalilist
-                 WHERE `Transporter` = ? AND id IN " . $in['sql'] . " AND `hardstop` != 1 AND Active != 0 AND thalisize != 'Roti'
-                 ORDER BY Transporter",
-                's' . $in['types'],
-                array_merge([$row_trans['Transporter']], $in['params'])
-            );
-
-            while ($row = mysqli_fetch_assoc($thaliRows)) {
-                $user_menu_item = $userMenuByThaliId[$row['id']] ?? null;
-
-                if ($user_menu_item === null) {
-                    continue;
-                }
-
-                // Skip this thali entirely if the only customization is
-                // to the roti quantity - that's covered by emailroti.php.
-                if (!menuDiffersIgnoringRoti($menu_item, $user_menu_item)) {
-                    continue;
-                }
-
-                $msgmenu .= '<tr>
-										<td align="center">' . e($row['tiffinno']) . '</td>
-										<td align="center">' . e($row['thalisize']) . '</td>';
-                if (!empty($user_menu_item['sabji']['item'])) {
-                    $msgmenu .= '<td align="center">' . (float) $user_menu_item['sabji']['qty'] . '</td>';
-                }
-                if (!empty($user_menu_item['tarkari']['item'])) {
-                    $msgmenu .= '<td align="center">' . (float) $user_menu_item['tarkari']['qty'] . '</td>';
-                }
-                if (!empty($user_menu_item['rice']['item'])) {
-                    $msgmenu .= '<td align="center">' . (float) $user_menu_item['rice']['qty'] . '</td>';
-                }
-                $msgmenu .= '<td align="center">' . e($row['NAME']) . '</td>
-										<td align="center">' . e($row['wingflat'] . ' ' . $row['society']) . '</td>
-									<tr>';
-            }
-            $msgmenu .= '</tbody>
+						<tbody>' . $transporterRows . '</tbody>
 					</table>';
         }
     }

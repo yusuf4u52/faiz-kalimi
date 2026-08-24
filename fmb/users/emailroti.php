@@ -101,7 +101,7 @@ if ($menu_item_result->num_rows > 0) {
         $rotiDetails = '';
         $rotiDetailTransporters = [];
         $hijridate = getHijriDate($tomorrow_date);
-        $msgroti .= "<br/><b>" . e($roti) . " Count on " . e($hijridate) . " " . e($day) . " - " . e($tomorrow_date) . "</b><br/>";
+        $msgroti .= "<br/><h3>" . e($roti) . " Count on " . e($hijridate) . " " . e($day) . " - " . e($tomorrow_date) . "</h3><br/><br/>";
         $rotiTable = "<table border='1'><tr><td style='padding: 2px 10px 2px 10px;'>Size</td>";
 
         foreach ($transporters as $transporterName) {
