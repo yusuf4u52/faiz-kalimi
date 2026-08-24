@@ -105,7 +105,8 @@ try {
                                   SUM(dc.`barnamaj`) AS total_barnamaj, SUM(dc.`count`) AS total_count
                            FROM `transporters` t
                                                      INNER JOIN `transporter_daily_count` dc
-                                                         ON LOWER(REPLACE(TRIM(dc.`name`), ' ', '')) = LOWER(REPLACE(TRIM(t.`Name`), ' ', ''))
+                                                         ON (LOWER(REPLACE(TRIM(dc.`name`), ' ', '')) = LOWER(REPLACE(TRIM(t.`Name`), ' ', ''))
+                                                             OR (LOWER(REPLACE(TRIM(t.`Name`), ' ', '')) = 'zoher' AND LOWER(REPLACE(TRIM(dc.`name`), ' ', '')) = 'zuhair'))
                            WHERE t.`id` = ? AND dc.`date` >= ? AND dc.`date` < ?
                            GROUP BY dc.`date`, t.`id`, t.`Name`, t.`rate_per_thali`
                                     ORDER BY dc.`date` ASC";
@@ -122,7 +123,8 @@ try {
                                      COALESCE(SUM(dc.`count`), 0) AS total_count
                               FROM `transporters` t
                               LEFT JOIN `transporter_daily_count` dc
-                                ON LOWER(REPLACE(TRIM(dc.`name`), ' ', '')) = LOWER(REPLACE(TRIM(t.`Name`), ' ', ''))
+                                ON (LOWER(REPLACE(TRIM(dc.`name`), ' ', '')) = LOWER(REPLACE(TRIM(t.`Name`), ' ', ''))
+                                    OR (LOWER(REPLACE(TRIM(t.`Name`), ' ', '')) = 'zoher' AND LOWER(REPLACE(TRIM(dc.`name`), ' ', '')) = 'zuhair'))
                                                              AND dc.`date` >= ? AND dc.`date` < ?
                               GROUP BY t.`id`, t.`Name`, t.`rate_per_thali` ORDER BY t.`Name` ASC";
                     }
