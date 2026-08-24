@@ -16,6 +16,11 @@ $selectedTransporterId = $selectedTransporterId !== false && $selectedTransporte
     ? $selectedTransporterId
     : null;
 $isCloud9Alias = $selectedTransporter === 'murtaza_cloud9';
+$unpaidTransporters = [
+    'pick_up' => ['name' => 'Pick Up', 'daily_count_name' => 'pickup'],
+    'naeem' => ['name' => 'Naeem', 'daily_count_name' => 'naeem'],
+];
+$selectedUnpaidTransporter = $unpaidTransporters[$selectedTransporter] ?? null;
 $transporters = [];
 $rows = [];
 $reportError = false;
@@ -38,6 +43,9 @@ try {
     $hasCloud9Transporter = (bool) array_filter($transporters, static fn(array $transporter): bool => strcasecmp((string) $transporter['Name'], 'Murtaza (Cloud 9)') === 0 || strcasecmp((string) $transporter['Name'], 'Murtaza(Cloud 9)') === 0);
     if (!$hasCloud9Transporter) {
         $transporters[] = ['id' => 'murtaza_cloud9', 'Name' => 'Murtaza (Cloud 9)', 'rate_per_thali' => 12];
+    }
+    foreach ($unpaidTransporters as $id => $transporter) {
+        $transporters[] = ['id' => $id, 'Name' => $transporter['name'], 'rate_per_thali' => 0];
     }
 } catch (RuntimeException $e) {
     error_log('[users/transporter/report.php] ' . $e->getMessage());
@@ -81,10 +89,10 @@ try {
                         </div>
                     </div>
                 </form>
-                <?php if (!$reportError && $isValidMonth) {
+                <?php if (!$reportError && $isValidMonth) { 
                     $startDate = $paymentMonth . '-01';
                     $nextMonth = date('Y-m-d', strtotime($startDate . ' +1 month'));
-                                        $isDailyReport = $selectedTransporterId !== null || $isCloud9Alias;
+                                        $isDailyReport = $selectedTransporterId !== null || $isCloud9Alias || $selectedUnpaidTransporter !== null;
                                         if ($isCloud9Alias) {
                                                 $query = "SELECT dc.`date`, 'Murtaza (Cloud 9)' AS transporter_name, 12 AS rate_per_thali,
                                                                     SUM(dc.`mini`) AS total_mini, SUM(dc.`small`) AS total_small,
@@ -96,7 +104,18 @@ try {
                                                          AND dc.`date` >= ? AND dc.`date` < ?
                                                      GROUP BY dc.`date`
                                                      ORDER BY dc.`date` ASC";
-                                        } elseif ($isDailyReport) {
+                                                                                } elseif ($selectedUnpaidTransporter !== null) {
+                                                                                                $query = "SELECT dc.`date`, ? AS transporter_name, 0 AS rate_per_thali,
+                                                                                                                                        SUM(dc.`mini`) AS total_mini, SUM(dc.`small`) AS total_small,
+                                                                                                                                        SUM(dc.`medium`) AS total_medium, SUM(dc.`large`) AS total_large,
+                                                                                                                                        SUM(dc.`friday`) AS total_friday, SUM(dc.`roti`) AS total_roti,
+                                                                                                                                        SUM(dc.`barnamaj`) AS total_barnamaj, SUM(dc.`count`) AS total_count
+                                                                                                         FROM `transporter_daily_count` dc
+                                                                                                             WHERE LOWER(REPLACE(TRIM(dc.`name`), ' ', '')) = ?
+                                                                                                                 AND dc.`date` >= ? AND dc.`date` < ?
+                                                                                                         GROUP BY dc.`date`
+                                                                                                         ORDER BY dc.`date` ASC";
+                                                                                } elseif ($isDailyReport) {
                                                 $query = "SELECT dc.`date`, t.`Name` AS transporter_name,
                                   CASE WHEN t.`Name` = 'Murtaza (Cloud 9)' THEN 12 ELSE t.`rate_per_thali` END AS rate_per_thali,
                                   SUM(dc.`mini`) AS total_mini, SUM(dc.`small`) AS total_small,
@@ -131,6 +150,9 @@ try {
                     if ($isCloud9Alias) {
                         $types = 'ss';
                         $params = [$startDate, $nextMonth];
+                    } elseif ($selectedUnpaidTransporter !== null) {
+                        $types = 'ssss';
+                        $params = [$selectedUnpaidTransporter['name'], $selectedUnpaidTransporter['daily_count_name'], $startDate, $nextMonth];
                     } elseif ($isDailyReport) {
                         $types = 'iss';
                         $params = [$selectedTransporterId, $startDate, $nextMonth];
@@ -148,7 +170,7 @@ try {
                         }
                         mysqli_free_result($result);
 
-                        if ($selectedTransporterId === null && !$isCloud9Alias && !$hasCloud9Transporter) {
+                        if ($selectedTransporterId === null && !$isCloud9Alias && $selectedUnpaidTransporter === null && !$hasCloud9Transporter) {
                             $cloud9Result = db_query(
                                 $link,
                                 "SELECT COALESCE(SUM(`mini`), 0) AS total_mini,
@@ -172,6 +194,33 @@ try {
                             $cloud9Row['base_payment'] = (float) $cloud9Row['total_count'] * 12;
                             $cloud9Row['net_payable'] = $cloud9Row['base_payment'];
                             $rows[] = $cloud9Row;
+                        }
+                        if ($selectedTransporterId === null && !$isCloud9Alias && $selectedUnpaidTransporter === null) {
+                            foreach ($unpaidTransporters as $transporter) {
+                                $unpaidResult = db_query(
+                                    $link,
+                                    "SELECT COALESCE(SUM(`mini`), 0) AS total_mini,
+                                            COALESCE(SUM(`small`), 0) AS total_small,
+                                            COALESCE(SUM(`medium`), 0) AS total_medium,
+                                            COALESCE(SUM(`large`), 0) AS total_large,
+                                            COALESCE(SUM(`friday`), 0) AS total_friday,
+                                            COALESCE(SUM(`roti`), 0) AS total_roti,
+                                            COALESCE(SUM(`barnamaj`), 0) AS total_barnamaj,
+                                            COALESCE(SUM(`count`), 0) AS total_count
+                                     FROM `transporter_daily_count`
+                                     WHERE LOWER(REPLACE(TRIM(`name`), ' ', '')) = ?
+                                       AND `date` >= ? AND `date` < ?",
+                                    'sss',
+                                    [$transporter['daily_count_name'], $startDate, $nextMonth]
+                                );
+                                $unpaidRow = mysqli_fetch_assoc($unpaidResult);
+                                mysqli_free_result($unpaidResult);
+                                $unpaidRow['transporter_name'] = $transporter['name'];
+                                $unpaidRow['rate_per_thali'] = 0;
+                                $unpaidRow['base_payment'] = 0;
+                                $unpaidRow['net_payable'] = 0;
+                                $rows[] = $unpaidRow;
+                            }
                         }
                     } catch (RuntimeException $e) {
                         error_log('[users/transporter/report.php] ' . $e->getMessage());
