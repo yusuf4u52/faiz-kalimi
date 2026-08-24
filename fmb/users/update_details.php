@@ -189,7 +189,7 @@ $_SESSION['active'] = $data['Active'];
 	  <div class="mb-3 row">
 		<label for="inputContact" class="col-3 control-label">Society</label>
 		<div class="col-9">
-		  <select class="form-select" name="society" required='required'>
+		  <select class="form-select" id="society" name="society" required='required'>
 			<option value=''>Select</option>
 			<?php
 			$society_list = db_query($link, "SELECT DISTINCT(society) FROM thalilist WHERE society IS NOT NULL ORDER BY society");
