@@ -80,7 +80,9 @@ if (in_array($action, ['change_menu', 'admin_change_menu'], true) && !empty($Cur
 
             foreach (['sabji' => &$sstop, 'tarkari' => &$tstop, 'rice' => &$rstop, 'roti' => &$rotiStop] as $course => &$stopFlag) {
                 if (!empty($menu_item[$course]['item'])) {
-                    $postedQty = (int) ($_POST['menu_item'][$course]['qty'] ?? 0);
+                    $postedQty = $course === 'roti'
+                        ? (int) ($_POST['menu_item'][$course]['qty'] ?? 0)
+                        : (float) ($_POST['menu_item'][$course]['qty'] ?? 0);
                     if ($course === 'roti') {
                         $postedQty = min(max(0, $postedQty), $rotiMaxQuantity);
                         $_POST['menu_item']['roti']['qty'] = $postedQty;
@@ -88,7 +90,7 @@ if (in_array($action, ['change_menu', 'admin_change_menu'], true) && !empty($Cur
                     if ($postedQty === 0) {
                         $stopFlag = 'yes';
                         $change = 'yes';
-                    } elseif ((int) ($currentMenuItem[$course]['qty'] ?? ($course === 'roti' ? $rotiQuantity : $menu_item[$course]['qty'] ?? 0)) !== $postedQty) {
+                    } elseif ((float) ($currentMenuItem[$course]['qty'] ?? ($course === 'roti' ? $rotiQuantity : $menu_item[$course]['qty'] ?? 0)) !== (float) $postedQty) {
                         // BUG FIX: this used to compare with strict !== against
                         // a raw (string) POST value, so an int(2) from the DB
                         // vs a string "2" from the form were never equal —
