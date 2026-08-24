@@ -72,6 +72,10 @@ if ($transporterResult->num_rows > 0) {
                     </li>
                     <li class="nav-item"><a class="nav-link" href="/fmb/transporter/report.php">Report</a>
                     </li>
+                    <?php if (stripos((string) ($_SESSION['transporter'] ?? ''), 'Murtaza') === 0) { ?>
+                        <li class="nav-item"><a class="nav-link" href="/fmb/transporter/report_cloud9.php">Report (Cloud 9)</a>
+                        </li>
+                    <?php } ?>
                     <li class="nav-item"><a class="nav-link" href="/fmb/users/logout.php">Logout</a></li>
                 </ul>
             </div>

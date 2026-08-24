@@ -27,6 +27,7 @@ $nextMonth = date('Y-m', strtotime($paymentMonth . '-01 +1 month'));
 $canGoNext = $nextMonth <= $currentMonth;
 $transporterName = (string) ($_SESSION['transporter'] ?? '');
 $transporterId = $_SESSION['transporterid'] ?? null;
+$isZoher = strcasecmp(trim($transporterName), 'Zoher') === 0;
 
 // Rate is per-transporter, stored on the transporters table, so the ₹/thali
 // figure below reflects whatever that transporter is actually charging
@@ -99,6 +100,9 @@ if ($transporterId !== null) {
         <?php } else {
             $startDate = $paymentMonth . '-01';
             $endDate = date('Y-m-t', strtotime($startDate));
+            $dailyCountNameFilter = $isZoher
+                ? "(`name` = ? OR `name` = 'Zuhair')"
+                : "`name` = ?";
 
             try {
                 $daily_count = db_query(
@@ -106,7 +110,7 @@ if ($transporterId !== null) {
                     "SELECT `date`, SUM(`mini`) as total_mini, SUM(`small`) as total_small,
                             SUM(`medium`) as total_medium, SUM(`large`) as total_large, SUM(`roti`) as total_roti, SUM(`friday`) as total_friday, SUM(`barnamaj`) as total_barnamaj, SUM(`count`) as total_count
                      FROM `transporter_daily_count`
-                     WHERE `name` = ? AND `date` BETWEEN ? AND ?
+                     WHERE " . $dailyCountNameFilter . " AND `date` BETWEEN ? AND ?
                      GROUP BY `date`
                      ORDER BY `date` ASC",
                     "sss",
