@@ -3,6 +3,13 @@ include('../header.php');
 include('../navbar.php');
 require_once('helpers.php');
 
+function menuHasNonRotiEdit(array $baseMenu, array $customMenu): bool
+{
+    unset($baseMenu['roti'], $customMenu['roti']);
+
+    return $baseMenu != $customMenu;
+}
+
 $menuDate = $_GET['menu_date'] ?? null;
 $isValidDate = $menuDate && DateTime::createFromFormat('Y-m-d', $menuDate);
 
@@ -82,7 +89,6 @@ if ($isValidDate) {
 
                                 $thali = db_query($link, "SELECT `thali` FROM user_menu WHERE `menu_date` = ?", "s", [$menuDate]);
                                 if ($thali->num_rows > 0) {
-                                    $totaledited = $thali->num_rows;
                                     $thalino = [];
                                     while ($row_thali = mysqli_fetch_assoc($thali)) {
                                         $thalino[] = $row_thali['thali'];
@@ -107,22 +113,26 @@ if ($isValidDate) {
 
                                     while ($row = mysqli_fetch_assoc($thali)) {
                                         $user_menu_item = decode_menu_item($row['menu_item']); ?>
+                                        <?php if (!menuHasNonRotiEdit($menu_item, $user_menu_item)) {
+                                            continue;
+                                        }
+                                        $totaledited++; ?>
                                             <tr>
                                                 <td><?php echo e($row['Thali']); ?></td>
                                                 <td><?php echo e($row['tiffinno']); ?></td>
                                                 <td><?php echo e($row['thalisize']); ?></td>
                                                 <td><?php echo e($row['Transporter']); ?></td>
                                                 <?php if (!empty($user_menu_item['sabji']['item'])) {
-                                                    $sabji += (int) $user_menu_item['sabji']['qty'];
-                                                    echo '<td>' . (int) $user_menu_item['sabji']['qty'] . '</td>';
+                                                    $sabji += (float) $user_menu_item['sabji']['qty'];
+                                                    echo '<td>' . e((string) $user_menu_item['sabji']['qty']) . '</td>';
                                                 }
                                                 if (!empty($user_menu_item['tarkari']['item'])) {
-                                                    $tarkari += (int) $user_menu_item['tarkari']['qty'];
-                                                    echo '<td>' . (int) $user_menu_item['tarkari']['qty'] . '</td>';
+                                                    $tarkari += (float) $user_menu_item['tarkari']['qty'];
+                                                    echo '<td>' . e((string) $user_menu_item['tarkari']['qty']) . '</td>';
                                                 }
                                                 if (!empty($user_menu_item['rice']['item'])) {
-                                                    $rice += (int) $user_menu_item['rice']['qty'];
-                                                    echo '<td>' . (int) $user_menu_item['rice']['qty'] . '</td>';
+                                                    $rice += (float) $user_menu_item['rice']['qty'];
+                                                    echo '<td>' . e((string) $user_menu_item['rice']['qty']) . '</td>';
                                                 } ?>
                                             </tr>
                                 <?php }
