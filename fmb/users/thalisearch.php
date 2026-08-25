@@ -13,7 +13,7 @@ $today = getTodayDateHijri();
  * (duplicated in both this file and _thalisearch_single.php) which ran up
  * to 2 extra queries PER menu date, in TWO separate near-identical loops.
  */
-function build_admin_menu_entries(mysqli $link, string $thaliId, ?string $thalisize): array
+function build_admin_menu_entries(mysqli $link, string $thaliId, ?string $thalisize, int $extraRoti = 0): array
 {
     $menuRows = mysqli_fetch_all(
         db_query($link, "SELECT * FROM menu_list WHERE `menu_date` >= ? AND `menu_type` = 'thaali' ORDER BY `menu_date` DESC", "s", [date('Y-m-d')]),
@@ -37,23 +37,31 @@ function build_admin_menu_entries(mysqli $link, string $thaliId, ?string $thalis
         $menuId = $menu['id'];
         $menuDate = $menu['menu_date'];
         $roti_qty = null;
+        $roti_max_qty = null;
+        $baseMenuItem = decode_menu_item($menu['menu_item']);
+        $sizeKey = match ($thalisize) {
+          'Mini' => 'tqty',
+          'Medium' => 'mqty',
+          'Large' => 'lqty',
+          default => 'sqty',
+        };
+        if (!empty($baseMenuItem['roti']['item'])) {
+          $roti_max_qty = (int) ($baseMenuItem['roti'][$sizeKey] ?? 0);
+          if (strcasecmp(trim((string) $baseMenuItem['roti']['item']), 'Roti') === 0) {
+            $roti_max_qty += max(0, $extraRoti);
+          }
+          $roti_max_qty = max(0, $roti_max_qty);
+        }
 
         if (isset($userMenuByDate[$menuDate])) {
             $menu_item = decode_menu_item($userMenuByDate[$menuDate]['menu_item']);
-            if (!empty($menu_item['roti']['qty'])) {
+            if (array_key_exists('qty', $menu_item['roti'] ?? [])) {
                 $roti_qty = $menu_item['roti']['qty'];
             }
             $target = 'adminusermenu-' . $menuId;
         } else {
-            $menu_item = decode_menu_item($menu['menu_item']);
-            $sizeKey = match ($thalisize) {
-                'Mini' => 'tqty',
-                'Small' => 'sqty',
-                'Medium' => 'mqty',
-                'Large' => 'lqty',
-                default => null,
-            };
-            if ($sizeKey !== null && !empty($menu_item['roti'][$sizeKey])) {
+            $menu_item = $baseMenuItem;
+            if (array_key_exists($sizeKey, $menu_item['roti'] ?? [])) {
                 $roti_qty = $menu_item['roti'][$sizeKey];
             }
             $target = 'adminmenu-' . $menuId;
@@ -64,6 +72,7 @@ function build_admin_menu_entries(mysqli $link, string $thaliId, ?string $thalis
             'date' => $menuDate,
             'menu_item' => $menu_item,
             'roti_qty' => $roti_qty,
+            'roti_max_qty' => $roti_max_qty,
             'target' => $target,
             'status' => isset($stoppedDates[$menuDate]) ? 'stop' : 'start',
         ];
@@ -266,7 +275,7 @@ if (isset($_GET['year'])) {
     if ($resultCount === 1) {
         $values = mysqli_fetch_assoc($result);
         mysqli_free_result($result);
-        $adminMenuEntries = build_admin_menu_entries($link, (string) $values['id'], $values['thalisize']);
+        $adminMenuEntries = build_admin_menu_entries($link, (string) $values['id'], $values['thalisize'], (int) $values['extraRoti']);
         $stopDateRanges = get_stop_date_ranges($link, (string) $values['id']);
     }
 }
@@ -779,8 +788,13 @@ if (isset($_GET['year'])) {
                     <div class="col-6">
                       <input type="hidden" class="form-control" name="menu_item[roti][item]" id="roti"
                         value="<?php echo e($menu_item['roti']['item'] ?? ''); ?>">
-                      <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty"
-                        value="<?php echo e((string) ($entry['roti_qty'] ?? '1')); ?>" min="0" readonly>
+                      <div class="input-group">
+                        <button class="btn btn-light btn-minus" type="button">-</button>
+                        <input type="number" class="form-control" name="menu_item[roti][qty]" id="rotiqty"
+                          value="<?php echo e((string) ($entry['roti_qty'] ?? '0')); ?>" min="0"
+                          max="<?php echo (int) ($entry['roti_max_qty'] ?? 0); ?>" step="1" readonly>
+                        <button class="btn btn-light btn-plus" type="button">+</button>
+                      </div>
                     </div>
                   </div>
                 <?php } ?>

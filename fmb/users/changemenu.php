@@ -18,8 +18,9 @@ if (in_array($action, ['change_menu', 'feedback_menu'], true) && $thali !== (str
 }
 
 // The admin action edits an arbitrary thali by design, so it needs its own
-// privilege check rather than relying on ownership.
-if ($action === 'admin_change_menu' && !user_email_in(THALISEARCH_ACCESS_EMAILS)) {
+// privilege check rather than relying on ownership. This matches the role
+// gate for thalisearch.php in _authCheck.php.
+if ($action === 'admin_change_menu' && !in_array($_SESSION['role'] ?? '', ['admin', 'superadmin'], true)) {
     header("Location: /fmb/users/index.php");
     exit;
 }
