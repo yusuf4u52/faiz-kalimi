@@ -132,7 +132,7 @@ if ($menu_item_result->num_rows > 0) {
 
                 $thaliSize[$bucket][$transporterName] += $qty;
 
-                if ($qty > 0 && $qty !== standardRotiQtyForSize($row['thalisize'])) {
+                if ($qty !== standardRotiQtyForSize($row['thalisize'])) {
                     if (!isset($rotiDetailTransporters[$transporterName])) {
                         $rotiDetails .= "<b>" . e((string) $transporterName) . "</b><br/>";
                         $rotiDetailTransporters[$transporterName] = true;
