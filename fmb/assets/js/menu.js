@@ -30,14 +30,17 @@
     const step = parseFloat($input.attr("step")) || 0.5;
     const bound = parseFloat($input.attr(direction < 0 ? "min" : "max"));
 
-    let value = parseFloat($input.val()) + direction * step;
-    value = direction < 0 ? Math.max(value, bound) : Math.min(value, bound);
+    let value = parseFloat($input.val());
+    value = Number.isFinite(value) ? value + direction * step : 0;
+    if (Number.isFinite(bound)) {
+      value = direction < 0 ? Math.max(value, bound) : Math.min(value, bound);
+    }
 
     const $opposite = $btn
       .parent()
       .find(direction < 0 ? ".btn-plus" : ".btn-minus");
     $opposite.prop("disabled", false);
-    $btn.prop("disabled", value === bound);
+    $btn.prop("disabled", Number.isFinite(bound) && value === bound);
 
     $input.val(value).trigger("change");
     return false;
