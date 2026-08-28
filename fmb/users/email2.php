@@ -12,6 +12,16 @@ require_once '_sendMail.php';
 // email to the whole recipient list on demand.
 require_cron_or_admin_access($link);
 
+// Start/stop notifications can involve many separate SMTP transactions.
+// Return the cron/browser response before processing the full recipient list.
+ignore_user_abort(true);
+set_time_limit(0);
+if (function_exists('fastcgi_finish_request')) {
+    http_response_code(202);
+    echo 'Daily email processing started.';
+    fastcgi_finish_request();
+}
+
 error_reporting(E_ALL);
 ini_set('display_errors', '0'); // don't leak DB/query details if this is ever hit over HTTP
 
