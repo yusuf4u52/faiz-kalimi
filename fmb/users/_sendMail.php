@@ -17,6 +17,11 @@ function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = nu
 {
     global $link;
     $GLOBALS['lastSendEmailError'] = null;
+    if (SMTP_USER === '' || SMTP_PASS === '') {
+        $GLOBALS['lastSendEmailError'] = 'SMTP credentials are not configured on the server.';
+        error_log('[sendEmail] SMTP credentials are not configured. Set FMB_SMTP_USER and FMB_SMTP_PASS.');
+        return false;
+    }
     $mail = new PHPMailer(true);
 
     try {
