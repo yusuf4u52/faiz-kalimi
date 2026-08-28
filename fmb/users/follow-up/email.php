@@ -85,6 +85,9 @@ while ($member = mysqli_fetch_assoc($members)) {
             <p>Was Salaam,<br><strong>FMB Khidmat Team</strong></p>
         </div>";
 
+    echo $emailBody; // For debugging purposes, you can remove this line in production
+    die;
+
     if (sendEmail($recipients, 'Reminder - FMB Hoob Pending', $emailBody)) {
         $sent++;
     } else {
