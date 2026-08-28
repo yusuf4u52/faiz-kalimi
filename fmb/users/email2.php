@@ -2,7 +2,6 @@
 include('connection.php');
 require_once('helpers.php');
 include('getHijriDate.php');
-include '../backup/_email_backup.php';
 require_once '_sendMail.php';
 //include('emailmenu.php');
 
@@ -129,7 +128,7 @@ try {
              FROM change_table AS c
              INNER JOIN thalilist AS t ON (c.userid = t.id)
              WHERE c.processed = 0
-             ORDER BY t.Transporter"
+             ORDER BY t.Transporter, t.thalisize, t.tiffinno"
         );
 
         $request = [];
@@ -360,3 +359,8 @@ try {
     error_log('[email2.php] ' . $e->getMessage());
     echo "An error occurred while processing the daily update.";
 }
+
+// Keep the database backup independent from the daily start/stop workflow.
+// The backup script reports its own success or failure and runs after the
+// notification work has completed.
+require_once __DIR__ . '/../backup/_email_backup.php';

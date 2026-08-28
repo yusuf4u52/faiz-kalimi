@@ -80,8 +80,13 @@ $emails = [
     'yusuf4u52@gmail.com',
     'moizlife@gmail.com'
 ];
-sendEmail($emails, $subject, "Please find the attachment", null, null, true, [[
+$backupSent = sendEmail($emails, $subject, "Please find the attachment", null, null, true, [[
     'data' => $content,
     'name' => $backup_name,
 ]]);
-echo "########## backup completed ##############";
+if ($backupSent) {
+    echo "########## backup email sent ##############";
+} else {
+    error_log('[backup/_email_backup.php] Backup email failed: ' . ($GLOBALS['lastSendEmailError'] ?? 'Unknown email error'));
+    echo "########## backup email failed ##############";
+}
