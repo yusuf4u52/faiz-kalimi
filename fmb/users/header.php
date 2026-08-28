@@ -10,6 +10,8 @@
         '/users/index.php' => 'Dashboard',
     ];
     $pageTitle = $pageTitle ?? ($pageTitles[$scriptPath] ?? ucwords(str_replace(['_', '-'], ' ', $pageSlug)));
+    $mainCssPath = __DIR__ . '/../assets/css/main.css';
+    $mainCssVersion = file_exists($mainCssPath) ? (string) filemtime($mainCssPath) : '1';
     ?>
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?> - FMB Kalimi</title>
     <meta charset="UTF-8">
@@ -35,7 +37,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.bootstrap5.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" />
-    <link rel="stylesheet" href="/fmb/assets/css/main.css" />
+    <link rel="stylesheet" href="/fmb/assets/css/main.css?v=<?php echo htmlspecialchars($mainCssVersion, ENT_QUOTES, 'UTF-8'); ?>" />
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const heading = document.querySelector('h1, h2');
