@@ -296,7 +296,7 @@ try {
         //$displayMessage('Sending transporter daily update to ' . count(DAILY_UPDATE_EMAILS) . ' recipients for ' . $tomorrow_date . '.');
         $mailSent = sendEmail(DAILY_UPDATE_EMAILS, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
 
-        if (!$mailSent) {
+        if ($mailSent) {
             $displayMessage('Daily start/stop email sent successfully.');
 
             foreach ($transporterDailyRows as $row) {
