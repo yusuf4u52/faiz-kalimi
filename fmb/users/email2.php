@@ -65,7 +65,8 @@ try {
 
                 $email_subject = "Thali Stop Notification";
                 $email_body = "Salaam " . e($list['NAME']) . ",<br><br>Your thali has been stopped from tomorrow till the date you selected in the FMB Website.<br><br> Note: If your thali is stopped by mistake, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
-                //sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
+                $stopEmailSent = sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
+                error_log('[email2.php] Stop email for Sabeel ' . $list['Thali'] . ': ' . ($stopEmailSent ? 'sent' : 'failed'));
             }
         }
     }
@@ -114,7 +115,8 @@ try {
 
             $email_subject = "Thali Start Notification";
             $email_body = "Salaam " . e($list['NAME']) . ",<br><br>Your thali has been started from tomorrow.<br><br>Note: If your thali is started by mistake or you wish to extend the period, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
-    //sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
+            $startEmailSent = sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
+            error_log('[email2.php] Start email for Sabeel ' . $list['Thali'] . ': ' . ($startEmailSent ? 'sent' : 'failed'));
         }
     }
 
@@ -274,7 +276,7 @@ try {
         $mailSent = sendEmail(DAILY_UPDATE_EMAILS, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
 
         if ($mailSent) {
-            echo "Email sent successfully";
+            error_log('[email2.php] Daily start/stop email sent successfully.');
 
             foreach ($transporterDailyRows as $row) {
                 // ON DUPLICATE KEY UPDATE instead of REPLACE INTO: REPLACE
@@ -363,4 +365,4 @@ try {
 // Keep the database backup independent from the daily start/stop workflow.
 // The backup script reports its own success or failure and runs after the
 // notification work has completed.
-require_once __DIR__ . '/../backup/_email_backup.php';
+//require_once __DIR__ . '/../backup/_email_backup.php';
