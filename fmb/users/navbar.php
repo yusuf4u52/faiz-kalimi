@@ -211,7 +211,7 @@ if ($curr_page !== 'events.php') {
                         <div class="row align-items-center">
                             <div class="col-9">
                                 <h6 class="mb-0">
-									Your FMB dues of <strong>₹<?php echo e(number_format((float) $values['Total_Pending'])); ?></strong> are still pending. As the sixth Miqaat, <strong>Chelum Imam Husain (AS)</strong>, has now passed, we humbly request you to kindly clear your outstanding FMB dues at the earliest. Timely payment helps us continue the smooth operation of Faiz and related services Once the payment is made, please  share the payment screenshot or receipt on <a href="https://wa.me/917499860950"><strong>+91 74998 60950</strong></a> so that we may update our records.
+									Your FMB dues of <strong>₹<?php echo e(number_format((float) $values['Total_Pending'])); ?></strong> are still pending. As the 7th Miqaat, <strong>Urus: Syedna Mohammed Burhanuddin (RA)</strong>, has now passed, we humbly request you to kindly clear your outstanding FMB dues at the earliest. Timely payment helps us continue the smooth operation of Faiz and related services Once the payment is made, please  share the payment screenshot or receipt on <a href="https://wa.me/917499860950"><strong>+91 74998 60950</strong></a>  with your Sabeel Number so that we may update our records.
 								</h6>
                             </div>
                             <div class="col-3 text-end">
