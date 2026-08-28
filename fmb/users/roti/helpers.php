@@ -6,7 +6,7 @@
  * ratios and the weekly-sheet / month-payment calculation & persistence
  * functions on top of it.
  *
- * Model: one calendar week (Monday-Sunday) is the unit of data entry.
+ * Model: one Monday-Saturday thaali week is the unit of data entry.
  * fmb_roti_distribution has (at most) one row per maker per week, keyed by
  * that week's Monday as `distribution_date`. Its `flour_left` / `oil_left`
  * columns hold that week's *Opening* Atta/Oil balance; `flour_distributed` /
@@ -81,12 +81,12 @@ function week_start_monday(string $date): string
     return $dt->format('Y-m-d');
 }
 
-/** The 7 dates (Monday..Sunday) of the week starting $weekStart. */
+/** The 6 thaali dates (Monday..Saturday) of the week starting $weekStart. */
 function week_dates(string $weekStart): array
 {
     $dates = [];
     $dt = new DateTime($weekStart);
-    for ($i = 0; $i < 7; $i++) {
+    for ($i = 0; $i < 6; $i++) {
         $dates[] = $dt->format('Y-m-d');
         $dt->modify('+1 day');
     }
@@ -381,7 +381,8 @@ function build_month_payment(mysqli $link, string $anchorDate): array
     $result = db_query(
         $link,
         "SELECT `maker_id`, COALESCE(SUM(`roti_recieved`), 0) AS total_roti FROM fmb_roti_recieved
-         WHERE `recieved_date` BETWEEN ? AND ? AND `roti_status` = 'recieved' GROUP BY `maker_id`",
+                 WHERE `recieved_date` BETWEEN ? AND ? AND `roti_status` = 'recieved'
+                     AND DAYOFWEEK(`recieved_date`) <> 1 GROUP BY `maker_id`",
         "ss",
         [$from, $to]
     );
@@ -413,7 +414,7 @@ function build_month_payment(mysqli $link, string $anchorDate): array
     ];
 }
 
-/** Build the payment report for one Monday-Sunday calendar week. */
+/** Build the payment report for one Monday-Saturday thaali week. */
 function build_week_payment(mysqli $link, string $weekDate): array
 {
     $from = week_start_monday($weekDate);
@@ -469,7 +470,8 @@ function build_maker_daily_payment(mysqli $link, int $makerId, string $weekDate)
         $link,
         "SELECT `recieved_date`, COALESCE(SUM(`roti_recieved`), 0) AS total_roti
          FROM `fmb_roti_recieved`
-         WHERE `maker_id` = ? AND `recieved_date` BETWEEN ? AND ? AND `roti_status` = 'recieved'
+                 WHERE `maker_id` = ? AND `recieved_date` BETWEEN ? AND ? AND `roti_status` = 'recieved'
+                     AND DAYOFWEEK(`recieved_date`) <> 1
          GROUP BY `recieved_date` ORDER BY `recieved_date` ASC",
         "iss",
         [$makerId, $from, $to]

@@ -48,7 +48,7 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
                         <th class="roti-col-sticky4">Opening<br>Oil (L)</th>
                         <th class="roti-col-sticky5">Given<br>Atta (KG)</th>
                         <th class="roti-col-sticky6">Given<br>Oil (L)</th>
-                        <th colspan="7" class="text-center">Roti Received (Mon – Sun)</th>
+                        <th colspan="6" class="text-center">Roti Received (Mon – Sat)</th>
                         <th class="roti-col-sticky7">Total<br>Roti</th>
                         <th class="roti-col-sticky8">Total<br>Amt (₹)</th>
                         <th class="roti-col-sticky9">Atta<br>Req (KG)</th>
@@ -60,7 +60,7 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
                         <th class="roti-col-sticky"></th>
                         <th class="roti-col-sticky2"></th>
                         <th colspan="4" class="roti-col-sticky3"></th>
-                        <!-- 7 day-of-week <th> filled in by JS -->
+                        <!-- 6 day-of-week <th> filled in by JS -->
                         <th colspan="6"></th>
                     </tr>
                 </thead>
@@ -129,7 +129,7 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
     }
 
     function buildDayHeader(dates) {
-        // Rebuild just the 7 day-of-week <th> cells in the second header row.
+        // Rebuild the six day-of-week <th> cells in the second header row.
         dayHeaderRow.innerHTML = '';
         const stickyBlank1 = document.createElement('th');
         stickyBlank1.className = 'roti-col-sticky';

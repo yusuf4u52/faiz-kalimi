@@ -2,7 +2,7 @@
 /**
  * GET /roti/api/sheet_week.php?date=YYYY-MM-DD
  *
- * Returns the single-week sheet (Monday-Sunday, containing whatever date is
+ * Returns the single-week sheet (Monday-Saturday, containing whatever date is
  * passed) as JSON: every maker's Opening/Given Atta & Oil, daily roti
  * received, and every computed total/required/closing figure — everything
  * roti/sheet.php needs to render one week.

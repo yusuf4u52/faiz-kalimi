@@ -80,6 +80,10 @@ try {
                 $errors[] = "Invalid date for maker $makerId.";
                 continue;
             }
+            if ((int) (new DateTime($date))->format('N') === 7) {
+                $errors[] = "Sunday has no thaali entry (maker $makerId).";
+                continue;
+            }
             $roti = is_numeric($edit['roti_recieved'] ?? null) ? (int) $edit['roti_recieved'] : null;
             if ($roti === null || $roti < 0) {
                 $errors[] = "Roti received can't be negative (maker $makerId, $date).";
