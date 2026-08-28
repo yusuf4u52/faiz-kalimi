@@ -12,7 +12,7 @@ require_once('../helpers.php');
                     <h2 class="mb-0">Local Current Year Pending Hoob</h2>
                     <form action="email.php" method="post" onsubmit="return confirm('Send pending amount emails to all members in this list?');">
                         <input type="hidden" name="report" value="local">
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-envelope me-1"></i>Email Members</button>
+                        <button type="submit" class="btn btn-light"><i class="bi bi-envelope me-1"></i>Email Members</button>
                     </form>
                 </div>
                 <?php if (!empty($_GET['status'])) { ?>
