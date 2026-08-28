@@ -56,6 +56,7 @@
                 </script>
                 <script type="text/javascript" src="/fmb/assets/js/pulltorefresh-sw.js" defer></script>
                 <script type="text/javascript" src="/fmb/assets/js/main.js" defer></script>
+                <script type="text/javascript" src="/fmb/assets/js/follow-up-email.js?v=<?php echo (int) filemtime(__DIR__ . '/../assets/js/follow-up-email.js'); ?>" defer></script>
                 <script type="text/javascript" src="/fmb/assets/js/menu.js?v=<?php echo (int) filemtime(__DIR__ . '/../assets/js/menu.js'); ?>" defer></script>
                 </body>
 

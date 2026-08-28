@@ -13,6 +13,9 @@ if (!user_email_in(FOLLOW_UP_ACCESS_EMAILS)) {
 }
 
 $report = (string) ($_POST['report'] ?? '');
+$batchMode = isset($_POST['batch']);
+$batchSize = min(5, max(1, (int) ($_POST['batch_size'] ?? 5)));
+$offset = max(0, (int) ($_POST['offset'] ?? 0));
 $reports = [
     'local' => [
         'title' => 'Local Current Year Pending Hoob',
@@ -29,30 +32,29 @@ $reports = [
 ];
 
 if (!isset($reports[$report])) {
+    if ($batchMode) {
+        header('Content-Type: application/json');
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'message' => 'Invalid email report.']);
+        exit;
+    }
     header('Location: local.php?status=' . urlencode('Invalid email report.'));
     exit;
 }
-
-// Do not keep the browser/proxy waiting for one SMTP transaction per member.
-// The authenticated PHP request continues after the response is flushed.
-ignore_user_abort(true);
-set_time_limit(0);
 
 $query = "SELECT NAME, ITS_No, Thali, Email_ID, SEmail_ID, Previous_Due,
                  (Previous_Due + yearly_hub - Paid) AS Total_Pending
           FROM thalilist
           WHERE {$reports[$report]['where']}
-          ORDER BY Total_Pending DESC";
-$members = db_query($link, $query);
+          ORDER BY Total_Pending DESC
+          LIMIT ?, ?";
+$members = db_query($link, $query, 'ii', [$offset, $batchSize]);
 $sent = 0;
 $failed = 0;
 
-if (function_exists('fastcgi_finish_request')) {
-    header('Location: ' . $report . '.php?status=' . urlencode('Email sending started in the background.'));
-    fastcgi_finish_request();
-}
-
+$processed = 0;
 while ($member = mysqli_fetch_assoc($members)) {
+    $processed++;
     $recipients = [];
     foreach ([$member['Email_ID'], $member['SEmail_ID']] as $email) {
         $email = trim((string) $email);
@@ -102,6 +104,19 @@ while ($member = mysqli_fetch_assoc($members)) {
     } else {
         $failed++;
     }
+}
+
+$hasMore = $processed === $batchSize;
+if ($batchMode) {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'ok' => true,
+        'sent' => $sent,
+        'failed' => $failed,
+        'next_offset' => $offset + $processed,
+        'has_more' => $hasMore,
+    ]);
+    exit;
 }
 
 $status = sprintf('%d email(s) sent, %d failed.', $sent, $failed);

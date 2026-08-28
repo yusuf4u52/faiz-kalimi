@@ -10,7 +10,7 @@ require_once('../helpers.php');
             <div class="col-12">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                     <h2 class="mb-0">Previous Year Pending Hoob</h2>
-                    <form action="email.php" method="post" onsubmit="return confirm('Send pending amount emails to all members in this list?');">
+                    <form action="email.php" method="post" data-follow-up-email>
                         <input type="hidden" name="report" value="previous">
                         <button type="submit" class="btn btn-light"><i class="bi bi-envelope me-1"></i>Email Members</button>
                     </form>
