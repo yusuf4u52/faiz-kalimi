@@ -131,10 +131,12 @@ if ($menu_item_result->num_rows > 0) {
                 $isRotiItem = strcasecmp(trim((string) $roti), 'Roti') === 0;
                 $userOverride = $overridesByThaliId[$row['id']] ?? null;
                 if (!$isRotiItem) {
-                    if ($userOverride === null || strcasecmp($userOverride['item'], trim((string) $roti)) !== 0) {
-                        continue;
+                    // The final Pav count follows menu_list for every active
+                    // thali, with a matching user_menu quantity overriding it.
+                    $qty = $originalQty;
+                    if ($userOverride !== null && strcasecmp($userOverride['item'], trim((string) $roti)) === 0) {
+                        $qty = max(0, $userOverride['qty']);
                     }
-                    $qty = max(0, $userOverride['qty']);
                 } else {
                     if ($userOverride !== null && strcasecmp($userOverride['item'], 'Roti') !== 0) {
                         $userOverride = null;
