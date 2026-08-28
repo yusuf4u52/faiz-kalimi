@@ -11,11 +11,16 @@ require_once '_sendMail.php';
 // email to the whole recipient list on demand.
 require_cron_or_admin_access($link);
 
+$debug = isset($_GET['debug']) && $_GET['debug'] === '1';
+$displayMessage = static function (string $message): void {
+    echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . "<br>\n";
+};
+
 // Start/stop notifications can involve many separate SMTP transactions.
 // Return the cron/browser response before processing the full recipient list.
 ignore_user_abort(true);
 set_time_limit(0);
-if (function_exists('fastcgi_finish_request')) {
+if (!$debug && function_exists('fastcgi_finish_request')) {
     http_response_code(202);
     echo 'Daily email processing started.';
     fastcgi_finish_request();
@@ -65,8 +70,8 @@ try {
 
                 $email_subject = "Thali Stop Notification";
                 $email_body = "Salaam " . e($list['NAME']) . ",<br><br>Your thali has been stopped from tomorrow till the date you selected in the FMB Website.<br><br> Note: If your thali is stopped by mistake, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
-                $stopEmailSent = sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
-                error_log('[email2.php] Stop email for Sabeel ' . $list['Thali'] . ': ' . ($stopEmailSent ? 'sent' : 'failed'));
+                // $stopEmailSent = sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
+                $displayMessage('Stop email for Sabeel ' . $list['Thali'] . ': disabled');
             }
         }
     }
@@ -115,13 +120,14 @@ try {
 
             $email_subject = "Thali Start Notification";
             $email_body = "Salaam " . e($list['NAME']) . ",<br><br>Your thali has been started from tomorrow.<br><br>Note: If your thali is started by mistake or you wish to extend the period, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
-            $startEmailSent = sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
-            error_log('[email2.php] Start email for Sabeel ' . $list['Thali'] . ': ' . ($startEmailSent ? 'sent' : 'failed'));
+            // $startEmailSent = sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
+            $displayMessage('Start email for Sabeel ' . $list['Thali'] . ': disabled');
         }
     }
 
     // --- Daily change/thali-count report for tomorrow ---
     $menu_item = db_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = ? AND `menu_type` = 'thaali'", "s", [$tomorrow_date]);
+    $displayMessage('Tomorrow menu check: date=' . $tomorrow_date . ', thaali_rows=' . $menu_item->num_rows);
 
     if ($menu_item->num_rows > 0) {
         $sql = db_query(
@@ -273,10 +279,11 @@ try {
         $total_registered_thali = $pivot["total"]["total"] + $registeredNotActiveCount;
         $msg .= "<br><strong>Total Registered Thali: " . e((string) $total_registered_thali) . "</strong>";
 
+        $displayMessage('Sending transporter daily update to ' . count(DAILY_UPDATE_EMAILS) . ' recipients for ' . $tomorrow_date . '.');
         $mailSent = sendEmail(DAILY_UPDATE_EMAILS, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
 
         if ($mailSent) {
-            error_log('[email2.php] Daily start/stop email sent successfully.');
+            $displayMessage('Daily start/stop email sent successfully.');
 
             foreach ($transporterDailyRows as $row) {
                 // ON DUPLICATE KEY UPDATE instead of REPLACE INTO: REPLACE
@@ -345,12 +352,15 @@ try {
                 $in = build_in_clause($processed, 'i');
                 db_query($link, "UPDATE change_table SET processed = 1 WHERE id IN " . $in['sql'], $in['types'], $in['params']);
             }
+        } else {
+            $displayMessage('Daily transporter update email failed: ' . ($GLOBALS['lastSendEmailError'] ?? 'Unknown email error'));
         }
 
             // Send the edited-menu and transporter-wise roti reports after the
             // scheduled stop/start changes above have updated Active status.
             //include __DIR__ . '/emailmenu.php';
     } else {
+        $displayMessage('No thaali menu found for ' . $tomorrow_date . '; sending skip notice instead of transporter update.');
         $skipmsg = "Skipping email as no thali available for " . e($tomorrow_date) . ".";
         $smailSent = sendEmail(SKIP_NOTICE_EMAILS, 'No Thaali Update ' . $tomorrow_date, $skipmsg, null, null, true);
         if ($smailSent) {
@@ -358,7 +368,7 @@ try {
         }
     }
 } catch (Throwable $e) {
-    error_log('[email2.php] ' . $e->getMessage());
+    $displayMessage('Error: ' . $e->getMessage());
     echo "An error occurred while processing the daily update.";
 }
 
