@@ -11,7 +11,7 @@ if (!DateTime::createFromFormat('Y-m-d', $tomorrow_date)) {
 
 $day = date('l', strtotime($tomorrow_date));
 
-// Default quantity for a given thalisize, from the day's base menu.
+// Default menu quantity for a given thalisize, from the day's base menu.
 // Friday/Barnamaj thalis use the "small" quantity, and thalis with no
 // recognised size (including the standalone "Roti" thalisize) default to 1.
 function defaultRotiQtyForSize(?string $thalisize, int $mini, int $small, int $medium, int $large): int
@@ -51,7 +51,7 @@ function standardRotiQtyForSize(?string $thalisize): int
 }
 
 /**
- * Effective quantity for one thali: the user's own customization (if
+ * Effective menu quantity for one thali: the user's own customization (if
  * they saved one) from $overridesByThaliId, otherwise the day's default
  * for their size. $overridesByThaliId is built with a single query up
  * front instead of one query per thali.
@@ -81,10 +81,10 @@ if ($menu_item_result->num_rows > 0) {
         $overrideResult = db_query($link, "SELECT thali, menu_item FROM user_menu WHERE menu_date = ?", "s", [$tomorrow_date]);
         while ($row = mysqli_fetch_assoc($overrideResult)) {
             $item = decode_menu_item($row['menu_item']);
-            if (!empty($item['roti']['item'])) {
+            if (!empty($item['roti']['item']) && isset($item['roti']['qty'])) {
                 $overridesByThaliId[$row['thali']] = [
                     'item' => trim((string) $item['roti']['item']),
-                    'qty' => isset($item['roti']['qty']) ? (int) $item['roti']['qty'] : 0,
+                    'qty' => (int) $item['roti']['qty'],
                 ];
             }
         }
@@ -124,15 +124,13 @@ if ($menu_item_result->num_rows > 0) {
             while ($row = mysqli_fetch_assoc($thaliRows)) {
                 $bucket = rotiBucketForSize($row['thalisize']);
                 if (!in_array($bucket, $buckets, true)) {
-                    continue; // Ignore thali sizes that have no report bucket.
+                    continue; // e.g. a 'Roti' thalisize thali on a day the roti item isn't literally "Roti"
                 }
 
-                $defaultQty = defaultRotiQtyForSize($row['thalisize'], $mini, $small, $medium, $large);
-                $userOverride = $overridesByThaliId[$row['id']] ?? null;
+                $originalQty = defaultRotiQtyForSize($row['thalisize'], $mini, $small, $medium, $large);
                 $isRotiItem = strcasecmp(trim((string) $roti), 'Roti') === 0;
+                $userOverride = $overridesByThaliId[$row['id']] ?? null;
                 if (!$isRotiItem) {
-                    // Pav and other non-Roti items are prepared only for
-                    // thalis whose user_menu explicitly selected that item.
                     if ($userOverride === null || strcasecmp($userOverride['item'], trim((string) $roti)) !== 0) {
                         continue;
                     }
@@ -141,9 +139,7 @@ if ($menu_item_result->num_rows > 0) {
                     if ($userOverride !== null && strcasecmp($userOverride['item'], 'Roti') !== 0) {
                         $userOverride = null;
                     }
-                    if ($isRotiItem) {
-                        $defaultQty += max(0, (int) ($row['extraRoti'] ?? 0));
-                    }
+                    $defaultQty = $originalQty + max(0, (int) ($row['extraRoti'] ?? 0));
                     $qty = effectiveRotiQty(
                         $userOverride === null ? [] : [$row['id'] => $userOverride['qty']],
                         $row['id'],
@@ -153,12 +149,15 @@ if ($menu_item_result->num_rows > 0) {
 
                 $thaliSize[$bucket][$transporterName] += $qty;
 
-                if (!$isRotiItem || $qty !== standardRotiQtyForSize($row['thalisize'])) {
+                $wasQuantityEdited = $userOverride !== null
+                    && strcasecmp($userOverride['item'], (string) $roti) === 0
+                    && $userOverride['qty'] !== $originalQty;
+                if ($wasQuantityEdited) {
                     if (!isset($rotiDetailTransporters[$transporterName])) {
                         $rotiDetails .= "<b>" . e((string) $transporterName) . "</b><br/>";
                         $rotiDetailTransporters[$transporterName] = true;
                     }
-                    $rotiDetails .= "<b>" . e((string) $qty) . " " . e($roti) . "</b> - ";
+                    $rotiDetails .= "<b>" . e((string) $qty) . " " . e((string) $roti) . "</b> - ";
                     $detailFields = [
                         $row['tiffinno'],
                         $row['thalisize'],
@@ -209,12 +208,12 @@ if ($menu_item_result->num_rows > 0) {
             $totalCount = $totalSizeCount ?? 0;
         }
 
-        echo $msgroti .= "<br/><b>Total " . e($roti) . " Count is " . e((string) $totalCount) . "</b>";
+        $msgroti .= "<br/><b>Total " . e($roti) . " Count is " . e((string) $totalCount) . "</b>";
 
         $subject = $roti . ' update ' . $tomorrow_date;
         sendEmail(ROTI_UPDATE_EMAILS, $subject, $msgroti, null, null, true);
     } else {
-        echo "Tomorrow no " . e($roti) . ".";
+        echo "Tomorrow no roti.";
     }
 } else {
     echo "Skipping email as no thali on Miqaat or any other reason.";
