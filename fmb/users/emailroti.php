@@ -205,7 +205,9 @@ if ($menu_item_result->num_rows > 0) {
             $totalCount += array_sum($thaliSize["no size"]) * 2;
             $totalCount += array_sum($thaliSize["roti"]) * 4;
         } else {
-            $totalCount = $totalSizeCount ?? 0;
+            // Non-Roti items such as Pav use the edited quantity from each
+            // member; aggregate all transporters, not only the last one.
+            $totalCount = array_sum($thaliSize['Total'] ?? []);
         }
 
         echo $msgroti .= "<br/><b>Total " . e($roti) . " Count is " . e((string) $totalCount) . "</b>";
