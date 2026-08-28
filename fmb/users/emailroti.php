@@ -188,7 +188,7 @@ if ($menu_item_result->num_rows > 0) {
             $totalCount = $totalSizeCount ?? 0;
         }
 
-        $msgroti .= "<br/><b>Total " . e($roti) . " Count is " . e((string) $totalCount) . "</b>";
+        echo $msgroti .= "<br/><b>Total " . e($roti) . " Count is " . e((string) $totalCount) . "</b>";
 
         $subject = $roti . ' update ' . $tomorrow_date;
         sendEmail(ROTI_UPDATE_EMAILS, $subject, $msgroti, null, null, true);

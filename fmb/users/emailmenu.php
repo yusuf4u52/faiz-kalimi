@@ -158,6 +158,8 @@ if ($menu_item_result->num_rows > 0) {
     $msgmenu .= '</td>
 	<table>';
 
+    echo $msgmenu;
+
     sendEmail(MENU_UPDATE_EMAILS, 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
 
     if (isset($_GET['menu_date'])) {

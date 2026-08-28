@@ -16,6 +16,20 @@ $displayMessage = static function (string $message): void {
     echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . "<br>\n";
 };
 
+$email2LockHandle = fopen(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'fmb-email2.lock', 'c');
+if ($email2LockHandle === false || !flock($email2LockHandle, LOCK_EX | LOCK_NB)) {
+    if ($email2LockHandle !== false) {
+        fclose($email2LockHandle);
+    }
+    http_response_code(409);
+    $displayMessage('Daily email processing is already running. Please wait for it to finish before trying again.');
+    exit;
+}
+register_shutdown_function(static function () use ($email2LockHandle): void {
+    flock($email2LockHandle, LOCK_UN);
+    fclose($email2LockHandle);
+});
+
 // Start/stop notifications can involve many separate SMTP transactions.
 // Return the cron/browser response before processing the full recipient list.
 ignore_user_abort(true);
@@ -277,7 +291,7 @@ try {
         );
         $registeredNotActiveCount = (int) (mysqli_fetch_assoc($registered_but_not_active)['cnt'] ?? 0);
         $total_registered_thali = $pivot["total"]["total"] + $registeredNotActiveCount;
-        $msg .= "<br><strong>Total Registered Thali: " . e((string) $total_registered_thali) . "</strong>";
+        echo $msg .= "<br><strong>Total Registered Thali: " . e((string) $total_registered_thali) . "</strong>";
 
         $displayMessage('Sending transporter daily update to ' . count(DAILY_UPDATE_EMAILS) . ' recipients for ' . $tomorrow_date . '.');
         $mailSent = sendEmail(DAILY_UPDATE_EMAILS, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
