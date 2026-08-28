@@ -27,6 +27,7 @@ function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = nu
         $mail->Password   = SMTP_PASS;
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
+        $mail->Timeout    = 20;
 
         // From and To
         $mail->setFrom(SMTP_USER);

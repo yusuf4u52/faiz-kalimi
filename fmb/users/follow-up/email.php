@@ -33,6 +33,11 @@ if (!isset($reports[$report])) {
     exit;
 }
 
+// Do not keep the browser/proxy waiting for one SMTP transaction per member.
+// The authenticated PHP request continues after the response is flushed.
+ignore_user_abort(true);
+set_time_limit(0);
+
 $query = "SELECT NAME, ITS_No, Thali, Email_ID, SEmail_ID, Previous_Due,
                  (Previous_Due + yearly_hub - Paid) AS Total_Pending
           FROM thalilist
@@ -41,6 +46,11 @@ $query = "SELECT NAME, ITS_No, Thali, Email_ID, SEmail_ID, Previous_Due,
 $members = db_query($link, $query);
 $sent = 0;
 $failed = 0;
+
+if (function_exists('fastcgi_finish_request')) {
+    header('Location: ' . $report . '.php?status=' . urlencode('Email sending started in the background.'));
+    fastcgi_finish_request();
+}
 
 while ($member = mysqli_fetch_assoc($members)) {
     $recipients = [];
