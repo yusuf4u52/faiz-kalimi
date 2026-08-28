@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
         let offset = 0;
         let sent = 0;
         let failed = 0;
+        let invalidRecipients = 0;
+        let smtpFailures = 0;
+        const failureExamples = [];
 
         try {
           do {
@@ -53,6 +56,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             sent += Number(result.sent || 0);
             failed += Number(result.failed || 0);
+            invalidRecipients += Number(result.invalid_recipients || 0);
+            smtpFailures += Number(result.smtp_failures || 0);
+            if (Array.isArray(result.failure_examples)) {
+              failureExamples.push(...result.failure_examples);
+            }
             offset = Number(result.next_offset || offset);
             status.textContent =
               "Sending emails... " + sent + " sent, " + failed + " failed.";
@@ -63,7 +71,22 @@ document.addEventListener("DOMContentLoaded", function () {
           } while (true);
 
           status.className = "alert alert-success mt-2";
-          status.textContent = sent + " email(s) sent, " + failed + " failed.";
+          status.textContent =
+            sent +
+            " sent, " +
+            failed +
+            " failed (" +
+            invalidRecipients +
+            " missing/invalid address, " +
+            smtpFailures +
+            " SMTP failure).";
+          if (failureExamples.length > 0) {
+            status.textContent +=
+              " Sabeel " +
+              failureExamples[0].sabeel +
+              ": " +
+              failureExamples[0].error;
+          }
         } catch (error) {
           status.className = "alert alert-danger mt-2";
           status.textContent =

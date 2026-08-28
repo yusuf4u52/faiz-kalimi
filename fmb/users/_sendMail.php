@@ -16,6 +16,7 @@ require_once __DIR__ . '/connection.php';
 function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = null, ?array $bcc = null, bool $isHtml = true, ?array $attachments = null): bool
 {
     global $link;
+    $GLOBALS['lastSendEmailError'] = null;
     $mail = new PHPMailer(true);
 
     try {
@@ -55,7 +56,9 @@ function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = nu
         $mail->smtpClose();
         return true;
     } catch (Throwable $e) {
-        error_log('[sendEmail] PHPMailer error: ' . $mail->ErrorInfo);
+        $error = $mail->ErrorInfo !== '' ? $mail->ErrorInfo : $e->getMessage();
+        $GLOBALS['lastSendEmailError'] = $error;
+        error_log('[sendEmail] PHPMailer error: ' . $error . ' | recipients: ' . implode(', ', $to));
         return false;
     }
 }

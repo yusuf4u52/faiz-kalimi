@@ -51,6 +51,9 @@ $query = "SELECT NAME, ITS_No, Thali, Email_ID, SEmail_ID, Previous_Due,
 $members = db_query($link, $query, 'ii', [$offset, $batchSize]);
 $sent = 0;
 $failed = 0;
+$invalidRecipients = 0;
+$smtpFailures = 0;
+$failureExamples = [];
 
 $processed = 0;
 while ($member = mysqli_fetch_assoc($members)) {
@@ -65,6 +68,7 @@ while ($member = mysqli_fetch_assoc($members)) {
 
     if ($recipients === []) {
         $failed++;
+        $invalidRecipients++;
         continue;
     }
 
@@ -103,6 +107,13 @@ while ($member = mysqli_fetch_assoc($members)) {
         $sent++;
     } else {
         $failed++;
+        $smtpFailures++;
+        if (count($failureExamples) < 3) {
+            $failureExamples[] = [
+                'sabeel' => (string) $member['Thali'],
+                'error' => (string) ($GLOBALS['lastSendEmailError'] ?? 'Unknown SMTP error'),
+            ];
+        }
     }
 }
 
@@ -113,6 +124,9 @@ if ($batchMode) {
         'ok' => true,
         'sent' => $sent,
         'failed' => $failed,
+        'invalid_recipients' => $invalidRecipients,
+        'smtp_failures' => $smtpFailures,
+        'failure_examples' => $failureExamples,
         'next_offset' => $offset + $processed,
         'has_more' => $hasMore,
     ]);
