@@ -8,7 +8,16 @@ require_once('../helpers.php');
     <div class="card-body">
         <div class="row">
             <div class="col-12">
-                <h2 class="mb-3">Previous Year Pending Hoob</h2>
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <h2 class="mb-0">Previous Year Pending Hoob</h2>
+                    <form action="email.php" method="post" onsubmit="return confirm('Send pending amount emails to all members in this list?');">
+                        <input type="hidden" name="report" value="previous">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-envelope me-1"></i>Email Members</button>
+                    </form>
+                </div>
+                <?php if (!empty($_GET['status'])) { ?>
+                    <div class="alert alert-info" role="alert"><?php echo e($_GET['status']); ?></div>
+                <?php } ?>
                 <?php $pendinghoob = db_query($link, "SELECT * FROM thalilist WHERE Previous_Due > 4 AND thalisize IS NOT NULL AND hardstop != 1 ORDER BY Previous_Due DESC");
                 if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
