@@ -50,9 +50,8 @@
                             <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Roti Management</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/fmb/users/roti/maker.php">Roti Maker</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/roti/distribute.php">Distribution</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/roti/recieved.php">Recieved</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/roti/report.php">Report</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/roti/sheet.php">Roti Sheet</a></li>
+                                <li><a class="dropdown-item" href="/fmb/users/roti/payment.php">Roti Payment</a></li>
                             </ul>
                         </li>
                     <?php } ?>
@@ -63,7 +62,6 @@
                                 <li><a class="dropdown-item" href="/fmb/users/transporter/list.php">Transporter</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/transporter/activethali.php">Active Thali</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/transporter/inactivethali.php">Inactive Thali</a></li>
-                                <li><a class="dropdown-item" href="/fmb/users/transporter/thalicount.php">Thali Count</a></li>
                                 <li><a class="dropdown-item" href="/fmb/users/transporter/report.php">Report</a></li>
                             </ul>
                         </li>
