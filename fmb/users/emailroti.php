@@ -212,7 +212,7 @@ if ($menu_item_result->num_rows > 0) {
             $totalCount = array_sum($thaliSize['Total'] ?? []);
         }
 
-        echo $msgroti .= "<br/><b>Total " . e($roti) . " Count is " . e((string) $totalCount) . "</b>";
+        $msgroti .= "<br/><b>Total " . e($roti) . " Count is " . e((string) $totalCount) . "</b>";
 
         $subject = $roti . ' update ' . $tomorrow_date;
         sendEmail(ROTI_UPDATE_EMAILS, $subject, $msgroti, null, null, true);
