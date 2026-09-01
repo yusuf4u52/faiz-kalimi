@@ -51,7 +51,7 @@ require_once('../helpers.php');
                                         <td><strong><?php echo e((string) ($values['Total_Pending'] ?? '')); ?></strong></td>
                                         <td><?php echo e($values['Paid %']); ?>%</td>
                                         <td><?php echo e($values['thalisize']); ?></td>
-                                        <td><?php echo e($values['Sabeel Type']); ?></td>
+                                        <td><?php echo e($values['sabeelType']); ?></td>
                                         <td><?php echo e($values['Transporter']); ?></td>
                                     </tr>
                                 <?php } ?>
