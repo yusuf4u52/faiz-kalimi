@@ -85,7 +85,6 @@ try {
                 $email_subject = "Thali Stop Notification";
                 $email_body = "Salaam " . e($list['NAME']) . ",<br><br>Your thali has been stopped from tomorrow till the date you selected in the FMB Website.<br><br> Note: If your thali is stopped by mistake, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
                 $stopEmailSent = sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
-                //$displayMessage('Stop email for Sabeel ' . $list['Thali'] . ': disabled');
             }
         }
     }
@@ -135,13 +134,11 @@ try {
             $email_subject = "Thali Start Notification";
             $email_body = "Salaam " . e($list['NAME']) . ",<br><br>Your thali has been started from tomorrow.<br><br>Note: If your thali is started by mistake or you wish to extend the period, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
             $startEmailSent = sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
-            //$displayMessage('Start email for Sabeel ' . $list['Thali'] . ': disabled');
         }
     }
 
     // --- Daily change/thali-count report for tomorrow ---
     $menu_item = db_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = ? AND `menu_type` = 'thaali'", "s", [$tomorrow_date]);
-    //$displayMessage('Tomorrow menu check: date=' . $tomorrow_date . ', thaali_rows=' . $menu_item->num_rows);
 
     if ($menu_item->num_rows > 0) {
         $sql = db_query(
@@ -293,8 +290,10 @@ try {
         $total_registered_thali = $pivot["total"]["total"] + $registeredNotActiveCount;
         $msg .= "<br><strong>Total Registered Thali: " . e((string) $total_registered_thali) . "</strong>";
 
-        //$displayMessage('Sending transporter daily update to ' . count(DAILY_UPDATE_EMAILS) . ' recipients for ' . $tomorrow_date . '.');
-        $mailSent = sendEmail(DAILY_UPDATE_EMAILS, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
+        $mailSent = false;
+        if (!empty($processed) || !empty($request)) {
+            $mailSent = sendEmail(DAILY_UPDATE_EMAILS, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
+        }
 
         if ($mailSent) {
             $displayMessage('Daily start/stop email sent successfully.');
