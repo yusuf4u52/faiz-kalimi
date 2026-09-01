@@ -257,15 +257,7 @@ table.table.table-striped thead > tr > th {
 #roti-sheet-table td.roti-col-sticky,
 #roti-sheet-table th.roti-col-sticky,
 #roti-sheet-table td.roti-col-sticky2,
-#roti-sheet-table th.roti-col-sticky2,
-#roti-sheet-table td.roti-col-sticky3,
-#roti-sheet-table th.roti-col-sticky3,
-#roti-sheet-table td.roti-col-sticky4,
-#roti-sheet-table th.roti-col-sticky4,
-#roti-sheet-table td.roti-col-sticky5,
-#roti-sheet-table th.roti-col-sticky5,
-#roti-sheet-table td.roti-col-sticky6,
-#roti-sheet-table th.roti-col-sticky6 {
+#roti-sheet-table th.roti-col-sticky2 {
   position: sticky;
   background: #fff;
   z-index: 2;
@@ -283,45 +275,81 @@ table.table.table-striped thead > tr > th {
 }
 
 #roti-sheet-table td.roti-col-sticky3,
-#roti-sheet-table th.roti-col-sticky3 {
-  left: 166px;
-  min-width: 102px;
-}
-
+#roti-sheet-table th.roti-col-sticky3,
 #roti-sheet-table td.roti-col-sticky4,
-#roti-sheet-table th.roti-col-sticky4 {
-  left: 268px;
-  min-width: 92px;
-}
-
+#roti-sheet-table th.roti-col-sticky4,
 #roti-sheet-table td.roti-col-sticky5,
-#roti-sheet-table th.roti-col-sticky5 {
-  left: 360px;
-  min-width: 102px;
-}
-
+#roti-sheet-table th.roti-col-sticky5,
 #roti-sheet-table td.roti-col-sticky6,
 #roti-sheet-table th.roti-col-sticky6 {
-  left: 462px;
-  min-width: 92px;
+  position: static;
+  left: auto;
+  box-shadow: none;
 }
 
 #roti-sheet-table thead th.roti-col-sticky,
-#roti-sheet-table thead th.roti-col-sticky2,
-#roti-sheet-table thead th.roti-col-sticky3,
-#roti-sheet-table thead th.roti-col-sticky4,
-#roti-sheet-table thead th.roti-col-sticky5,
-#roti-sheet-table thead th.roti-col-sticky6 {
+#roti-sheet-table thead th.roti-col-sticky2 {
   z-index: 4;
 }
 
 #roti-sheet-table tbody tr:nth-child(even) td.roti-col-sticky,
-#roti-sheet-table tbody tr:nth-child(even) td.roti-col-sticky2,
-#roti-sheet-table tbody tr:nth-child(even) td.roti-col-sticky3,
-#roti-sheet-table tbody tr:nth-child(even) td.roti-col-sticky4,
-#roti-sheet-table tbody tr:nth-child(even) td.roti-col-sticky5,
-#roti-sheet-table tbody tr:nth-child(even) td.roti-col-sticky6 {
+#roti-sheet-table tbody tr:nth-child(even) td.roti-col-sticky2 {
   background: #f1f7f5;
+}
+
+#roti-sheet-table_wrapper .dt-layout-row,
+#roti-sheet-table_wrapper .dt-search,
+#roti-sheet-table_wrapper .dataTables_filter,
+#roti-sheet-table_wrapper .dt-filter {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+#roti-sheet-table_wrapper .dt-layout-row {
+  padding-top: 0.25rem;
+  padding-bottom: 0.5rem;
+}
+
+#roti-sheet-table_wrapper .dt-search input,
+#roti-sheet-table_wrapper .dataTables_filter input {
+  background: #fff;
+}
+
+@media (max-width: 767.98px) {
+  #roti-sheet-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #roti-sheet-table td.roti-col-sticky,
+  #roti-sheet-table th.roti-col-sticky {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    box-shadow: 2px 0 0 rgba(61, 115, 115, 0.18);
+    background: #fff;
+  }
+
+  #roti-sheet-table td.roti-col-sticky2,
+  #roti-sheet-table th.roti-col-sticky2 {
+    position: static;
+    left: auto;
+    z-index: auto;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  #roti-sheet-table thead th.roti-col-sticky,
+  #roti-sheet-table thead th.roti-col-sticky2 {
+    position: sticky;
+    z-index: 4;
+  }
+
+  #roti-sheet-table thead th.roti-col-sticky2 {
+    position: static;
+    z-index: auto;
+  }
 }
 
 .roti-input {

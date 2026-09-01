@@ -4,7 +4,7 @@ include('../navbar.php');
 require_once('helpers.php');
 include('../getHijriDate.php');
 
-$view = ($_GET['view'] ?? 'month') === 'week' ? 'week' : 'month';
+$view = ($_GET['view'] ?? 'week') === 'week' ? 'week' : 'month';
 $monthValue = (string) ($_GET['month_date'] ?? date('Y-m'));
 $weekValue = (string) ($_GET['week_date'] ?? date('o-\\WW'));
 $isValidMonth = preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $monthValue) === 1;
@@ -59,7 +59,7 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                 <h2 class="mb-3">
                     Roti Maker Payment Report
                     <?php if ($payment) { ?>
-                        for <?php echo e($view === 'month' ? $payment['month_label'] : $payment['from'] . ' to ' . $payment['to']); ?>
+                        for <?php echo e($view === 'month' ? $payment['month_label'] : date('d-m-Y', strtotime($payment['from'])) . ' to ' . date('d-m-Y', strtotime($payment['to']))); ?>
                     <?php } ?>
                 </h2>
             </div>
@@ -117,7 +117,7 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                 <div class="col-12 col-md-4 mb-2">
                     <div class="card bg-light">
                         <div class="card-body py-3">
-                            <div class="text-muted small">Total Roti Made (<?php echo $view === 'week' ? 'Week' : 'Month'; ?>: <?php echo e($payment['from']); ?> to <?php echo e($payment['to']); ?>)</div>
+                            <div class="text-muted small">Total Roti Made (<?php echo $view === 'week' ? 'Week' : 'Month'; ?>: <?php echo e(date('d-m-Y', strtotime($payment['from']))); ?> to <?php echo e(date('d-m-Y', strtotime($payment['to']))); ?>)</div>
                             <div class="fs-4 fw-bold"><?php echo (int) $totalRoti; ?></div>
                         </div>
                     </div>
@@ -141,7 +141,7 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
             </div>
 
             <div class="table-responsive mb-3">
-                <table class="table table-striped table-hover display" style="width:100%">
+                <table id="paymentreport" class="table table-striped table-hover" style="width:100%">
                     <thead>
                         <tr>
                             <?php if ($selectedMakerId !== null) { ?>
@@ -162,7 +162,15 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($payment['rows'] as $row) { ?>
+                        <?php foreach ($payment['rows'] as $row) {
+                            // Skip Sundays when viewing weekly report by maker
+                            if ($selectedMakerId !== null && $view === 'week') {
+                                $dayOfWeek = date('w', strtotime($row['date']));
+                                if ($dayOfWeek == 0) { // 0 = Sunday
+                                    continue;
+                                }
+                            }
+                        ?>
                             <tr>
                                 <?php if ($selectedMakerId !== null) { ?>
                                     <td><?php echo e($view === 'week'

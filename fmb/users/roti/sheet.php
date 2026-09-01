@@ -5,7 +5,7 @@ require_once('helpers.php');
 include('../getHijriDate.php');
 
 // Load the current Monday first; navigation happens client-side afterward.
-$initialWeekStart = week_start_monday(date('Y-m-d'));
+$initialWeekStart = week_start_sunday(date('Y-m-d'));
 $currentDate = date('Y-m-d');
 $currentHijriFullDate = getHijriFullDate($currentDate);
 $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
@@ -92,7 +92,7 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
     function updateNextWeekButton() {
         const today = new Date();
         const saturdayOrLater = today.getDay() === 6 || today.getDay() === 0;
-        const currentWeekStart = addDays(localIsoDate(), 1 - (today.getDay() || 7));
+        const currentWeekStart = addDays(localIsoDate(), -today.getDay());
         const isCurrentWeek = currentWeek && currentWeek.week_start === currentWeekStart;
         const canLoadNextWeek = !isCurrentWeek || saturdayOrLater;
 
@@ -128,8 +128,34 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
         return d.toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' });
     }
 
+    function formatDisplayDate(iso) {
+        const d = new Date(iso + 'T00:00:00');
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return day + '-' + month + '-' + year;
+    }
+
+    function formatDisplayHijriDate(iso) {
+        if (!iso || typeof iso !== 'string') return '';
+        const parts = iso.split('-');
+        if (parts.length !== 3) return iso;
+        const [year, month, day] = parts;
+        return `${day}-${month}-${year}`;
+    }
+
+    function formatDisplayHijriRange(label) {
+        if (!label || typeof label !== 'string') return label || '';
+        return label
+            .split(' – ')
+            .map((part) => formatDisplayHijriDate(part.trim()))
+            .join(' – ');
+    }
+
     function buildDayHeader(dates) {
-        // Rebuild the six day-of-week <th> cells in the second header row.
+        // Rebuild the visible day-of-week <th> cells in the second header row.
+        // Only hide Sunday when the underlying data actually contains a 7-day week.
+        const visibleDates = dates.length > 6 ? dates.slice(1) : dates;
         dayHeaderRow.innerHTML = '';
         const stickyBlank1 = document.createElement('th');
         stickyBlank1.className = 'roti-col-sticky';
@@ -140,7 +166,7 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
         const blank4 = document.createElement('th');
         blank4.colSpan = 4;
         dayHeaderRow.appendChild(blank4);
-        dates.forEach((d) => {
+        visibleDates.forEach((d) => {
             const th = document.createElement('th');
             th.innerHTML = shortLabel(d).replace(', ', '<br>');
             dayHeaderRow.appendChild(th);
@@ -222,10 +248,13 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
             givenOil.td.classList.add('roti-col-sticky6');
             tr.appendChild(givenOil.td); rowCells.push({ kind: 'input-given', field: 'given_oil', input: givenOil.input });
 
-            row.daily.forEach((val, di) => {
-                const cell = makeInputCell(val, 0, '', (v) => queueReceivedEdit(row, matrix.dates[di], v, di));
+            const visibleDaily = matrix.dates.length > 6 ? row.daily.slice(1) : row.daily;
+            visibleDaily.forEach((val, visibleIndex) => {
+                const originalIndex = matrix.dates.length > 6 ? visibleIndex + 1 : visibleIndex;
+                const date = matrix.dates[originalIndex];
+                const cell = makeInputCell(val, 0, '', (v) => queueReceivedEdit(row, date, v, originalIndex));
                 tr.appendChild(cell.td);
-                rowCells.push({ kind: 'input-received', dayIndex: di, input: cell.input });
+                rowCells.push({ kind: 'input-received', dayIndex: originalIndex, input: cell.input });
             });
 
             const totalRoti = makeComputedCell(row.total_roti, 0, true, false);
@@ -261,15 +290,22 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
                 ordering: false,
                 info: false,
                 layout: {
-                    topStart: 'search',
-                    topEnd: null,
+                    topStart: {
+                        buttons: [
+                            { extend: 'excelHtml5', className: 'btn-light' },
+                            { extend: 'print', className: 'btn-light' },
+                        ],
+                    },
+                    topEnd: 'search',
                     bottomStart: null,
                     bottomEnd: null,
                 },
             });
         }
         attachKeyboardNav();
-        periodEl.textContent = matrix.week_start + ' – ' + matrix.week_end + '  (' + matrix.hijri_label + ')';
+        const gregorianPeriod = formatDisplayDate(matrix.week_start) + ' – ' + formatDisplayDate(matrix.week_end);
+        const hijriPeriod = formatDisplayHijriRange(matrix.hijri_label);
+        periodEl.textContent = gregorianPeriod + '  (' + hijriPeriod + ')';
         const weekStartDate = new Date(matrix.week_start + 'T00:00:00');
         gregorianMonthEl.textContent = weekStartDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
         hijriMonthEl.textContent = matrix.hijri_month_year;

@@ -284,7 +284,7 @@ try {
                             <?php } ?>
                         </div>
                         <div class="table-responsive mb-3">
-                            <table class="table table-striped table-hover display">
+                            <table id="paymentreport" class="table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <?php if ($isDailyReport) { ?>
@@ -356,5 +356,18 @@ try {
         </div>
     </div>
 </div>
+
+<script>
+(function () {
+    'use strict';
+
+    if (window.DataTable && document.getElementById('paymentreport')) {
+        new DataTable('#paymentreport', {
+            responsive: true,
+            order: [[0, 'desc']],
+        });
+    }
+})();
+</script>
 
 <?php include('../footer.php'); ?>

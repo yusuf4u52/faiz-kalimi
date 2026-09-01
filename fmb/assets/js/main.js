@@ -114,6 +114,14 @@
       });
   });
 
+  const paymentreport = new DataTable("table#paymentreport", {
+    displayLength: 25,
+    responsive: true,
+    columnDefs: [{ searchable: false, orderable: false, targets: 0 }],
+    order: [[1, "asc"]],
+    layout: exportButtonsLayout(),
+  });
+
   new DataTable("table#userfeedmenu", {
     displayLength: 25,
     responsive: true,

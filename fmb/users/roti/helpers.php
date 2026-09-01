@@ -70,23 +70,29 @@ function get_hijri_month_range(string $anchorDate): array
     return ['start' => $start->format('Y-m-d'), 'end' => $end->format('Y-m-d')];
 }
 
-/** The Monday (ISO weekday 1) of the calendar week containing $date. */
-function week_start_monday(string $date): string
+/** The Sunday (ISO weekday 0) of the calendar week containing $date. */
+function week_start_sunday(string $date): string
 {
     $dt = new DateTime($date);
-    $isoDow = (int) $dt->format('N'); // 1 (Mon) .. 7 (Sun)
-    if ($isoDow > 1) {
-        $dt->modify('-' . ($isoDow - 1) . ' days');
+    $dayOfWeek = (int) $dt->format('w'); // 0 (Sun) .. 6 (Sat)
+    if ($dayOfWeek > 0) {
+        $dt->modify('-' . $dayOfWeek . ' days');
     }
     return $dt->format('Y-m-d');
 }
 
-/** The 6 thaali dates (Monday..Saturday) of the week starting $weekStart. */
+/** Backward-compatible alias for older callers that still use a Monday-based name. */
+function week_start_monday(string $date): string
+{
+    return week_start_sunday($date);
+}
+
+/** The 7 dates (Sunday..Saturday) of the week starting $weekStart. */
 function week_dates(string $weekStart): array
 {
     $dates = [];
     $dt = new DateTime($weekStart);
-    for ($i = 0; $i < 6; $i++) {
+    for ($i = 0; $i < 7; $i++) {
         $dates[] = $dt->format('Y-m-d');
         $dt->modify('+1 day');
     }
