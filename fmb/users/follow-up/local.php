@@ -18,7 +18,7 @@ require_once('../helpers.php');
                 <?php if (!empty($_GET['status'])) { ?>
                     <div class="alert alert-info" role="alert"><?php echo e($_GET['status']); ?></div>
                 <?php } ?>
-                <?php $pendinghoob = db_query( $link, "SELECT *, (Previous_Due + yearly_hub - Paid) AS Total_Pending FROM thalilist WHERE (Previous_Due + yearly_hub - Paid) = yearly_hub AND thalisize IS NOT NULL AND hardstop != 1 AND sabeelType = 'Kalimi ITS' ORDER BY Total_Pending DESC");
+                <?php $pendinghoob = db_query( $link, "SELECT *, (Previous_Due + yearly_hub - Paid) AS Total_Pending FROM thalilist WHERE (Previous_Due + yearly_hub - Paid) > 0 AND thalisize IS NOT NULL AND hardstop != 1 AND sabeelType LIKE '%Kalimi ITS%' ORDER BY Total_Pending DESC");
                 if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="transporterlist" class="table table-striped table-hover">
@@ -32,7 +32,9 @@ require_once('../helpers.php');
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
                                     <th scope="col">Pending</th>
+                                    <th scope="col">Paid %</th>
                                     <th scope="col">Thali Size</th>
+                                    <th scope="col">Sabeel Type</th>
                                     <th scope="col">Transporter</th>
                                 </tr>
                             </thead>
@@ -47,7 +49,9 @@ require_once('../helpers.php');
                                         <td><?php echo e((string) $values['previous_hub']); ?></td>
                                         <td><?php echo e((string) $values['yearly_hub']); ?></td>
                                         <td><strong><?php echo e((string) ($values['Total_Pending'] ?? '')); ?></strong></td>
+                                        <td><?php echo e($values['Paid %']); ?>%</td>
                                         <td><?php echo e($values['thalisize']); ?></td>
+                                        <td><?php echo e($values['Sabeel Type']); ?></td>
                                         <td><?php echo e($values['Transporter']); ?></td>
                                     </tr>
                                 <?php } ?>
@@ -62,7 +66,9 @@ require_once('../helpers.php');
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
                                     <th scope="col">Pending</th>
+                                    <th scope="col">Paid %</th>
                                     <th scope="col">Thali Size</th>
+                                    <th scope="col">Sabeel Type</th>
                                     <th scope="col">Transporter</th>
                                 </tr>
                             </tfoot>
