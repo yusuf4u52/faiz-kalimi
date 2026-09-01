@@ -217,6 +217,8 @@ if (!empty($values['musaid'])) {
           <li class="nav-item">
             <?php if ($values['Active'] != '1') { ?>
               <a class="nav-link" href="#" data-key="stopthaali" data-thali="<?php echo e($values['Thali']); ?>" data-active="1">Start Thaali</a>
+            <?php } else { ?>
+              <a class="nav-link" href="#" data-key="startthaali" data-thali="<?php echo e($values['Thali']); ?>" data-active="0">Stop Thaali</a>
             <?php } ?>
           </li>
           <?php if ($values['hardstop'] != '1') { ?>
