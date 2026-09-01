@@ -88,7 +88,7 @@ if (in_array($action, ['change_menu', 'admin_change_menu'], true) && !empty($Cur
                         $postedQty = min(max(0, $postedQty), $rotiMaxQuantity);
                         $_POST['menu_item']['roti']['qty'] = $postedQty;
                     }
-                    if ($postedQty === 0) {
+                    if ((float) $postedQty == 0.0) {
                         $stopFlag = 'yes';
                         $change = 'yes';
                     } elseif ((float) ($currentMenuItem[$course]['qty'] ?? ($course === 'roti' ? $rotiQuantity : $menu_item[$course]['qty'] ?? 0)) !== (float) $postedQty) {
