@@ -19,15 +19,15 @@ $offset = max(0, (int) ($_POST['offset'] ?? 0));
 $reports = [
     'local' => [
         'title' => 'Local Current Year Pending Hoob',
-        'where' => '(Previous_Due + yearly_hub - Paid) = yearly_hub AND thalisize IS NOT NULL AND hardstop != 1 AND yearly_hub > 3 AND sabeelType = \'Kalimi ITS\'',
+        'where' => '(Previous_Due + yearly_hub - Paid) > 5 AND thalisize IS NOT NULL AND hardstop != 1 AND yearly_hub > 3 AND sabeelType = \'Kalimi ITS\'',
     ],
     'non-local' => [
         'title' => 'Non Local Current Year Pending Hoob',
-        'where' => '(Previous_Due + yearly_hub - Paid) = yearly_hub AND thalisize IS NOT NULL AND hardstop != 1 AND yearly_hub > 3 AND sabeelType != \'Kalimi ITS\'',
+        'where' => '(Previous_Due + yearly_hub - Paid) > 5 AND thalisize IS NOT NULL AND hardstop != 1 AND yearly_hub > 5 AND sabeelType != \'Kalimi ITS\'',
     ],
     'previous' => [
         'title' => 'Previous Year Pending Hoob',
-        'where' => 'Previous_Due > 4  AND yearly_hub > 0 AND thalisize IS NOT NULL AND hardstop != 1',
+        'where' => 'Previous_Due > 5  AND yearly_hub > 0 AND thalisize IS NOT NULL AND hardstop != 1',
     ],
 ];
 
