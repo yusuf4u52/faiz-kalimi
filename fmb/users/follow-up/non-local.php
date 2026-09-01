@@ -32,6 +32,7 @@ require_once('../helpers.php');
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
                                     <th scope="col">Pending</th>
+                                    <th scope="col">Paid</th>
                                     <th scope="col">Paid %</th>
                                     <th scope="col">Thali Size</th>
                                     <th scope="col">Sabeel Type</th>
@@ -49,6 +50,7 @@ require_once('../helpers.php');
                                         <td><?php echo e((string) $values['previous_hub']); ?></td>
                                         <td><?php echo e((string) $values['yearly_hub']); ?></td>
                                         <td><strong><?php echo e((string) ($values['Total_Pending'] ?? '')); ?></strong></td>
+                                        <td><?php echo e((string) ($values['Paid'] ?? '')); ?></td>
                                         <td><?php echo e($values['Paid %']); ?>%</td>
                                         <td><?php echo e($values['thalisize']); ?></td>
                                         <td><?php echo e($values['sabeelType']); ?></td>
@@ -66,6 +68,7 @@ require_once('../helpers.php');
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
                                     <th scope="col">Pending</th>
+                                    <th scope="col">Paid</th>
                                     <th scope="col">Paid %</th>
                                     <th scope="col">Thali Size</th>
                                     <th scope="col">Sabeel Type</th>
