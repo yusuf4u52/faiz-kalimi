@@ -18,7 +18,7 @@ require_once('../helpers.php');
                 <?php if (!empty($_GET['status'])) { ?>
                     <div class="alert alert-info" role="alert"><?php echo e($_GET['status']); ?></div>
                 <?php } ?>
-                <?php $pendinghoob = db_query($link, "SELECT * FROM thalilist WHERE Previous_Due > 4 AND thalisize IS NOT NULL AND hardstop != 1 ORDER BY Previous_Due DESC");
+                <?php $pendinghoob = db_query($link, "SELECT * FROM thalilist WHERE Previous_Due > 5 ORDER BY Previous_Due DESC");
                 if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="transporterlist" class="table table-striped table-hover">
