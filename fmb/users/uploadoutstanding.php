@@ -109,9 +109,7 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                             $setParams[] = $sabeelNo;
                             $setTypes .= 's';
                         }
-                        if (!empty($row[3])) {
-                            $setColumns[] = "`sabeelType` = 'Kalimi ITS'";
-                        }
+                        
                         $setColumns[] = '`Previous_Due` = ?';
                         $setParams[] = $prev;
                         $setTypes .= 'i';
