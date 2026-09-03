@@ -140,6 +140,7 @@ if (isset($_POST['submit'])) {
                 $msg = "Your registration has been successfully submitted. Please contact Kalimi Mohalla Jamaat Office to start your thali.";
             } catch (RuntimeException $e) {
                 error_log('[registration/index.php] ' . $e->getMessage());
+                echo $e->getMessage();
                 $msg = "Sorry, something went wrong while saving your registration. Please try again in a moment or contact the Jamaat office.";
             }
         }
