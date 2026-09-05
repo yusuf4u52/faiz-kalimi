@@ -268,7 +268,7 @@ if (isset($_GET['year'])) {
     // Table name interpolation here is unavoidable (table names can't be
     // bound as query parameters), but $thalilist_tablename can now only
     // ever be 'thalilist' or 'thalilist_<validated 4-digit year>'.
-    $max_days = mysqli_fetch_row(mysqli_query($link, "SELECT MAX(thalicount) as max FROM `$thalilist_tablename`"));
+    $max_days = mysqli_fetch_row(mysqli_query($link, "SELECT COUNT(*) FROM `menu_list` WHERE `menu_type` = 'thaali'"));
 
     $resultCount = $result->num_rows;
 
