@@ -1,15 +1,39 @@
 <?php
 include('../header.php');
 include('../navbar.php');
+require_once('helpers.php');
 
-$result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));
+$result = db_query($link, "SELECT * FROM menu_list ORDER BY `menu_date` DESC");
+$menuList = mysqli_fetch_all($result, MYSQLI_ASSOC);
+mysqli_free_result($result);
+
+$today = date('Y-m-d');
+$upcomingMenus = array_values(array_filter($menuList, fn($v) => $v['menu_date'] > $today));
+
+$flashAction = $_GET['action'] ?? null;
+$flashDate = $_GET['date'] ?? null;
+$flashDateFormatted = $flashDate ? date('d M Y', strtotime($flashDate)) : '';
+
+// Single query grouped by dish_type instead of 5 separate round trips.
+$dishOptionsByType = ['1' => [], '2' => [], '3' => [], '4' => [], '5' => []];
+$dishOptionsResult = db_query($link, "SELECT dish_name, dish_type FROM food_list ORDER BY `dish_name` ASC");
+while ($row = mysqli_fetch_assoc($dishOptionsResult)) {
+    if (isset($dishOptionsByType[$row['dish_type']])) {
+        $dishOptionsByType[$row['dish_type']][] = $row;
+    }
+}
+$sabjiOptions = $dishOptionsByType['1'];
+$tarkariOptions = $dishOptionsByType['2'];
+$riceOptions = $dishOptionsByType['3'];
+$rotiOptions = $dishOptionsByType['4'];
+$extraOptions = $dishOptionsByType['5'];
 ?>
 
 <div class="card">
     <div class="card-body">
         <div class="row align-items-center">
             <div class="col-6">
-                <h2 clas="mb-3">Menu List</h2>
+                <h2 class="mb-3">Menu List</h2>
             </div>
             <div class="col-6 text-end">
                 <button type="button" class="btn btn-light mb-3" data-bs-target="#addmenu"
@@ -19,27 +43,27 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
         </div>
         <div class="row">
             <div class="col-12">
-                <?php if (isset($_GET['action']) && $_GET['action'] == 'add') { ?>
+                <?php if ($flashAction === 'add') { ?>
                     <div class="alert alert-success" role="alert">Menu/Miqaat of
-                        <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is added
+                        <strong><?php echo e($flashDateFormatted); ?></strong> is added
                         successfully.
                     </div>
                 <?php } ?>
-                <?php if (isset($_GET['action']) && $_GET['action'] == 'edit') { ?>
+                <?php if ($flashAction === 'edit') { ?>
                     <div class="alert alert-info" role="alert">Menu/Miqaat of
-                        <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is edited
+                        <strong><?php echo e($flashDateFormatted); ?></strong> is edited
                         successfully.
                     </div>
                 <?php } ?>
-                <?php if (isset($_GET['action']) && $_GET['action'] == 'delete') { ?>
+                <?php if ($flashAction === 'delete') { ?>
                     <div class="alert alert-danger" role="alert">Menu/Miqaat of
-                        <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is deleted
+                        <strong><?php echo e($flashDateFormatted); ?></strong> is deleted
                         successfully.
                     </div>
                 <?php } ?>
-                <?php if (isset($_GET['action']) && $_GET['action'] == 'existed') { ?>
+                <?php if ($flashAction === 'existed') { ?>
                     <div class="alert alert-warning" role="alert">Menu/Miqaat of
-                        <strong><?php echo date('d M Y', strtotime($_GET['date'])); ?></strong> is already
+                        <strong><?php echo e($flashDateFormatted); ?></strong> is already
                         existed.
                     </div>
                 <?php } ?>
@@ -53,47 +77,45 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($values = mysqli_fetch_assoc($result)) {
-                            $menu_item = unserialize($values['menu_item']); ?>
+                        <?php foreach ($menuList as $values) {
+                            $menu_item = decode_menu_item($values['menu_item']); ?>
                             <tr>
-                                <td data-sort="<?php echo strtotime($values['menu_date']); ?>"><?php echo date('d M Y', strtotime($values['menu_date'])); ?></td>
-                                <td><?php echo ucfirst($values['menu_type']); ?></td>
+                                <td data-sort="<?php echo strtotime($values['menu_date']); ?>"><?php echo e(date('d M Y', strtotime($values['menu_date']))); ?></td>
+                                <td><?php echo e(ucfirst($values['menu_type'])); ?></td>
                                 <td>
-                                    <?php if ($values['menu_type'] == 'miqaat') { ?>
-                                        <?php echo (!empty($menu_item['miqaat']) ? $menu_item['miqaat'] : 'No Miqaat'); ?>
-                                    <?php } elseif ($values['menu_type'] == 'thaali') { ?>
-                                        <?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] . '  (' . $menu_item['sabji']['qty'] . ')<br />' : ''); ?>
-                                        <?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] . '  (' . $menu_item['tarkari']['qty'] . ')<br />' : ''); ?>
-                                        <?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] . '  (' . $menu_item['rice']['qty'] . ')<br />' : ''); ?>
-                                        <?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] . '  (Mini:' . $menu_item['roti']['tqty'] . ', Small:' . $menu_item['roti']['sqty'] . ', Medium:' . $menu_item['roti']['mqty'] . ', Large:' . $menu_item['roti']['lqty'] . ')<br/>' : ''); ?>
-                                        <?php echo (!empty($menu_item['extra']['item']) ? $menu_item['extra']['item'] . '  (' . $menu_item['extra']['qty'] . ')<br />' : ''); ?>
+                                    <?php if ($values['menu_type'] === 'miqaat') { ?>
+                                        <?php echo e(!empty($menu_item['miqaat']) ? $menu_item['miqaat'] : 'No Miqaat'); ?>
+                                    <?php } elseif ($values['menu_type'] === 'thaali') { ?>
+                                        <?php echo (!empty($menu_item['sabji']['item']) ? e($menu_item['sabji']['item']) . '  (' . (int) $menu_item['sabji']['qty'] . ')<br />' : ''); ?>
+                                        <?php echo (!empty($menu_item['tarkari']['item']) ? e($menu_item['tarkari']['item']) . '  (' . (int) $menu_item['tarkari']['qty'] . ')<br />' : ''); ?>
+                                        <?php echo (!empty($menu_item['rice']['item']) ? e($menu_item['rice']['item']) . '  (' . (int) $menu_item['rice']['qty'] . ')<br />' : ''); ?>
+                                        <?php echo (!empty($menu_item['roti']['item']) ? e($menu_item['roti']['item']) . '  (Mini:' . (int) $menu_item['roti']['tqty'] . ', Small:' . (int) $menu_item['roti']['sqty'] . ', Medium:' . (int) $menu_item['roti']['mqty'] . ', Large:' . (int) $menu_item['roti']['lqty'] . ')<br/>' : ''); ?>
+                                        <?php echo (!empty($menu_item['extra']['item']) ? e($menu_item['extra']['item']) . '  (' . (int) $menu_item['extra']['qty'] . ')<br />' : ''); ?>
                                     <?php } ?>
                                 </td>
-                                <td><?php if (date('Y-m-d') < $values['menu_date']) { ?><button
+                                <td><?php if ($today < $values['menu_date']) { ?><button
                                             type="button" class="btn btn-light"
-                                            data-bs-target="#editmenu-<?php echo $values['id']; ?>"
+                                            data-bs-target="#editmenu-<?php echo (int) $values['id']; ?>"
                                             data-bs-toggle="modal" style="margin-bottom:5px"><i class="bi bi-pencil-square"></i></button><?php } ?> <button
                                         type="button" class="btn btn-light"
-                                        data-bs-target="#deletemenu-<?php echo $values['id']; ?>"
+                                        data-bs-target="#deletemenu-<?php echo (int) $values['id']; ?>"
                                         data-bs-toggle="modal" style="margin-bottom:5px"><i class="bi bi-trash"></i></button>
                                 </td>
                             </tr>
-                        <?php }
-                        mysqli_free_result($result); ?>
+                        <?php } ?>
                     </tbody>
                 </table>
             </div>
 
-            <?php $result = mysqli_query($link, "SELECT * FROM menu_list WHERE `menu_date` > '" . date('Y-m-d') . "' order by `menu_date` DESC") or die(mysqli_error($link));
-            while ($values = mysqli_fetch_assoc($result)) {
-                $menu_item = unserialize($values['menu_item']); ?>
-                <div class="modal fade" id="editmenu-<?php echo $values['id']; ?>">
+            <?php foreach ($upcomingMenus as $values) {
+                $menu_item = decode_menu_item($values['menu_item']); ?>
+                <div class="modal fade" id="editmenu-<?php echo (int) $values['id']; ?>">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form id="editmenu-<?php echo $values['id']; ?>" class="form-horizontal"
+                            <form id="editmenu-<?php echo (int) $values['id']; ?>" class="form-horizontal"
                                 method="post" action="savelist.php" autocomplete="off">
                                 <input type="hidden" name="action" value="edit_menu" />
-                                <input type="hidden" name="menu_id" value="<?php echo $values['id']; ?>" />
+                                <input type="hidden" name="menu_id" value="<?php echo (int) $values['id']; ?>" />
                                 <div class="modal-header">
                                     <h4 class="modal-title">Edit Menu</h4>
                                     <button type="button" class="btn ms-auto" data-bs-dismiss="modal"
@@ -104,8 +126,8 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                         <label for="menu_date" class="col-4 control-label">Menu Date</label>
                                         <div class="col-8">
                                             <input type="date" class="form-control"
-                                                min="<?php echo date('Y-m-d'); ?>" name="menu_date"
-                                                value="<?php echo $values['menu_date']; ?>" readonly>
+                                                min="<?php echo $today; ?>" name="menu_date"
+                                                value="<?php echo e($values['menu_date']); ?>" readonly>
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
@@ -113,7 +135,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                         <div class="col-8">
                                             <div class="form-check">
                                                 <input class="form-check-input menu_type" type="radio"
-                                                    name="menu_type" id="menu_type1" value="thaali" <?php echo (!empty($values['menu_type']) && $values['menu_type'] == 'thaali' ? 'Checked' : ''); ?>
+                                                    name="menu_type" id="menu_type1" value="thaali" <?php echo ($values['menu_type'] === 'thaali' ? 'checked' : ''); ?>
                                                     required>
                                                 <label class="form-check-label" for="menu_type1">
                                                     Thaali
@@ -121,7 +143,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input menu_type" type="radio"
-                                                    name="menu_type" id="menu_type2" value="miqaat" <?php echo (!empty($values['menu_type']) && $values['menu_type'] == 'miqaat' ? 'Checked' : ''); ?>
+                                                    name="menu_type" id="menu_type2" value="miqaat" <?php echo ($values['menu_type'] === 'miqaat' ? 'checked' : ''); ?>
                                                     required>
                                                 <label class="form-check-label" for="menu_type2">
                                                     Miqaat
@@ -130,29 +152,29 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                         </div>
                                     </div>
                                     <div
-                                        class="miqaat <?php echo (!empty($values['menu_type']) && $values['menu_type'] != 'miqaat' ? 'd-none' : ''); ?>">
+                                        class="miqaat <?php echo ($values['menu_type'] !== 'miqaat' ? 'd-none' : ''); ?>">
                                         <div class="mb-3 row">
                                             <label for="miqaat" class="col-4 control-label">Miqaat</label>
                                             <div class="col-8">
                                                 <textarea class="form-control" name="menu_item[miqaat]"
-                                                    id="miqaat"><?php echo (!empty($menu_item['miqaat']) ? $menu_item['miqaat'] : ''); ?></textarea>
+                                                    id="miqaat"><?php echo e($menu_item['miqaat'] ?? ''); ?></textarea>
                                             </div>
                                         </div>
                                     </div>
                                     <div
-                                        class="thaali <?php echo (!empty($values['menu_type']) && $values['menu_type'] != 'thaali' ? 'd-none' : ''); ?>">
+                                        class="thaali <?php echo ($values['menu_type'] !== 'thaali' ? 'd-none' : ''); ?>">
                                         <div class="mb-3 row">
                                             <label for="sabji" class="col-4 control-label">Sabji
                                                 Item</label>
                                             <div class="col-6">
                                                 <input list="sabji-item" type="text" class="form-control"
                                                     name="menu_item[sabji][item]" id="sabji"
-                                                    value="<?php echo (!empty($menu_item['sabji']['item']) ? $menu_item['sabji']['item'] : ''); ?>">
+                                                    value="<?php echo e($menu_item['sabji']['item'] ?? ''); ?>">
                                             </div>
                                             <div class="col-2">
                                                 <input type="number" class="form-control"
                                                     name="menu_item[sabji][qty]" id="sabjiqty" min="1"
-                                                    value="<?php echo (!empty($menu_item['sabji']['qty']) ? $menu_item['sabji']['qty'] : '1'); ?>">
+                                                    value="<?php echo (int) ($menu_item['sabji']['qty'] ?? 1); ?>">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
@@ -161,12 +183,12 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                             <div class="col-6">
                                                 <input list="tarkari-item" type="text" class="form-control"
                                                     name="menu_item[tarkari][item]" id="tarkari"
-                                                    value="<?php echo (!empty($menu_item['tarkari']['item']) ? $menu_item['tarkari']['item'] : ''); ?>">
+                                                    value="<?php echo e($menu_item['tarkari']['item'] ?? ''); ?>">
                                             </div>
                                             <div class="col-2">
                                                 <input type="number" class="form-control"
                                                     name="menu_item[tarkari][qty]" id="tarkariqty" min="1"
-                                                    value="<?php echo (!empty($menu_item['tarkari']['qty']) ? $menu_item['tarkari']['qty'] : '1'); ?>">
+                                                    value="<?php echo (int) ($menu_item['tarkari']['qty'] ?? 1); ?>">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
@@ -174,12 +196,12 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                             <div class="col-6">
                                                 <input list="rice-item" type="text" class="form-control"
                                                     name="menu_item[rice][item]" id="rice"
-                                                    value="<?php echo (!empty($menu_item['rice']['item']) ? $menu_item['rice']['item'] : ''); ?>">
+                                                    value="<?php echo e($menu_item['rice']['item'] ?? ''); ?>">
                                             </div>
                                             <div class="col-2">
                                                 <input type="number" class="form-control"
                                                     name="menu_item[rice][qty]" id="riceqty" min="1"
-                                                    value="<?php echo (!empty($menu_item['rice']['qty']) ? $menu_item['rice']['qty'] : '2'); ?>">
+                                                    value="<?php echo (int) ($menu_item['rice']['qty'] ?? 2); ?>">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
@@ -188,7 +210,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                             <div class="col-8">
                                                 <input list="roti-item" class="form-control"
                                                     name="menu_item[roti][item]" id="roti"
-                                                    value="<?php echo (!empty($menu_item['roti']['item']) ? $menu_item['roti']['item'] : ''); ?>">
+                                                    value="<?php echo e($menu_item['roti']['item'] ?? ''); ?>">
                                                 <div class="mb-3 row">
                                                     <div class="col-3">
                                                         <label for="rotitqty"
@@ -196,7 +218,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                                         <input type="number" class="form-control"
                                                             name="menu_item[roti][tqty]" id="rotitqty"
                                                             min="1"
-                                                            value="<?php echo (!empty($menu_item['roti']['tqty']) ? $menu_item['roti']['tqty'] : '1'); ?>">
+                                                            value="<?php echo (int) ($menu_item['roti']['tqty'] ?? 1); ?>">
                                                     </div>
                                                     <div class="col-3">
                                                         <label for="rotisqty"
@@ -204,7 +226,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                                         <input type="number" class="form-control"
                                                             name="menu_item[roti][sqty]" id="rotisqty"
                                                             min="1"
-                                                            value="<?php echo (!empty($menu_item['roti']['sqty']) ? $menu_item['roti']['sqty'] : '1'); ?>">
+                                                            value="<?php echo (int) ($menu_item['roti']['sqty'] ?? 1); ?>">
                                                     </div>
                                                     <div class="col-3">
                                                         <label for="rotimqty"
@@ -212,7 +234,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                                         <input type="number" class="form-control"
                                                             name="menu_item[roti][mqty]" id="rotimqty"
                                                             min="1"
-                                                            value="<?php echo (!empty($menu_item['roti']['mqty']) ? $menu_item['roti']['mqty'] : '2'); ?>">
+                                                            value="<?php echo (int) ($menu_item['roti']['mqty'] ?? 2); ?>">
                                                     </div>
                                                     <div class="col-3">
                                                         <label for="rotilqty"
@@ -220,7 +242,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                                         <input type="number" class="form-control"
                                                             name="menu_item[roti][lqty]" id="rotilqty"
                                                             min="1"
-                                                            value="<?php echo (!empty($menu_item['roti']['lqty']) ? $menu_item['roti']['lqty'] : '2'); ?>">
+                                                            value="<?php echo (int) ($menu_item['roti']['lqty'] ?? 2); ?>">
                                                     </div>
                                                 </div>
                                             </div>
@@ -231,12 +253,12 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                             <div class="col-6">
                                                 <input list="extra-item" type="text" class="form-control"
                                                     name="menu_item[extra][item]" id="extra"
-                                                    value="<?php echo (!empty($menu_item['extra']['item']) ? $menu_item['extra']['item'] : ''); ?>">
+                                                    value="<?php echo e($menu_item['extra']['item'] ?? ''); ?>">
                                             </div>
                                             <div class="col-2">
                                                 <input type="number" class="form-control"
                                                     name="menu_item[extra][qty]" id="extraqty" min="1"
-                                                    value="<?php echo (!empty($menu_item['extra']['qty']) ? $menu_item['extra']['qty'] : '1'); ?>">
+                                                    value="<?php echo (int) ($menu_item['extra']['qty'] ?? 1); ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -248,20 +270,18 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                         </div>
                     </div>
                 </div>
-            <?php }
-            mysqli_free_result($result); ?>
+            <?php } ?>
 
-            <?php $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC") or die(mysqli_error($link));
-            while ($values = mysqli_fetch_assoc($result)) { ?>
-                <div class="modal fade" id="deletemenu-<?php echo $values['id']; ?>">
+            <?php foreach ($menuList as $values) { ?>
+                <div class="modal fade" id="deletemenu-<?php echo (int) $values['id']; ?>">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form id="deletemenu-<?php echo $values['id']; ?>" class="form-horizontal"
+                            <form id="deletemenu-<?php echo (int) $values['id']; ?>" class="form-horizontal"
                                 method="post" action="savelist.php" autocomplete="off">
                                 <input type="hidden" name="action" value="delete_menu" />
                                 <input type="hidden" name="menu_date"
-                                    value="<?php echo $values['menu_date']; ?>" />
-                                <input type="hidden" name="menu_id" value="<?php echo $values['id']; ?>" />
+                                    value="<?php echo e($values['menu_date']); ?>" />
+                                <input type="hidden" name="menu_id" value="<?php echo (int) $values['id']; ?>" />
                                 <div class="modal-header">
                                     <h4 class="modal-title">Delete Menu</h4>
                                     <button type="button" class="btn ms-auto" data-bs-dismiss="modal"
@@ -269,7 +289,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                 </div>
                                 <div class="modal-body">
                                     <p> Are you sure you want to delete <strong>Menu</strong> of
-                                        <strong><?php echo date('d M Y', strtotime($values['menu_date'])); ?></strong>
+                                        <strong><?php echo e(date('d M Y', strtotime($values['menu_date']))); ?></strong>
                                         from
                                         database ?
                                     </p>
@@ -281,8 +301,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                         </div>
                     </div>
                 </div>
-            <?php }
-            mysqli_free_result($result); ?>
+            <?php } ?>
 
             <div class="modal fade" id="addmenu">
                 <div class="modal-dialog">
@@ -299,7 +318,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                     <label for="menu_date" class="col-4 control-label">Menu Date</label>
                                     <div class="col-8">
                                         <input type="date" class="form-control"
-                                            min="<?php echo date('Y-m-d'); ?>" name="menu_date"
+                                            min="<?php echo $today; ?>" name="menu_date"
                                             required>
                                     </div>
                                 </div>
@@ -378,7 +397,7 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                                                 name="menu_item[roti][item]" id="roti">
                                             <div class="mb-3 row">
                                                 <div class="col-3">
-                                                    <label for="rotisqty"
+                                                    <label for="rotitqty"
                                                         class="control-label">Mini</label>
                                                     <input type="number" class="form-control"
                                                         name="menu_item[roti][tqty]" id="rotitqty"
@@ -429,55 +448,36 @@ $result = mysqli_query($link, "SELECT * FROM menu_list order by `menu_date` DESC
                         </form>
                     </div>
                 </div>
-                <?php $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_type` = '1' order by `dish_name` ASC") or die(mysqli_error($link));
-                if (!empty($result)) { ?>
-                    <datalist id="sabji-item">
-                        <?php while ($values = mysqli_fetch_assoc($result)) { ?>
-                            <option value="<?php echo $values['dish_name']; ?>">
-                            <?php } ?>
-                    </datalist>
-                <?php }
-                mysqli_free_result($result); ?>
 
-                <?php $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_type` = '2' order by `dish_name` ASC") or die(mysqli_error($link));
-                if (!empty($result)) { ?>
-                    <datalist id="tarkari-item">
-                        <?php while ($values = mysqli_fetch_assoc($result)) { ?>
-                            <option value="<?php echo $values['dish_name']; ?>">
-                            <?php } ?>
-                    </datalist>
-                <?php }
-                mysqli_free_result($result); ?>
+                <datalist id="sabji-item">
+                    <?php foreach ($sabjiOptions as $values) { ?>
+                        <option value="<?php echo e($values['dish_name']); ?>">
+                    <?php } ?>
+                </datalist>
 
-                <?php $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_type` = '3' order by `dish_name` ASC") or die(mysqli_error($link));
-                if (!empty($result)) { ?>
-                    <datalist id="rice-item">
-                        <?php while ($values = mysqli_fetch_assoc($result)) { ?>
-                            <option value="<?php echo $values['dish_name']; ?>">
-                            <?php } ?>
-                    </datalist>
-                <?php }
-                mysqli_free_result($result); ?>
+                <datalist id="tarkari-item">
+                    <?php foreach ($tarkariOptions as $values) { ?>
+                        <option value="<?php echo e($values['dish_name']); ?>">
+                    <?php } ?>
+                </datalist>
 
-                <?php $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_type` = '4' order by `dish_name` ASC") or die(mysqli_error($link));
-                if (!empty($result)) { ?>
-                    <datalist id="roti-item">
-                        <?php while ($values = mysqli_fetch_assoc($result)) { ?>
-                            <option value="<?php echo $values['dish_name']; ?>">
-                            <?php } ?>
-                    </datalist>
-                <?php }
-                mysqli_free_result($result); ?>
+                <datalist id="rice-item">
+                    <?php foreach ($riceOptions as $values) { ?>
+                        <option value="<?php echo e($values['dish_name']); ?>">
+                    <?php } ?>
+                </datalist>
 
-                <?php $result = mysqli_query($link, "SELECT * FROM food_list WHERE `dish_type` = '5' order by `dish_name` ASC") or die(mysqli_error($link));
-                if (!empty($result)) { ?>
-                    <datalist id="extra-item">
-                        <?php while ($values = mysqli_fetch_assoc($result)) { ?>
-                            <option value="<?php echo $values['dish_name']; ?>">
-                            <?php } ?>
-                    </datalist>
-                <?php }
-                mysqli_free_result($result); ?>
+                <datalist id="roti-item">
+                    <?php foreach ($rotiOptions as $values) { ?>
+                        <option value="<?php echo e($values['dish_name']); ?>">
+                    <?php } ?>
+                </datalist>
+
+                <datalist id="extra-item">
+                    <?php foreach ($extraOptions as $values) { ?>
+                        <option value="<?php echo e($values['dish_name']); ?>">
+                    <?php } ?>
+                </datalist>
             </div>
         </div>
     </div>

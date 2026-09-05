@@ -27,7 +27,7 @@ class Examples extends CI_Controller
 	function faiz()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','tinwalaabizer@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','tinwalaabizer@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com', 'itsammara@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 
@@ -42,7 +42,7 @@ class Examples extends CI_Controller
 	function transporter_count()
 	{
 		session_start();
-		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com','tzabuawala@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
+		if (!is_null($_SESSION['fromLogin']) && in_array($_SESSION['email'], array('moizagasiyawala@gmail.com', 'mulla.moiz@gmail.com', 'yusuf4u52@gmail.com'))) {
 		} else
 			header("Location: /fmb/index.php");
 

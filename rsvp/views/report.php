@@ -14,7 +14,7 @@ function content_display()
             echo '<tbody>';
                 foreach ($data as $row) {
                     $thaal = (int)($row["total"] / 8);
-                    echo "<tr><td><a href='sectorwise_report/{$row['id']}'>Sectorwise</a></td><td>$thaal</td>";
+                    echo "<tr><td><a href='sectorwise_report/{$row['id']}'>Sectorwise</a> | <a href='miqaat_attendees/{$row['id']}'>Attendees</a></td><td>$thaal</td>";
                     foreach ($cols as $col) {
                         echo "<td>{$row["$col"]}</td>";                        
                     }

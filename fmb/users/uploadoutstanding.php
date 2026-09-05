@@ -1,9 +1,12 @@
 <?php
 include('header.php');
 include('navbar.php');
-require '../vendor/autoload.php';
+require_once('helpers.php');
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+
+$canImport = user_email_in(DATA_IMPORT_EMAILS);
 ?>
 
 <div class="card">
@@ -15,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
         </div>
         <div class="row">
             <div class="col-12">
-                <?php if (in_array($_SESSION['email'], array('tinwalaabizer@gmail.com', 'moizagasiyawala@gmail.com'))) { ?>
+                <?php if ($canImport) { ?>
                     <form id="uploadreciept" class="form-horizontal my-3" method="POST"
                         action="uploadoutstanding.php" enctype="multipart/form-data" autocomplete="off">
                         <div class="mb-3 row">
@@ -29,39 +32,104 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
                         </div>
                     </form>
                 <?php } ?>
-                <?php if (isset($_POST['import']) && isset($_FILES['import_reciept'])) {
+                <?php if ($canImport && isset($_POST['import']) && isset($_FILES['import_reciept'])) {
                     $filePath = $_FILES['import_reciept']['tmp_name'];
 
-                    // Load the XLSX file
-                    $spreadsheet = IOFactory::load($filePath);
+                    try {
+                        $spreadsheet = IOFactory::load($filePath);
+                    } catch (Exception $e) {
+                        error_log('[uploadoutstanding.php] ' . $e->getMessage());
+                        echo "Could not read that file. Please check it's a valid .xls/.xlsx export.";
+                        include('footer.php');
+                        exit;
+                    }
+
                     $sheet = $spreadsheet->getActiveSheet();
                     $rows = $sheet->toArray();
-                    $headers = array_shift($rows);
-                    // Skip header row and loop through the data
+                    array_shift($rows); // header row
+
                     foreach ($rows as $row) {
-                        $its = $row[0];
-                        $outstanding = str_replace(',', '', $row[3]);
-                        $outstanding = intval($outstanding);
-                        $takmeem = intval($row[6]); 
-                        if( $takmeem > 0 ) {
-                            if( $takmeem > $outstanding ) {
-                                $prev = 0;
-                                $paid = $takmeem - $outstanding;
-                            } else {
-                                $prev = $outstanding - $takmeem;
-                                $paid = 0;
-                            }
-                            if(empty($row[2])) {
-                                $sql = "UPDATE  thalilist SET `Previous_Due` = '" . $prev . "', `yearly_hub` = '" . $takmeem . "', `Paid` = '" . $paid . "' WHERE `ITS_No` = '".$its."'";
-                            } else {
-                                $sql = "UPDATE  thalilist SET `Thali` = '" . $row[2] . "', `Previous_Due` = '" . $prev . "', `yearly_hub` = '" . $takmeem . "', `Paid` = '" . $paid . "' WHERE `ITS_No` = '".$its."'";
-                            }
-                            mysqli_query($link,$sql) or die(mysqli_error($link));
-                            echo '<h4>'.$its.' data updated successfully</h4>';
+                        $its = trim((string) ($row[0] ?? ''));
+                        $sabeelNo = trim((string) ($row[2] ?? ''));
+                        $outstanding = (int) str_replace(',', '', (string) ($row[7] ?? '0'));
+
+                        $takmeem = 0;
+                        if (trim((string) ($row[5] ?? '')) === '1447-1448') {
+                            $takmeem = (int) ($row[10] ?? 0);
+                        } elseif ((int) ($row[10] ?? 0) > 0) {
+                            $takmeem = 1;
                         }
+
+                        if ($takmeem <= 0) {
+                            continue;
+                        }
+
+                        if ($takmeem > $outstanding) {
+                            $prev = 0;
+                            $paid = $takmeem - $outstanding;
+                        } else {
+                            $prev = $outstanding - $takmeem;
+                            $paid = 0;
+                        }
+
+                        // Figure out which column identifies this member —
+                        // ITS number first, falling back to sabeel number —
+                        // then build the matching WHERE clause as a
+                        // parameter rather than string-interpolated SQL.
+                        $whereColumn = null;
+                        $whereValue = null;
+
+                        if ($its !== '') {
+                            $checkIts = db_query($link, "SELECT id FROM thalilist WHERE ITS_No = ? LIMIT 1", "s", [$its]);
+                            if ($checkIts->num_rows > 0) {
+                                $whereColumn = 'ITS_No';
+                                $whereValue = $its;
+                            }
+                        }
+
+                        if ($whereColumn === null && $sabeelNo !== '') {
+                            $checkSabeel = db_query($link, "SELECT id FROM thalilist WHERE Thali = ? LIMIT 1", "s", [$sabeelNo]);
+                            if ($checkSabeel->num_rows > 0) {
+                                $whereColumn = 'Thali';
+                                $whereValue = $sabeelNo;
+                            }
+                        }
+
+                        if ($whereColumn === null) {
+                            echo "<p style='color:red;'>Skipped : ITS " . e($its) . " / Sabeel " . e($sabeelNo) . " not found.</p>";
+                            continue;
+                        }
+
+                        $setColumns = [];
+                        $setParams = [];
+                        $setTypes = '';
+
+                        if ($sabeelNo !== '') {
+                            $setColumns[] = '`Thali` = ?';
+                            $setParams[] = $sabeelNo;
+                            $setTypes .= 's';
+                        }
+                        
+                        $setColumns[] = '`Previous_Due` = ?';
+                        $setParams[] = $prev;
+                        $setTypes .= 'i';
+                        $setColumns[] = '`yearly_hub` = ?';
+                        $setParams[] = $takmeem;
+                        $setTypes .= 'i';
+                        $setColumns[] = '`Paid` = ?';
+                        $setParams[] = $paid;
+                        $setTypes .= 'i';
+
+                        $setParams[] = $whereValue;
+                        $setTypes .= 's';
+
+                        db_query(
+                            $link,
+                            "UPDATE thalilist SET " . implode(', ', $setColumns) . " WHERE `$whereColumn` = ?",
+                            $setTypes,
+                            $setParams
+                        );
                     }
-                } else {
-                    //echo "No file uploaded.";
                 } ?>
             </div>
         </div>

@@ -1,45 +1,62 @@
 <?php
 include('connection.php');
+require_once('helpers.php');
 include('getHijriDate.php');
 
-$today = getTodayDateHijri();
-session_start();
-if ($_POST['fromLogin']) {
-  $_SESSION['fromLogin'] = $_POST['fromLogin'];
-  $_SESSION['thaliid'] = $_POST['thaliid'];
-  $_SESSION['thali'] = $_POST['thali'];
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-if (is_null($_SESSION['fromLogin'])) {
-
-  //send them back
-  header("Location: /fmb/index.php");
-  exit;
+/**
+ * SECURITY FIX: this used to do
+ *   if ($_POST['fromLogin']) {
+ *       $_SESSION['fromLogin'] = $_POST['fromLogin'];
+ *       $_SESSION['thaliid']   = $_POST['thaliid'];
+ *       $_SESSION['thali']     = $_POST['thali'];
+ *   }
+ * i.e. it let the POST body itself *set* the session's identity, rather
+ * than requiring the person already be logged in. Anyone could POST any
+ * thaliid here and stop that thali, with no real authentication at all.
+ * This page now only acts on the session already established by the
+ * normal Google login flow (login.php -> navbar.php) — it never trusts
+ * identity fields from the request body.
+ */
+if (empty($_SESSION['fromLogin']) || empty($_SESSION['thaliid'])) {
+    header("Location: /fmb/index.php");
+    exit;
 }
 
 // check if request is in cut off time
 date_default_timezone_set('Asia/Kolkata');
-$cutoffTime = '20:00'; //Cut off at 8 pm
-$startTime = '23:59'; //reset back to open at midnight
+$cutoffTime = '20:00'; // Cut off at 8 pm
+$startTime = '23:59'; // reset back to open at midnight
 
-$time = new DateTime($cutoffTime);
-$time1 = date_format($time, 'H:i');
-$time = new DateTime($startTime);
-$time2 = date_format($time, 'H:i');
-
+$time1 = (new DateTime($cutoffTime))->format('H:i');
+$time2 = (new DateTime($startTime))->format('H:i');
 $current = date("H:i");
+
 if ($current > $time1 && $current < $time2) {
-  $cutoffmessage =  'Stop thali not allowed post 8 PM.';
-  header("Location: index.php?status=$cutoffmessage");
-  exit;
+    header("Location: index.php?status=" . urlencode('Stop thali not allowed post 8 PM.'));
+    exit;
 }
 
-$update = mysqli_query($link, "UPDATE thalilist set Active='0' WHERE id = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
-$update = mysqli_query($link, "UPDATE thalilist set Thali_stop_date='" . $today . "' WHERE id = '" . $_SESSION['thaliid'] . "'") or die(mysqli_error($link));
+$today = getTodayDateHijri();
+$thaliId = $_SESSION['thaliid'];
+$thaliNo = $_SESSION['thali'] ?? '';
 
-mysqli_query($link, "update change_table set processed = 1 where userid = '" . $_SESSION['thaliid'] . "' and `Operation` in ('Start Thali','Stop Thali','Start Transport','Stop Transport') and processed = 0") or die(mysqli_error($link));
-mysqli_query($link, "INSERT INTO change_table (`Thali`, `userid`,`Operation`, `Date`) VALUES ('" . $_SESSION['thali'] . "','" . $_SESSION['thaliid'] . "', 'Stop Thali','" . $today . "')") or die(mysqli_error($link));
+db_query($link, "UPDATE thalilist SET Active = 0, Thali_stop_date = ? WHERE id = ?", "ss", [$today, $thaliId]);
+db_query(
+    $link,
+    "UPDATE change_table SET processed = 1 WHERE userid = ? AND `Operation` IN ('Start Thali','Stop Thali','Start Transport','Stop Transport') AND processed = 0",
+    "s",
+    [$thaliId]
+);
+db_query(
+    $link,
+    "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES (?, ?, 'Stop Thali', ?)",
+    "sss",
+    [$thaliNo, $thaliId, $today]
+);
 
-$status = 'Stop Thali Successful';
-header("Location: index.php?status=$status");
+header("Location: index.php?status=" . urlencode('Stop Thali Successful'));
 exit;

@@ -1,7 +1,7 @@
 <?php
 
-require_once '../users/_sendMail.php';
-require '../sms/_credentials.php';
+require_once __DIR__ . '/../users/_sendMail.php';
+require __DIR__ . '/../sms/_credentials.php';
 //ENTER THE RELEVANT INFO BELOW
 $mysqlUserName      = $username;
 $mysqlPassword      = $password;
@@ -77,7 +77,16 @@ $content = Export_Database($mysqlHostName, $mysqlUserName, $mysqlPassword, $DbNa
 $subject = 'database backup ' . date('d/m/Y');
 echo "now sending backup email";
 $emails = [
-    'yusuf4u52@gmail.com'
+    'yusuf4u52@gmail.com',
+    'moizlife@gmail.com'
 ];
-sendEmail($emails, $subject, "Please find the attachment", $content);
-echo "########## backup completed ##############";
+$backupSent = sendEmail($emails, $subject, "Please find the attachment", null, null, true, [[
+    'data' => $content,
+    'name' => $backup_name,
+]]);
+if ($backupSent) {
+    echo "########## backup email sent ##############";
+} else {
+    error_log('[backup/_email_backup.php] Backup email failed: ' . ($GLOBALS['lastSendEmailError'] ?? 'Unknown email error'));
+    echo "########## backup email failed ##############";
+}

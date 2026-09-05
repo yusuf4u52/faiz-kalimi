@@ -1,31 +1,53 @@
 <?php
 include('connection.php');
 include('_authCheck.php');
+require_once('helpers.php');
 include('getHijriDate.php');
 
-
-$thali = $_POST['Thali'];
+$thali = $_POST['id'] ?? null;
 $clearhub = true;
 
-if (isset($_POST['action']) && $_POST['action'] == 'stop_permanant') {
-	stoppermenant($thali, $clearhub);
+if ($thali !== null && ($_POST['action'] ?? null) === 'stop_permanant') {
+    $today = getTodayDateHijri();
 
-	function stoppermenant($thali, $clearhub)
-	{
+    $result = db_query(
+        $link,
+        "SELECT id, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending FROM thalilist WHERE id = ?",
+        "s",
+        [$thali]
+    );
+    $name = mysqli_fetch_assoc($result);
 
-		$today = getTodayDateHijri();
-		$sql = "select id, (Previous_Due + yearly_hub + Zabihat - Paid) AS Total_Pending from thalilist WHERE Thali = '" . $thali . "'";
-		$result = mysqli_query($link, $sql) or die(mysqli_error($link));
-		$name = mysqli_fetch_assoc($result);
+    if ($name) {
+        db_query(
+            $link,
+            "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES (?, ?, 'Stop Permanent', ?)",
+            "sss",
+            [$thali, $name['id'], $today]
+        );
+        db_query($link, "UPDATE thalilist SET Active = 0, hardstop = 1 WHERE id = ?", "s", [$name['id']]);
 
-		mysqli_query($link, "INSERT INTO change_table (`Thali`,`userid`, `Operation`, `Date`) VALUES ('" . $thali . "','" . $name['id'] . "', 'Stop Permanent','" . $today . "')") or die(mysqli_error($link));
-		mysqli_query($link, "UPDATE thalilist set Active='2' WHERE id = '" . $name['id'] . "'") or die(mysqli_error($link));
-		if ($clearhub == "true") {
-			mysqli_query($link, "UPDATE thalilist set yearly_hub=yearly_hub - '" . $name['Total_Pending'] . "' WHERE id = '" . $name['id'] . "'") or die(mysqli_error($link));
-		}
-		mysqli_query($link, "update change_table set processed = 1 where userid = '" . $name['id'] . "' and `Operation` in ('New Thali') and processed = 0") or die(mysqli_error($link));
+        if ($clearhub) {
+            db_query(
+                $link,
+                "UPDATE thalilist SET yearly_hub = yearly_hub - ? WHERE id = ?",
+                "ds",
+                [(float) $name['Total_Pending'], $name['id']]
+            );
+        }
 
-		header("Location: /fmb/users/thalisearch.php?thalino=" . $_POST['thalino'] . "&general=" . $_POST['general'] . "&year=" . $_POST['year'] . "&action=spermanant");
-		exit;
-	}
+        db_query(
+            $link,
+            "UPDATE change_table SET processed = 1 WHERE userid = ? AND `Operation` IN ('New Thali') AND processed = 0",
+            "s",
+            [$name['id']]
+        );
+    }
+
+    header("Location: /fmb/users/thalisearch.php?thalino=" . urlencode($_POST['thalino'] ?? '')
+        . "&tiffinno=" . urlencode($_POST['tiffinno'] ?? '')
+        . "&general=" . urlencode($_POST['general'] ?? '')
+        . "&year=" . urlencode($_POST['year'] ?? '')
+        . "&action=spermanant");
+    exit;
 }

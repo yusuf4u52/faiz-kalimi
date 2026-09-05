@@ -1,40 +1,33 @@
 <?php
 include('header.php');
 include('navbar.php');
+require_once('helpers.php');
 
-$query = "SELECT * FROM thalilist";
-$query_new_transporter = $query . " WHERE Transporter is null and Active=1";
-$result = mysqli_query($link, $query_new_transporter);
+$result = db_query($link, "SELECT * FROM thalilist WHERE Transporter IS NULL AND Active = 1");
+$result_new_thali = db_query($link, "SELECT * FROM thalilist WHERE Thali IS NULL AND Active IS NULL");
 
-$query_new_thali = $query . " WHERE Thali is null and Active is null";
-$result_new_thali = mysqli_query($link, $query_new_thali);
-
-$transporter_list = array();
-$query = "SELECT Distinct(Transporter) as Name FROM thalilist where Transporter is not NULL";
-$result1 = mysqli_query($link, $query);
+$transporter_list = [];
+$result1 = db_query($link, "SELECT DISTINCT(Transporter) AS Name FROM thalilist WHERE Transporter IS NOT NULL");
 while ($values1 = mysqli_fetch_assoc($result1)) {
-	$transporter_list[] = $values1['Name'];
+    $transporter_list[] = $values1['Name'];
 }
 
-$thalisize_list = array();
-$thalisize_query = "SELECT Distinct(thalisize) as size FROM thalilist where thalisize is not NULL";
-$thalisize_result = mysqli_query($link, $thalisize_query);
+$thalisize_list = [];
+$thalisize_result = db_query($link, "SELECT DISTINCT(thalisize) AS size FROM thalilist WHERE thalisize IS NOT NULL");
 while ($thalisize_values = mysqli_fetch_assoc($thalisize_result)) {
-	$thalisize_list[] = $thalisize_values['size'];
+    $thalisize_list[] = $thalisize_values['size'];
 }
 
-$sector_list = array();
-$sector_query = "SELECT DISTINCT(sector) FROM `thalilist` WHERE sector IS NOT NULL order by sector";
-$sector_result = mysqli_query($link, $sector_query);
+$sector_list = [];
+$sector_result = db_query($link, "SELECT DISTINCT(sector) FROM `thalilist` WHERE sector IS NOT NULL ORDER BY sector");
 while ($sector_value = mysqli_fetch_assoc($sector_result)) {
-	$sector_list[] = $sector_value['sector'];
+    $sector_list[] = $sector_value['sector'];
 }
 
-$subsector_list = array();
-$subsector_query = "SELECT DISTINCT(subsector) FROM `thalilist` WHERE subsector IS NOT NULL order by subsector";
-$subsector_result = mysqli_query($link, $subsector_query);
+$subsector_list = [];
+$subsector_result = db_query($link, "SELECT DISTINCT(subsector) FROM `thalilist` WHERE subsector IS NOT NULL ORDER BY subsector");
 while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
-	$subsector_list[] = $subsector_value['subsector'];
+    $subsector_list[] = $subsector_value['subsector'];
 }
 ?>
 
@@ -64,18 +57,18 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 							<tr>
 								<form action='savetransporter.php' method='post'>
 									<td>
-										<?php echo $values['Thali']; ?>
-										<input type="hidden" name="Thali" value="<?php echo $values['Thali']; ?>">
+										<?php echo e($values['Thali']); ?>
+										<input type="hidden" name="Thali" value="<?php echo e($values['Thali']); ?>">
 									</td>
 									<td>
-										<input type="text" name="tiffinno" value="<?php echo $values['tiffinno']; ?>" required>
+										<input type="text" name="tiffinno" value="<?php echo e($values['tiffinno']); ?>" required>
 									</td>
 									<td>
 										<select class="form-select form-select-sm" name="thalisize" required>
 											<option value=''>Select Thalisize</option>
 											<?php foreach ($thalisize_list as $tsize) { ?>
-												<option value='<?php echo $tsize; ?>' <?php echo ($tsize == $values['thalisize']) ? 'selected' : ''; ?>>
-													<?php echo $tsize; ?>
+												<option value='<?php echo e($tsize); ?>' <?php echo ($tsize == $values['thalisize']) ? 'selected' : ''; ?>>
+													<?php echo e($tsize); ?>
 												</option>
 											<?php } ?>
 										</select>
@@ -85,15 +78,15 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 											<select class='transporter form-select form-select-sm' name='transporter' required>
 												<option value=''>Select Transporter</option>
 												<?php foreach ($transporter_list as $tname) { ?>
-													<option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>>
-														<?php echo $tname; ?>
+													<option value='<?php echo e($tname); ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>>
+														<?php echo e($tname); ?>
 													</option>
 												<?php } ?>
 											</select>
 										<?php } ?>
 									</td>
-									<td><?php echo $values['society']; ?></td>
-									<td><?php echo $values['NAME']; ?></td>
+									<td><?php echo e($values['society']); ?></td>
+									<td><?php echo e($values['NAME']); ?></td>
 									<td><?php echo ($values['Active'] == '1') ? 'Yes' : 'No'; ?></td>
 									<td><button type="submit" class="btn btn-light btn-sm">Submit</button>
 									</td>
@@ -107,11 +100,11 @@ while ($subsector_value = mysqli_fetch_assoc($subsector_result)) {
 		<div class="new-thali mt-5">
 			<h2 class="mb-3">New Thali</h2>
 			<?php
-			$sql = mysqli_query($link, "
+			$sql = db_query($link, "
 SELECT (t1.Thali +1) AS gap_starts_at, (SELECT MIN( t3.Thali )-1 FROM thalilist t3 WHERE t3.Thali > t1.Thali) AS gap_ends_at FROM thalilist t1 WHERE NOT  EXISTS ( SELECT t2.Thali FROM thalilist t2 WHERE t2.Thali = t1.Thali +1 ) HAVING gap_ends_at IS NOT NULL  LIMIT 0 , 30");
 			$row = mysqli_fetch_row($sql);
-			$plusone = $row[0];
-			echo "Thali No. :: $plusone  can be given";
+			$plusone = $row[0] ?? null;
+			echo "Thali No. :: " . e((string) $plusone) . "  can be given";
 			?>
 			<div class="table-responsive">
 				<table class="table table-striped display" width="100%">
@@ -135,10 +128,15 @@ SELECT (t1.Thali +1) AS gap_starts_at, (SELECT MIN( t3.Thali )-1 FROM thalilist 
 						?>
 							<tr>
 								<form action='activatethali.php' method='post'>
-									<input type='hidden' value='<?php echo $values['id']; ?>' name='id'>
-									<input type='hidden' value='<?php echo $values['NAME']; ?>' name='name'>
+									<input type='hidden' value='<?php echo e($values['id']); ?>' name='id'>
+									<input type='hidden' value='<?php echo e($values['NAME']); ?>' name='name'>
+									<?php /* BUG FIX: activatethali.php and reject.php both read
+									       $_POST['email'] to send a welcome/rejection email, but this
+									       form never actually submitted an email field, so that email
+									       could never have been sent. */ ?>
+									<input type='hidden' value='<?php echo e($values['Email_ID'] ?? ''); ?>' name='email'>
 									<td>
-										<input class="form-control form-control-sm" type='text' name='sabeelno' class='' required='required'>
+										<input class="form-control form-control-sm" type='text' name='sabeelno' required='required'>
 									</td>
 									<td>
 										<input class="form-control form-control-sm" type='text' name="thalino" required='required'>
@@ -152,13 +150,13 @@ SELECT (t1.Thali +1) AS gap_starts_at, (SELECT MIN( t3.Thali )-1 FROM thalilist 
 											<option value="Large">Large</option>
 										</select>
 									</td>
-									<td><input class="form-control form-control-sm" type='number' name="hub" required='required' value="<?php echo $values['yearly_hub']; ?>"></td>
+									<td><input class="form-control form-control-sm" type='number' name="hub" required='required' value="<?php echo e((string) $values['yearly_hub']); ?>"></td>
 									<td>
 										<select class='sector form-select form-select-sm' name='sector' required>
 											<option value=''>Select Sector</option>
 											<?php foreach ($sector_list as $sector_name) { ?>
-												<option value='<?php echo $sector_name; ?>' <?php echo ($sector_name == $values['sector']) ? 'selected' : ''; ?>>
-													<?php echo $sector_name; ?>
+												<option value='<?php echo e($sector_name); ?>' <?php echo ($sector_name == $values['sector']) ? 'selected' : ''; ?>>
+													<?php echo e($sector_name); ?>
 												</option>
 											<?php } ?>
 										</select>
@@ -167,15 +165,15 @@ SELECT (t1.Thali +1) AS gap_starts_at, (SELECT MIN( t3.Thali )-1 FROM thalilist 
 										<select class='transporter form-select form-select-sm' name='transporter' required>
 											<option value=''>Select Transporter</option>
 											<?php foreach ($transporter_list as $tname) { ?>
-												<option value='<?php echo $tname; ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>>
-													<?php echo $tname; ?>
+												<option value='<?php echo e($tname); ?>' <?php echo ($tname == $values['Transporter']) ? 'selected' : ''; ?>>
+													<?php echo e($tname); ?>
 												</option>
 											<?php } ?>
 										</select>
 									</td>
-									<td><?php echo $values['wingflat'] . ', ' . $values['society'] . ', ' . $values['Full_Address']; ?></td>
-									<td><?php echo $values['NAME']; ?></td>
-									<td><?php echo $values['CONTACT']; ?></td>
+									<td><?php echo e($values['wingflat'] . ', ' . $values['society'] . ', ' . $values['Full_Address']); ?></td>
+									<td><?php echo e($values['NAME']); ?></td>
+									<td><?php echo e($values['CONTACT']); ?></td>
 									<td><button type="submit"
 											class="btn btn-light btn-sm me-2 mb-2">Activate</button>
 										<button class="btn btn-light btn-sm mb-2" type="submit"

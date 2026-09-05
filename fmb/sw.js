@@ -15,6 +15,12 @@ const filesToCache = [
   "/fmb/assets/js/main.js",
   "/fmb/assets/img/logo-192x192.png",
 ];
+
+// NOTE: main.css / main.js are pre-cached above, but the fetch handler below
+// bypasses SW handling entirely for /assets/css/ and /assets/js/, so those
+// cached copies never actually get served. That's fine if you *want* CSS/JS
+// to always hit the network fresh (and are OK with them failing offline) —
+// but if you want offline pages to stay styled, remove those two patterns.
 const neverCacheUrls = [
   /\/users\/viewmenu.php/,
   /\/assets\/css/,
@@ -130,8 +136,13 @@ self.addEventListener("fetch", function (e) {
             });
           })
           .catch(function () {
-            // If the network is unavailable, get the request from cache
-            return cache.match(e.request);
+            // If the network is unavailable, get the request from cache.
+            // (Fixed: open the cache here instead of referencing an
+            // out-of-scope `cache` variable, which previously threw
+            // "cache is not defined" and broke this fallback entirely.)
+            return caches.open(cacheName).then(function (cache) {
+              return cache.match(e.request);
+            });
           }),
       );
     } else {
@@ -170,13 +181,17 @@ function checkNeverCacheList(url) {
   }
   return true;
 }
-importScripts(
-  "https://storage.googleapis.com/workbox-cdn/releases/6.0.2/workbox-sw.js",
-);
-if (workbox.googleAnalytics) {
-  try {
+
+// Workbox is optional (only used for Google Analytics offline buffering
+// below). Wrapped so that a blocked/unreachable CDN can't throw during SW
+// script evaluation and take down the whole service worker install.
+try {
+  importScripts(
+    "https://storage.googleapis.com/workbox-cdn/releases/6.0.2/workbox-sw.js",
+  );
+  if (typeof workbox !== "undefined" && workbox.googleAnalytics) {
     workbox.googleAnalytics.initialize();
-  } catch (e) {
-    console.log(e.message);
   }
+} catch (e) {
+  console.log("PWA: Workbox failed to load, continuing without it.", e.message);
 }

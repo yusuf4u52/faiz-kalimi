@@ -1,6 +1,7 @@
 <?php
 include('header.php');
 include('navbar.php');
+require_once('helpers.php');
 ?>
 
 <div class="card">
@@ -13,7 +14,7 @@ include('navbar.php');
           </div>
           <div class="col-6 text-end">
             <?php if ($values['hardstop'] == 1) { ?>
-              <h4>Your thali is currently stopped: <?php echo $values['hardstop_comment']; ?></h4>
+              <h4>Your thali is currently stopped: <?php echo e($values['hardstop_comment']); ?></h4>
             <?php } else { ?>
               <button type="button" class="btn btn-light" data-bs-target="#stop_thali" data-bs-toggle="modal">Stop
                 Thali</button>
@@ -21,16 +22,16 @@ include('navbar.php');
           </div>
         </div>
 
-        <?php if (isset($_GET['action']) && $_GET['action'] == 'srange') { ?>
+        <?php if (($_GET['action'] ?? null) === 'srange') { ?>
           <div class="alert alert-success" role="alert">Your thali is stopped from <strong>
-              <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
+              <?php echo e(date('d M Y', strtotime($_GET['sdate'] ?? ''))); ?>
             </strong> to <strong>
-              <?php echo date('d M Y', strtotime($_GET['edate'])); ?>
+              <?php echo e(date('d M Y', strtotime($_GET['edate'] ?? ''))); ?>
             </strong>. Click <a href="/fmb/users/stop_dates.php">here</a> to view stopped dates.</div>
         <?php }
-        if (isset($_GET['action']) && $_GET['action'] == 'srsvp') { ?>
+        if (($_GET['action'] ?? null) === 'srsvp') { ?>
           <div class="alert alert-warning" role="alert">RSVP ended to stop thali of <strong>
-              <?php echo date('d M Y', strtotime($_GET['sdate'])); ?>
+              <?php echo e(date('d M Y', strtotime($_GET['sdate'] ?? ''))); ?>
             </strong>.</div>
         <?php }  ?>
 
@@ -39,7 +40,7 @@ include('navbar.php');
             <div class="modal-content">
               <form id="user_stop" class="form-horizontal" method="post" action="stopthali.php" autocomplete="off">
                 <input type="hidden" name="action" value="stop_thali" />
-                <input type="hidden" id="thali" name="thali" value="<?php echo $_SESSION['thaliid']; ?>" />
+                <input type="hidden" id="thali" name="thali" value="<?php echo e($_SESSION['thaliid'] ?? ''); ?>" />
                 <div class="modal-header">
                   <h4 class="modal-title">Stop Thali</h4>
                   <button type="button" class="btn ms-auto" data-bs-dismiss="modal" aria-label="Close"><i

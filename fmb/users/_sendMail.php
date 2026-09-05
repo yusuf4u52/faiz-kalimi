@@ -3,41 +3,134 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../vendor/autoload.php';
-require_once 'connection.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/connection.php';
 
-function sendEmail(array $to, $subject, $bodyHtml, $bodyText = '')
+/**
+ * Every call site in this codebase already passes 4-6 positional args
+ * (to, subject, body, cc, bcc, isHtml) — the previous version of this
+ * function only declared 4 params, so the cc/bcc/isHtml values callers
+ * were passing were silently discarded by PHP rather than doing anything.
+ * This signature matches what's actually being called everywhere.
+ */
+function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = null, ?array $bcc = null, bool $isHtml = true, ?array $attachments = null): bool
 {
-	$mail = new PHPMailer(true);
+    global $link;
+    $GLOBALS['lastSendEmailError'] = null;
+    if (SMTP_USER === '' || SMTP_PASS === '') {
+        $GLOBALS['lastSendEmailError'] = 'SMTP credentials are not configured on the server.';
+        error_log('[sendEmail] SMTP credentials are not configured. Set FMB_SMTP_USER and FMB_SMTP_PASS.');
+        return false;
+    }
+    $mail = new PHPMailer(true);
 
-	try {
-		// SMTP configuration for Hostinger
-		$mail->isSMTP();
-		$mail->Host       = 'smtp.hostinger.com';
-		$mail->SMTPAuth   = true;
-		$mail->Username   = SMTP_USER;
-		$mail->Password   = SMTP_PASS;
-		$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-		$mail->Port       = 587;
+    try {
+        // SMTP configuration for Hostinger
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.hostinger.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = SMTP_USER;
+        $mail->Password   = SMTP_PASS;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+        $mail->Timeout    = 20;
 
-		// From and To
-		$mail->setFrom(SMTP_USER);
-		foreach ($to as $email) {
-			$mail->addAddress($email);
-		}
+        // From and To
+        $mail->setFrom(SMTP_USER);
+        foreach ($to as $email) {
+            $mail->addAddress($email);
+        }
+        foreach ($cc ?? [] as $email) {
+            $mail->addCC($email);
+        }
+        foreach ($bcc ?? [] as $email) {
+            $mail->addBCC($email);
+        }
 
-		// Content
-		$mail->isHTML(true);
-		$mail->Subject = $subject;
-		$mail->Body    = $bodyHtml;
-		$mail->AltBody = $bodyText ?: strip_tags($bodyHtml);
+        // Content
+        $mail->isHTML($isHtml);
+        $mail->Subject = $subject;
+        $mail->Body    = $bodyHtml;
+        $mail->AltBody = $isHtml ? strip_tags($bodyHtml) : $bodyHtml;
+        foreach ($attachments ?? [] as $attachment) {
+            $mail->addStringAttachment($attachment['data'], $attachment['name']);
+        }
 
-		$mail->send();
-		$mail->SMTPKeepAlive = false;
+        $mail->send();
+        $mail->SMTPKeepAlive = false;
         $mail->smtpClose();
-		return true;
-	} catch (Exception $e) {
-		echo("Email could not be sent. PHPMailer Error: {$mail->ErrorInfo}");
-		return false;
-	}
+        return true;
+    } catch (Throwable $e) {
+        $error = $mail->ErrorInfo !== '' ? $mail->ErrorInfo : $e->getMessage();
+        $GLOBALS['lastSendEmailError'] = $error;
+        error_log('[sendEmail] PHPMailer error: ' . $error . ' | recipients: ' . implode(', ', $to));
+        return false;
+    }
+}
+
+/**
+ * Send personalized messages over one SMTP connection. This is used by the
+ * daily start/stop job, where opening one connection per user can exceed the
+ * web server timeout for a large batch.
+ *
+ * @param array<int, array{to: array, subject: string, body: string, cc?: ?array, bcc?: ?array, isHtml?: bool}> $messages
+ */
+function sendEmailBatch(array $messages): int
+{
+    if (empty($messages)) {
+        return 0;
+    }
+    if (SMTP_USER === '' || SMTP_PASS === '') {
+        $GLOBALS['lastSendEmailError'] = 'SMTP credentials are not configured on the server.';
+        error_log('[sendEmailBatch] SMTP credentials are not configured. Set FMB_SMTP_USER and FMB_SMTP_PASS.');
+        return 0;
+    }
+
+    $mail = new PHPMailer(true);
+    $sent = 0;
+
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.hostinger.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = SMTP_USER;
+        $mail->Password = SMTP_PASS;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+        $mail->Timeout = 20;
+        $mail->SMTPKeepAlive = true;
+
+        foreach ($messages as $message) {
+            try {
+                $mail->clearAllRecipients();
+                $mail->clearAttachments();
+                $mail->setFrom(SMTP_USER);
+                foreach ($message['to'] as $email) {
+                    $mail->addAddress($email);
+                }
+                foreach ($message['cc'] ?? [] as $email) {
+                    $mail->addCC($email);
+                }
+                foreach ($message['bcc'] ?? [] as $email) {
+                    $mail->addBCC($email);
+                }
+                $mail->isHTML($message['isHtml'] ?? true);
+                $mail->Subject = $message['subject'];
+                $mail->Body = $message['body'];
+                $mail->AltBody = ($message['isHtml'] ?? true) ? strip_tags($message['body']) : $message['body'];
+                $mail->send();
+                $sent++;
+            } catch (Throwable $e) {
+                $error = $mail->ErrorInfo !== '' ? $mail->ErrorInfo : $e->getMessage();
+                error_log('[sendEmailBatch] PHPMailer error: ' . $error . ' | recipients: ' . implode(', ', $message['to']));
+            }
+        }
+    } catch (Throwable $e) {
+        $GLOBALS['lastSendEmailError'] = $e->getMessage();
+        error_log('[sendEmailBatch] SMTP setup error: ' . $e->getMessage());
+    } finally {
+        $mail->smtpClose();
+    }
+
+    return $sent;
 }
