@@ -10,7 +10,13 @@
         "sendgrid/sendgrid": "^7.9",
         "google/apiclient": "2.12.1",
         "phpoffice/phpspreadsheet": "^1.19",
-        "phpmailer/phpmailer": "^6.10"
+        "phpmailer/phpmailer": "^6.10",
+        "dompdf/dompdf": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "JamaatReport\\": "reporting/src/"
+        }
     },
     "scripts": {
         "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
