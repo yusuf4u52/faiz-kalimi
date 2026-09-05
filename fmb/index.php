@@ -107,6 +107,8 @@ if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
 }
 
 if (isset($authUrl) || isset($_GET['status'])) {
+	$documentTitle = 'Faiz al-Mawaid al-Burhaniyah (Kalimi Mohallah - Poona)';
+	$browserTitle = 'Login - FMB Kalimi';
 	include('users/header.php'); ?>
 	<div class="content mt-4 text-center">
 		<div class="container">

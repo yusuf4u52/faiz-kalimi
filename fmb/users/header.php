@@ -10,10 +10,13 @@
         '/users/index.php' => 'Dashboard',
     ];
     $pageTitle = $pageTitle ?? ($pageTitles[$scriptPath] ?? ucwords(str_replace(['_', '-'], ' ', $pageSlug)));
+    $documentTitle = $documentTitle ?? ($pageTitle . ' - FMB Kalimi');
+    $browserTitle = $browserTitle ?? $documentTitle;
     $mainCssPath = __DIR__ . '/../assets/css/main.css';
     $mainCssVersion = file_exists($mainCssPath) ? (string) filemtime($mainCssPath) : '1';
     ?>
-    <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?> - FMB Kalimi</title>
+    <title><?php echo htmlspecialchars($documentTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+    <meta name="description" content="Faiz al-Mawaid al-Burhaniyah, Kalimi Mohallah - Poona.">
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -40,10 +43,13 @@
     <link rel="stylesheet" href="/fmb/assets/css/main.css?v=<?php echo htmlspecialchars($mainCssVersion, ENT_QUOTES, 'UTF-8'); ?>" />
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const browserTitle = <?php echo json_encode($browserTitle, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
             const heading = document.querySelector('h1, h2');
             const headingText = heading ? heading.textContent.replace(/\s+/g, ' ').trim() : '';
 
-            if (headingText) {
+            if (browserTitle) {
+                document.title = browserTitle;
+            } else if (headingText) {
                 document.title = headingText + ' - FMB Kalimi';
             }
         });
