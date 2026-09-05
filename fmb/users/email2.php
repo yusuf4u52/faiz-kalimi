@@ -53,40 +53,48 @@ try {
     // --- Thalis stopping tomorrow ---
     $stop_thali = db_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` = ?", "s", [$tomorrow_date]);
     if ($stop_thali->num_rows > 0) {
+        $stopNotifications = [];
         while ($stop = mysqli_fetch_assoc($stop_thali)) {
-            $start_list = db_query(
-                $link,
-                "SELECT `id`, `Thali`, `NAME`, `Email_ID` FROM thalilist WHERE `id` = ? AND `Active` = 1 LIMIT 1",
-                "s",
-                [$stop['thali']]
-            );
-            if ($start_list->num_rows > 0) {
-                $list = $start_list->fetch_assoc();
-
-                db_query(
+            try {
+                $start_list = db_query(
                     $link,
-                    "UPDATE thalilist SET `Active` = 0, `Thali_stop_date` = ? WHERE `id` = ?",
-                    "ss",
-                    [$hijridate, $list['id']]
-                );
-                db_query(
-                    $link,
-                    "UPDATE change_table SET processed = 1 WHERE userid = ? AND `Operation` IN ('Start Thali','Stop Thali','Start Transport','Stop Transport') AND processed = 0",
+                    "SELECT `id`, `Thali`, `NAME`, `Email_ID` FROM thalilist WHERE `id` = ? AND `Active` = 1 LIMIT 1",
                     "s",
-                    [$list['id']]
+                    [$stop['thali']]
                 );
-                db_query(
-                    $link,
-                    "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES (?, ?, 'Stop Thali', ?)",
-                    "sss",
-                    [$list['Thali'], $list['id'], $hijridate]
-                );
+                if ($start_list->num_rows > 0) {
+                    $list = $start_list->fetch_assoc();
 
-                $email_subject = "Thali Stop Notification";
-                $email_body = "Salaam " . e($list['NAME']) . ",<br><br>Your thali has been stopped from tomorrow till the date you selected in the FMB Website.<br><br> Note: If your thali is stopped by mistake, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
-                $stopEmailSent = sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
+                    db_query(
+                        $link,
+                        "UPDATE thalilist SET `Active` = 0, `Thali_stop_date` = ? WHERE `id` = ?",
+                        "ss",
+                        [$hijridate, $list['id']]
+                    );
+                    db_query(
+                        $link,
+                        "UPDATE change_table SET processed = 1 WHERE userid = ? AND `Operation` IN ('Start Thali','Stop Thali','Start Transport','Stop Transport') AND processed = 0",
+                        "s",
+                        [$list['id']]
+                    );
+                    db_query(
+                        $link,
+                        "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES (?, ?, 'Stop Thali', ?)",
+                        "sss",
+                        [$list['Thali'], $list['id'], $hijridate]
+                    );
+
+                    $stopNotifications[] = [
+                        'to' => [$list['Email_ID']],
+                        'subject' => 'Thali Stop Notification',
+                        'body' => "Salaam " . e($list['NAME']) . ",<br><br>Your thali has been stopped from tomorrow till the date you selected in the FMB Website.<br><br> Note: If your thali is stopped by mistake, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla",
+                    ];
+                }
+            } catch (Throwable $e) {
+                error_log('[email2.php] Stop notification DB error: ' . $e->getMessage());
             }
         }
+        sendEmailBatch($stopNotifications);
     }
 
     // --- Thalis stopped today with no stop scheduled for tomorrow => resume tomorrow ---
@@ -107,34 +115,42 @@ try {
         [$today_date, $tomorrow_date]
     );
     if ($chk_stop_thali->num_rows > 0) {
+        $startNotifications = [];
         while ($list = mysqli_fetch_assoc($chk_stop_thali)) {
-            db_query(
-                $link,
-                "UPDATE thalilist SET `Active` = 1, `Thali_start_date` = ? WHERE `id` = ?",
-                "ss",
-                [$hijridate, $list['id']]
-            );
-            db_query(
-                $link,
-                "UPDATE change_table SET processed = 1 WHERE userid = ?
-                 AND (`Operation` IN ('Start Thali','Stop Thali','Update Address','Change Size')
-                      OR `Operation` LIKE 'Update Address from %'
-                      OR `Operation` LIKE 'Change Size from %')
-                 AND processed = 0",
-                "s",
-                [$list['id']]
-            );
-            db_query(
-                $link,
-                "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES (?, ?, 'Start Thali', ?)",
-                "sss",
-                [$list['Thali'], $list['id'], $hijridate]
-            );
+            try {
+                db_query(
+                    $link,
+                    "UPDATE thalilist SET `Active` = 1, `Thali_start_date` = ? WHERE `id` = ?",
+                    "ss",
+                    [$hijridate, $list['id']]
+                );
+                db_query(
+                    $link,
+                    "UPDATE change_table SET processed = 1 WHERE userid = ?
+                     AND (`Operation` IN ('Start Thali','Stop Thali','Update Address','Change Size')
+                          OR `Operation` LIKE 'Update Address from %'
+                          OR `Operation` LIKE 'Change Size from %')
+                     AND processed = 0",
+                    "s",
+                    [$list['id']]
+                );
+                db_query(
+                    $link,
+                    "INSERT INTO change_table (`Thali`, `userid`, `Operation`, `Date`) VALUES (?, ?, 'Start Thali', ?)",
+                    "sss",
+                    [$list['Thali'], $list['id'], $hijridate]
+                );
 
-            $email_subject = "Thali Start Notification";
-            $email_body = "Salaam " . e($list['NAME']) . ",<br><br>Your thali has been started from tomorrow.<br><br>Note: If your thali is started by mistake or you wish to extend the period, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla";
-            $startEmailSent = sendEmail([$list['Email_ID']], $email_subject, $email_body, null, null, true);
+                $startNotifications[] = [
+                    'to' => [$list['Email_ID']],
+                    'subject' => 'Thali Start Notification',
+                    'body' => "Salaam " . e($list['NAME']) . ",<br><br>Your thali has been started from tomorrow.<br><br>Note: If your thali is started by mistake or you wish to extend the period, please whatsapp us on <a href='https://wa.me/919826932974' target='_blank'>+91 98269 32974</a><br><br>Thank you,<br>Kalimi Mohalla",
+                ];
+            } catch (Throwable $e) {
+                error_log('[email2.php] Start notification DB error: ' . $e->getMessage());
+            }
         }
+        sendEmailBatch($startNotifications);
     }
 
     // --- Daily change/thali-count report for tomorrow ---
@@ -261,7 +277,31 @@ try {
         $pivot["total"]["total"] = $result[0];
         $dailyThaliCountRow = $result;
 
-        db_query($link, "UPDATE thalilist SET thalicount = thalicount + 1 WHERE Active = 1");
+        // Count one thaali day for every currently active user. The date marker
+        // prevents a repeated run of this scheduled script from counting the
+        // same menu day twice.
+        $countMarkerPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'fmb-email2-count-' . $tomorrow_date . '.sent';
+        $countMarkerHandle = @fopen($countMarkerPath, 'x');
+        if ($countMarkerHandle !== false) {
+            fclose($countMarkerHandle);
+            try {
+                db_query(
+                    $link,
+                    "UPDATE `thalilist`
+                     SET `thalicount` = COALESCE(`thalicount`, 0) + 1
+                     WHERE `Active` = 1
+                       AND EXISTS (
+                           SELECT 1 FROM `menu_list`
+                           WHERE `menu_type` = 'thaali' AND `menu_date` = ?
+                       )",
+                    "s",
+                    [$tomorrow_date]
+                );
+            } catch (Throwable $e) {
+                @unlink($countMarkerPath);
+                throw $e;
+            }
+        }
         $msg = str_replace("\n", "<br>", $msg);
 
         $pivotTable = "<table border='1'><tr><td></td>";
@@ -374,10 +414,20 @@ try {
             //include __DIR__ . '/emailmenu.php';
     } else {
         $displayMessage('No thaali menu found for ' . $tomorrow_date . '; sending skip notice instead of transporter update.');
-        $skipmsg = "Skipping email as no thali available for " . e($tomorrow_date) . ".";
-        $smailSent = sendEmail(SKIP_NOTICE_EMAILS, 'No Thaali Update ' . $tomorrow_date, $skipmsg, null, null, true);
-        if ($smailSent) {
-            echo 'Skip Email';
+        $skipMarkerPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'fmb-email2-skip-' . $tomorrow_date . '.sent';
+        $skipMarkerHandle = @fopen($skipMarkerPath, 'x');
+        if ($skipMarkerHandle === false) {
+            $displayMessage('Skip notice already sent for ' . $tomorrow_date . '.');
+        } else {
+            fclose($skipMarkerHandle);
+            $skipmsg = "Skipping email as no thali available for " . e($tomorrow_date) . ".";
+            $smailSent = sendEmail(SKIP_NOTICE_EMAILS, 'No Thaali Update ' . $tomorrow_date, $skipmsg, null, null, true);
+            if (!$smailSent) {
+                @unlink($skipMarkerPath);
+                $displayMessage('Skip notice email failed: ' . ($GLOBALS['lastSendEmailError'] ?? 'Unknown email error'));
+            } else {
+                echo 'Skip Email';
+            }
         }
     }
 } catch (Throwable $e) {

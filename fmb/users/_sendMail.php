@@ -67,3 +67,70 @@ function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = nu
         return false;
     }
 }
+
+/**
+ * Send personalized messages over one SMTP connection. This is used by the
+ * daily start/stop job, where opening one connection per user can exceed the
+ * web server timeout for a large batch.
+ *
+ * @param array<int, array{to: array, subject: string, body: string, cc?: ?array, bcc?: ?array, isHtml?: bool}> $messages
+ */
+function sendEmailBatch(array $messages): int
+{
+    if (empty($messages)) {
+        return 0;
+    }
+    if (SMTP_USER === '' || SMTP_PASS === '') {
+        $GLOBALS['lastSendEmailError'] = 'SMTP credentials are not configured on the server.';
+        error_log('[sendEmailBatch] SMTP credentials are not configured. Set FMB_SMTP_USER and FMB_SMTP_PASS.');
+        return 0;
+    }
+
+    $mail = new PHPMailer(true);
+    $sent = 0;
+
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.hostinger.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = SMTP_USER;
+        $mail->Password = SMTP_PASS;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+        $mail->Timeout = 20;
+        $mail->SMTPKeepAlive = true;
+
+        foreach ($messages as $message) {
+            try {
+                $mail->clearAllRecipients();
+                $mail->clearAttachments();
+                $mail->setFrom(SMTP_USER);
+                foreach ($message['to'] as $email) {
+                    $mail->addAddress($email);
+                }
+                foreach ($message['cc'] ?? [] as $email) {
+                    $mail->addCC($email);
+                }
+                foreach ($message['bcc'] ?? [] as $email) {
+                    $mail->addBCC($email);
+                }
+                $mail->isHTML($message['isHtml'] ?? true);
+                $mail->Subject = $message['subject'];
+                $mail->Body = $message['body'];
+                $mail->AltBody = ($message['isHtml'] ?? true) ? strip_tags($message['body']) : $message['body'];
+                $mail->send();
+                $sent++;
+            } catch (Throwable $e) {
+                $error = $mail->ErrorInfo !== '' ? $mail->ErrorInfo : $e->getMessage();
+                error_log('[sendEmailBatch] PHPMailer error: ' . $error . ' | recipients: ' . implode(', ', $message['to']));
+            }
+        }
+    } catch (Throwable $e) {
+        $GLOBALS['lastSendEmailError'] = $e->getMessage();
+        error_log('[sendEmailBatch] SMTP setup error: ' . $e->getMessage());
+    } finally {
+        $mail->smtpClose();
+    }
+
+    return $sent;
+}

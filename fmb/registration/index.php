@@ -5,6 +5,8 @@ require_once '../users/_sendMail.php';
 
 $msg = null;
 $formValues = ['its' => '', 'firstname' => '', 'fathername' => '', 'lastname' => '', 'gender' => '', 'mobile' => '', 'whatsapp' => '', 'email' => '', 'wingflat' => '', 'society' => ''];
+$societyName = '';
+$societyAddress = '';
 
 function formatRegistrationNamePart(string $name): string
 {
@@ -78,17 +80,24 @@ if (isset($_POST['submit'])) {
 
         $thalilist_result = db_query(
             $link,
-            "SELECT id FROM `thalilist` WHERE `ITS_No` = ? OR `Email_ID` = ? OR `SEmail_ID` = ?",
+            "SELECT `Active` FROM `thalilist` WHERE `ITS_No` = ? OR `Email_ID` = ? OR `SEmail_ID` = ? ORDER BY `Active` DESC",
             "sss",
             [$its, $email, $email]
         );
 
         if ($thalilist_result->num_rows > 0) {
-            $msg = "Your data already exist in the system and so you can login directly.";
+            $existingRow = $thalilist_result->fetch_assoc();
+            if ($existingRow['Active'] === null) {
+                $msg = "Your registration is already submitted and is awaiting activation from the Jamaat office.";
+            } else {
+                $msg = "Your data already exist in the system and so you can login directly.";
+            }
         } else {
             if ($formValues['society'] === 'Other') {
-                $society = trim((string) $_POST['society_name']);
-                $full_address = trim((string) ($_POST['society_address'] ?? ''));
+                $societyName = trim((string) ($_POST['society_name'] ?? ''));
+                $societyAddress = trim((string) ($_POST['society_address'] ?? ''));
+                $society = $societyName;
+                $full_address = $societyAddress;
                 $sector = '';
                 $transporter = '';
                 $musaid = '';
@@ -138,9 +147,11 @@ if (isset($_POST['submit'])) {
                 sendEmail([$email], 'New Registration Successful, Visit Faiz to start the thali', $msgvar, null, null, true);
 
                 $msg = "Your registration has been successfully submitted. Please contact Kalimi Mohalla Jamaat Office to start your thali.";
+                $formValues = ['its' => '', 'firstname' => '', 'fathername' => '', 'lastname' => '', 'gender' => '', 'mobile' => '', 'whatsapp' => '', 'email' => '', 'wingflat' => '', 'society' => ''];
+                $societyName = '';
+                $societyAddress = '';
             } catch (RuntimeException $e) {
                 error_log('[registration/index.php] ' . $e->getMessage());
-                echo $e->getMessage();
                 $msg = "Sorry, something went wrong while saving your registration. Please try again in a moment or contact the Jamaat office.";
             }
         }
@@ -240,13 +251,13 @@ include('../users/header.php'); ?>
 							<div id="society_name_wrapper" class="mb-3 row" style="display:none;">
 								<label for="society_name" class="col-3 control-label">Other Society/House Name</label>
 								<div class="col-9">
-									<input type="text" class="form-control" name="society_name" id="society_name_input" value="<?php echo e((string) ($_POST['society_name'] ?? '')); ?>" />
+                                    <input type="text" class="form-control" name="society_name" id="society_name_input" value="<?php echo e($societyName); ?>" />
 								</div>
 							</div>
 							<div id="society_address_wrapper" class="mb-3 row" style="display:none;">
 								<label for="society_address" class="col-3 control-label">Other Society/House Address</label>
 								<div class="col-9">
-									<textarea class="form-control" name="society_address" id="society_address_input"><?php echo e((string) ($_POST['society_address'] ?? '')); ?></textarea>
+                                    <textarea class="form-control" name="society_address" id="society_address_input"><?php echo e($societyAddress); ?></textarea>
 								</div>
 							</div>
 							<div class="mb-3 row">
