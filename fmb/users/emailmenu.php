@@ -9,7 +9,7 @@ require_cron_or_admin_access($link);
 
 include('getHijriDate.php');
 require_once '_sendMail.php';
-include('emailroti.php');
+//include('emailroti.php');
 
 $tomorrow_date = $_GET['menu_date'] ?? date('Y-m-d', strtotime('+ 1 day'));
 if (!DateTime::createFromFormat('Y-m-d', $tomorrow_date)) {
@@ -158,12 +158,12 @@ if ($menu_item_result->num_rows > 0) {
     $msgmenu .= '</td>
 	<table>';
 
-    //echo $msgmenu;
+    echo $msgmenu;
 
     sendEmail(MENU_UPDATE_EMAILS, 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
 
     if (isset($_GET['menu_date'])) {
-        header("Location: /fmb/users/menu/edited.php?action=send&date=" . urlencode($_GET['menu_date']));
+        //header("Location: /fmb/users/menu/edited.php?action=send&date=" . urlencode($_GET['menu_date']));
         exit;
     }
 } else {
