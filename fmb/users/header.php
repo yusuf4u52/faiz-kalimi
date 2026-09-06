@@ -6,8 +6,10 @@
     $scriptPath = $_SERVER['SCRIPT_NAME'] ?? '';
     $pageSlug = pathinfo($scriptPath, PATHINFO_FILENAME);
     $pageTitles = [
-        '/index.php' => 'Login',
-        '/users/index.php' => 'Dashboard',
+        '/index.php' => 'Faiz al-Mawaid al-Burhaniyah (Kalimi Mohallah - Poona)',
+        '/fmb/index.php' => 'Faiz al-Mawaid al-Burhaniyah (Kalimi Mohallah - Poona)',
+        '/users/index.php' => 'View Menu',
+        '/fmb/users/index.php' => 'View Menu',
     ];
     $pageTitle = $pageTitle ?? ($pageTitles[$scriptPath] ?? ucwords(str_replace(['_', '-'], ' ', $pageSlug)));
     $documentTitle = $documentTitle ?? ($pageTitle . ' - FMB Kalimi');
@@ -47,10 +49,10 @@
             const heading = document.querySelector('h1, h2');
             const headingText = heading ? heading.textContent.replace(/\s+/g, ' ').trim() : '';
 
-            if (browserTitle) {
-                document.title = browserTitle;
-            } else if (headingText) {
+            if (headingText) {
                 document.title = headingText + ' - FMB Kalimi';
+            } else if (browserTitle) {
+                document.title = browserTitle;
             }
         });
     </script>
