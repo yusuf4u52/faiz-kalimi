@@ -10,7 +10,7 @@ $result = db_query(
             musaid, Paid, (Previous_Due + yearly_hub - Paid) AS Total_Pending
      FROM thalilist WHERE thalisize = 'Friday' AND hardstop != 1 ORDER BY tiffinno ASC"
 );
-$max_days = mysqli_fetch_row(db_query($link, "SELECT MAX(thalicount) AS max FROM thalilist"));
+$max_days = mysqli_fetch_row(mysqli_query($link, "SELECT COUNT(*) FROM `menu_list` WHERE `menu_type` = 'thaali'"));
 ?>
 <div class="card">
     <div class="card-body">

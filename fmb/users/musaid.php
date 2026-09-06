@@ -11,7 +11,7 @@ $previous_year = ((int) $current_year['value']) - 1;
 $previous_thalilist = "thalilist_" . $previous_year;
 $previous_receipts = "receipts_" . $previous_year;
 
-$max_days = mysqli_fetch_row(db_query($link, "SELECT MAX(thalicount) as max FROM `thalilist`"));
+$max_days = mysqli_fetch_row(mysqli_query($link, "SELECT COUNT(*) FROM `menu_list` WHERE `menu_type` = 'thaali'"));
 
 // Table name interpolation here is unavoidable (table names can't be bound
 // as query parameters), but $previous_year is cast to int above, so this
