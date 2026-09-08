@@ -7,3 +7,9 @@ connection.php
 vendor
 *.csv
 *.sql
+
+# reporting module
+reporting/config/config.php
+reporting/config/cacert.pem
+reporting/output/*.pdf
+*.log
