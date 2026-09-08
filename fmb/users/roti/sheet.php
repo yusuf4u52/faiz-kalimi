@@ -1,7 +1,7 @@
 <?php
 include('../header.php');
 include('../navbar.php');
-require_once('helpers.php');
+require_once('helpers.php'); 
 include('../getHijriDate.php');
 
 // Load the current Monday first; navigation happens client-side afterward.
@@ -32,6 +32,9 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
                     <button type="button" class="btn btn-outline-secondary" id="roti-week-today">This Week</button>
                     <button type="button" class="btn btn-outline-secondary" id="roti-week-next">Next Week &raquo;</button>
                 </div>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-outline-primary" id="roti-apply-defaults" disabled>Apply Defaults</button>
             </div>
             <div class="col-auto ms-auto">
                 <h6 id="roti-sheet-status" class="fw-semibold" role="status" aria-live="polite"></h6>
@@ -82,6 +85,7 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
     const hijriMonthEl = document.getElementById('roti-hijri-month');
     const tableEl = document.getElementById('roti-sheet-table');
     const nextWeekButton = document.getElementById('roti-week-next');
+    const applyDefaultsButton = document.getElementById('roti-apply-defaults');
 
     let currentWeek = null;      // last-loaded matrix from the server
     let cellGrid = [];           // [rowIndex] -> array of cell descriptors, for patching after save
@@ -284,6 +288,10 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
         currentWeek = matrix;
         buildDayHeader(matrix.dates);
         buildBody(matrix);
+        applyDefaultsButton.disabled = matrix.roti_menu_dates.length === 0;
+        applyDefaultsButton.title = matrix.roti_menu_dates.length === 0
+            ? 'No matching thaali Roti menu dates in this week'
+            : 'Copy maker defaults into this week';
         if (window.DataTable) {
             dataTable = new DataTable(tableEl, {
                 paging: false,
@@ -395,6 +403,30 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
         scheduleSave();
     }
 
+    function applyDefaults() {
+        if (!currentWeek || currentWeek.roti_menu_dates.length === 0) return;
+        if (!window.confirm('Apply maker defaults to this week? Existing given atta, oil, and roti values will be replaced.')) return;
+
+        const menuDates = new Set(currentWeek.roti_menu_dates);
+        currentWeek.rows.forEach((row, rowIndex) => {
+            row.given_atta = Number(row.default_atta) || 0;
+            row.given_oil = Number(row.default_oil) || 0;
+            const distributionCells = cellGrid[rowIndex].filter((cell) => cell.kind === 'input-given');
+            distributionCells[0].input.value = fmt(row.given_atta, 2);
+            distributionCells[1].input.value = fmt(row.given_oil, 2);
+            queueDistributionEdit(row, 'given_atta', row.given_atta);
+            queueDistributionEdit(row, 'given_oil', row.given_oil);
+
+            currentWeek.dates.forEach((date, dayIndex) => {
+                if (!menuDates.has(date)) return;
+                row.daily[dayIndex] = Number(row.default_roti) || 0;
+                const receivedCell = cellGrid[rowIndex].find((cell) => cell.kind === 'input-received' && cell.dayIndex === dayIndex);
+                if (receivedCell) receivedCell.input.value = Math.round(row.daily[dayIndex]);
+                queueReceivedEdit(row, date, row.daily[dayIndex], dayIndex);
+            });
+        });
+    }
+
     function scheduleSave() {
         setStatus('Editing…', 'saving');
         clearTimeout(saveTimer);
@@ -447,6 +479,7 @@ $currentHijriMonthYear = preg_replace('/^\d+\s+/', '', $currentHijriFullDate);
         if (!nextWeekButton.disabled) loadWeek(addDays(currentWeek.week_start, 7));
     });
     document.getElementById('roti-week-today').addEventListener('click', () => loadWeek(localIsoDate()));
+    applyDefaultsButton.addEventListener('click', applyDefaults);
 
     window.addEventListener('beforeunload', (e) => {
         if (pendingEdits.size > 0) {
