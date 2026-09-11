@@ -168,9 +168,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'previ
 
     <?php if ($reportHtml !== null): ?>
         <h2>Preview</h2>
-        <iframe id="reportFrame" srcdoc="<?= htmlspecialchars($reportHtml, ENT_QUOTES, 'UTF-8') ?>" style="width: 100%; height: 900px; border: 1px solid #ccc;"></iframe>
-
         <button type="button" onclick="document.getElementById('reportFrame').contentWindow.print()">Print</button>
+        <iframe id="reportFrame" srcdoc="<?= htmlspecialchars($reportHtml, ENT_QUOTES, 'UTF-8') ?>" style="width: 100%; height: 900px; border: 1px solid #ccc;"></iframe>
     <?php endif; ?>
 </body>
 </html>
