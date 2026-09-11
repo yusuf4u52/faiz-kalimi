@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-// Testing page: lets an allow-listed admin generate a single Sabeel's
-// statement PDF on demand (nothing is emailed) to sanity-check report output.
+// Testing page: lets an allow-listed admin preview a single Sabeel's
+// statement on demand (nothing is emailed) to sanity-check report output.
+// Printing here prints the HTML directly via the browser — PDF generation
+// (Dompdf, in SabeelReportMailer) is reserved for the emailed statement.
 //
 // Not a login page of its own — reads the SAME PHP session fmb/index.php's
 // Google Sign-In already sets (shared cookie, path '/'), and just checks the
@@ -67,8 +69,10 @@ if (!$isLoggedIn || !in_array($loggedInEmail, $allowedEmails, true)) {
 
 $_SESSION['reporting_csrf_token'] ??= bin2hex(random_bytes(32));
 $errorMessage = null;
+$reportHtml = null;
+$sabeelNo = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'generate') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'preview') {
     $csrfOk = isset($_POST['csrf_token']) && hash_equals($_SESSION['reporting_csrf_token'], (string) $_POST['csrf_token']);
     $sabeelNo = trim((string) ($_POST['sabeel_no'] ?? ''));
 
@@ -131,21 +135,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'gener
                     $reportConfig['org_name'] ?? 'Jamaat',
                     $reportConfig['currency_symbol'] ?? 'Rs. '
                 );
-                $pdfHtml = $renderer->render($report, $fiscalYearLabel, date('d-M-Y'));
-
-                $options = new \Dompdf\Options();
-                $options->set('isRemoteEnabled', false);
-                $dompdf = new \Dompdf\Dompdf($options);
-                $dompdf->loadHtml($pdfHtml);
-                $dompdf->setPaper('A4', 'portrait');
-                $dompdf->render();
-                $pdfContent = $dompdf->output();
-
-                header('Content-Type: application/pdf');
-                header('Content-Disposition: inline; filename="sabeel-' . $sabeelNo . '-statement-test.pdf"');
-                header('Content-Length: ' . (string) strlen($pdfContent));
-                echo $pdfContent;
-                exit;
+                // PDF (via Dompdf) is only used for the emailed statement; this
+                // test page prints straight from the rendered HTML instead.
+                $reportHtml = $renderer->render($report, $fiscalYearLabel, date('d-M-Y'));
             }
         } catch (\Throwable $e) {
             error_log('[reporting/index.php] Report generation failed: ' . $e->getMessage());
@@ -160,18 +152,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'gener
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><title>Reporting — Sabeel Statement Test</title></head>
-<body style="font-family: sans-serif; max-width: 480px; margin: 60px auto;">
+<body style="font-family: sans-serif; max-width: 720px; margin: 60px auto;">
     <p>Signed in as <?= htmlspecialchars($loggedInEmail, ENT_QUOTES, 'UTF-8') ?></p>
     <h1>Generate a Sabeel Statement (test)</h1>
-    <p>Builds one Sabeel's statement PDF and opens it directly — nothing is emailed.</p>
+    <p>Builds one Sabeel's statement and shows it on this page — Print uses the browser's print dialog directly, no PDF is generated.</p>
     <?php if ($errorMessage !== null): ?>
         <p style="color: #b00020;"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></p>
     <?php endif; ?>
     <form method="post">
-        <input type="hidden" name="action" value="generate">
+        <input type="hidden" name="action" value="preview">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['reporting_csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
-        <label>Sabeel No. <input type="text" name="sabeel_no" required autofocus></label>
-        <button type="submit">Generate PDF</button>
+        <label>Sabeel No. <input type="text" name="sabeel_no" value="<?= htmlspecialchars($sabeelNo, ENT_QUOTES, 'UTF-8') ?>" required autofocus></label>
+        <button type="submit">Preview</button>
     </form>
+
+    <?php if ($reportHtml !== null): ?>
+        <h2>Preview</h2>
+        <iframe id="reportFrame" srcdoc="<?= htmlspecialchars($reportHtml, ENT_QUOTES, 'UTF-8') ?>" style="width: 100%; height: 900px; border: 1px solid #ccc;"></iframe>
+
+        <button type="button" onclick="document.getElementById('reportFrame').contentWindow.print()">Print</button>
+    <?php endif; ?>
 </body>
 </html>
