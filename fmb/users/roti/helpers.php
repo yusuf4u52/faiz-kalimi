@@ -40,6 +40,19 @@ const ATTO_PER_ROTI = 1 / 40;  // 40 roti = 1 KG atta
 const OIL_PER_ROTI = 1 / 400;  // 400 roti = 1 Ltr oil
 const AMOUNT_PER_ROTI = 5;     // ₹5 per roti
 
+/** Return gross amount, one weekly Faiz deduction, and net payment. */
+function roti_payment_breakdown(float $totalRoti, float $faizContribution): array
+{
+    $gross = $totalRoti * AMOUNT_PER_ROTI;
+    $contribution = $totalRoti > 0 ? max(0.0, $faizContribution) : 0.0;
+
+    return [
+        'gross' => $gross,
+        'contribution' => min($gross, $contribution),
+        'net' => max(0.0, $gross - $contribution),
+    ];
+}
+
 /**
  * Determine the Gregorian start/end dates of the Hijri month containing
  * $anchorDate, by walking outward day-by-day with getHijriDate() until the
@@ -277,6 +290,32 @@ function upsert_roti_received(mysqli $link, int $makerId, string $recievedDate, 
     return ['was_update' => mysqli_affected_rows($link) > 1];
 }
 
+/** Return the dates in this week whose menu includes the standard Roti item. */
+function get_roti_menu_dates(mysqli $link, string $weekStart, string $weekEnd): array
+{
+    $result = db_query(
+        $link,
+        "SELECT `menu_date`, `menu_item` FROM `menu_list`
+         WHERE `menu_date` BETWEEN ? AND ? AND `menu_type` = 'thaali'",
+        "ss",
+        [$weekStart, $weekEnd]
+    );
+
+    $dates = [];
+    while ($menu = mysqli_fetch_assoc($result)) {
+        if ((int) (new DateTime($menu['menu_date']))->format('N') === 7) {
+            continue;
+        }
+        $menuItem = decode_menu_item($menu['menu_item']);
+        if (strcasecmp(trim((string) ($menuItem['roti']['item'] ?? '')), 'roti') === 0) {
+            $dates[$menu['menu_date']] = true;
+        }
+    }
+    mysqli_free_result($result);
+
+    return $dates;
+}
+
 /**
  * Build the full weekly sheet data for every Roti Maker for the week
  * starting $weekStart (a Monday): opening/given Atta & Oil, each day's
@@ -288,8 +327,9 @@ function build_week_matrix(mysqli $link, string $weekStart): array
 {
     $dates = week_dates($weekStart);
     $weekEnd = end($dates);
+    $rotiMenuDates = get_roti_menu_dates($link, $weekStart, $weekEnd);
 
-    $makersResult = db_query($link, "SELECT `id`, `code`, `full_name`, `mobile_no` FROM fmb_roti_maker ORDER BY `full_name` ASC");
+    $makersResult = db_query($link, "SELECT `id`, `code`, `full_name`, `mobile_no`, `email`, `default_atta`, `default_oil`, `default_roti` FROM fmb_roti_maker ORDER BY `full_name` ASC");
     $makers = mysqli_fetch_all($makersResult, MYSQLI_ASSOC);
     mysqli_free_result($makersResult);
 
@@ -322,12 +362,17 @@ function build_week_matrix(mysqli $link, string $weekStart): array
     foreach ($makers as $maker) {
         $makerId = (int) $maker['id'];
         $opening = get_week_opening($link, $makerId, $weekStart);
-        $given = $givenByMaker[$makerId] ?? ['atta' => 0.0, 'oil' => 0.0];
+        $given = $givenByMaker[$makerId] ?? [
+            'atta' => 0.0,
+            'oil' => 0.0,
+        ];
 
         $daily = [];
         $totalRoti = 0;
         foreach ($dates as $date) {
-            $roti = $receivedByMakerDate[$makerId][$date] ?? 0;
+            $roti = array_key_exists($date, $receivedByMakerDate[$makerId] ?? [])
+                ? $receivedByMakerDate[$makerId][$date]
+                : 0;
             $daily[] = $roti;
             $totalRoti += $roti;
         }
@@ -344,6 +389,9 @@ function build_week_matrix(mysqli $link, string $weekStart): array
             'opening_oil' => $opening['oil'],
             'given_atta' => $given['atta'],
             'given_oil' => $given['oil'],
+            'default_atta' => (float) ($maker['default_atta'] ?? 0),
+            'default_oil' => (float) ($maker['default_oil'] ?? 0),
+            'default_roti' => (float) ($maker['default_roti'] ?? 0),
             'daily' => $daily,
             'total_roti' => $totalRoti,
             'total_amt' => $totalRoti * AMOUNT_PER_ROTI,
@@ -361,6 +409,7 @@ function build_week_matrix(mysqli $link, string $weekStart): array
         'hijri_label' => getHijriDate($weekStart) . ' – ' . getHijriDate($weekEnd),
         'hijri_month_year' => preg_replace('/^\d+\s+/', '', getHijriFullDate($weekStart)),
         'amount_per_roti' => AMOUNT_PER_ROTI,
+        'roti_menu_dates' => array_keys($rotiMenuDates),
         'rows' => $rows,
     ];
 }
@@ -379,27 +428,32 @@ function build_month_payment(mysqli $link, string $anchorDate): array
     $from = $monthStart->format('Y-m-d');
     $to = $monthStart->format('Y-m-t');
 
-    $makersResult = db_query($link, "SELECT `id`, `code`, `full_name`, `mobile_no`, `bank_details` FROM fmb_roti_maker ORDER BY `full_name` ASC");
+    $makersResult = db_query($link, "SELECT `id`, `code`, `full_name`, `mobile_no`, `bank_details`, `faiz_contribution` FROM fmb_roti_maker ORDER BY `full_name` ASC");
     $makers = mysqli_fetch_all($makersResult, MYSQLI_ASSOC);
     mysqli_free_result($makersResult);
 
     $rotiByMaker = [];
     $result = db_query(
         $link,
-        "SELECT `maker_id`, COALESCE(SUM(`roti_recieved`), 0) AS total_roti FROM fmb_roti_recieved
+        "SELECT `maker_id`, COALESCE(SUM(`roti_recieved`), 0) AS total_roti, COUNT(DISTINCT YEARWEEK(`recieved_date`, 0)) AS active_weeks FROM fmb_roti_recieved
                  WHERE `recieved_date` BETWEEN ? AND ? AND `roti_status` = 'recieved'
                      AND DAYOFWEEK(`recieved_date`) <> 1 GROUP BY `maker_id`",
         "ss",
         [$from, $to]
     );
     while ($row = mysqli_fetch_assoc($result)) {
-        $rotiByMaker[(int) $row['maker_id']] = (int) $row['total_roti'];
+        $rotiByMaker[(int) $row['maker_id']] = [
+            'total' => (int) $row['total_roti'],
+            'weeks' => (int) $row['active_weeks'],
+        ];
     }
     mysqli_free_result($result);
 
     $rows = [];
     foreach ($makers as $maker) {
-        $totalRoti = $rotiByMaker[(int) $maker['id']] ?? 0;
+        $makerTotals = $rotiByMaker[(int) $maker['id']] ?? ['total' => 0, 'weeks' => 0];
+        $totalRoti = $makerTotals['total'];
+        $breakdown = roti_payment_breakdown($totalRoti, (float) $maker['faiz_contribution'] * $makerTotals['weeks']);
         $rows[] = [
             'maker_id' => (int) $maker['id'],
             'code' => $maker['code'],
@@ -407,7 +461,9 @@ function build_month_payment(mysqli $link, string $anchorDate): array
             'mobile_no' => $maker['mobile_no'],
             'bank_details' => $maker['bank_details'],
             'total_roti' => $totalRoti,
-            'total_payout' => $totalRoti * AMOUNT_PER_ROTI,
+            'gross_payout' => $breakdown['gross'],
+            'faiz_contribution' => $breakdown['contribution'],
+            'total_payout' => $breakdown['net'],
         ];
     }
 
@@ -426,7 +482,7 @@ function build_week_payment(mysqli $link, string $weekDate): array
     $from = week_start_monday($weekDate);
     $to = (new DateTime($from))->modify('+6 days')->format('Y-m-d');
 
-    $makersResult = db_query($link, "SELECT `id`, `code`, `full_name`, `mobile_no`, `bank_details` FROM fmb_roti_maker ORDER BY `full_name` ASC");
+    $makersResult = db_query($link, "SELECT `id`, `code`, `full_name`, `mobile_no`, `bank_details`, `faiz_contribution` FROM fmb_roti_maker ORDER BY `full_name` ASC");
     $makers = mysqli_fetch_all($makersResult, MYSQLI_ASSOC);
     mysqli_free_result($makersResult);
 
@@ -446,6 +502,7 @@ function build_week_payment(mysqli $link, string $weekDate): array
     $rows = [];
     foreach ($makers as $maker) {
         $totalRoti = $rotiByMaker[(int) $maker['id']] ?? 0;
+        $breakdown = roti_payment_breakdown($totalRoti, (float) $maker['faiz_contribution']);
         $rows[] = [
             'maker_id' => (int) $maker['id'],
             'code' => $maker['code'],
@@ -453,7 +510,9 @@ function build_week_payment(mysqli $link, string $weekDate): array
             'mobile_no' => $maker['mobile_no'],
             'bank_details' => $maker['bank_details'],
             'total_roti' => $totalRoti,
-            'total_payout' => $totalRoti * AMOUNT_PER_ROTI,
+            'gross_payout' => $breakdown['gross'],
+            'faiz_contribution' => $breakdown['contribution'],
+            'total_payout' => $breakdown['net'],
         ];
     }
 
@@ -472,6 +531,8 @@ function build_maker_daily_payment(mysqli $link, int $makerId, string $weekDate)
     $from = week_start_monday($weekDate);
     $dates = week_dates($from);
     $to = end($dates);
+    $makerResult = db_query($link, "SELECT `faiz_contribution` FROM fmb_roti_maker WHERE `id` = ? LIMIT 1", "i", [$makerId]);
+    $maker = mysqli_fetch_assoc($makerResult) ?: ['faiz_contribution' => 0];
     $result = db_query(
         $link,
         "SELECT `recieved_date`, COALESCE(SUM(`roti_recieved`), 0) AS total_roti
@@ -489,9 +550,25 @@ function build_maker_daily_payment(mysqli $link, int $makerId, string $weekDate)
     mysqli_free_result($result);
 
     $rows = [];
+    $contributionApplied = false;
     foreach ($dates as $date) {
         $totalRoti = $rotiByDate[$date] ?? 0;
-        $rows[] = ['date' => $date, 'total_roti' => $totalRoti, 'total_payout' => $totalRoti * AMOUNT_PER_ROTI];
+        $breakdown = roti_payment_breakdown(
+            $totalRoti,
+            !$contributionApplied && (int) (new DateTime($date))->format('N') !== 7
+                ? (float) $maker['faiz_contribution']
+                : 0.0
+        );
+        if ($breakdown['contribution'] > 0) {
+            $contributionApplied = true;
+        }
+        $rows[] = [
+            'date' => $date,
+            'total_roti' => $totalRoti,
+            'gross_payout' => $breakdown['gross'],
+            'faiz_contribution' => $breakdown['contribution'],
+            'total_payout' => $breakdown['net'],
+        ];
     }
     return ['from' => $from, 'to' => $to, 'amount_per_roti' => AMOUNT_PER_ROTI, 'rows' => $rows];
 }
@@ -503,6 +580,8 @@ function build_maker_weekly_payment(mysqli $link, int $makerId, string $monthDat
     $monthStart->modify('first day of this month');
     $from = $monthStart->format('Y-m-d');
     $to = $monthStart->format('Y-m-t');
+    $makerResult = db_query($link, "SELECT `faiz_contribution` FROM fmb_roti_maker WHERE `id` = ? LIMIT 1", "i", [$makerId]);
+    $maker = mysqli_fetch_assoc($makerResult) ?: ['faiz_contribution' => 0];
     $result = db_query(
         $link,
         "SELECT `recieved_date`, COALESCE(SUM(`roti_recieved`), 0) AS total_roti
@@ -524,7 +603,15 @@ function build_maker_weekly_payment(mysqli $link, int $makerId, string $monthDat
     while ($weekStart <= $to) {
         $weekEnd = (new DateTime($weekStart))->modify('+6 days')->format('Y-m-d');
         $totalRoti = $rotiByWeek[$weekStart] ?? 0;
-        $rows[] = ['week_start' => max($weekStart, $from), 'week_end' => min($weekEnd, $to), 'total_roti' => $totalRoti, 'total_payout' => $totalRoti * AMOUNT_PER_ROTI];
+        $breakdown = roti_payment_breakdown($totalRoti, (float) $maker['faiz_contribution']);
+        $rows[] = [
+            'week_start' => max($weekStart, $from),
+            'week_end' => min($weekEnd, $to),
+            'total_roti' => $totalRoti,
+            'gross_payout' => $breakdown['gross'],
+            'faiz_contribution' => $breakdown['contribution'],
+            'total_payout' => $breakdown['net'],
+        ];
         $weekStart = (new DateTime($weekStart))->modify('+7 days')->format('Y-m-d');
     }
     return ['from' => $from, 'to' => $to, 'amount_per_roti' => AMOUNT_PER_ROTI, 'rows' => $rows];

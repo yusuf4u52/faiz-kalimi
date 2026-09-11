@@ -11,8 +11,13 @@ if ($action === 'add_rmaker') {
     $code = trim((string) ($_POST['code'] ?? ''));
     $mobileNo = trim((string) ($_POST['mobile_no'] ?? ''));
     $bankDetails = trim((string) ($_POST['bank_details'] ?? ''));
+    $email = strtolower(trim((string) ($_POST['email'] ?? '')));
+    $defaultAtta = is_numeric($_POST['default_atta'] ?? null) ? (float) $_POST['default_atta'] : -1;
+    $defaultOil = is_numeric($_POST['default_oil'] ?? null) ? (float) $_POST['default_oil'] : -1;
+    $defaultRoti = is_numeric($_POST['default_roti'] ?? null) ? (float) $_POST['default_roti'] : -1;
+    $faizContribution = is_numeric($_POST['faiz_contribution'] ?? null) ? (float) $_POST['faiz_contribution'] : -1;
 
-    if ($itsNo === '' || $fullName === '' || $code === '' || !preg_match('/^[0-9]{10}$/', $mobileNo)) {
+    if ($itsNo === '' || $fullName === '' || $code === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || !preg_match('/@gmail\.com$/i', $email) || $defaultAtta < 0 || $defaultOil < 0 || $defaultRoti < 0 || $faizContribution < 0 || !preg_match('/^[0-9]{10}$/', $mobileNo)) {
         header("Location: /fmb/users/roti/maker.php?action=error");
         exit;
     }
@@ -23,9 +28,9 @@ if ($action === 'add_rmaker') {
     try {
         db_query(
             $link,
-            "INSERT INTO fmb_roti_maker (`its_no`, `full_name`, `code`, `mobile_no`, `bank_details`) VALUES (?, ?, ?, ?, ?)",
-            "sssss",
-            [$itsNo, $fullName, $code, $mobileNo, $bankDetails]
+            "INSERT INTO fmb_roti_maker (`its_no`, `full_name`, `code`, `mobile_no`, `email`, `default_atta`, `default_oil`, `default_roti`, `faiz_contribution`, `bank_details`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "sssssdddds",
+            [$itsNo, $fullName, $code, $mobileNo, $email, $defaultAtta, $defaultOil, $defaultRoti, $faizContribution, $bankDetails]
         );
     } catch (RuntimeException $e) {
         if (mysqli_errno($link) === 1062) { // ER_DUP_ENTRY
@@ -44,9 +49,14 @@ if ($action === 'edit_rmaker') {
     $code = trim((string) ($_POST['code'] ?? ''));
     $mobileNo = trim((string) ($_POST['mobile_no'] ?? ''));
     $bankDetails = trim((string) ($_POST['bank_details'] ?? ''));
+    $email = strtolower(trim((string) ($_POST['email'] ?? '')));
+    $defaultAtta = is_numeric($_POST['default_atta'] ?? null) ? (float) $_POST['default_atta'] : -1;
+    $defaultOil = is_numeric($_POST['default_oil'] ?? null) ? (float) $_POST['default_oil'] : -1;
+    $defaultRoti = is_numeric($_POST['default_roti'] ?? null) ? (float) $_POST['default_roti'] : -1;
+    $faizContribution = is_numeric($_POST['faiz_contribution'] ?? null) ? (float) $_POST['faiz_contribution'] : -1;
     $rmakerId = (int) ($_POST['rmaker_id'] ?? 0);
 
-    if ($itsNo === '' || $fullName === '' || $code === '' || !preg_match('/^[0-9]{10}$/', $mobileNo) || $rmakerId <= 0) {
+    if ($itsNo === '' || $fullName === '' || $code === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || !preg_match('/@gmail\.com$/i', $email) || $defaultAtta < 0 || $defaultOil < 0 || $defaultRoti < 0 || $faizContribution < 0 || !preg_match('/^[0-9]{10}$/', $mobileNo) || $rmakerId <= 0) {
         header("Location: /fmb/users/roti/maker.php?action=error");
         exit;
     }
@@ -54,9 +64,9 @@ if ($action === 'edit_rmaker') {
     try {
         db_query(
             $link,
-            "UPDATE fmb_roti_maker SET `its_no` = ?, `full_name` = ?, `code` = ?, `mobile_no` = ?, `bank_details` = ? WHERE `id` = ?",
-            "sssssi",
-            [$itsNo, $fullName, $code, $mobileNo, $bankDetails, $rmakerId]
+            "UPDATE fmb_roti_maker SET `its_no` = ?, `full_name` = ?, `code` = ?, `mobile_no` = ?, `email` = ?, `default_atta` = ?, `default_oil` = ?, `default_roti` = ?, `faiz_contribution` = ?, `bank_details` = ? WHERE `id` = ?",
+            "sssssddddsi",
+            [$itsNo, $fullName, $code, $mobileNo, $email, $defaultAtta, $defaultOil, $defaultRoti, $faizContribution, $bankDetails, $rmakerId]
         );
     } catch (RuntimeException $e) {
         if (mysqli_errno($link) === 1062) { // ER_DUP_ENTRY

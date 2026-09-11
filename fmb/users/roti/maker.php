@@ -55,6 +55,11 @@ $flashName = $_GET['full_name'] ?? '';
                                 <th>Full Name</th>
                                 <th>ITS No</th>
                                 <th>Mobile No</th>
+                                <th>Email</th>
+                                <th>Default Atta</th>
+                                <th>Default Oil</th>
+                                <th>Roti/Day</th>
+                                <th>Faiz/Week</th>
                                 <th>Bank Details</th>
                                 <th>Action</th>
                             </tr>
@@ -67,6 +72,11 @@ $flashName = $_GET['full_name'] ?? '';
                                     <td><?php echo e($values['full_name']); ?></td>
                                     <td><?php echo e($values['its_no']); ?></td>
                                     <td><?php echo e($values['mobile_no']); ?></td>
+                                    <td><?php echo e($values['email'] ?? ''); ?></td>
+                                    <td><?php echo e((string) ($values['default_atta'] ?? 0)); ?></td>
+                                    <td><?php echo e((string) ($values['default_oil'] ?? 0)); ?></td>
+                                    <td><?php echo e((string) ($values['default_roti'] ?? 0)); ?></td>
+                                    <td><?php echo e((string) ($values['faiz_contribution'] ?? 0)); ?></td>
                                     <td><?php foreach ($paragraphs as $para) {
                                         echo '<p class="mb-1">' . e($para) . '</p>';
                                     } ?></td>
@@ -126,6 +136,28 @@ $flashName = $_GET['full_name'] ?? '';
                                                 pattern="[0-9]{10}" maxlength="10"
                                                 value="<?php echo e($values['mobile_no']); ?>" required>
                                         </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="email" class="col-4 control-label">Gmail</label>
+                                        <div class="col-8">
+                                            <input type="email" class="form-control" name="email" pattern="[A-Za-z0-9._%+-]+@gmail\.com" value="<?php echo e($values['email'] ?? ''); ?>" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="default_atta" class="col-4 control-label">Default Atta (KG)</label>
+                                        <div class="col-8"><input type="number" class="form-control" name="default_atta" min="0" step="0.001" value="<?php echo e((string) ($values['default_atta'] ?? 0)); ?>" required></div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="default_oil" class="col-4 control-label">Default Oil (L)</label>
+                                        <div class="col-8"><input type="number" class="form-control" name="default_oil" min="0" step="0.001" value="<?php echo e((string) ($values['default_oil'] ?? 0)); ?>" required></div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="default_roti" class="col-4 control-label">Roti Per Day</label>
+                                        <div class="col-8"><input type="number" class="form-control" name="default_roti" min="0" step="1" value="<?php echo e((string) ($values['default_roti'] ?? 0)); ?>" required></div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="faiz_contribution" class="col-4 control-label">Faiz/Week (Rs.)</label>
+                                        <div class="col-8"><input type="number" class="form-control" name="faiz_contribution" min="0" step="0.01" value="<?php echo e((string) ($values['faiz_contribution'] ?? 0)); ?>" required></div>
                                     </div>
                                     <div class="mb-3 row">
                                         <label for="bank_details" class="col-4 control-label">Bank Details</label>
@@ -209,6 +241,26 @@ $flashName = $_GET['full_name'] ?? '';
                                         <input type="tel" inputmode="numeric" class="form-control" name="mobile_no"
                                             pattern="[0-9]{10}" maxlength="10" required>
                                     </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="email" class="col-4 control-label">Gmail</label>
+                                    <div class="col-8"><input type="email" class="form-control" name="email" pattern="[A-Za-z0-9._%+-]+@gmail\.com" required></div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="default_atta" class="col-4 control-label">Default Atta (KG)</label>
+                                    <div class="col-8"><input type="number" class="form-control" name="default_atta" min="0" step="0.001" required></div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="default_oil" class="col-4 control-label">Default Oil (L)</label>
+                                    <div class="col-8"><input type="number" class="form-control" name="default_oil" min="0" step="0.001" required></div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="default_roti" class="col-4 control-label">Roti Per Day</label>
+                                    <div class="col-8"><input type="number" class="form-control" name="default_roti" min="0" step="1" required></div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="faiz_contribution" class="col-4 control-label">Faiz/Week (Rs.)</label>
+                                    <div class="col-8"><input type="number" class="form-control" name="faiz_contribution" min="0" step="0.01" required></div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label for="bank_details" class="col-4 control-label">Bank Details</label>

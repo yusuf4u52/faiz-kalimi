@@ -4,12 +4,8 @@ include('../navbar.php');
 require_once('helpers.php');
 include('../getHijriDate.php');
 
-$view = ($_GET['view'] ?? 'week') === 'week' ? 'week' : 'month';
-$monthValue = (string) ($_GET['month_date'] ?? date('Y-m'));
 $weekValue = (string) ($_GET['week_date'] ?? date('o-\\WW'));
-$isValidMonth = preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $monthValue) === 1;
 $isValidWeek = preg_match('/^\d{4}-W(0[1-9]|[1-4]\d|5[0-3])$/', $weekValue) === 1;
-$anchor = $isValidMonth ? $monthValue . '-01' : date('Y-m-d');
 $weekDate = date('Y-m-d');
 if ($isValidWeek) {
     [$weekYear, $weekNumber] = array_map('intval', explode('-W', $weekValue));
@@ -35,18 +31,11 @@ try {
 }
 
 $payment = null;
-if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
+if (!$reportError && $isValidWeek) {
     if ($selectedMakerId !== null) {
-        $payment = $view === 'month'
-            ? build_maker_weekly_payment($link, $selectedMakerId, $anchor)
-            : build_maker_daily_payment($link, $selectedMakerId, $weekDate);
+        $payment = build_maker_daily_payment($link, $selectedMakerId, $weekDate);
     } else {
-        $payment = $view === 'month'
-            ? build_month_payment($link, $anchor)
-            : build_week_payment($link, $weekDate);
-    }
-    if ($view === 'month') {
-        $payment['month_label'] = date('F Y', strtotime($payment['from']));
+        $payment = build_week_payment($link, $weekDate);
     }
 }
 
@@ -59,14 +48,14 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                 <h2 class="mb-3">
                     Roti Maker Payment Report
                     <?php if ($payment) { ?>
-                        for <?php echo e($view === 'month' ? $payment['month_label'] : date('d-m-Y', strtotime($payment['from'])) . ' to ' . date('d-m-Y', strtotime($payment['to']))); ?>
+                        for <?php echo e(date('d-m-Y', strtotime($payment['from'])) . ' to ' . date('d-m-Y', strtotime($payment['to']))); ?>
                     <?php } ?>
                 </h2>
             </div>
         </div>
 
-        <?php if (($view === 'month' && !$isValidMonth) || ($view === 'week' && !$isValidWeek)) { ?>
-            <div class="alert alert-danger" role="alert">Please choose a valid <?php echo $view === 'month' ? 'month date' : 'week date'; ?>.</div>
+        <?php if (!$isValidWeek) { ?>
+            <div class="alert alert-danger" role="alert">Please choose a valid week date.</div>
         <?php } ?>
         <?php if ($reportError) { ?>
             <div class="alert alert-danger" role="alert">Could not load the Roti Maker list. Please try again.</div>
@@ -74,7 +63,6 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
 
         <form id="rotipayment" class="form-horizontal" method="GET" action="<?php echo e($_SERVER['PHP_SELF']); ?>" autocomplete="off">
             <div class="mb-3 row align-items-center">
-                <input type="hidden" name="view" value="<?php echo e($view); ?>">
                 <label for="maker_id" class="col-md-2 col-form-label">Roti Maker</label>
                 <div class="col-md-3 mb-2 mb-md-0">
                     <select class="form-select" name="maker_id" id="maker_id">
@@ -86,43 +74,38 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                         <?php } ?>
                     </select>
                 </div>
-                 <label for="report_period" class="col-md-3 col-form-label">Report <?php echo $view === 'month' ? 'Month' : 'Week'; ?></label>
+                 <label for="report_period" class="col-md-3 col-form-label">Report Week</label>
                 <div class="col-md-2 mb-2 mb-md-0">
-                    <?php if ($view === 'month') { ?>
-                        <input type="month" class="form-control" name="month_date" id="report_period" value="<?php echo e($monthValue); ?>">
-                    <?php } else { ?>
-                        <input type="week" class="form-control" name="week_date" id="report_period" value="<?php echo e($weekValue); ?>">
-                    <?php } ?>
+                    <input type="week" class="form-control" name="week_date" id="report_period" value="<?php echo e($weekValue); ?>">
                 </div>
                 <div class="col-md-2">
                     <button class="btn btn-light w-100" type="submit" name="search">Filter</button>
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <div class="col-md-10 offset-md-2">
-                    <a class="btn btn-outline-secondary btn-sm" href="?view=<?php echo $view === 'month' ? 'week' : 'month'; ?>&maker_id=<?php echo e((string) ($selectedMakerId ?? '')); ?>">Switch to <?php echo $view === 'month' ? 'Week' : 'Month'; ?> Report</a>
                 </div>
             </div>
         </form>
 
         <?php if ($payment && count($payment['rows']) > 0) {
             $totalRoti = 0;
+            $totalGross = 0.0;
+            $totalFaiz = 0.0;
             $totalPayout = 0.0;
             foreach ($payment['rows'] as $row) {
                 $totalRoti += $row['total_roti'];
+                $totalGross += $row['gross_payout'];
+                $totalFaiz += $row['faiz_contribution'];
                 $totalPayout += $row['total_payout'];
             }
         ?>
             <div class="row mb-3">
-                <div class="col-12 col-md-4 mb-2">
+                <div class="col-12 col-md-3 mb-2">
                     <div class="card bg-light">
                         <div class="card-body py-3">
-                            <div class="text-muted small">Total Roti Made (<?php echo $view === 'week' ? 'Week' : 'Month'; ?>: <?php echo e(date('d-m-Y', strtotime($payment['from']))); ?> to <?php echo e(date('d-m-Y', strtotime($payment['to']))); ?>)</div>
+                            <div class="text-muted small">Total Roti Made (Week: <?php echo e(date('d-m-Y', strtotime($payment['from']))); ?> to <?php echo e(date('d-m-Y', strtotime($payment['to']))); ?>)</div>
                             <div class="fs-4 fw-bold"><?php echo (int) $totalRoti; ?></div>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-4 mb-2">
+                <div class="col-12 col-md-3 mb-2">
                     <div class="card bg-light">
                         <div class="card-body py-3">
                             <div class="text-muted small">Rate per Roti</div>
@@ -130,10 +113,18 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-4 mb-2">
+                <div class="col-12 col-md-3 mb-2">
                     <div class="card bg-light">
                         <div class="card-body py-3">
-                            <div class="text-muted small">Total Amount Payable</div>
+                            <div class="text-muted small">Faiz Deduction</div>
+                            <div class="fs-4 fw-bold">&#8377;<?php echo e(number_format($totalFaiz, 2)); ?></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 mb-2">
+                    <div class="card bg-light">
+                        <div class="card-body py-3">
+                            <div class="text-muted small">Net Amount Payable</div>
                             <div class="fs-4 fw-bold">&#8377;<?php echo e(number_format($totalPayout, 2)); ?></div>
                         </div>
                     </div>
@@ -145,11 +136,7 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                     <thead>
                         <tr>
                             <?php if ($selectedMakerId !== null) { ?>
-                                <?php if ($view === 'week') { ?>
-                                    <th>Date</th>
-                                <?php } else { ?>
-                                    <th>Week</th>
-                                <?php } ?>
+                                <th>Date</th>
                             <?php } else { ?>
                                 <th>Code</th>
                                 <th>Roti Maker</th>
@@ -158,13 +145,15 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                             <?php } ?>
                             <th>Total Roti Made</th>
                             <th>Rate / Roti</th>
-                            <th>Total Amount Payable</th>
+                            <th>Gross Amount</th>
+                            <th>Faiz Deduction</th>
+                            <th>Net Payable</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($payment['rows'] as $row) {
                             // Skip Sundays when viewing weekly report by maker
-                            if ($selectedMakerId !== null && $view === 'week') {
+                            if ($selectedMakerId !== null) {
                                 $dayOfWeek = date('w', strtotime($row['date']));
                                 if ($dayOfWeek == 0) { // 0 = Sunday
                                     continue;
@@ -173,9 +162,7 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                         ?>
                             <tr>
                                 <?php if ($selectedMakerId !== null) { ?>
-                                    <td><?php echo e($view === 'week'
-                                        ? date('d M Y (l)', strtotime($row['date']))
-                                        : date('d M Y', strtotime($row['week_start'])) . ' to ' . date('d M Y', strtotime($row['week_end']))); ?></td>
+                                    <td><?php echo e(date('d M Y (l)', strtotime($row['date']))); ?></td>
                                 <?php } else { ?>
                                     <td><?php echo e($row['code']); ?></td>
                                     <td><?php echo e($row['full_name']); ?></td>
@@ -190,6 +177,8 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                                 <?php } ?>
                                 <td><?php echo (int) $row['total_roti']; ?></td>
                                 <td>&#8377;<?php echo e(number_format($payment['amount_per_roti'], 2)); ?></td>
+                                <td>&#8377;<?php echo e(number_format($row['gross_payout'], 2)); ?></td>
+                                <td>&#8377;<?php echo e(number_format($row['faiz_contribution'], 2)); ?></td>
                                 <td>&#8377;<?php echo e(number_format($row['total_payout'], 2)); ?></td>
                             </tr>
                         <?php } ?>
@@ -199,6 +188,8 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
                             <td colspan="<?php echo $selectedMakerId !== null ? '1' : '4'; ?>">Grand Total</td>
                             <td><?php echo (int) $totalRoti; ?></td>
                             <td>-</td>
+                            <td>&#8377;<?php echo e(number_format($totalGross, 2)); ?></td>
+                            <td>&#8377;<?php echo e(number_format($totalFaiz, 2)); ?></td>
                             <td>&#8377;<?php echo e(number_format($totalPayout, 2)); ?></td>
                         </tr>
                     </tfoot>
@@ -206,7 +197,7 @@ if (!$reportError && ($view === 'month' ? $isValidMonth : $isValidWeek)) {
             </div>
         <?php } elseif ($payment) { ?>
             <div class="alert alert-danger" role="alert">
-                No roti-received data found for the selected <?php echo $view === 'week' ? 'week' : 'month'; ?><?php echo $selectedMakerId !== null ? ' and Roti Maker' : ''; ?>.
+                No roti-received data found for the selected week<?php echo $selectedMakerId !== null ? ' and Roti Maker' : ''; ?>.
             </div>
         <?php } ?>
     </div>
