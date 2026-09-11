@@ -12,4 +12,5 @@ vendor
 reporting/config/config.php
 reporting/config/cacert.pem
 reporting/output/*.pdf
+reporting/cache/
 *.log

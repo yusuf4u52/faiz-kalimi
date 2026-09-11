@@ -25,6 +25,17 @@ class JamaatOnlineClient
         $this->username = $username;
         $this->password = $password;
         $this->cookieJar = tempnam(sys_get_temp_dir(), 'joc_');
+
+        // Every *DueReport()/*Roster() method below locates its <tbody> with a
+        // non-greedy DOTALL regex. PHP's default pcre.backtrack_limit (1,000,000)
+        // is comfortably enough for a single member's filtered response, but not
+        // for a jamaat-wide unfiltered one: confirmed getSabeelDueReport('', '')
+        // against the full ~1180-row report (a ~2.6MB response body) blows the
+        // default limit and preg_match() silently returns no match — no warning,
+        // no exception, just an empty array back to the caller. Raised here so
+        // every regex this class runs gets the same headroom, not just this one
+        // call site.
+        ini_set('pcre.backtrack_limit', '20000000');
     }
 
     public function __destruct()

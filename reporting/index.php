@@ -27,9 +27,15 @@ ini_set('log_errors', '1');
 
 require __DIR__ . '/../fmb/vendor/autoload.php';
 
+use JamaatReport\JamaatDataCache;
 use JamaatReport\JamaatOnlineClient;
 use JamaatReport\SabeelReportBuilder;
 use JamaatReport\SabeelReportRenderer;
+
+// refresh_cache.php keeps this warm (see its docblock for the crontab). If it
+// hasn't run in a while (stalled/misconfigured cron), fall back to a full live
+// scrape below rather than serving very stale data.
+const CACHE_MAX_AGE_SECONDS = 15 * 60;
 
 $configPath = __DIR__ . '/config/config.php';
 if (!is_file($configPath)) {
@@ -80,17 +86,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'gener
             $client = new JamaatOnlineClient($jo['base_url'], $jo['username'], $jo['password']);
             $client->login();
 
-            $years = $client->getFiscalYears();
-            $currentYearId = array_key_last($years);
-            $client->selectFiscalYear($currentYearId);
-            $fiscalYearLabel = $years[$currentYearId];
+            $cache = new JamaatDataCache(__DIR__ . '/cache/jamaat_snapshot.json');
+            $snapshot = $cache->read();
+            $useCache = $snapshot !== null && $cache->ageSeconds($snapshot) <= CACHE_MAX_AGE_SECONDS;
 
-            $dueRows = $client->getSabeelDueReport($sabeelNo, '');
-            $roster = $client->getSabeelMemberRoster('', $sabeelNo);
+            if ($useCache) {
+                $fiscalYearLabel = $snapshot['fiscalYearLabel'];
+                $client->selectFiscalYear($snapshot['fiscalYearId']);
 
-            $currentAcademicYearId = array_key_last($client->getMadresaAcademicYears());
-            $madresaStudentRoster = $client->getMadresaStudentRoster();
-            $madresaFeeRows = $client->getMadresaFeeDueReport($currentAcademicYearId);
+                $dueRows = array_values(array_filter(
+                    $snapshot['dueRows'],
+                    static fn (array $row): bool => $row['sabeelNo'] === $sabeelNo
+                ));
+                $roster = $snapshot['roster'];
+                $madresaStudentRoster = $snapshot['madresaStudentRoster'];
+                $madresaFeeRows = $snapshot['madresaFeeRows'];
+            } else {
+                $years = $client->getFiscalYears();
+                $currentYearId = array_key_last($years);
+                $client->selectFiscalYear($currentYearId);
+                $fiscalYearLabel = $years[$currentYearId];
+
+                $dueRows = $client->getSabeelDueReport($sabeelNo, '');
+                $roster = $client->getSabeelMemberRoster('', $sabeelNo);
+
+                $currentAcademicYearId = array_key_last($client->getMadresaAcademicYears());
+                $madresaStudentRoster = $client->getMadresaStudentRoster();
+                $madresaFeeRows = $client->getMadresaFeeDueReport($currentAcademicYearId);
+            }
 
             $itsNoToMemberId = [];
             foreach ($roster as $memberId => $member) {
