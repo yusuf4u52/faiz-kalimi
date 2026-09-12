@@ -60,7 +60,7 @@ if (!$isLoggedIn || !in_array($loggedInEmail, $allowedEmails, true)) {
     <body style="font-family: sans-serif; max-width: 480px; margin: 80px auto; text-align: center;">
         <h1>Access restricted</h1>
         <p>Sign in with an allow-listed Google account on the main site first.</p>
-        <p><a href="/fmb/index.php">Go to sign-in</a></p>
+        <p><a href="/fmb/index.php?next=/reporting/index.php">Go to sign-in</a></p>
     </body>
     </html>
     <?php

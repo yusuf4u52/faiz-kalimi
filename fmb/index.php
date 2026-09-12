@@ -30,6 +30,19 @@ function clear_login_session(): void
 	session_destroy();
 }
 
+/**
+ * Only same-site absolute paths (leading single '/') are accepted as a
+ * post-login redirect target, so a crafted ?next= can't send a user off-site
+ * (protocol-relative '//host/...') or inject extra header lines ('\r\n').
+ */
+function sanitize_local_redirect(?string $path): ?string
+{
+	if ($path === null || $path === '' || !preg_match('#^/(?!/|\\\\)[^\r\n]*$#', $path)) {
+		return null;
+	}
+	return $path;
+}
+
 /***********************************************
   Make an API request on behalf of a user. In
   this case we need to have a valid OAuth 2.0
@@ -88,6 +101,13 @@ if (isset($_GET['code'])) {
 	}
 }
 
+// Remembered across the Google round-trip via the session (Google's callback
+// only echoes back 'code' and 'state', not our own query params), and reused
+// as-is when an existing, still-valid token skips the round-trip entirely.
+if (isset($_GET['next'])) {
+	$_SESSION['post_login_redirect'] = sanitize_local_redirect($_GET['next']);
+}
+
 /************************************************
 If we have an access token, we can make
 requests, else we generate an authentication URL.
@@ -144,7 +164,10 @@ if (isset($authUrl) || isset($_GET['status'])) {
 
 		$_SESSION['fromLogin'] = "true";
 		$_SESSION['email'] = $user->email;
-		header('Location: users/index.php');
+
+		$next = $_SESSION['post_login_redirect'] ?? null;
+		unset($_SESSION['post_login_redirect']);
+		header('Location: ' . ($next ?? 'users/index.php'));
 		exit;
 	} catch (Exception $e) {
 		error_log('[index.php] userinfo lookup failed: ' . $e->getMessage());
