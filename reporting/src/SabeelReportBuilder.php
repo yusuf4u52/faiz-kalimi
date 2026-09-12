@@ -128,14 +128,19 @@ final class SabeelReportBuilder
     }
 
     /**
-     * Faiz's due report is a running year-by-year ledger (each year's balance
-     * carries into the next), so the total amount owed is the most recent
-     * year's Due, not a sum across years — see JamaatOnlineClient::getFaizDueReport().
-     * Split here into what was already outstanding going into the latest year
-     * ("previous due", i.e. the year before's Due) and what that latest year
-     * itself added on top ("current due"), so previous + current == total.
+     * Faiz's due report is a running year-by-year ledger, so the total amount
+     * owed is the most recent year's Due, not a sum across years — see
+     * JamaatOnlineClient::getFaizDueReport(). Split here into what was already
+     * outstanding going into the latest year (that row's own "Previous Due") and
+     * what the latest year itself added on top ("current due"), so previous +
+     * current == total.
      *
-     * @param array<int, array{takhmeenYear: string, due: float}> $faizRows
+     * A negative Due (e.g. a payment that covered more than this ledger's own
+     * Takhmeen + Previous Due) isn't a real Faiz credit — confirmed against the
+     * JamaatOnline Takhmeen Details page, see getFaizDueReport() — so it floors
+     * to 0 pending rather than being reported as an advance.
+     *
+     * @param array<int, array{takhmeenYear: string, previousDue: float, due: float}> $faizRows
      * @return array{0: float, 1: float} [previousDue, currentDue]
      */
     private function faizPreviousAndCurrentDue(array $faizRows): array
@@ -145,11 +150,16 @@ final class SabeelReportBuilder
         }
 
         usort($faizRows, static fn (array $a, array $b) => self::startYear($a['takhmeenYear']) <=> self::startYear($b['takhmeenYear']));
+        $latest = end($faizRows);
 
-        $latestDue = end($faizRows)['due'];
-        $previousDue = count($faizRows) >= 2 ? $faizRows[count($faizRows) - 2]['due'] : 0.0;
+        $due = max(0.0, $latest['due']);
+        if ($due === 0.0) {
+            return [0.0, 0.0];
+        }
 
-        return [$previousDue, $latestDue - $previousDue];
+        $previousDue = max(0.0, $latest['previousDue']);
+
+        return [$previousDue, $due - $previousDue];
     }
 
     private static function startYear(string $takhmeenYear): int

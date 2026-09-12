@@ -357,15 +357,24 @@ class JamaatOnlineClient
     /**
      * Scrapes FaizYealybaseduereport.aspx ("Faiz Yearly Due Report" — Faiz is this
      * jamaat's name for what the system itself calls Niyaz). Unlike Sabeel's due
-     * report, this is a running year-by-year ledger: each year's "Previous Amount"
-     * is the prior year's "Due" carried forward, so the *current* amount owed is
-     * the most recent year's Due — summing every year's Due would double-count
-     * the carried-forward balance. Picking that latest-year row is left to the
-     * caller (see SabeelReportBuilder), this method only returns the raw rows.
+     * report, this is a running year-by-year ledger — each row also carries the
+     * report's own "Previous Due" (what was outstanding going into that year), so
+     * the *current* amount owed is the most recent year's Due, split against its
+     * own Previous Due — summing every year's Due would double-count the
+     * carried-forward balance. Picking that latest-year row is left to the caller
+     * (see SabeelReportBuilder), this method only returns the raw rows.
+     *
+     * A row's Due can go negative even when nothing is actually owed: confirmed
+     * against the JamaatOnline Takhmeen Details page for ITS 30373179 (Sabeel 005,
+     * 1447-1448) — Paid (128,500) exceeded TakhmeenAmount (90,000) by 38,500, this
+     * table's Due read -38,500, yet that detail page reported "Due: No outstanding
+     * due" (Total Due: 0.00). The excess is absorbed elsewhere (not this table's
+     * concern), not a real Faiz credit — callers should floor a negative Due at 0
+     * rather than reporting an advance.
      *
      * Requires the same elevated login as getSabeelDueReport().
      *
-     * @return array<int, array{itsNo: string, sabeelNo: string, fullName: string, mohallaName: string, takhmeenYear: string, takhmeenType: string, takhmeenAmount: float, due: float}>
+     * @return array<int, array{itsNo: string, sabeelNo: string, fullName: string, mohallaName: string, takhmeenYear: string, takhmeenType: string, takhmeenAmount: float, previousDue: float, due: float}>
      */
     public function getFaizDueReport(string $itsNo): array
     {
@@ -400,6 +409,7 @@ class JamaatOnlineClient
                 'takhmeenYear' => $cells[6],
                 'takhmeenType' => $cells[7],
                 'takhmeenAmount' => (float) str_replace(',', '', $cells[8]),
+                'previousDue' => (float) str_replace(',', '', $cells[11]),
                 'due' => (float) str_replace(',', '', $cells[13]),
             ];
         }
