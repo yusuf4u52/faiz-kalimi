@@ -306,7 +306,7 @@ class JamaatOnlineClient
      * $includeCredits = true (the default) to see those too; outstanding is negative
      * for an advance/credit, positive when due.
      *
-     * @return array<int, array{itsNo: string, fullName: string, mohallaName: string, sabeelType: string, grade: string, sabeelAmount: string, sabeelNo: string, mobile: string, paidTill: string, outstanding: float}>
+     * @return array<int, array{itsNo: string, fullName: string, mohallaName: string, sabeelType: string, grade: string, sabeelAmount: float, sabeelNo: string, mobile: string, paidTill: string, outstanding: float}>
      */
     public function getSabeelDueReport(string $sabeelNo = '', string $itsNo = '', bool $includeCredits = true): array
     {
@@ -343,7 +343,7 @@ class JamaatOnlineClient
                 'mohallaName' => $cells[4],
                 'sabeelType' => $cells[5],
                 'grade' => $cells[6],
-                'sabeelAmount' => $cells[7],
+                'sabeelAmount' => (float) str_replace(',', '', $cells[7]),
                 'sabeelNo' => $cells[8],
                 'mobile' => $cells[9],
                 'paidTill' => $cells[10],

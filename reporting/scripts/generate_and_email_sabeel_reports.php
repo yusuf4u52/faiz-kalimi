@@ -68,7 +68,7 @@ foreach ($roster as $memberId => $member) {
 }
 
 $builder = new SabeelReportBuilder($client);
-$reports = $builder->buildFromDueRows($dueRows, $itsNoToMemberId, $madresaFeeRows, $madresaStudentRoster);
+$reports = $builder->buildFromDueRows($dueRows, $itsNoToMemberId, $madresaFeeRows, $madresaStudentRoster, $fiscalYearLabel);
 
 $renderer = new SabeelReportRenderer(
     $reportConfig['org_name'] ?? 'Jamaat',

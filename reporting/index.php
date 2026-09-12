@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'previ
             }
 
             $builder = new SabeelReportBuilder($client);
-            $reports = $builder->buildFromDueRows($dueRows, $itsNoToMemberId, $madresaFeeRows, $madresaStudentRoster);
+            $reports = $builder->buildFromDueRows($dueRows, $itsNoToMemberId, $madresaFeeRows, $madresaStudentRoster, $fiscalYearLabel);
             $report = $reports[$sabeelNo] ?? null;
 
             if ($report === null) {

@@ -21,8 +21,11 @@ final class SabeelReportRenderer
      *     sabeelNo: string,
      *     itsNo: string,
      *     hof: array<string, string>,
-     *     sabeelLines: array<int, array{sabeelType: string, grade: string, outstanding: float}>,
+     *     sabeelLines: array<int, array{sabeelType: string, grade: string, outstanding: float, outstandingTillYearEnd: float}>,
      *     sabeelTotal: float,
+     *     sabeelTotalTillYearEnd: float,
+     *     faizPreviousDue: float,
+     *     faizCurrentDue: float,
      *     faizDue: float,
      *     hoobLines: array<int, array{hoobName: string, takhmeenYear: string, due: float}>,
      *     hoobTotal: float,
@@ -38,10 +41,11 @@ final class SabeelReportRenderer
         $sabeelRows = '';
         foreach ($report['sabeelLines'] as $line) {
             $sabeelRows .= sprintf(
-                '<tr><td>%s</td><td>%s</td><td class="right">%s</td></tr>',
+                '<tr><td>%s</td><td>%s</td><td class="right">%s</td><td class="right">%s</td></tr>',
                 $this->esc($line['sabeelType']),
                 $this->esc($line['grade']),
-                $this->esc($this->formatOutstanding($line['outstanding']))
+                $this->esc($this->formatOutstanding($line['outstanding'])),
+                $this->esc($this->formatOutstanding($line['outstandingTillYearEnd']))
             );
         }
 
@@ -69,7 +73,10 @@ final class SabeelReportRenderer
         $itsNo = $this->esc($report['itsNo']);
         $hofName = $this->esc($hof['fullname'] ?? '');
         $sabeelTotal = $this->esc($this->formatOutstanding($report['sabeelTotal']));
-        $faizDue = $this->esc($this->formatOutstanding($report['faizDue']));
+        $sabeelTotalTillYearEnd = $this->esc($this->formatOutstanding($report['sabeelTotalTillYearEnd']));
+        $faizPreviousDue = $this->esc($this->formatOutstanding($report['faizPreviousDue']));
+        $faizCurrentDue = $this->esc($this->formatOutstanding($report['faizCurrentDue']));
+        $faizTotalDue = $this->esc($this->formatOutstanding($report['faizDue']));
         $grandTotal = $this->esc($this->formatOutstanding($report['grandTotal']));
         $generatedOn = $this->esc($generatedOn);
 
@@ -108,20 +115,23 @@ final class SabeelReportRenderer
     <h2>Sabeel</h2>
     <table>
         <thead>
-            <tr><th>Sabeel Type</th><th>Grade</th><th class="right">Outstanding</th></tr>
+            <tr><th>Sabeel Type</th><th>Grade</th><th class="right">Outstanding (Till Date)</th><th class="right">Outstanding (Till Year-End)</th></tr>
         </thead>
         <tbody>
             {$sabeelRows}
         </tbody>
         <tfoot>
-            <tr><td colspan="2">Sabeel Total</td><td class="right">{$sabeelTotal}</td></tr>
+            <tr><td colspan="2">Sabeel Total</td><td class="right">{$sabeelTotal}</td><td class="right">{$sabeelTotalTillYearEnd}</td></tr>
         </tfoot>
     </table>
 
     <h2>Faiz</h2>
     <table>
+        <thead>
+            <tr><th class="right">Previous Due</th><th class="right">Current Due</th><th class="right">Total</th></tr>
+        </thead>
         <tbody>
-            <tr><td>Current Due</td><td class="right">{$faizDue}</td></tr>
+            <tr><td class="right">{$faizPreviousDue}</td><td class="right">{$faizCurrentDue}</td><td class="right">{$faizTotalDue}</td></tr>
         </tbody>
     </table>
 
@@ -130,9 +140,8 @@ final class SabeelReportRenderer
     {$madresaSection}
 
     <div class="grand-total">
-        <strong>Grand Total</strong>
         <table>
-            <tr><td>Sabeel + Faiz + Hoob + Madresa</td><td class="right">{$grandTotal}</td></tr>
+            <tr><td><strong>Grand Total</strong></td><td class="right"><strong>{$grandTotal}</strong></td></tr>
         </table>
     </div>
 
