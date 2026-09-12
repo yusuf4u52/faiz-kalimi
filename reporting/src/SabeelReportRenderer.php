@@ -54,7 +54,7 @@ final class SabeelReportRenderer
             'Hoob',
             'Year',
             'Hoob Total',
-            array_map(static fn (array $l) => [$l['hoobName'], $l['takhmeenYear'], $l['due']], $report['hoobLines']),
+            array_map(static fn (array $l) => [$l['hoobName'], self::formatHoobYear($l['takhmeenYear']), $l['due']], $report['hoobLines']),
             $report['hoobTotal']
         );
 
@@ -201,6 +201,20 @@ HTML;
         </tfoot>
     </table>
 HTML;
+    }
+
+    /**
+     * Hoob's takhmeenYear is scraped as a single year (e.g. '1447'), unlike
+     * Faiz's own '1447-1448' range — displayed here as a range too for
+     * consistency, since a Hoob pledge spans into the following year.
+     */
+    private static function formatHoobYear(string $takhmeenYear): string
+    {
+        if (!ctype_digit($takhmeenYear)) {
+            return $takhmeenYear;
+        }
+
+        return $takhmeenYear . ' - ' . ((int) $takhmeenYear + 1);
     }
 
     /**
