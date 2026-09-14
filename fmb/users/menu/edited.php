@@ -156,6 +156,9 @@ if ($isValidDate) {
                         if (!empty($menu_item['rice']['item']) && $riceqty > 0) {
                             echo '<h5 class="mb-1">' . e($menu_item['rice']['item']) . ' - ' . ($total - ($totaledited - $rice / $riceqty)) . '</h5>';
                         }
+                        if (!empty($menu_item['extra']['item'])) {
+                            echo '<h5 class="mb-1">' . e($menu_item['extra']['item']) . ' - ' . $total . '</h5>'; 
+                        }
                     }
                 } ?>
             </div>
