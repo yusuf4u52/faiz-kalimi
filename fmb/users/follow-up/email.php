@@ -103,7 +103,7 @@ while ($member = mysqli_fetch_assoc($members)) {
             <p style=\"text-align:center;margin:12px 0 24px\"><a href=\"upi://pay?pa=dbjt-fmb-kalimi@ybl&amp;pn=D%20B%20J%20T%20TRUST%20K%20M%20POONA%20-%20FMB&amp;cu=INR\" style=\"display:inline-block;background:#198754;color:#fff;padding:12px 28px;text-decoration:none;border-radius:4px;font-weight:bold\">Pay Now</a></p>
         </div>";
 
-    if (sendEmail($recipients, 'Reminder - FMB Hoob Pending', $emailBody)) {
+    if (sendEmailBatch($recipients, 'Reminder - FMB Hoob Pending', $emailBody)) {
         $sent++;
     } else {
         $failed++;
