@@ -88,6 +88,7 @@ function sendEmailBatch(array $messages): int
 
     $mail = new PHPMailer(true);
     $sent = 0;
+    $lastError = null;
 
     try {
         $mail->isSMTP();
@@ -122,7 +123,10 @@ function sendEmailBatch(array $messages): int
                 $sent++;
             } catch (Throwable $e) {
                 $error = $mail->ErrorInfo !== '' ? $mail->ErrorInfo : $e->getMessage();
+                $lastError = $error;
+                $GLOBALS['lastSendEmailError'] = $error;
                 error_log('[sendEmailBatch] PHPMailer error: ' . $error . ' | recipients: ' . implode(', ', $message['to']));
+                $mail->smtpClose();
             }
         }
     } catch (Throwable $e) {
@@ -130,6 +134,10 @@ function sendEmailBatch(array $messages): int
         error_log('[sendEmailBatch] SMTP setup error: ' . $e->getMessage());
     } finally {
         $mail->smtpClose();
+    }
+
+    if ($lastError !== null) {
+        $GLOBALS['lastSendEmailError'] = $lastError;
     }
 
     return $sent;

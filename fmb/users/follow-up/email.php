@@ -55,6 +55,7 @@ $invalidRecipients = 0;
 $smtpFailures = 0;
 $failureExamples = [];
 $paymentReminders = [];
+$GLOBALS['lastSendEmailError'] = null;
 
 $processed = 0;
 while ($member = mysqli_fetch_assoc($members)) {

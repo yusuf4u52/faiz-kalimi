@@ -81,11 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
             smtpFailures +
             " SMTP failure).";
           if (failureExamples.length > 0) {
-            status.textContent +=
-              " Sabeel " +
-              failureExamples[0].sabeel +
-              ": " +
-              failureExamples[0].error;
+            status.textContent += " " + failureExamples[0].error;
           }
         } catch (error) {
           status.className = "alert alert-danger mt-2";
