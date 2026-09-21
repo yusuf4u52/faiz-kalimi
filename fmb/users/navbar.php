@@ -102,7 +102,7 @@ if ($curr_page !== 'events.php') {
     </div>
     <nav class="navbar">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/fmb/users/index.php">FMB (Kalimi Mohalla)</a>
+            <a class="navbar-brand" href="/fmb/users/index.php">FMB (Kalimi Mohallah)</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headernavbar"
                 aria-controls="headernavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="bi bi-list"></i>

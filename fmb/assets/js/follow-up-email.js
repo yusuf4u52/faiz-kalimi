@@ -65,6 +65,13 @@ document.addEventListener("DOMContentLoaded", function () {
             status.textContent =
               "Sending emails... " + sent + " sent, " + failed + " failed.";
 
+            if (result.rate_limited) {
+              throw new Error(
+                "Hostinger SMTP rate limit exceeded. Wait for the cooldown, then run the remaining emails again. " +
+                  (result.failure_examples?.[0]?.error || ""),
+              );
+            }
+
             if (!result.has_more) {
               break;
             }

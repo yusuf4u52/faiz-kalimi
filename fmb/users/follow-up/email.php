@@ -56,6 +56,8 @@ $smtpFailures = 0;
 $failureExamples = [];
 $paymentReminders = [];
 $GLOBALS['lastSendEmailError'] = null;
+$GLOBALS['lastSendEmailRateLimited'] = false;
+$GLOBALS['lastSendEmailAttempted'] = 0;
 
 $processed = 0;
 while ($member = mysqli_fetch_assoc($members)) {
@@ -113,10 +115,17 @@ while ($member = mysqli_fetch_assoc($members)) {
 }
 
 $batchSent = sendEmailBatch($paymentReminders);
-$batchFailures = count($paymentReminders) - $batchSent;
+$batchAttempted = (int) ($GLOBALS['lastSendEmailAttempted'] ?? count($paymentReminders));
+$batchFailures = $batchAttempted - $batchSent;
+$deferredMessages = count($paymentReminders) - $batchAttempted;
 $sent += $batchSent;
 $failed += $batchFailures;
 $smtpFailures += $batchFailures;
+$rateLimited = (bool) ($GLOBALS['lastSendEmailRateLimited'] ?? false);
+$nextOffset = $offset + $processed;
+if ($rateLimited) {
+    $nextOffset -= $deferredMessages;
+}
 if ($batchFailures > 0 && count($failureExamples) < 3) {
     $failureExamples[] = [
         'error' => (string) ($GLOBALS['lastSendEmailError'] ?? 'One or more emails could not be sent.'),
@@ -134,8 +143,9 @@ if ($batchMode) {
         'invalid_recipients' => $invalidRecipients,
         'smtp_failures' => $smtpFailures,
         'failure_examples' => $failureExamples,
-        'next_offset' => $offset + $processed,
-        'has_more' => $hasMore,
+        'rate_limited' => $rateLimited,
+        'next_offset' => $nextOffset,
+        'has_more' => $hasMore && !$rateLimited,
     ]);
     exit;
 }

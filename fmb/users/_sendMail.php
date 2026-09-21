@@ -77,6 +77,8 @@ function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = nu
  */
 function sendEmailBatch(array $messages): int
 {
+    $GLOBALS['lastSendEmailRateLimited'] = false;
+    $GLOBALS['lastSendEmailAttempted'] = 0;
     if (empty($messages)) {
         return 0;
     }
@@ -102,6 +104,7 @@ function sendEmailBatch(array $messages): int
         $mail->SMTPKeepAlive = true;
 
         foreach ($messages as $message) {
+            $GLOBALS['lastSendEmailAttempted']++;
             try {
                 $mail->clearAllRecipients();
                 $mail->clearAttachments();
@@ -127,6 +130,10 @@ function sendEmailBatch(array $messages): int
                 $GLOBALS['lastSendEmailError'] = $error;
                 error_log('[sendEmailBatch] PHPMailer error: ' . $error . ' | recipients: ' . implode(', ', $message['to']));
                 $mail->smtpClose();
+                if (strpos($error, '451') !== false || stripos($error, 'ratelimit') !== false) {
+                    $GLOBALS['lastSendEmailRateLimited'] = true;
+                    break;
+                }
             }
         }
     } catch (Throwable $e) {
