@@ -41,48 +41,56 @@ function smtpThrottleGuard(): void
 {
     $stateFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'smtp-hourly-send-log.json';
 
-    $fp = fopen($stateFile, 'c+');
-    if ($fp === false) {
-        // Can't track usage — fail open rather than block sending entirely.
-        error_log('[smtpThrottleGuard] Could not open state file; skipping throttle check.');
-        return;
-    }
+    // Loop instead of recursion: if we have to wait, we re-check afterwards
+    // in case another process sent meanwhile, without growing the call stack.
+    while (true) {
+        $fp = fopen($stateFile, 'c+');
+        if ($fp === false) {
+            // Can't track usage — fail open rather than block sending entirely.
+            error_log('[smtpThrottleGuard] Could not open state file; skipping throttle check.');
+            return;
+        }
 
-    flock($fp, LOCK_EX);
+        flock($fp, LOCK_EX);
 
-    $raw = stream_get_contents($fp);
-    $timestamps = $raw !== false && $raw !== '' ? (json_decode($raw, true) ?: []) : [];
+        $raw = stream_get_contents($fp);
+        $timestamps = $raw !== false && $raw !== '' ? (json_decode($raw, true) ?: []) : [];
+        if (!is_array($timestamps)) {
+            $timestamps = [];
+        }
 
-    $now = time();
-    $timestamps = array_values(array_filter($timestamps, static fn($t) => $t > $now - 3600));
+        $now = time();
+        $timestamps = array_values(array_filter($timestamps, static function ($t) use ($now) {
+            return $t > $now - 3600;
+        }));
 
-    if (count($timestamps) >= SMTP_HOURLY_LIMIT) {
-        sort($timestamps);
-        $waitSeconds = max(1, ($timestamps[0] + 3600) - $now + 1);
+        if (count($timestamps) >= SMTP_HOURLY_LIMIT) {
+            sort($timestamps);
+            $waitSeconds = max(1, ($timestamps[0] + 3600) - $now + 1);
 
-        // Persist the pruned list before releasing the lock so other
-        // processes don't wait on stale entries.
+            // Persist the pruned list before releasing the lock so other
+            // processes don't wait on stale entries.
+            rewind($fp);
+            ftruncate($fp, 0);
+            fwrite($fp, json_encode($timestamps));
+            fflush($fp);
+            flock($fp, LOCK_UN);
+            fclose($fp);
+
+            error_log("[smtpThrottleGuard] Hourly limit (" . SMTP_HOURLY_LIMIT . ") reached; sleeping {$waitSeconds}s.");
+            sleep($waitSeconds);
+            continue; // re-check after waiting
+        }
+
+        $timestamps[] = $now;
         rewind($fp);
         ftruncate($fp, 0);
         fwrite($fp, json_encode($timestamps));
         fflush($fp);
         flock($fp, LOCK_UN);
         fclose($fp);
-
-        error_log("[smtpThrottleGuard] Hourly limit (" . SMTP_HOURLY_LIMIT . ") reached; sleeping {$waitSeconds}s.");
-        sleep($waitSeconds);
-
-        smtpThrottleGuard(); // re-check; another process may have sent meanwhile
         return;
     }
-
-    $timestamps[] = $now;
-    rewind($fp);
-    ftruncate($fp, 0);
-    fwrite($fp, json_encode($timestamps));
-    fflush($fp);
-    flock($fp, LOCK_UN);
-    fclose($fp);
 }
 
 /**
