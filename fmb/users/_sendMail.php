@@ -7,96 +7,84 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/connection.php';
 
 /**
- * Send one email.
+ * Every call site in this codebase already passes 4-6 positional args
+ * (to, subject, body, cc, bcc, isHtml) — the previous version of this
+ * function only declared 4 params, so the cc/bcc/isHtml values callers
+ * were passing were silently discarded by PHP rather than doing anything.
+ * This signature matches what's actually being called everywhere.
  */
-function sendEmail(
-    array $to,
-    string $subject,
-    string $bodyHtml,
-    ?array $cc = null,
-    ?array $bcc = null,
-    bool $isHtml = true,
-    ?array $attachments = null
-): bool {
+function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = null, ?array $bcc = null, bool $isHtml = true, ?array $attachments = null): bool
+{
+    global $link;
     $GLOBALS['lastSendEmailError'] = null;
-
     if (SMTP_USER === '' || SMTP_PASS === '') {
         $GLOBALS['lastSendEmailError'] = 'SMTP credentials are not configured on the server.';
-        error_log('[sendEmail] SMTP credentials are not configured.');
+        error_log('[sendEmail] SMTP credentials are not configured. Set FMB_SMTP_USER and FMB_SMTP_PASS.');
         return false;
     }
-
     $mail = new PHPMailer(true);
 
     try {
+        // SMTP configuration for Hostinger
         $mail->isSMTP();
-        $mail->Host = 'smtp.hostinger.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = SMTP_USER;
-        $mail->Password = SMTP_PASS;
+        $mail->Host       = 'smtp.hostinger.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = SMTP_USER;
+        $mail->Password   = SMTP_PASS;
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
-        $mail->Timeout = 30;
+        $mail->Port       = 587;
+        $mail->Timeout    = 20;
 
+        // From and To
         $mail->setFrom(SMTP_USER);
-
         foreach ($to as $email) {
             $mail->addAddress($email);
         }
-
         foreach ($cc ?? [] as $email) {
             $mail->addCC($email);
         }
-
         foreach ($bcc ?? [] as $email) {
             $mail->addBCC($email);
         }
 
+        // Content
         $mail->isHTML($isHtml);
         $mail->Subject = $subject;
-        $mail->Body = $bodyHtml;
+        $mail->Body    = $bodyHtml;
         $mail->AltBody = $isHtml ? strip_tags($bodyHtml) : $bodyHtml;
-
         foreach ($attachments ?? [] as $attachment) {
             $mail->addStringAttachment($attachment['data'], $attachment['name']);
         }
 
         $mail->send();
+        $mail->SMTPKeepAlive = false;
         $mail->smtpClose();
-
         return true;
     } catch (Throwable $e) {
         $error = $mail->ErrorInfo !== '' ? $mail->ErrorInfo : $e->getMessage();
         $GLOBALS['lastSendEmailError'] = $error;
-        error_log('[sendEmail] PHPMailer error: ' . $error);
-        $mail->smtpClose();
-
+        error_log('[sendEmail] PHPMailer error: ' . $error . ' | recipients: ' . implode(', ', $to));
         return false;
     }
 }
 
 /**
- * Send personalized messages over one SMTP connection.
+ * Send personalized messages over one SMTP connection. This is used by the
+ * daily start/stop job, where opening one connection per user can exceed the
+ * web server timeout for a large batch.
  *
- * Each message may contain a private "member_index" value. This value is
- * used by the caller to resume safely if Hostinger rate-limits the connection.
- *
- * @param array<int, array{to: array, subject: string, body: string, cc?: ?array, bcc?: ?array, isHtml?: bool, member_index?: int}> $messages
+ * @param array<int, array{to: array, subject: string, body: string, cc?: ?array, bcc?: ?array, isHtml?: bool}> $messages
  */
 function sendEmailBatch(array $messages): int
 {
     $GLOBALS['lastSendEmailRateLimited'] = false;
     $GLOBALS['lastSendEmailAttempted'] = 0;
-    $GLOBALS['lastSendEmailRateLimitMemberIndex'] = null;
-    $GLOBALS['lastSendEmailError'] = null;
-
     if (empty($messages)) {
         return 0;
     }
-
     if (SMTP_USER === '' || SMTP_PASS === '') {
         $GLOBALS['lastSendEmailError'] = 'SMTP credentials are not configured on the server.';
-        error_log('[sendEmailBatch] SMTP credentials are not configured.');
+        error_log('[sendEmailBatch] SMTP credentials are not configured. Set FMB_SMTP_USER and FMB_SMTP_PASS.');
         return 0;
     }
 
@@ -112,65 +100,40 @@ function sendEmailBatch(array $messages): int
         $mail->Password = SMTP_PASS;
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
-        $mail->Timeout = 30;
+        $mail->Timeout = 20;
         $mail->SMTPKeepAlive = true;
 
         foreach ($messages as $message) {
+            $GLOBALS['lastSendEmailAttempted']++;
             try {
                 $mail->clearAllRecipients();
                 $mail->clearAttachments();
                 $mail->setFrom(SMTP_USER);
-
                 foreach ($message['to'] as $email) {
                     $mail->addAddress($email);
                 }
-
                 foreach ($message['cc'] ?? [] as $email) {
                     $mail->addCC($email);
                 }
-
                 foreach ($message['bcc'] ?? [] as $email) {
                     $mail->addBCC($email);
                 }
-
-                $isHtml = $message['isHtml'] ?? true;
-                $mail->isHTML($isHtml);
+                $mail->isHTML($message['isHtml'] ?? true);
                 $mail->Subject = $message['subject'];
                 $mail->Body = $message['body'];
-                $mail->AltBody = $isHtml
-                    ? strip_tags($message['body'])
-                    : $message['body'];
-
+                $mail->AltBody = ($message['isHtml'] ?? true) ? strip_tags($message['body']) : $message['body'];
                 $mail->send();
                 $sent++;
-                $GLOBALS['lastSendEmailAttempted']++;
             } catch (Throwable $e) {
                 $error = $mail->ErrorInfo !== '' ? $mail->ErrorInfo : $e->getMessage();
                 $lastError = $error;
                 $GLOBALS['lastSendEmailError'] = $error;
-
-                error_log(
-                    '[sendEmailBatch] PHPMailer error: ' . $error .
-                    ' | recipients: ' . implode(', ', $message['to'])
-                );
-
-                $isRateLimited =
-                    strpos($error, '451') !== false ||
-                    stripos($error, 'ratelimit') !== false ||
-                    stripos($error, 'rate limit') !== false;
-
-                if ($isRateLimited) {
+                error_log('[sendEmailBatch] PHPMailer error: ' . $error . ' | recipients: ' . implode(', ', $message['to']));
+                $mail->smtpClose();
+                if (strpos($error, '451') !== false || stripos($error, 'ratelimit') !== false) {
                     $GLOBALS['lastSendEmailRateLimited'] = true;
-                    $GLOBALS['lastSendEmailRateLimitMemberIndex'] =
-                        isset($message['member_index'])
-                            ? (int) $message['member_index']
-                            : null;
-                    $mail->smtpClose();
                     break;
                 }
-
-                // A non-rate-limit failure is counted as an attempted message.
-                $GLOBALS['lastSendEmailAttempted']++;
             }
         }
     } catch (Throwable $e) {
