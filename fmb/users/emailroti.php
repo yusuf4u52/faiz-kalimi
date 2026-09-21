@@ -220,7 +220,7 @@ if ($menu_item_result->num_rows > 0) {
         if($rotiMailSent) {
             echo "Email sent successfully.";
         } else {
-            echo "Email sending failed."; 
+            echo $msgroti; 
             die;
         }
     } else {
