@@ -94,7 +94,7 @@ try {
                 error_log('[email2.php] Stop notification DB error: ' . $e->getMessage());
             }
         }
-        //sendEmailBatch($stopNotifications);
+        sendEmailBatch($stopNotifications);
     }
 
     // --- Thalis stopped today with no stop scheduled for tomorrow => resume tomorrow ---
@@ -150,7 +150,7 @@ try {
                 error_log('[email2.php] Start notification DB error: ' . $e->getMessage());
             }
         }
-        //sendEmailBatch($startNotifications);
+        sendEmailBatch($startNotifications);
     }
 
     // --- Daily change/thali-count report for tomorrow ---
@@ -328,14 +328,14 @@ try {
         );
         $registeredNotActiveCount = (int) (mysqli_fetch_assoc($registered_but_not_active)['cnt'] ?? 0);
         $total_registered_thali = $pivot["total"]["total"] + $registeredNotActiveCount;
-        echo $msg .= "<br><strong>Total Registered Thali: " . e((string) $total_registered_thali) . "</strong>";
+        $msg .= "<br><strong>Total Registered Thali: " . e((string) $total_registered_thali) . "</strong>";
 
         $mailSent = false;
         if (!empty($processed) || !empty($request)) {
-            //$mailSent = sendEmail(DAILY_UPDATE_EMAILS, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
+            $mailSent = sendEmail(DAILY_UPDATE_EMAILS, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
         }
 
-        if (!$mailSent) {
+        if ($mailSent) {
             $displayMessage('Daily start/stop email sent successfully.');
 
             foreach ($transporterDailyRows as $row) {
