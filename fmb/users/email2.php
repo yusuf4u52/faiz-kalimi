@@ -94,7 +94,7 @@ try {
                 error_log('[email2.php] Stop notification DB error: ' . $e->getMessage());
             }
         }
-        sendEmailBatch($stopNotifications);
+        //sendEmailBatch($stopNotifications);
     }
 
     // --- Thalis stopped today with no stop scheduled for tomorrow => resume tomorrow ---
@@ -150,7 +150,7 @@ try {
                 error_log('[email2.php] Start notification DB error: ' . $e->getMessage());
             }
         }
-        sendEmailBatch($startNotifications);
+        //sendEmailBatch($startNotifications);
     }
 
     // --- Daily change/thali-count report for tomorrow ---
