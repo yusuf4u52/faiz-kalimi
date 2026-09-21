@@ -1,4 +1,5 @@
 <?php
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -14,8 +15,14 @@ if (!user_email_in(FOLLOW_UP_ACCESS_EMAILS)) {
 
 $report = (string) ($_POST['report'] ?? '');
 $batchMode = isset($_POST['batch']);
-$batchSize = min(5, max(1, (int) ($_POST['batch_size'] ?? 5)));
+
+/*
+ * Keep this conservative for Hostinger SMTP. Increase only after confirming
+ * that your hosting plan permits a higher sending rate.
+ */
+$batchSize = min(2, max(1, (int) ($_POST['batch_size'] ?? 2)));
 $offset = max(0, (int) ($_POST['offset'] ?? 0));
+
 $reports = [
     'local' => [
         'title' => 'Local Current Year Pending Hoob',
@@ -38,6 +45,7 @@ if (!isset($reports[$report])) {
         echo json_encode(['ok' => false, 'message' => 'Invalid email report.']);
         exit;
     }
+
     header('Location: local.php?status=' . urlencode('Invalid email report.'));
     exit;
 }
@@ -48,24 +56,37 @@ $query = "SELECT NAME, ITS_No, Thali, Email_ID, SEmail_ID, Previous_Due,
           WHERE {$reports[$report]['where']}
           ORDER BY Total_Pending DESC
           LIMIT ?, ?";
+
 $members = db_query($link, $query, 'ii', [$offset, $batchSize]);
+
 $sent = 0;
 $failed = 0;
 $invalidRecipients = 0;
 $smtpFailures = 0;
 $failureExamples = [];
 $paymentReminders = [];
+
 $GLOBALS['lastSendEmailError'] = null;
 $GLOBALS['lastSendEmailRateLimited'] = false;
 $GLOBALS['lastSendEmailAttempted'] = 0;
+$GLOBALS['lastSendEmailRateLimitMemberIndex'] = null;
 
 $processed = 0;
+
 while ($member = mysqli_fetch_assoc($members)) {
+    $memberIndex = $processed;
     $processed++;
+
     $recipients = [];
+
     foreach ([$member['Email_ID'], $member['SEmail_ID']] as $email) {
         $email = trim((string) $email);
-        if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array($email, $recipients, true)) {
+
+        if (
+            $email !== '' &&
+            filter_var($email, FILTER_VALIDATE_EMAIL) &&
+            !in_array($email, $recipients, true)
+        ) {
             $recipients[] = $email;
         }
     }
@@ -81,10 +102,16 @@ while ($member = mysqli_fetch_assoc($members)) {
     $sabeelNumber = e((string) $member['Thali']);
     $pendingAmount = number_format((float) ($member['Total_Pending'] ?? 0));
     $previousDue = (float) ($member['Previous_Due'] ?? 0);
+
     $previousDueMessage = '';
+
     if ($previousDue > 0) {
-        $previousDueMessage = '<p>Aapni pichla Waras ni due <strong>₹' . number_format($previousDue) . '</strong> haji pan pending che. Aap si adab sathe iltemaas che ane ummeed ke Aqa Maula T.U.S na Milad Mubarak na pehla aa due ada kari ne clear kari aapso.</p>';
+        $previousDueMessage =
+            '<p>Aapni pichla Waras ni due <strong>₹' .
+            number_format($previousDue) .
+            '</strong> haji pan pending che. Aap si adab sathe iltemaas che ane ummeed ke Aqa Maula T.U.S na Milad Mubarak na pehla aa due ada kari ne clear kari aapso.</p>';
     }
+
     $emailBody = "
         <div style=\"font-family:Arial,sans-serif;color:#333;max-width:640px;margin:auto\">
             <img src=\"https://kalimijamaatpoona.org/fmb/assets/img/logo.avif\" alt=\"FMB Kalimi Mohalla\" width=\"90\" height=\"90\" style=\"display:block;margin:0 auto 20px\">
@@ -101,7 +128,7 @@ while ($member = mysqli_fetch_assoc($members)) {
             <p>FMB ni hoob ada kerva ni <strong>7th Miqaat - Al-Hayyul Muqaddas Syedna Mohammed Burhanuddin (RA)</strong> na <strong>Urs Mubarak</strong> no din gujri chuko che. Aap Maula (T.U.S) ni nazarat ane barakat si <strong>Faiz ul Mawaid il Burhaniyah</strong> no aa amal jaari che ane ghana gharo sudhi Faiz ni barkat pohchi rahi che.</p>
             <p>Aap si adab sathe iltemaas che ke aap aapni pending FMB ni hoob ada kari ne aa khidmat ma ane <strong>Burhanuddin Maula (RA)</strong> na faiz ma shamil thaiye ane <strong>Mufaddal Maula (T.U.S)</strong> ni khushi haasil kariye. Aapna waqt pe hoob ada kerva si <strong>Faiz</strong> ane aa khidmat nu nizam barabar chaltu rahe che.</p>
             <p>Payment kara pachi screenshot ya receipt <a href=\"https://wa.me/917499860950\"><strong>+91 74998 60950</strong></a> par aapna Sabeel Number <strong>{$sabeelNumber}</strong> saathe mokli aapso, taake hame aapna records update kari shakay.</p>
-            <p><strong>Note:</strong> Agar aap aa hoob pehla thi ada kari chuka ho, to payment ni receipt ya transfer nu screenshot hamne mokli aapso, taake hame aapna records update kari shakay.</p>
+            <p><strong>Note:</strong> Agar aap aa hoob pehla thi ada kari chuka ho, to payment ni receipt ya transfer nu screenshot hamne mokli aapso, taake hame records update kari shakay.</p>
             <p>Was Salaam,<br><strong>FMB Khidmat Team</strong></p>
             <p style=\"text-align:center;margin:24px 0 12px\"><img src=\"https://kalimijamaatpoona.org/fmb/assets/img/fmb-account.avif\" alt=\"FMB payment details\" width=\"900\" style=\"display:block;width:100%;max-width:900px;height:auto;margin:0 auto\"></p>
             <p style=\"text-align:center;margin:12px 0 24px\"><a href=\"upi://pay?pa=dbjt-fmb-kalimi@ybl&amp;pn=D%20B%20J%20T%20TRUST%20K%20M%20POONA%20-%20FMB&amp;cu=INR\" style=\"display:inline-block;background:#198754;color:#fff;padding:12px 28px;text-decoration:none;border-radius:4px;font-weight:bold\">Pay Now</a></p>
@@ -111,31 +138,47 @@ while ($member = mysqli_fetch_assoc($members)) {
         'to' => $recipients,
         'subject' => 'Reminder - FMB Hoob Pending',
         'body' => $emailBody,
+        'member_index' => $memberIndex,
     ];
 }
 
 $batchSent = sendEmailBatch($paymentReminders);
-$batchAttempted = (int) ($GLOBALS['lastSendEmailAttempted'] ?? count($paymentReminders));
-$batchFailures = $batchAttempted - $batchSent;
-$deferredMessages = count($paymentReminders) - $batchAttempted;
+$batchAttempted = (int) ($GLOBALS['lastSendEmailAttempted'] ?? 0);
+$batchFailures = max(0, $batchAttempted - $batchSent);
+
 $sent += $batchSent;
 $failed += $batchFailures;
 $smtpFailures += $batchFailures;
+
 $rateLimited = (bool) ($GLOBALS['lastSendEmailRateLimited'] ?? false);
+$rateLimitMemberIndex = $GLOBALS['lastSendEmailRateLimitMemberIndex'] ?? null;
+
+/*
+ * Normally all fetched members are consumed.
+ * If rate limiting occurred, resume at the exact member that was rejected.
+ * This prevents both skipped members and repeated successful emails.
+ */
 $nextOffset = $offset + $processed;
-if ($rateLimited) {
-    $nextOffset -= $deferredMessages;
+
+if ($rateLimited && $rateLimitMemberIndex !== null) {
+    $nextOffset = $offset + (int) $rateLimitMemberIndex;
 }
-if ($batchFailures > 0 && count($failureExamples) < 3) {
+
+if ($batchFailures > 0 || $rateLimited) {
     $failureExamples[] = [
-        'error' => (string) ($GLOBALS['lastSendEmailError'] ?? 'One or more emails could not be sent.'),
+        'error' => (string) (
+            $GLOBALS['lastSendEmailError'] ??
+            'One or more emails could not be sent.'
+        ),
         'count' => $batchFailures,
     ];
 }
 
 $hasMore = $processed === $batchSize;
+
 if ($batchMode) {
     header('Content-Type: application/json');
+
     echo json_encode([
         'ok' => true,
         'sent' => $sent,
@@ -147,6 +190,7 @@ if ($batchMode) {
         'next_offset' => $nextOffset,
         'has_more' => $hasMore && !$rateLimited,
     ]);
+
     exit;
 }
 

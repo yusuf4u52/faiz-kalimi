@@ -15,10 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const button = form.querySelector('button[type="submit"]');
         const originalText = button.textContent;
+
         const status = document.createElement("div");
         status.className = "alert alert-info mt-2";
         status.setAttribute("role", "status");
+
         form.insertAdjacentElement("afterend", status);
+
         button.disabled = true;
         status.textContent = "Sending emails...";
 
@@ -27,20 +30,26 @@ document.addEventListener("DOMContentLoaded", function () {
         let failed = 0;
         let invalidRecipients = 0;
         let smtpFailures = 0;
+
         const failureExamples = [];
 
         try {
           do {
             const data = new FormData(form);
+
             data.append("batch", "1");
-            data.append("batch_size", "5");
+
+            // Keep the batch small to reduce SMTP rate-limit issues.
+            data.append("batch_size", "2");
             data.append("offset", String(offset));
 
             const response = await fetch(form.action, {
               method: "POST",
               body: data,
               credentials: "same-origin",
-              headers: { Accept: "application/json" },
+              headers: {
+                Accept: "application/json",
+              },
             });
 
             if (!response.ok) {
@@ -50,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const result = await response.json();
+
             if (!result.ok) {
               throw new Error(result.message || "The email request failed.");
             }
@@ -58,16 +68,21 @@ document.addEventListener("DOMContentLoaded", function () {
             failed += Number(result.failed || 0);
             invalidRecipients += Number(result.invalid_recipients || 0);
             smtpFailures += Number(result.smtp_failures || 0);
+
             if (Array.isArray(result.failure_examples)) {
               failureExamples.push(...result.failure_examples);
             }
+
             offset = Number(result.next_offset || offset);
+
             status.textContent =
               "Sending emails... " + sent + " sent, " + failed + " failed.";
 
             if (result.rate_limited) {
               throw new Error(
-                "Hostinger SMTP rate limit exceeded. Wait for the cooldown, then run the remaining emails again. " +
+                "Hostinger SMTP rate limit exceeded. " +
+                  "Please wait for the cooldown and click " +
+                  '"Email Members" again to continue the remaining emails. ' +
                   (result.failure_examples?.[0]?.error || ""),
               );
             }
@@ -75,9 +90,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!result.has_more) {
               break;
             }
+
+            // Pause briefly between batches.
+            await new Promise(function (resolve) {
+              setTimeout(resolve, 1500);
+            });
           } while (true);
 
           status.className = "alert alert-success mt-2";
+
           status.textContent =
             sent +
             " sent, " +
@@ -87,11 +108,13 @@ document.addEventListener("DOMContentLoaded", function () {
             " missing/invalid address, " +
             smtpFailures +
             " SMTP failure).";
+
           if (failureExamples.length > 0) {
             status.textContent += " " + failureExamples[0].error;
           }
         } catch (error) {
           status.className = "alert alert-danger mt-2";
+
           status.textContent =
             error.message + " The completed batches were not repeated.";
         } finally {
