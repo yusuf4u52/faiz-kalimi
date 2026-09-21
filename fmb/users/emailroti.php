@@ -215,7 +215,14 @@ if ($menu_item_result->num_rows > 0) {
         $msgroti .= "<br/><b>Total " . e($roti) . " Count is " . e((string) $totalCount) . "</b>";
 
         $subject = $roti . ' update ' . $tomorrow_date;
-        sendEmail(ROTI_UPDATE_EMAILS, $subject, $msgroti, null, null, true);
+        $rotiMailSent = sendEmail(ROTI_UPDATE_EMAILS, $subject, $msgroti, null, null, true);
+
+        if($rotiMailSent) {
+            echo "Email sent successfully.";
+        } else {
+            echo "Email sending failed."; 
+            die;
+        }
     } else {
         echo "Tomorrow no roti.";
     }
