@@ -221,7 +221,6 @@ if ($menu_item_result->num_rows > 0) {
             echo "Email sent successfully.";
         } else {
             echo $msgroti; 
-            die;
         }
     } else {
         echo "Tomorrow no roti.";

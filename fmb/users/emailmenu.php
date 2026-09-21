@@ -160,11 +160,17 @@ if ($menu_item_result->num_rows > 0) {
 
     $msgmenu;
 
-    //sendEmail(MENU_UPDATE_EMAILS, 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
+    $menuEmailSent = sendEmail(MENU_UPDATE_EMAILS, 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
 
-    if (isset($_GET['menu_date'])) {
-        header("Location: /fmb/users/menu/edited.php?action=send&date=" . urlencode($_GET['menu_date']));
-        exit;
+    if ($menuEmailSent) {
+        echo "Email sent successfully.";
+        if (isset($_GET['menu_date'])) {
+            header("Location: /fmb/users/menu/edited.php?action=send&date=" . urlencode($_GET['menu_date']));
+            exit;
+        }
+    } else {
+        echo $msgmenu;
+        die;
     }
 } else {
     echo "Skipping email as no thali on Miqaat or any other reason.";
