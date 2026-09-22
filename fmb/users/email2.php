@@ -2,7 +2,7 @@
 include('connection.php');
 require_once('helpers.php');
 include('getHijriDate.php');
-//require_once '_sendMail.php';
+require_once '_sendMail.php';
 //include('emailmenu.php');
 
 // This endpoint has no login of its own to check (it's meant to be hit by
@@ -407,6 +407,7 @@ try {
             }
         } else {
             $displayMessage('Daily transporter update email failed: ' . ($GLOBALS['lastSendEmailError'] ?? 'Unknown email error'));
+            echo $msg;
         }
 
             // Send the edited-menu and transporter-wise roti reports after the
