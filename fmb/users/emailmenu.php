@@ -95,7 +95,6 @@ if ($menu_item_result->num_rows > 0) {
 
             $transporterRows = '';
             $i=0; while ($row = mysqli_fetch_assoc($thaliRows)) {
-                $i++;
                 $user_menu_item = $userMenuByThaliId[$row['id']] ?? null;
 
                 if ($user_menu_item === null) {
@@ -107,6 +106,8 @@ if ($menu_item_result->num_rows > 0) {
                 if (!menuDiffersIgnoringRoti($menu_item, $user_menu_item)) {
                     continue;
                 }
+
+                $i++;
 
 				$transporterRows .= '<tr>
                                         <td align="center">' . $i . '</td>
