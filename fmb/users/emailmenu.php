@@ -94,6 +94,7 @@ if ($menu_item_result->num_rows > 0) {
             );
 
             $transporterRows = '';
+            $i = 0;
             while ($row = mysqli_fetch_assoc($thaliRows)) {
                 $user_menu_item = $userMenuByThaliId[$row['id']] ?? null;
 
@@ -107,7 +108,8 @@ if ($menu_item_result->num_rows > 0) {
                     continue;
                 }
 
-				$transporterRows .= '<tr>
+                $transporterRows .= '<tr>
+                                        <td align="center">' . $i . '</td>
 										<td align="center">' . e($row['tiffinno']) . '</td>
 										<td align="center">' . e($row['thalisize']) . '</td>';
                 if (!empty($user_menu_item['sabji']['item'])) {
@@ -119,9 +121,10 @@ if ($menu_item_result->num_rows > 0) {
                 if (!empty($user_menu_item['rice']['item'])) {
                     $transporterRows .= '<td align="center">' . (float) $user_menu_item['rice']['qty'] . '</td>';
                 }
-                $transporterRows .= '<td align="center">' . e($row['NAME']) . '</td>
-										<td align="center">' . e($row['wingflat'] . ' ' . $row['society']) . '</td>
+                $transporterRows .= '<td align="center">' . e($row['wingflat'] . ' ' . $row['society']) . '</td>
+                <td align="center">' . e($row['NAME']) . '</td>
 									<tr>';
+                $i++;
             }
 
             if ($transporterRows === '') {
@@ -136,6 +139,7 @@ if ($menu_item_result->num_rows > 0) {
 					<table width="720" cellpadding="0" cellspacing="0" border="1" bgcolor="#ffffff" style="color:#000; border-color:#548484;">
 						<thead>
 							<tr bgcolor="#c36d29" style="color:#FFFFFF;">
+                                <th width="7%">Sr. No</th>
 								<th width="7%">Tiffin No</th>
 								<th width="7%">Tiffin Size</th>';
             if (!empty($menu_item['sabji']['item'])) {
@@ -147,8 +151,8 @@ if ($menu_item_result->num_rows > 0) {
             if (!empty($menu_item['rice']['item'])) {
                 $msgmenu .= '<th width="7%">' . e($menu_item['rice']['item']) . '</th>';
             }
-            $msgmenu .= '<th>Name</th>
-								<th>Flat/Society</th>
+            $msgmenu .= '<th>Flat/Society</th>
+                <th>Name</th>
 							<tr>
 						</thead>
 						<tbody>' . $transporterRows . '</tbody>
