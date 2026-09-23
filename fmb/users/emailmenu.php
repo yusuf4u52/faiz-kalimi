@@ -9,7 +9,7 @@ require_cron_or_admin_access($link);
 
 include('getHijriDate.php');
 require_once '_sendMail.php';
-include('emailroti.php');
+//include('emailroti.php');
 
 $tomorrow_date = $_GET['menu_date'] ?? date('Y-m-d', strtotime('+ 1 day'));
 if (!DateTime::createFromFormat('Y-m-d', $tomorrow_date)) {
@@ -94,8 +94,8 @@ if ($menu_item_result->num_rows > 0) {
             );
 
             $transporterRows = '';
-            $i = 0;
-            while ($row = mysqli_fetch_assoc($thaliRows)) {
+            $i=0; while ($row = mysqli_fetch_assoc($thaliRows)) {
+                $i++;
                 $user_menu_item = $userMenuByThaliId[$row['id']] ?? null;
 
                 if ($user_menu_item === null) {
@@ -108,7 +108,7 @@ if ($menu_item_result->num_rows > 0) {
                     continue;
                 }
 
-                $transporterRows .= '<tr>
+				$transporterRows .= '<tr>
                                         <td align="center">' . $i . '</td>
 										<td align="center">' . e($row['tiffinno']) . '</td>
 										<td align="center">' . e($row['thalisize']) . '</td>';
@@ -123,8 +123,7 @@ if ($menu_item_result->num_rows > 0) {
                 }
                 $transporterRows .= '<td align="center">' . e($row['wingflat'] . ' ' . $row['society']) . '</td>
                 <td align="center">' . e($row['NAME']) . '</td>
-									<tr>';
-                $i++;
+									<tr>'; 
             }
 
             if ($transporterRows === '') {
