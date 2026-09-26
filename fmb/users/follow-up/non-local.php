@@ -28,6 +28,7 @@ require_once('../helpers.php');
                                     <th scope="col">Thali No</th>
                                     <th scope="col">Contact</th>
                                     <th scope="col">Whatsapp</th>
+                                    <th scope="col">ITS No</th>
                                     <th scope="col">Name</th>
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
@@ -36,6 +37,8 @@ require_once('../helpers.php');
                                     <th scope="col">Paid %</th>
                                     <th scope="col">Thali Size</th>
                                     <th scope="col">Sabeel Type</th>
+                                    <th scope="col">Wing/Flat</th>
+                                    <th scope="col">Society</th>
                                     <th scope="col">Transporter</th>
                                 </tr>
                             </thead>
@@ -46,6 +49,7 @@ require_once('../helpers.php');
                                         <td><?php echo e($values['tiffinno']); ?></td>
                                         <td><a href="tel:<?php echo e($values['CONTACT']); ?>">Call</a></td>
                                         <td><a href="https://wa.me/<?php echo e($values['WhatsApp']); ?>" target="_blank">Whatsapp</a></td>
+                                        <td><?php echo e($values['ITS_No']); ?></td>
                                         <td><?php echo e($values['NAME']); ?></td>
                                         <td><?php echo e((string) $values['previous_hub']); ?></td>
                                         <td><?php echo e((string) $values['yearly_hub']); ?></td>
@@ -54,6 +58,8 @@ require_once('../helpers.php');
                                         <td><?php echo e($values['Paid %']); ?>%</td>
                                         <td><?php echo e($values['thalisize']); ?></td>
                                         <td><?php echo e($values['sabeelType']); ?></td>
+                                        <td><?php echo e($values['wingflat']); ?></td>
+                                        <td><?php echo e($values['society']); ?></td>
                                         <td><?php echo e($values['Transporter']); ?></td>
                                     </tr>
                                 <?php } ?>
@@ -64,6 +70,7 @@ require_once('../helpers.php');
                                     <th scope="col">Thali No</th>
                                     <th scope="col">Contact</th>
                                     <th scope="col">Whatsapp</th>
+                                    <th scope="col">ITS No</th>
                                     <th scope="col">Name</th>
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
@@ -72,6 +79,8 @@ require_once('../helpers.php');
                                     <th scope="col">Paid %</th>
                                     <th scope="col">Thali Size</th>
                                     <th scope="col">Sabeel Type</th>
+                                    <th scope="col">Wing/Flat</th>
+                                    <th scope="col">Society</th>
                                     <th scope="col">Transporter</th>
                                 </tr>
                             </tfoot>

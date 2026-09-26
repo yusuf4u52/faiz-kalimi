@@ -34,7 +34,7 @@ $reports = [
     ],
     'previous' => [
         'title' => 'Previous Year Pending Hoob',
-        'where' => 'Previous_Due > 5 AND yearly_hub > 0',
+        'where' => 'Previous_Due > 5 AND thalisize IS NOT NULL AND hardstop != 1 AND yearly_hub > 0',
     ],
 ];
 
