@@ -9,7 +9,7 @@ require_cron_or_admin_access($link);
 
 include('getHijriDate.php');
 require_once '_sendMail.php';
-include('emailroti.php');
+//include('emailroti.php');
 
 $tomorrow_date = $_GET['menu_date'] ?? date('Y-m-d', strtotime('+ 1 day'));
 if (!DateTime::createFromFormat('Y-m-d', $tomorrow_date)) {
@@ -37,18 +37,8 @@ $msgmenu = '';
 $menu_item_result = db_query($link, "SELECT `menu_item` FROM menu_list WHERE `menu_date` = ? AND `menu_type` = 'thaali' LIMIT 1", "s", [$tomorrow_date]);
 
 if ($menu_item_result->num_rows > 0) {
-    $msgmenu .= '<table border="0" bgcolor="#FFFFFF" width="100%" cellpadding="3" cellspacing="3">
-		<td align="center" valign="top">
-			<table border="0" width="720" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="color:#333333; padding:1rem;">
-				<tr>
-					<td align="left">
-						<img src="https://kalimijamaatpoona.org/fmb/assets/img/logo.avif" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="90" height="90"> 
-					</td>
-					<td align="right"><strong>Updated Thali of ' . e($day) . '<br/>' . e($hijridate) . ' ' . e($tomorrow_date) . '</strong></td>
-				</tr>
-			</table>';
 
-        $row_menu = $menu_item_result->fetch_assoc();
+    $row_menu = $menu_item_result->fetch_assoc();
     $menu_item = decode_menu_item($row_menu['menu_item']);
 
     // Which item columns exist today (used for BOTH header and rows so they always align)
@@ -167,11 +157,11 @@ if ($menu_item_result->num_rows > 0) {
         }
     }
 
-    echo $msgmenu .= '</td>
+    $msgmenu .= '</td>
     </tr>
     </table>';
 
-    //$menuEmailSent = sendEmail(MENU_UPDATE_EMAILS, 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
+    $menuEmailSent = sendEmail(MENU_UPDATE_EMAILS, 'Updated Thali ' . $tomorrow_date, $msgmenu, null, null, true);
 
     if ($menuEmailSent) {
         echo "Email sent successfully.";
