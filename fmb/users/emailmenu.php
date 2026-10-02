@@ -9,7 +9,7 @@ require_cron_or_admin_access($link);
 
 include('getHijriDate.php');
 require_once '_sendMail.php';
-//include('emailroti.php');
+include('emailroti.php');
 
 $tomorrow_date = $_GET['menu_date'] ?? date('Y-m-d', strtotime('+ 1 day'));
 if (!DateTime::createFromFormat('Y-m-d', $tomorrow_date)) {
