@@ -93,7 +93,7 @@ $extraOptions = $dishOptionsByType['5'];
                                         <?php echo (!empty($menu_item['extra']['item']) ? e($menu_item['extra']['item']) . '  (' . (int) $menu_item['extra']['qty'] . ')<br />' : ''); ?>
                                     <?php } ?>
                                 </td>
-                                <td><?php if ($today < $values['menu_date']) { ?><button
+                                <td><?php if ($today <= $values['menu_date']) { ?><button
                                             type="button" class="btn btn-light"
                                             data-bs-target="#editmenu-<?php echo (int) $values['id']; ?>"
                                             data-bs-toggle="modal" style="margin-bottom:5px"><i class="bi bi-pencil-square"></i></button><?php } ?> <button
