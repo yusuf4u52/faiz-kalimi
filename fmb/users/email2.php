@@ -46,7 +46,7 @@ ini_set('display_errors', '0'); // don't leak DB/query details if this is ever h
 try {
     date_default_timezone_set('Asia/Kolkata');
     $today_date = date('Y-m-d');
-    $tomorrow_date = date('Y-m-d', strtotime('+ 1 day'));
+    $tomorrow_date = $_GET['stop_date'] ?? date('Y-m-d', strtotime('+ 1 day'));
     $day = date('l', strtotime($tomorrow_date));
     $hijridate = getHijriDate($tomorrow_date);
 
