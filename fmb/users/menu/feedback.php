@@ -3,7 +3,7 @@ include('../header.php');
 include('../navbar.php');
 require_once('helpers.php');
 
-$menuDate = $_GET['menu_date'] ?? null;
+$menuDate = $_GET['menu_date'] ?? date('Y-m-d', strtotime('-1 week'));
 $isValidDate = $menuDate && DateTime::createFromFormat('Y-m-d', $menuDate);
 
 $menu_list = null;
@@ -30,6 +30,7 @@ if ($isValidDate) {
                             <input type="date" class="form-control"
                                 name="menu_date"
                                 value="<?php echo e($menuDate ?? ''); ?>"
+                                max="<?php echo e(date('Y-m-d', strtotime('-1 day'))); ?>"
                                 required>
                         </div>
                         <div class="col-4 col-md-3">
