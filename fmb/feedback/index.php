@@ -185,7 +185,7 @@ if ($view === 'results' && $hofRow !== null) {
             $link,
             "SELECT * FROM `user_feedmenu` WHERE `menu_date` = ? AND `thali` = ?",
             "ss",
-            [$menu['menu_date'], $hofRow['Thali']]
+            [$menu['menu_date'], $hofRow['id']]
         );
         if ($feedResult->num_rows > 0) {
             $feedRow = $feedResult->fetch_assoc();
@@ -248,7 +248,7 @@ include('../users/header.php'); ?>
                             <hr>
                             <form class="form-horizontal" method="post" autocomplete="off">
                                 <input type="hidden" name="action" value="feedback_menu" />
-                                <input type="hidden" name="thali" value="<?php echo e((string) $hofRow['Thali']); ?>" />
+                                <input type="hidden" name="thali" value="<?php echo e((string) $hofRow['id']); ?>" />
 
                                 <div class="alert alert-info" role="alert">Salaam <strong class="text-capitalize"><?php echo e(strtolower($hofRow['NAME'])); ?></strong>, your feedback is valuable to us. Please submit or review your feedback.</div>
 
