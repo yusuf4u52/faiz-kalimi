@@ -74,7 +74,7 @@ if (!$isInRange) {
         // Re-check eligibility server-side rather than trusting the hidden
         // field — it only tells us which thali the form was built for, not
         // that the submitter is still allowed to give feedback for it.
-        $thaliCheck = db_query($link, "SELECT `NAME` FROM `thalilist` WHERE `Thali` = ? AND `hardstop` != 1", "s", [$thali]);
+        $thaliCheck = db_query($link, "SELECT `NAME` FROM `thalilist` WHERE `id` = ? AND `hardstop` != 1", "s", [$thali]);
         if ($thaliCheck->num_rows === 0) {
             $errors[] = 'You are not eligible to submit feedback because you are not taking barakat of thali from Kalimi Mohallah - Poona.';
         } else {
