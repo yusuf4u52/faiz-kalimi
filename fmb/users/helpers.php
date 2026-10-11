@@ -187,6 +187,7 @@ const MENU_MANAGEMENT_ACCESS_EMAILS = [
     'tinwalaabizer@gmail.com',
     'moizagasiyawala@gmail.com',
     'aliasgaraurangabadwala@gmail.com',
+    'taherdiwan@gmail.com',
 ];
 
 const ROTI_MANAGEMENT_ACCESS_EMAILS = [
