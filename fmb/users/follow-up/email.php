@@ -8,20 +8,41 @@ require_once('../connection.php');
 require_once('../helpers.php');
 require_once('../_sendMail.php');
 
-if (!user_email_in(FOLLOW_UP_ACCESS_EMAILS)) {
-    http_response_code(403);
-    exit('Forbidden.');
-}
-
-$report = (string) ($_POST['report'] ?? '');
-$batchMode = isset($_POST['batch']);
+date_default_timezone_set('Asia/Kolkata');
 
 /*
- * Keep this conservative for Hostinger SMTP. Increase only after confirming
- * that your hosting plan permits a higher sending rate.
+ * Access control unchanged from your original file — only people in
+ * FOLLOW_UP_ACCESS_EMAILS can trigger this. If you also want a daily cron
+ * job to hit this URL unattended, you have two options:
+ *   1) Swap this for require_cron_or_admin_access($link) (same helper used
+ *      in email2.php / emailmenu.php) — but check helpers.php first: that
+ *      function may allow ANY admin, not just people in
+ *      FOLLOW_UP_ACCESS_EMAILS, which would be a bigger access grant than
+ *      you have today.
+ *   2) Leave this as-is and have cron call this URL with a session cookie
+ *      for a FOLLOW_UP_ACCESS_EMAILS account (e.g. via a saved cookie jar
+ *      in curl/wget), so access stays scoped exactly as before.
+ * Left untouched here deliberately — pick whichever matches your intent.
  */
-$batchSize = min(2, max(1, (int) ($_POST['batch_size'] ?? 2)));
-$offset = max(0, (int) ($_POST['offset'] ?? 0));
+if (!user_email_in(FOLLOW_UP_ACCESS_EMAILS)) {
+    http_response_code(403);
+    header('Content-Type: application/json');
+    echo json_encode(['ok' => false, 'message' => 'Forbidden.']);
+    exit;
+}
+
+header('Content-Type: application/json');
+
+/*
+ * Tune these to your Hostinger plan. If you keep seeing 421/450-style
+ * throttling errors in error_log after this change, your host is capping
+ * sends per hour regardless of code — lower EMAILS_PER_HOUR, or move to a
+ * transactional SMTP provider (SES / Brevo / Mailgun / SendGrid).
+ */
+const EMAILS_PER_HOUR = 250;   // target sustained send rate
+const CHUNK_SIZE       = 20;    // members per sendEmailBatch() call; file is saved after each chunk
+const MAX_PASSES        = 3;    // extra full sweeps over transient failures within this run
+const PASS_GAP_SECONDS  = 180;  // wait between sweeps, to ride out a short SMTP outage
 
 $reports = [
     'local' => [
@@ -38,81 +59,83 @@ $reports = [
     ],
 ];
 
-if (!isset($reports[$report])) {
-    if ($batchMode) {
-        header('Content-Type: application/json');
-        http_response_code(400);
-        echo json_encode(['ok' => false, 'message' => 'Invalid email report.']);
-        exit;
-    }
+$report = (string) ($_REQUEST['report'] ?? '');
+$action = (string) ($_REQUEST['action'] ?? 'run'); // 'run' (default) or 'status'
 
-    header('Location: local.php?status=' . urlencode('Invalid email report.'));
+if (!isset($reports[$report])) {
+    http_response_code(400);
+    echo json_encode(['ok' => false, 'message' => 'Invalid email report.']);
     exit;
 }
 
-$query = "SELECT NAME, ITS_No, Thali, Email_ID, SEmail_ID, Previous_Due,
-                 (Previous_Due + yearly_hub - Paid) AS Total_Pending
-          FROM thalilist
-          WHERE {$reports[$report]['where']}
-          ORDER BY Total_Pending DESC
-          LIMIT ?, ?";
+/* ---------------------------- file-based queue storage ---------------------------- */
 
-$members = db_query($link, $query, 'ii', [$offset, $batchSize]);
-
-$sent = 0;
-$failed = 0;
-$invalidRecipients = 0;
-$smtpFailures = 0;
-$failureExamples = [];
-$paymentReminders = [];
-
-$GLOBALS['lastSendEmailError'] = null;
-$GLOBALS['lastSendEmailRateLimited'] = false;
-$GLOBALS['lastSendEmailAttempted'] = 0;
-$GLOBALS['lastSendEmailRateLimitMemberIndex'] = null;
-
-$processed = 0;
-
-while ($member = mysqli_fetch_assoc($members)) {
-    $memberIndex = $processed;
-    $processed++;
-
-    $recipients = [];
-
-    foreach ([$member['Email_ID'], $member['SEmail_ID']] as $email) {
-        $email = trim((string) $email);
-
-        if (
-            $email !== '' &&
-            filter_var($email, FILTER_VALIDATE_EMAIL) &&
-            !in_array($email, $recipients, true)
-        ) {
-            $recipients[] = $email;
-        }
+function queueDir(): string
+{
+    $dir = __DIR__ . '/../storage/email-queue';
+    if (!is_dir($dir)) {
+        mkdir($dir, 0770, true);
     }
-
-    if ($recipients === []) {
-        $failed++;
-        $invalidRecipients++;
-        continue;
+    $htaccess = $dir . '/.htaccess';
+    if (!file_exists($htaccess)) {
+        // Belt-and-suspenders: these files contain member emails and pending
+        // amounts. Deny direct web access even if this folder ends up under
+        // your document root.
+        file_put_contents($htaccess, "Require all denied\n");
     }
+    return $dir;
+}
 
-    $name = e((string) $member['NAME']);
-    $itsNumber = e((string) $member['ITS_No']);
-    $sabeelNumber = e((string) $member['Thali']);
-    $pendingAmount = number_format((float) ($member['Total_Pending'] ?? 0));
-    $previousDue = (float) ($member['Previous_Due'] ?? 0);
+function campaignPath(string $report): string
+{
+    // One file per report per calendar day. Yesterday's file is left in
+    // place as a small history log; delete old ones periodically if you
+    // want to reclaim space.
+    return queueDir() . '/' . $report . '-' . date('Y-m-d') . '.json';
+}
+
+function lockPath(string $report): string
+{
+    return queueDir() . '/' . $report . '.lock';
+}
+
+function loadCampaign(string $path): ?array
+{
+    if (!file_exists($path)) {
+        return null;
+    }
+    $raw = file_get_contents($path);
+    $data = json_decode($raw, true);
+    return is_array($data) ? $data : null;
+}
+
+function saveCampaign(string $path, array $data): void
+{
+    // Write to a temp file and rename, so a request reading the file mid-write
+    // (e.g. a status poll) never sees a half-written JSON file.
+    $tmp = $path . '.tmp';
+    file_put_contents($tmp, json_encode($data));
+    rename($tmp, $path);
+}
+
+/* ---------------------------- email content ---------------------------- */
+
+function buildReminderEmail(array $member): string
+{
+    $name = e((string) $member['name']);
+    $itsNumber = e((string) $member['its']);
+    $sabeelNumber = e((string) $member['sabeel']);
+    $pendingAmount = number_format((float) $member['pending']);
+    $previousDue = (float) $member['previous_due'];
 
     $previousDueMessage = '';
-
     if ($previousDue > 0) {
         $previousDueMessage =
-            '<p>Aapni pichla Waras ni due <strong>₹' .
-            number_format($previousDue) .
+            '<p>Aapni pichla Waras ni due <strong>₹' . number_format($previousDue) .
             '</strong> haji pan pending che. Aap si adab sathe iltemaas che ane ummeed ke Aqa Maula T.U.S na Milad Mubarak na pehla aa due ada kari ne clear kari aapso.</p>';
     }
 
-    $emailBody = "
+    return "
         <div style=\"font-family:Arial,sans-serif;color:#333;max-width:640px;margin:auto\">
             <img src=\"https://kalimijamaatpoona.org/fmb/assets/img/logo.avif\" alt=\"FMB Kalimi Mohalla\" width=\"90\" height=\"90\" style=\"display:block;margin:0 auto 20px\">
             <p>Salaam <strong>{$name}</strong>,</p>
@@ -133,67 +156,182 @@ while ($member = mysqli_fetch_assoc($members)) {
             <p style=\"text-align:center;margin:24px 0 12px\"><img src=\"https://kalimijamaatpoona.org/fmb/assets/img/fmb-account.avif\" alt=\"FMB payment details\" width=\"900\" style=\"display:block;width:100%;max-width:900px;height:auto;margin:0 auto\"></p>
             <p style=\"text-align:center;margin:12px 0 24px\"><a href=\"upi://pay?pa=dbjt-fmb-kalimi@ybl&amp;pn=D%20B%20J%20T%20TRUST%20K%20M%20POONA%20-%20FMB&amp;cu=INR\" style=\"display:inline-block;background:#198754;color:#fff;padding:12px 28px;text-decoration:none;border-radius:4px;font-weight:bold\">Pay Now</a></p>
         </div>";
+}
 
-    $paymentReminders[] = [
-        'to' => $recipients,
-        'subject' => 'Reminder - FMB Hoob Pending',
-        'body' => $emailBody,
-        'member_index' => $memberIndex,
+function buildCampaign(string $report, array $reportDef, mysqli $link): array
+{
+    $members = db_query($link, "SELECT NAME, ITS_No, Thali, Email_ID, SEmail_ID, Previous_Due,
+            (Previous_Due + yearly_hub - Paid) AS Total_Pending
+        FROM thalilist WHERE {$reportDef['where']}
+        ORDER BY Total_Pending DESC, ITS_No");
+
+    $rows = [];
+    $noEmail = 0;
+
+    while ($m = mysqli_fetch_assoc($members)) {
+        $recipients = [];
+        foreach ([$m['Email_ID'], $m['SEmail_ID']] as $email) {
+            $email = trim((string) $email);
+            if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array($email, $recipients, true)) {
+                $recipients[] = $email;
+            }
+        }
+        if (!$recipients) {
+            $noEmail++;
+            continue;
+        }
+
+        $its = (string) $m['ITS_No'];
+        $rows[$its] = [
+            'name' => (string) $m['NAME'],
+            'its' => $its,
+            'sabeel' => (string) $m['Thali'],
+            'pending' => (float) ($m['Total_Pending'] ?? 0),
+            'previous_due' => (float) ($m['Previous_Due'] ?? 0),
+            'recipients' => $recipients,
+            'status' => 'pending',
+            'attempts' => 0,
+            'last_error' => null,
+        ];
+    }
+
+    return [
+        'report' => $report,
+        'date' => date('Y-m-d'),
+        'created_at' => date('c'),
+        'status' => 'in_progress',
+        'no_valid_email' => $noEmail,
+        'members' => $rows,
     ];
 }
 
-$batchSent = sendEmailBatch($paymentReminders);
-$batchAttempted = (int) ($GLOBALS['lastSendEmailAttempted'] ?? 0);
-$batchFailures = max(0, $batchAttempted - $batchSent);
-
-$sent += $batchSent;
-$failed += $batchFailures;
-$smtpFailures += $batchFailures;
-
-$rateLimited = (bool) ($GLOBALS['lastSendEmailRateLimited'] ?? false);
-$rateLimitMemberIndex = $GLOBALS['lastSendEmailRateLimitMemberIndex'] ?? null;
-
-/*
- * Normally all fetched members are consumed.
- * If rate limiting occurred, resume at the exact member that was rejected.
- * This prevents both skipped members and repeated successful emails.
- */
-$nextOffset = $offset + $processed;
-
-if ($rateLimited && $rateLimitMemberIndex !== null) {
-    $nextOffset = $offset + (int) $rateLimitMemberIndex;
-}
-
-if ($batchFailures > 0 || $rateLimited) {
-    $failureExamples[] = [
-        'error' => (string) (
-            $GLOBALS['lastSendEmailError'] ??
-            'One or more emails could not be sent.'
-        ),
-        'count' => $batchFailures,
-    ];
-}
-
-$hasMore = $processed === $batchSize;
-
-if ($batchMode) {
-    header('Content-Type: application/json');
-
-    echo json_encode([
-        'ok' => true,
+function summarize(array $campaign): array
+{
+    $sent = $failed = $pending = 0;
+    foreach ($campaign['members'] as $m) {
+        if ($m['status'] === 'sent') {
+            $sent++;
+        } elseif ($m['status'] === 'failed') {
+            $failed++;
+        } else {
+            $pending++;
+        }
+    }
+    return [
+        'total' => count($campaign['members']),
         'sent' => $sent,
         'failed' => $failed,
-        'invalid_recipients' => $invalidRecipients,
-        'smtp_failures' => $smtpFailures,
-        'failure_examples' => $failureExamples,
-        'rate_limited' => $rateLimited,
-        'next_offset' => $nextOffset,
-        'has_more' => $hasMore && !$rateLimited,
-    ]);
+        'pending' => $pending,
+        'no_valid_email' => $campaign['no_valid_email'] ?? 0,
+        'status' => $campaign['status'],
+        'date' => $campaign['date'],
+    ];
+}
 
+/* ---------------------------- action=status ---------------------------- */
+
+if ($action === 'status') {
+    $campaign = loadCampaign(campaignPath($report));
+    if ($campaign === null) {
+        echo json_encode(['ok' => true, 'exists' => false]);
+        exit;
+    }
+    echo json_encode(['ok' => true, 'exists' => true] + summarize($campaign));
     exit;
 }
 
-$status = sprintf('%d email(s) sent, %d failed.', $sent, $failed);
-header('Location: ' . $report . '.php?status=' . urlencode($status));
-exit;
+/* ---------------------------- action=run (default) ---------------------------- */
+
+$lockHandle = fopen(lockPath($report), 'c');
+if ($lockHandle === false || !flock($lockHandle, LOCK_EX | LOCK_NB)) {
+    if ($lockHandle !== false) {
+        fclose($lockHandle);
+    }
+    echo json_encode(['ok' => true, 'busy' => true, 'message' => 'Already running for this report. Check back shortly.']);
+    exit;
+}
+register_shutdown_function(static function () use ($lockHandle): void {
+    flock($lockHandle, LOCK_UN);
+    fclose($lockHandle);
+});
+
+ignore_user_abort(true);
+set_time_limit(0);
+
+$path = campaignPath($report);
+$campaign = loadCampaign($path);
+if ($campaign === null) {
+    // First trigger today for this report: snapshot who currently qualifies.
+    $campaign = buildCampaign($report, $reports[$report], $link);
+    saveCampaign($path, $campaign);
+} elseif ($campaign['status'] === 'done') {
+    // Already fully processed today. Re-clicking won't re-send anyone —
+    // it just reports today's completed totals.
+    echo json_encode(['ok' => true, 'started' => false, 'already_done_today' => true] + summarize($campaign));
+    exit;
+}
+// else: an earlier run today didn't finish (crash/restart) — resume it,
+// skipping anyone already marked 'sent'.
+
+echo json_encode(['ok' => true, 'started' => true] + summarize($campaign));
+if (function_exists('fastcgi_finish_request')) {
+    fastcgi_finish_request();
+}
+
+/* --------- everything below runs after the HTTP response has already been sent --------- */
+
+$minIntervalSeconds = EMAILS_PER_HOUR > 0 ? (3600 / EMAILS_PER_HOUR) : 0;
+
+for ($pass = 1; $pass <= MAX_PASSES; $pass++) {
+    $pendingIts = array_keys(array_filter($campaign['members'], static fn($m) => $m['status'] === 'pending'));
+    if (!$pendingIts) {
+        break;
+    }
+
+    foreach (array_chunk($pendingIts, CHUNK_SIZE) as $chunk) {
+        $messages = [];
+        foreach ($chunk as $its) {
+            $m = $campaign['members'][$its];
+            $messages[$its] = [
+                'to' => $m['recipients'],
+                'subject' => 'Reminder - FMB Hoob Pending',
+                'body' => buildReminderEmail($m),
+            ];
+        }
+
+        $results = sendEmailBatch($messages);
+
+        foreach ($chunk as $its) {
+            $res = $results[$its] ?? ['ok' => false, 'retry' => true, 'error' => 'No result returned'];
+            $campaign['members'][$its]['attempts']++;
+
+            if ($res['ok']) {
+                $campaign['members'][$its]['status'] = 'sent';
+                $campaign['members'][$its]['last_error'] = null;
+            } elseif ($res['retry'] && $pass < MAX_PASSES) {
+                // leave status = 'pending' — picked up again next pass
+                $campaign['members'][$its]['last_error'] = $res['error'];
+            } else {
+                $campaign['members'][$its]['status'] = 'failed';
+                $campaign['members'][$its]['last_error'] = $res['error'];
+            }
+        }
+
+        saveCampaign($path, $campaign);
+
+        if ($minIntervalSeconds > 0) {
+            usleep((int) ($minIntervalSeconds * count($chunk) * 1000000));
+        }
+    }
+
+    $stillPending = array_filter($campaign['members'], static fn($m) => $m['status'] === 'pending');
+    if ($stillPending && $pass < MAX_PASSES) {
+        sleep(PASS_GAP_SECONDS);
+    }
+}
+
+$campaign['status'] = 'done';
+$campaign['finished_at'] = date('c');
+saveCampaign($path, $campaign);
+
+error_log('[email.php] Campaign ' . $report . ' ' . $campaign['date'] . ' finished: ' . json_encode(summarize($campaign)));

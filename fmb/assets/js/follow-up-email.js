@@ -2,6 +2,29 @@ document.addEventListener("DOMContentLoaded", function () {
   document
     .querySelectorAll("form[data-follow-up-email]")
     .forEach(function (form) {
+      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+      async function call(action) {
+        const data = new FormData(form); // includes "report"
+        data.set("action", action);
+
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: data,
+          credentials: "same-origin",
+          headers: { Accept: "application/json" },
+        });
+
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error(
+            "Unexpected server response: " + text.slice(0, 150),
+          );
+        }
+      }
+
       form.addEventListener("submit", async function (event) {
         event.preventDefault();
 
@@ -14,112 +37,100 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const button = form.querySelector('button[type="submit"]');
-        const originalText = button.textContent;
 
-        const status = document.createElement("div");
-        status.className = "alert alert-info mt-2";
-        status.setAttribute("role", "status");
-
-        form.insertAdjacentElement("afterend", status);
+        let status = form.parentElement.querySelector(".follow-up-status");
+        if (!status) {
+          status = document.createElement("div");
+          status.setAttribute("role", "status");
+          status.className = "follow-up-status";
+          form.insertAdjacentElement("afterend", status);
+        }
+        const show = (type, text) => {
+          status.className = "follow-up-status alert alert-" + type + " mt-2";
+          status.textContent = text;
+        };
 
         button.disabled = true;
-        status.textContent = "Sending emails...";
-
-        let offset = 0;
-        let sent = 0;
-        let failed = 0;
-        let invalidRecipients = 0;
-        let smtpFailures = 0;
-
-        const failureExamples = [];
+        show("info", "Starting...");
 
         try {
-          do {
-            const data = new FormData(form);
+          const start = await call("run");
+          if (!start.ok) {
+            throw new Error(start.message || "Could not start.");
+          }
 
-            data.append("batch", "1");
+          if (start.busy) {
+            show(
+              "warning",
+              start.message || "Already running — checking progress...",
+            );
+          } else if (start.already_done_today) {
+            show(
+              "success",
+              "Already sent today: " + start.sent + " sent, " +
+                start.failed + " failed, out of " + start.total + " total.",
+            );
+            return;
+          } else if (start.total === 0) {
+            show("warning", "No members with a valid email address to send to.");
+            return;
+          }
 
-            // Keep the batch small to reduce SMTP rate-limit issues.
-            data.append("batch_size", "2");
-            data.append("offset", String(offset));
+          // Poll status until the background run finishes.
+          let networkFailures = 0;
 
-            const response = await fetch(form.action, {
-              method: "POST",
-              body: data,
-              credentials: "same-origin",
-              headers: {
-                Accept: "application/json",
-              },
-            });
+          while (true) {
+            await sleep(5000);
 
-            if (!response.ok) {
-              throw new Error(
-                "The server returned HTTP " + response.status + ".",
+            let s;
+            try {
+              s = await call("status");
+              networkFailures = 0;
+            } catch (error) {
+              networkFailures++;
+              if (networkFailures > 6) {
+                throw error;
+              }
+              show(
+                "warning",
+                "Connection problem, retrying (" + networkFailures + ")...",
               );
+              continue;
             }
 
-            const result = await response.json();
-
-            if (!result.ok) {
-              throw new Error(result.message || "The email request failed.");
+            if (!s.exists) {
+              continue; // campaign file not written yet, keep polling
             }
 
-            sent += Number(result.sent || 0);
-            failed += Number(result.failed || 0);
-            invalidRecipients += Number(result.invalid_recipients || 0);
-            smtpFailures += Number(result.smtp_failures || 0);
+            show(
+              "info",
+              "Sent " + s.sent + " of " + s.total +
+                " · Failed " + s.failed +
+                " · Remaining " + s.pending +
+                (s.no_valid_email ? " · " + s.no_valid_email + " skipped (no email)" : ""),
+            );
 
-            if (Array.isArray(result.failure_examples)) {
-              failureExamples.push(...result.failure_examples);
-            }
-
-            offset = Number(result.next_offset || offset);
-
-            status.textContent =
-              "Sending emails... " + sent + " sent, " + failed + " failed.";
-
-            if (result.rate_limited) {
-              throw new Error(
-                "Hostinger SMTP rate limit exceeded. " +
-                  "Please wait for the cooldown and click " +
-                  '"Email Members" again to continue the remaining emails. ' +
-                  (result.failure_examples?.[0]?.error || ""),
+            if (s.status === "done") {
+              show(
+                s.failed > 0 ? "warning" : "success",
+                "Done. " + s.sent + " sent, " + s.failed + " failed" +
+                  (s.no_valid_email
+                    ? " (" + s.no_valid_email + " skipped: missing/invalid email)"
+                    : "") +
+                  ".",
               );
-            }
-
-            if (!result.has_more) {
               break;
             }
-
-            // Pause briefly between batches.
-            await new Promise(function (resolve) {
-              setTimeout(resolve, 1500);
-            });
-          } while (true);
-
-          status.className = "alert alert-success mt-2";
-
-          status.textContent =
-            sent +
-            " sent, " +
-            failed +
-            " failed (" +
-            invalidRecipients +
-            " missing/invalid address, " +
-            smtpFailures +
-            " SMTP failure).";
-
-          if (failureExamples.length > 0) {
-            status.textContent += " " + failureExamples[0].error;
           }
         } catch (error) {
-          status.className = "alert alert-danger mt-2";
-
-          status.textContent =
-            error.message + " The completed batches were not repeated.";
+          show(
+            "danger",
+            error.message +
+              ' Click "Email Members" again — anyone already emailed today ' +
+              "will not be emailed twice.",
+          );
         } finally {
           button.disabled = false;
-          button.textContent = originalText;
         }
       });
     });

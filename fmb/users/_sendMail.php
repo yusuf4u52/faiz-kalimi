@@ -34,6 +34,7 @@ function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = nu
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->Timeout    = 20;
+        $mail->CharSet    = PHPMailer::CHARSET_UTF8;
 
         // From and To
         $mail->setFrom(SMTP_USER);
@@ -69,68 +70,84 @@ function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = nu
 }
 
 /**
- * Send personalized messages over one SMTP connection. This is used by the
- * daily start/stop job, where opening one connection per user can exceed the
- * web server timeout for a large batch.
+ * Sends each message over one kept-alive SMTP connection, but recovers from
+ * a dead/reset connection by closing it and letting PHPMailer reconnect on
+ * the next send(). Transient errors (connection-level failures, or SMTP 4xx
+ * codes such as rate limiting) are retried in place with backoff up to
+ * $maxRetries times; permanent 5xx errors are not retried.
  *
- * @param array<int, array{to: array, subject: string, body: string, cc?: ?array, bcc?: ?array, isHtml?: bool}> $messages
+ * IMPORTANT: this returns an array of per-message results, NOT an int count.
+ * Every call site must read $results[$key]['ok'] / ['retry'] / ['error'],
+ * not treat the return value as a number. (email2.php calls this and
+ * ignores the return value entirely, so it is unaffected either way.)
+ *
+ * @param array<int|string, array{to: array, subject: string, body: string, cc?: ?array, bcc?: ?array, isHtml?: bool}> $messages
+ * @return array<int|string, array{ok: bool, retry: bool, error: ?string}> keyed the same as $messages
  */
-function sendEmailBatch(array $messages): int
+function sendEmailBatch(array $messages, int $maxRetries = 2): array
 {
+    $results = [];
     if (empty($messages)) {
-        return 0;
+        return $results;
     }
     if (SMTP_USER === '' || SMTP_PASS === '') {
-        $GLOBALS['lastSendEmailError'] = 'SMTP credentials are not configured on the server.';
-        error_log('[sendEmailBatch] SMTP credentials are not configured. Set FMB_SMTP_USER and FMB_SMTP_PASS.');
-        return 0;
+        foreach ($messages as $key => $_) {
+            $results[$key] = ['ok' => false, 'retry' => false, 'error' => 'SMTP credentials are not configured.'];
+        }
+        return $results;
     }
 
     $mail = new PHPMailer(true);
-    $sent = 0;
+    $mail->isSMTP();
+    $mail->Host          = 'smtp.hostinger.com';
+    $mail->SMTPAuth      = true;
+    $mail->Username      = SMTP_USER;
+    $mail->Password      = SMTP_PASS;
+    $mail->SMTPSecure    = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port          = 587;
+    $mail->Timeout       = 20;
+    $mail->CharSet       = PHPMailer::CHARSET_UTF8;
+    $mail->SMTPKeepAlive = true;
 
-    try {
-        $mail->isSMTP();
-        $mail->Host = 'smtp.hostinger.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = SMTP_USER;
-        $mail->Password = SMTP_PASS;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
-        $mail->Timeout = 20;
-        $mail->SMTPKeepAlive = true;
-
-        foreach ($messages as $message) {
+    foreach ($messages as $key => $message) {
+        $attempt = 0;
+        while (true) {
+            $attempt++;
             try {
                 $mail->clearAllRecipients();
                 $mail->clearAttachments();
                 $mail->setFrom(SMTP_USER);
-                foreach ($message['to'] as $email) {
-                    $mail->addAddress($email);
-                }
-                foreach ($message['cc'] ?? [] as $email) {
-                    $mail->addCC($email);
-                }
-                foreach ($message['bcc'] ?? [] as $email) {
-                    $mail->addBCC($email);
-                }
-                $mail->isHTML($message['isHtml'] ?? true);
+                foreach ($message['to'] as $email)        { $mail->addAddress($email); }
+                foreach ($message['cc'] ?? [] as $email)  { $mail->addCC($email); }
+                foreach ($message['bcc'] ?? [] as $email) { $mail->addBCC($email); }
+                $isHtml = $message['isHtml'] ?? true;
+                $mail->isHTML($isHtml);
                 $mail->Subject = $message['subject'];
-                $mail->Body = $message['body'];
-                $mail->AltBody = ($message['isHtml'] ?? true) ? strip_tags($message['body']) : $message['body'];
+                $mail->Body    = $message['body'];
+                $mail->AltBody = $isHtml ? strip_tags($message['body']) : $message['body'];
                 $mail->send();
-                $sent++;
+
+                $results[$key] = ['ok' => true, 'retry' => false, 'error' => null];
+                break;
             } catch (Throwable $e) {
                 $error = $mail->ErrorInfo !== '' ? $mail->ErrorInfo : $e->getMessage();
-                error_log('[sendEmailBatch] PHPMailer error: ' . $error . ' | recipients: ' . implode(', ', $message['to']));
+                $code  = (int) ($mail->getSMTPInstance()?->getError()['smtp_code'] ?? 0);
+                // 0 = connection/timeout level, 4xx = temporary SMTP failure
+                $transient = $code === 0 || ($code >= 400 && $code < 500);
+                error_log("[sendEmailBatch] code=$code attempt=$attempt error=$error | " . implode(', ', $message['to']));
+
+                $mail->smtpClose(); // drop the dead connection; next send() reconnects
+
+                if (!$transient || $attempt > $maxRetries) {
+                    $results[$key] = ['ok' => false, 'retry' => $transient, 'error' => $error];
+                    break;
+                }
+                sleep(2 * $attempt); // backoff before reconnecting
             }
         }
-    } catch (Throwable $e) {
-        $GLOBALS['lastSendEmailError'] = $e->getMessage();
-        error_log('[sendEmailBatch] SMTP setup error: ' . $e->getMessage());
-    } finally {
-        $mail->smtpClose();
+        usleep(400000); // small gentle pacing floor between messages
     }
 
-    return $sent;
+    $mail->smtpClose();
+    return $results;
 }
