@@ -148,7 +148,7 @@ function buildReminderEmail(array $member): string
                 <tr><td style=\"border:1px solid #ddd\"><strong>Pending Amount</strong></td><td style=\"border:1px solid #ddd\">₹ {$pendingAmount}</td></tr>
             </table>
             {$previousDueMessage}
-            <p>FMB ni hoob ada kerva ni <strong>7th Miqaat - Al-Hayyul Muqaddas Syedna Mohammed Burhanuddin (RA)</strong> na <strong>Urs Mubarak</strong> no din gujri chuko che. Aap Maula (T.U.S) ni nazarat ane barakat si <strong>Faiz ul Mawaid il Burhaniyah</strong> no aa amal jaari che ane ghana gharo sudhi Faiz ni barkat pohchi rahi che.</p>
+            <p>FMB ni hoob ada kerva ni <strong>8th Miqaat - Al-Hayyul Muqaddas Syedna Mohammed Burhanuddin (RA)</strong> na <strong>Milad Mubarak</strong> no din gujri chuko che. Aap Maula (T.U.S) ni nazarat ane barakat si <strong>Faiz ul Mawaid il Burhaniyah</strong> no aa amal jaari che ane ghana gharo sudhi Faiz ni barkat pohchi rahi che.</p>
             <p>Aap si adab sathe iltemaas che ke aap aapni pending FMB ni hoob ada kari ne aa khidmat ma ane <strong>Burhanuddin Maula (RA)</strong> na faiz ma shamil thaiye ane <strong>Mufaddal Maula (T.U.S)</strong> ni khushi haasil kariye. Aapna waqt pe hoob ada kerva si <strong>Faiz</strong> ane aa khidmat nu nizam barabar chaltu rahe che.</p>
             <p>Payment kara pachi screenshot ya receipt <a href=\"https://wa.me/917499860950\"><strong>+91 74998 60950</strong></a> par aapna Sabeel Number <strong>{$sabeelNumber}</strong> saathe mokli aapso, taake hame aapna records update kari shakay.</p>
             <p><strong>Note:</strong> Agar aap aa hoob pehla thi ada kari chuka ho, to payment ni receipt ya transfer nu screenshot hamne mokli aapso, taake hame records update kari shakay.</p>
