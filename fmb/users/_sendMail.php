@@ -70,21 +70,26 @@ function sendEmail(array $to, string $subject, string $bodyHtml, ?array $cc = nu
 }
 
 /**
- * Sends each message over one kept-alive SMTP connection, but recovers from
- * a dead/reset connection by closing it and letting PHPMailer reconnect on
- * the next send(). Transient errors (connection-level failures, or SMTP 4xx
- * codes such as rate limiting) are retried in place with backoff up to
- * $maxRetries times; permanent 5xx errors are not retried.
+ * Sends each message over one kept-alive SMTP connection, and recovers from
+ * a dead/reset connection by closing it so PHPMailer reconnects on the next
+ * send(). Transient errors (connection-level failures, SMTP 4xx codes such as
+ * rate limiting) are retried in place with backoff up to $maxRetries times;
+ * permanent 5xx errors are not retried.
  *
- * IMPORTANT: this returns an array of per-message results, NOT an int count.
- * Every call site must read $results[$key]['ok'] / ['retry'] / ['error'],
- * not treat the return value as a number. (email2.php calls this and
- * ignores the return value entirely, so it is unaffected either way.)
+ * $deadline (unix time with microseconds, e.g. microtime(true) + 20) makes the
+ * function stop early so a web request never outlives the gateway timeout:
+ *   - messages not yet attempted when the deadline passes are NOT in the result
+ *     array at all, so the caller can leave them pending;
+ *   - a retry that would sleep past the deadline is skipped and reported as a
+ *     transient failure (retry => true) instead.
+ *
+ * Returns an array of per-message results, NOT an int. email2.php ignores the
+ * return value, so it is unaffected by this.
  *
  * @param array<int|string, array{to: array, subject: string, body: string, cc?: ?array, bcc?: ?array, isHtml?: bool}> $messages
- * @return array<int|string, array{ok: bool, retry: bool, error: ?string}> keyed the same as $messages
+ * @return array<int|string, array{ok: bool, retry: bool, error: ?string}> keyed like $messages
  */
-function sendEmailBatch(array $messages, int $maxRetries = 2): array
+function sendEmailBatch(array $messages, int $maxRetries = 2, ?float $deadline = null): array
 {
     $results = [];
     if (empty($messages)) {
@@ -110,6 +115,10 @@ function sendEmailBatch(array $messages, int $maxRetries = 2): array
     $mail->SMTPKeepAlive = true;
 
     foreach ($messages as $key => $message) {
+        if ($deadline !== null && microtime(true) >= $deadline) {
+            break; // not attempted: caller keeps it pending
+        }
+
         $attempt = 0;
         while (true) {
             $attempt++;
@@ -138,14 +147,17 @@ function sendEmailBatch(array $messages, int $maxRetries = 2): array
 
                 $mail->smtpClose(); // drop the dead connection; next send() reconnects
 
-                if (!$transient || $attempt > $maxRetries) {
+                $backoff = 2 * $attempt;
+                $outOfTime = $deadline !== null && (microtime(true) + $backoff) >= $deadline;
+
+                if (!$transient || $attempt > $maxRetries || $outOfTime) {
                     $results[$key] = ['ok' => false, 'retry' => $transient, 'error' => $error];
                     break;
                 }
-                sleep(2 * $attempt); // backoff before reconnecting
+                sleep($backoff);
             }
         }
-        usleep(400000); // small gentle pacing floor between messages
+        usleep(400000); // small pacing floor between messages
     }
 
     $mail->smtpClose();
