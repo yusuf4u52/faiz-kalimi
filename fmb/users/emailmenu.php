@@ -55,12 +55,12 @@ if ($menu_item_result->num_rows > 0) {
     $wFlat = (int) round($remaining * 0.45);
     $wName = $remaining - $wFlat;
 
-    $tableStyle = 'width:720px;max-width:100%;table-layout:fixed;border-collapse:collapse;border-color:#548484;';
+    $tableStyle = 'width:100%;max-width:720px;table-layout:fixed;border-collapse:collapse;border-color:#548484;';
 
     $msgmenu .= '<table border="0" bgcolor="#FFFFFF" width="100%" cellpadding="3" cellspacing="3">
     <tr>
     <td align="center" valign="top">
-        <table border="0" width="720" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="width:720px;max-width:100%;color:#333333;padding:1rem;">
+        <table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="width:100%;max-width:720px;color:#333333;padding:1rem;">
             <tr>
                 <td align="left">
                     <img src="https://kalimijamaatpoona.org/fmb/assets/img/logo.avif" alt="Faizul Mawaidil Burhaniya (Kalimi Mohalla)" width="90" height="90">
@@ -134,7 +134,7 @@ if ($menu_item_result->num_rows > 0) {
                 continue;
             }
 
-            $msgmenu .= '<table border="1" width="720" cellpadding="10" cellspacing="0" bgcolor="#c36d29" style="' . $tableStyle . 'color:#FFFFFF;margin-top:1rem;">
+            $msgmenu .= '<table width="100%" cellpadding="4" cellspacing="0" border="1" bgcolor="#ffffff" style="' . $tableStyle . 'color:#000;">
                 <tr>
                     <th align="center"><strong>' . e($row_trans['Transporter']) . '</strong></th>
                 </tr>
