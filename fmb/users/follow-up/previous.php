@@ -18,7 +18,7 @@ require_once('../helpers.php');
                 <?php if (!empty($_GET['status'])) { ?>
                     <div class="alert alert-info" role="alert"><?php echo e($_GET['status']); ?></div>
                 <?php } ?>
-                <?php $pendinghoob = db_query($link, "SELECT * FROM thalilist as t LEFT JOIN receipts as r ON t.id = r.userid WHERE t.Previous_Due > 5 ORDER BY t.Previous_Due, r.Date DESC LIMIT 1");
+                <?php $pendinghoob = db_query($link, "SELECT * FROM thalilist as t LEFT JOIN receipts_1447 as r ON t.id = r.userid WHERE t.Previous_Due > 5 ORDER BY t.Previous_Due, r.Date DESC");
                 if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="transporterlist" class="table table-striped table-hover">
