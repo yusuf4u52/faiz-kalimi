@@ -18,7 +18,7 @@ require_once('../helpers.php');
                 <?php if (!empty($_GET['status'])) { ?>
                     <div class="alert alert-info" role="alert"><?php echo e($_GET['status']); ?></div>
                 <?php } ?>
-                <?php $pendinghoob = db_query( $link, "SELECT *, (t.Previous_Due + t.yearly_hub - t.Paid) AS Total_Pending FROM thalilist as t LEFT JOIN receipts as r ON t.id = r.userid WHERE (t.Previous_Due + t.yearly_hub - t.Paid) > 0 AND t.thalisize IS NOT NULL AND t.hardstop != 1 AND t.sabeelType LIKE '%Kalimi ITS%' AND t.Previous_Due <= 0 ORDER BY Total_Pending, r.Date DESC");
+                <?php $pendinghoob = db_query( $link, "SELECT t.*, r.*, (t.Previous_Due + t.yearly_hub - t.Paid) AS Total_Pending FROM thalilist AS t LEFT JOIN (SELECT * FROM (SELECT r.*, ROW_NUMBER() OVER (PARTITION BY r.userid ORDER BY r.Date DESC, r.id DESC) AS rn FROM receipts AS r) AS ranked WHERE rn = 1) AS r ON t.id = r.userid WHERE (t.Previous_Due + t.yearly_hub - t.Paid) > 0 AND t.thalisize IS NOT NULL AND t.hardstop != 1 AND t.sabeelType LIKE '%Kalimi ITS%' AND t.Previous_Due <= 0 ORDER BY Total_Pending DESC, r.Date DESC");
                 if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="transporterlist" class="table table-striped table-hover">
