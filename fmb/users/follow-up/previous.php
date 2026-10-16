@@ -18,7 +18,7 @@ require_once('../helpers.php');
                 <?php if (!empty($_GET['status'])) { ?>
                     <div class="alert alert-info" role="alert"><?php echo e($_GET['status']); ?></div>
                 <?php } ?>
-                <?php $pendinghoob = db_query($link, "SELECT * FROM thalilist WHERE Previous_Due > 5 ORDER BY Previous_Due DESC");
+                <?php $pendinghoob = db_query($link, "SELECT * FROM thalilist as t LEFT JOIN receipts as r ON t.id = r.userid WHERE t.Previous_Due > 5 ORDER BY t.Previous_Due, r.Date DESC LIMIT 1");
                 if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="transporterlist" class="table table-striped table-hover">
@@ -34,6 +34,8 @@ require_once('../helpers.php');
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
                                     <th scope="col">Pending</th>
+                                    <th scope="col">Last Payment</th>
+                                    <th scope="col">Payment Date</th>
                                     <th scope="col">Thali Size</th>
                                     <th scope="col">Sabeel Type</th>
                                     <th scope="col">Wing/Flat</th>
@@ -54,6 +56,8 @@ require_once('../helpers.php');
                                         <td><?php echo e((string) $values['previous_hub']); ?></td>
                                         <td><?php echo e((string) $values['yearly_hub']); ?></td>
                                         <td><strong><?php echo e((string) ($values['Total_Pending'] ?? '')); ?></strong></td>
+                                        <td><?php echo e((string) $values['Amount']); ?></td>
+                                        <td><?php echo e((string) $values['Date']); ?></td>
                                         <td><?php echo e($values['thalisize']); ?></td>
                                         <td><?php echo e($values['sabeelType']); ?></td>
                                         <td><?php echo e($values['wingflat']); ?></td>
@@ -74,6 +78,8 @@ require_once('../helpers.php');
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
                                     <th scope="col">Pending</th>
+                                    <th scope="col">Last Payment</th>
+                                    <th scope="col">Payment Date</th>
                                     <th scope="col">Thali Size</th>
                                     <th scope="col">Sabeel Type</th>
                                     <th scope="col">Wing/Flat</th>
