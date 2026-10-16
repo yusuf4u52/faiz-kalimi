@@ -48,16 +48,16 @@ require_once('../helpers.php');
                                     <tr>
                                         <td><?php echo e($values['Thali']); ?></td>
                                         <td><?php echo e($values['tiffinno']); ?></td>
-                                        <td><a href="tel:<?php echo e($values['CONTACT']); ?>">Call</a></td>
-                                        <td><a href="https://wa.me/<?php echo e($values['WhatsApp']); ?>" target="_blank">Whatsapp</a></td>
+                                        <td><a href="tel:<?php echo e($values['CONTACT']); ?>"><?php echo e($values['CONTACT']); ?></a></td>
+                                        <td><a href="https://wa.me/91<?php echo e($values['WhatsApp']); ?>" target="_blank"><?php echo e($values['WhatsApp']); ?></a></td>
                                         <td><?php echo e($values['ITS_No']); ?></td>
                                         <td><?php echo e($values['NAME']); ?></td>
                                         <td><?php echo e((string) $values['Previous_Due']); ?></td>
                                         <td><?php echo e((string) $values['previous_hub']); ?></td>
                                         <td><?php echo e((string) $values['yearly_hub']); ?></td>
                                         <td><strong><?php echo e((string) ($values['Total_Pending'] ?? '')); ?></strong></td>
-                                        <td><?php echo e((string) $values['Amount']); ?></td>
-                                        <td><?php echo e((string) $values['Date']); ?></td>
+                                        <td><?php echo e((string) ($values['Amount'] ?? '')); ?></td>
+                                        <td><?php echo e((string) ($values['Date'] ?? '')); ?></td>
                                         <td><?php echo e($values['thalisize']); ?></td>
                                         <td><?php echo e($values['sabeelType']); ?></td>
                                         <td><?php echo e($values['wingflat']); ?></td>
