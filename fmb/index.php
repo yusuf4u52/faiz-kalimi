@@ -9,6 +9,11 @@ session_set_cookie_params([
 ]);
 session_start();
 
+$feedbackNow = new DateTimeImmutable('now', new DateTimeZone('Asia/Kolkata'));
+$feedbackDayOfWeek = (int) $feedbackNow->format('w'); // Sunday = 0, Saturday = 6
+$isFeedbackLive = ($feedbackDayOfWeek === 6 && $feedbackNow->format('H:i') >= '13:00')
+	|| $feedbackDayOfWeek === 0;
+
 // Log everything, but never display raw errors/stack traces to visitors —
 // this is the public-facing login page, reachable by anyone.
 error_reporting(E_ALL);
@@ -148,6 +153,14 @@ if (isset($authUrl) || isset($_GET['status'])) {
 							<img class="img-fluid mx-auto d-block" src="assets/img/pakavi.avif" alt="pakavi" width=981
 								height="254" />
 							<hr>
+							<?php if ($isFeedbackLive) { ?>
+								<div class="feedback-live-option mb-4">
+									<a class="feedback-live-link" href="/fmb/feedback/index.php">
+										<i class="bi bi-megaphone-fill" aria-hidden="true"></i> Feedback is live
+									</a>
+									<p class="mb-0 mt-2">Share your feedback for this week's FMB menu.</p>
+								</div>
+							<?php } ?>
 							<h3>Already have Kalimi Mohalla Sabil?</h3>
 							<?php if (isset($authUrl)) { ?>
 								<a class="btn btn-light btn-lg" href="<?php echo e($authUrl); ?>"><i class="bi bi-google"></i> Login with Google</a>
