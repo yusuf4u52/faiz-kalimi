@@ -492,6 +492,10 @@ if (isset($_GET['year'])) {
     </div>
   </div>
 
+  <?php $restrans = db_query($link, "SELECT * FROM transporters ORDER BY `Name` ASC");
+  $transporters = mysqli_fetch_all($restrans, MYSQLI_ASSOC);
+  mysqli_free_result($restrans);
+  if (!empty($transporters)): ?>
   <div class="modal fade" id="changeTransporter">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -508,16 +512,11 @@ if (isset($_GET['year'])) {
           <div class="modal-body">
             <select name="transporter" required='required' class="form-select">
               <option value=''>Select</option>
-              <option value='Balasinor'>Balasinor</option>
-              <option value='Imran'>Imran</option>
-              <option value='Mauwala'>Mauwala</option>
-              <option value='Molana'>Molana</option>
-              <option value='Murtaza'>Murtaza</option>
+              <?php foreach ($transporters as $values) { ?>
+                <option value='<?php echo e($values['Name']); ?>'><?php echo e($values['Name']); ?></option>
+              <?php } ?>
               <option value='Murtaza (Cloud9)'>Murtaza (Cloud9)</option>
-              <option value='Shahid'>Shahid</option>
-              <option value='SUHB'>SUHB</option>
-              <option value='Zainuddin'>Zainuddin</option>
-              <option value='Zuhair'>Zuhair</option>
+              <option value='Naeem'>Naeem</option>
               <option value='Pick Up'>Pick Up</option>
             </select>
           </div>
@@ -529,6 +528,7 @@ if (isset($_GET['year'])) {
       </div>
     </div>
   </div>
+  <?php endif; ?>
 
   <div class="modal fade" id="changeThalisize">
     <div class="modal-dialog">
