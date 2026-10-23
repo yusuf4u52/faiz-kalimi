@@ -512,8 +512,8 @@ if (isset($_GET['year'])) {
           <div class="modal-body">
             <select name="transporter" required='required' class="form-select">
               <option value=''>Select</option>
-              <?php foreach ($transporters as $values) { ?>
-                <option value='<?php echo e($values['Name']); ?>'><?php echo e($values['Name']); ?></option>
+              <?php foreach ($transporters as $transporter) { ?>
+                <option value='<?php echo e($transporter['Name']); ?>'><?php echo e($transporter['Name']); ?></option>
               <?php } ?>
               <option value='Murtaza (Cloud9)'>Murtaza (Cloud9)</option>
               <option value='Naeem'>Naeem</option>
