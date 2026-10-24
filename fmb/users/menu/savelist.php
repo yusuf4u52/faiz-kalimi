@@ -71,7 +71,7 @@ if ($menuType === 'miqaat') {
     if (!empty($menuItemInput['extra']['item'])) {
         $item = trim((string) $menuItemInput['extra']['item']);
         // Preserved from the original: extras are stored under dish_type '1' too.
-        $ensureDish($item, '1');
+        $ensureDish($item, '5');
         $menu_item['extra']['item'] = $item;
         $menu_item['extra']['qty'] = (int) ($menuItemInput['extra']['qty'] ?? 0);
     }
