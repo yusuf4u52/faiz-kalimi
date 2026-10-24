@@ -22,7 +22,10 @@ const filesToCache = [
 // to always hit the network fresh (and are OK with them failing offline) —
 // but if you want offline pages to stay styled, remove those two patterns.
 const neverCacheUrls = [
-  /\/users\/viewmenu.php/,
+  /\/users\/index\.php/,
+  /\/users\/stop_dates\.php/,
+  /\/users\/thalisearch\.php/,
+  /\/users\/viewmenu\.php/,
   /\/assets\/css/,
   /\/assets\/js/,
   /\/admin/,
