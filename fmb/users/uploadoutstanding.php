@@ -75,9 +75,11 @@ $currentYear = '1447-1448';
                         }
                     }
 
-                    $updated = 0;
-                    $skipped = 0;
+                    $updated  = 0;
+                    $skipped  = 0;
                     $notFound = 0;
+                    $its = '';
+                    $sabeelNo = '';
 
                     try {
                         $link->begin_transaction();
@@ -179,7 +181,10 @@ $currentYear = '1447-1448';
                     } catch (\Throwable $e) {
                         $link->rollback();
                         error_log('[uploadoutstanding.php] import failed: ' . $e->getMessage());
-                        echo "<p style='color:red;'>Import failed and no changes were saved. Please try again or contact the administrator.</p>";
+                        // TEMPORARY diagnostic output - remove the detail lines once the issue is fixed
+                        echo "<p style='color:red;'>Import failed, nothing saved.<br>"
+                            . "Last row: ITS " . e($its) . " / Sabeel " . e($sabeelNo) . "<br>"
+                            . "Error: " . e($e->getMessage()) . " (line " . (int) $e->getLine() . ")</p>";
                         include('footer.php');
                         exit;
                     }
