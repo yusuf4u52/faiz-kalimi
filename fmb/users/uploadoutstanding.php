@@ -49,15 +49,15 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                     array_shift($rows); // header row
 
                     foreach ($rows as $row) {
-                        $its = trim((string) ($row[0] ?? ''));
-                        $sabeelNo = trim((string) ($row[2] ?? ''));
-                        $outstanding = (int) str_replace(',', '', (string) ($row[7] ?? '0'));
+                        echo $its = trim((string) ($row[0] ?? ''));
+                        echo $sabeelNo = trim((string) ($row[2] ?? ''));
+                        echo $outstanding = (int) str_replace(',', '', (string) ($row[7] ?? '0'));
 
                         $takmeem = 0;
                         if (trim((string) ($row[5] ?? '')) === '1447-1448') {
-                            $takmeem = (int) ($row[10] ?? 0);
+                            echo $takmeem = (int) ($row[10] ?? 0);
                         } elseif ((int) ($row[10] ?? 0) > 0) {
-                            $takmeem = 1;
+                            echo $takmeem = 1;
                         }
 
                         if ($takmeem <= 0) {
@@ -65,12 +65,14 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                         }
 
                         if ($takmeem > $outstanding) {
-                            $prev = 0;
-                            $paid = $takmeem - $outstanding;
+                            echo $prev = 0;
+                            echo $paid = $takmeem - $outstanding;
                         } else {
-                            $prev = $outstanding - $takmeem;
-                            $paid = 0;
+                            echo $prev = $outstanding - $takmeem;
+                            echo $paid = 0;
                         }
+
+                        die;
 
                         // Figure out which column identifies this member —
                         // ITS number first, falling back to sabeel number —
