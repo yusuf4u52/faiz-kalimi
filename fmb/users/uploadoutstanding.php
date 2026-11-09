@@ -7,6 +7,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 $canImport = user_email_in(DATA_IMPORT_EMAILS);
+
+// Change this each year (or move it to your config file)
+$currentYear = '1447-1448';
 ?>
 
 <div class="card">
@@ -32,12 +35,23 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                         </div>
                     </form>
                 <?php } ?>
+
                 <?php if ($canImport && isset($_POST['import']) && isset($_FILES['import_reciept'])) {
-                    $filePath = $_FILES['import_reciept']['tmp_name'];
+
+                    // ---- Upload validation ----
+                    $upload = $_FILES['import_reciept'];
+                    $ext = strtolower(pathinfo($upload['name'] ?? '', PATHINFO_EXTENSION));
+                    if (($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || !in_array($ext, ['xls', 'xlsx'], true)) {
+                        echo "<p style='color:red;'>Please choose a valid .xls or .xlsx file.</p>";
+                        include('footer.php');
+                        exit;
+                    }
+
+                    $filePath = $upload['tmp_name'];
 
                     try {
                         $spreadsheet = IOFactory::load($filePath);
-                    } catch (Exception $e) {
+                    } catch (\Throwable $e) {
                         error_log('[uploadoutstanding.php] ' . $e->getMessage());
                         echo "Could not read that file. Please check it's a valid .xls/.xlsx export.";
                         include('footer.php');
@@ -48,90 +62,131 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                     $rows = $sheet->toArray();
                     array_shift($rows); // header row
 
+                    // Convert "1,250.50" / "-3" / null to a rounded int
+                    $num = function ($v) {
+                        return (int) round((float) str_replace(',', '', (string) ($v ?? 0)));
+                    };
+
+                    // Pass 1: ITS numbers that have a current-year row
+                    $currentIts = [];
                     foreach ($rows as $row) {
-                        echo $its = trim((string) ($row[0] ?? ''));
-                        echo $sabeelNo = trim((string) ($row[2] ?? ''));
-                        echo $outstanding = (int) str_replace(',', '', (string) ($row[7] ?? '0'));
-
-                        $takmeem = 0;
-                        if (trim((string) ($row[5] ?? '')) === '1447-1448') {
-                            echo $takmeem = (int) ($row[10] ?? 0);
-                        } elseif ((int) ($row[10] ?? 0) > 0) {
-                            echo $takmeem = 1;
+                        if (trim((string) ($row[5] ?? '')) === $currentYear) {
+                            $currentIts[trim((string) ($row[0] ?? ''))] = true;
                         }
-
-                        if ($takmeem <= 0) {
-                            continue;
-                        }
-
-                        if ($takmeem > $outstanding) {
-                            echo $prev = 0;
-                            echo $paid = $takmeem - $outstanding;
-                        } else {
-                            echo $prev = $outstanding - $takmeem;
-                            echo $paid = 0;
-                        }
-
-                        die;
-
-                        // Figure out which column identifies this member —
-                        // ITS number first, falling back to sabeel number —
-                        // then build the matching WHERE clause as a
-                        // parameter rather than string-interpolated SQL.
-                        $whereColumn = null;
-                        $whereValue = null;
-
-                        if ($its !== '') {
-                            $checkIts = db_query($link, "SELECT id FROM thalilist WHERE ITS_No = ? LIMIT 1", "s", [$its]);
-                            if ($checkIts->num_rows > 0) {
-                                $whereColumn = 'ITS_No';
-                                $whereValue = $its;
-                            }
-                        }
-
-                        if ($whereColumn === null && $sabeelNo !== '') {
-                            $checkSabeel = db_query($link, "SELECT id FROM thalilist WHERE Thali = ? LIMIT 1", "s", [$sabeelNo]);
-                            if ($checkSabeel->num_rows > 0) {
-                                $whereColumn = 'Thali';
-                                $whereValue = $sabeelNo;
-                            }
-                        }
-
-                        if ($whereColumn === null) {
-                            echo "<p style='color:red;'>Skipped : ITS " . e($its) . " / Sabeel " . e($sabeelNo) . " not found.</p>";
-                            continue;
-                        }
-
-                        $setColumns = [];
-                        $setParams = [];
-                        $setTypes = '';
-
-                        if ($sabeelNo !== '') {
-                            $setColumns[] = '`Thali` = ?';
-                            $setParams[] = $sabeelNo;
-                            $setTypes .= 's';
-                        }
-                        
-                        $setColumns[] = '`Previous_Due` = ?';
-                        $setParams[] = $prev;
-                        $setTypes .= 'i';
-                        $setColumns[] = '`yearly_hub` = ?';
-                        $setParams[] = $takmeem;
-                        $setTypes .= 'i';
-                        $setColumns[] = '`Paid` = ?';
-                        $setParams[] = $paid;
-                        $setTypes .= 'i';
-
-                        $setParams[] = $whereValue;
-                        $setTypes .= 's';
-
-                        db_query(
-                            $link,
-                            "UPDATE thalilist SET " . implode(', ', $setColumns) . " WHERE `$whereColumn` = ?",
-                            $setTypes,
-                            $setParams
-                        );
                     }
+
+                    $updated = 0;
+                    $skipped = 0;
+                    $notFound = 0;
+
+                    try {
+                        $link->begin_transaction();
+
+                        // Pass 2: process rows
+                        foreach ($rows as $row) {
+                            $its      = trim((string) ($row[0] ?? ''));
+                            $sabeelNo = trim((string) ($row[2] ?? ''));
+                            $rowYear  = trim((string) ($row[5] ?? ''));
+
+                            // Skip the totals row at the bottom of the report
+                            if (stripos($its, 'GRAND TOTAL') !== false || stripos($rowYear, 'GRAND TOTAL') !== false) {
+                                continue;
+                            }
+
+                            // A valid ITS is exactly 8 digits (blocks ITS "0" etc.)
+                            if (!preg_match('/^\d{8}$/', $its)) {
+                                $its = '';
+                            }
+
+                            $outstanding = max(0, $num($row[7] ?? 0));   // Niyaz (Outstanding)
+                            $sheetPrev   = max(0, $num($row[15] ?? 0));  // Previous Due
+
+                            if ($rowYear === $currentYear) {
+                                $takmeem = max(0, $num($row[10] ?? 0));  // Total Takhmeen
+                                $prev    = max($sheetPrev, $outstanding - $takmeem);
+                                $paid    = max(0, $sheetPrev + $takmeem - $outstanding);
+                            } else {
+                                // Older-year row: never overwrite a member who has a current-year row
+                                if ($its !== '' && isset($currentIts[$its])) {
+                                    $skipped++;
+                                    continue;
+                                }
+                                // Otherwise carry the old balance forward as Previous Due
+                                $takmeem = 0;
+                                $prev    = $outstanding;
+                                $paid    = 0;
+                            }
+
+                            // Find the member's row id: ITS first, then sabeel number
+                            $id = null;
+
+                            if ($its !== '') {
+                                $res = db_query($link, "SELECT id FROM thalilist WHERE ITS_No = ? LIMIT 1", "s", [$its]);
+                                if ($res->num_rows > 0) {
+                                    $id = $res->fetch_assoc()['id'];
+                                }
+                            }
+
+                            if ($id === null && $sabeelNo !== '') {
+                                $res = db_query($link, "SELECT id FROM thalilist WHERE Thali = ? LIMIT 1", "s", [$sabeelNo]);
+                                if ($res->num_rows > 0) {
+                                    $id = $res->fetch_assoc()['id'];
+                                }
+                            }
+
+                            if ($id === null) {
+                                $notFound++;
+                                echo "<p style='color:red;'>Skipped : ITS " . e($its) . " / Sabeel " . e($sabeelNo) . " not found.</p>";
+                                continue;
+                            }
+
+                            // Build the UPDATE (parameterised)
+                            $setColumns = [];
+                            $setParams  = [];
+                            $setTypes   = '';
+
+                            if ($sabeelNo !== '') {
+                                $setColumns[] = '`Thali` = ?';
+                                $setParams[]  = $sabeelNo;
+                                $setTypes    .= 's';
+                            }
+
+                            $setColumns[] = '`Previous_Due` = ?';
+                            $setParams[]  = $prev;
+                            $setTypes    .= 'i';
+
+                            $setColumns[] = '`yearly_hub` = ?';
+                            $setParams[]  = $takmeem;
+                            $setTypes    .= 'i';
+
+                            $setColumns[] = '`Paid` = ?';
+                            $setParams[]  = $paid;
+                            $setTypes    .= 'i';
+
+                            $setParams[] = $id;
+                            $setTypes   .= 'i';
+
+                            db_query(
+                                $link,
+                                "UPDATE thalilist SET " . implode(', ', $setColumns) . " WHERE id = ?",
+                                $setTypes,
+                                $setParams
+                            );
+                            $updated++;
+                        }
+
+                        $link->commit();
+                    } catch (\Throwable $e) {
+                        $link->rollback();
+                        error_log('[uploadoutstanding.php] import failed: ' . $e->getMessage());
+                        echo "<p style='color:red;'>Import failed and no changes were saved. Please try again or contact the administrator.</p>";
+                        include('footer.php');
+                        exit;
+                    }
+
+                    echo "<p style='color:green;'>Import complete. Updated: " . (int) $updated
+                        . ", Skipped (older duplicate): " . (int) $skipped
+                        . ", Not found: " . (int) $notFound . "</p>";
                 } ?>
             </div>
         </div>
