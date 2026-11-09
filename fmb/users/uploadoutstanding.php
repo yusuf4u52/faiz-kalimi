@@ -191,12 +191,6 @@ $currentYear = '1447-1448';
                     } catch (\Throwable $e) {
                         $link->rollback();
                         error_log('[uploadoutstanding.php] import failed: ' . $e->getMessage());
-                        // TEMPORARY diagnostic output - remove the detail lines once the issue is fixed
-                        echo "<p style='color:red;'>Import failed, nothing saved.<br>"
-                            . "Last row: ITS " . e($its) . " / Sabeel " . e($sabeelNo) . "<br>"
-                            . "Error: " . e($e->getMessage()) . " (line " . (int) $e->getLine() . ")</p>";
-                        include('footer.php');
-                        exit;
                     }
 
                     echo "<p style='color:green;'>Import complete. Updated: " . (int) $updated
