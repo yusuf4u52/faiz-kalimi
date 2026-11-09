@@ -75,9 +75,10 @@ $currentYear = '1447-1448';
                         }
                     }
 
-                    $updated  = 0;
-                    $skipped  = 0;
-                    $notFound = 0;
+                    $updated       = 0;
+                    $skipped       = 0;
+                    $notFound      = 0;
+                    $thaliConflict = 0;
                     $its = '';
                     $sabeelNo = '';
 
@@ -147,10 +148,19 @@ $currentYear = '1447-1448';
                             $setParams  = [];
                             $setTypes   = '';
 
+                            // Thali has a UNIQUE key: only write it if no OTHER member already holds it
                             if ($sabeelNo !== '') {
-                                $setColumns[] = '`Thali` = ?';
-                                $setParams[]  = $sabeelNo;
-                                $setTypes    .= 's';
+                                $dup = db_query($link, "SELECT id FROM thalilist WHERE Thali = ? AND id <> ? LIMIT 1", "si", [$sabeelNo, $id]);
+                                if ($dup->num_rows > 0) {
+                                    $thaliConflict++;
+                                    echo "<p style='color:#b36b00;'>Warning : sabeel " . e($sabeelNo)
+                                        . " is already used by another member, so Thali was NOT changed for ITS "
+                                        . e($its) . " (dues were still updated).</p>";
+                                } else {
+                                    $setColumns[] = '`Thali` = ?';
+                                    $setParams[]  = $sabeelNo;
+                                    $setTypes    .= 's';
+                                }
                             }
 
                             $setColumns[] = '`Previous_Due` = ?';
@@ -191,7 +201,8 @@ $currentYear = '1447-1448';
 
                     echo "<p style='color:green;'>Import complete. Updated: " . (int) $updated
                         . ", Skipped (older duplicate): " . (int) $skipped
-                        . ", Not found: " . (int) $notFound . "</p>";
+                        . ", Not found: " . (int) $notFound
+                        . ", Thali conflicts: " . (int) $thaliConflict . "</p>";
                 } ?>
             </div>
         </div>
