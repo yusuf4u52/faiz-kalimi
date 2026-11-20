@@ -1,8 +1,8 @@
 <?php
-include('connection.php');
-require_once('helpers.php');
-include('getHijriDate.php');
-require_once '_sendMail.php';
+require_once __DIR__ . '/connection.php';
+require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/getHijriDate.php';
+require_once __DIR__ . '/_sendMail.php';
 //include('emailmenu.php');
 
 // This endpoint has no login of its own to check (it's meant to be hit by
@@ -432,7 +432,13 @@ try {
         }
     }
 } catch (Throwable $e) {
-    $displayMessage('Error: ' . $e->getMessage());
+    error_log('[email2.php] Processing failed: ' . $e);
+    if (!headers_sent()) {
+        http_response_code(500);
+    }
+    $displayMessage($debug
+        ? 'Error: ' . $e->getMessage()
+        : 'Processing failed. Check the PHP error log for details.');
     echo "An error occurred while processing the daily update.";
 }
 
