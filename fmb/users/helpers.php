@@ -99,6 +99,7 @@ function current_user_email(): ?string
  * a manual re-send by an admin.
  *
  * Accepts either:
+ *   - a local PHP CLI invocation (for a host's command-based cron), or
  *   - a shared-secret token (?token=... or an X-Cron-Token header) matching
  *     the FMB_CRON_SECRET environment variable, for the automated trigger, or
  *   - an active session belonging to an admin/superadmin user.
@@ -112,6 +113,12 @@ function current_user_email(): ?string
  */
 function require_cron_or_admin_access(mysqli $link): void
 {
+    // A CLI invocation is not reachable over HTTP and is the normal mode for
+    // hosting providers that run cron commands directly.
+    if (PHP_SAPI === 'cli') {
+        return;
+    }
+
     $secret = getenv('FMB_CRON_SECRET');
     $provided = $_GET['token'] ?? ($_SERVER['HTTP_X_CRON_TOKEN'] ?? null);
 
