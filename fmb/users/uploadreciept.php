@@ -38,14 +38,79 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                     $spreadsheet = IOFactory::load($filePath);
                     $sheet = $spreadsheet->getActiveSheet();
                     $rows = $sheet->toArray();
-                    array_shift($rows); // header row
+
+                    // Reports may have a title row above the real column headings.
+                    $normalizeHeader = function ($v) {
+                        return strtolower(trim(preg_replace('/[^a-z0-9]+/', ' ', (string) $v)));
+                    };
+
+                    $headerRowIndex = null;
+                    $columns = [];
+                    foreach ($rows as $index => $row) {
+                        $candidate = [];
+                        foreach ($row as $columnIndex => $heading) {
+                            $normalized = $normalizeHeader($heading);
+                            if ($normalized !== '') {
+                                $candidate[$normalized] = $columnIndex;
+                            }
+                        }
+
+                        if (
+                            isset($candidate['receiptno']) ||
+                            isset($candidate['reciept no']) ||
+                            isset($candidate['receipt no'])
+                        ) {
+                            $headerRowIndex = $index;
+                            $columns = $candidate;
+                            break;
+                        }
+                    }
+
+                    if ($headerRowIndex === null) {
+                        // Legacy exports did not include a separate title row.
+                        $headerRowIndex = 0;
+                    }
+
+                    $columnIndex = function (array $names) use ($columns) {
+                        foreach ($names as $name) {
+                            if (isset($columns[$name])) {
+                                return $columns[$name];
+                            }
+                        }
+                        return null;
+                    };
+
+                    $receiptColumn = $columnIndex(['receiptno', 'reciept no', 'receipt no']);
+                    $dateColumn = $columnIndex(['date']);
+                    $itsColumn = $columnIndex(['its no', 'its']);
+                    $nameColumn = $columnIndex(['full name']);
+                    $receiptNameColumn = $columnIndex(['reciept name', 'receipt name']);
+                    $sabeelColumn = $columnIndex(['sabeel number', 'sabeel no', 'sabeel']);
+                    $amountColumn = $columnIndex(['amount']);
+                    $paymentColumn = $columnIndex(['paytype', 'pay type', 'payment type']);
+                    $transactionColumn = $columnIndex(['reference no']);
+                    $yearColumn = $columnIndex(['takhmeen year']);
+
+                    // Fallback for older exports using fixed positions.
+                    if ($receiptColumn === null) $receiptColumn = 0;
+                    if ($dateColumn === null) $dateColumn = 1;
+                    if ($itsColumn === null) $itsColumn = 2;
+                    if ($nameColumn === null) $nameColumn = 4;
+                    if ($sabeelColumn === null) $sabeelColumn = 7;
+                    if ($amountColumn === null) $amountColumn = 6;
+                    if ($paymentColumn === null) $paymentColumn = 9;
+                    if ($transactionColumn === null) $transactionColumn = 14;
+                    if ($yearColumn === null) $yearColumn = 15;
+
+                    $rows = array_slice($rows, $headerRowIndex + 1);
 
                     foreach ($rows as $row) {
-                        $Receipt_No = trim((string) ($row[0] ?? ''));
-                        $its = trim((string) ($row[2] ?? ''));
-                        $takhmeemYear = trim((string) ($row[15] ?? ''));
+                        $Receipt_No = trim((string) ($row[$receiptColumn] ?? ''));
+                        $its = trim((string) ($row[$itsColumn] ?? ''));
+                        $takhmeemYear = trim((string) ($row[$yearColumn] ?? ''));
                         $receiptsTable = $takhmeemYear === '1447-1448' ? 'receipts' : 'receipts_1447';
-                        $date = date('Y-m-d', strtotime((string) ($row[1] ?? '')));
+                        $dateTimestamp = strtotime((string) ($row[$dateColumn] ?? ''));
+                        $date = $dateTimestamp !== false ? date('Y-m-d', $dateTimestamp) : '';
 
                         if ($Receipt_No === '' || $its === '') {
                             continue;
@@ -53,9 +118,26 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
 
                         $thalilistResult = db_query($link, "SELECT id, Thali FROM thalilist WHERE `ITS_No` = ? LIMIT 1", "s", [$its]);
                         if ($thalilistResult->num_rows === 0) {
+                            $sabeelNo = trim((string) ($row[$sabeelColumn] ?? ''));
+                            if ($sabeelNo !== '') {
+                                $thalilistResult = db_query($link, "SELECT id, Thali FROM thalilist WHERE `Thali` = ? LIMIT 1", "s", [$sabeelNo]);
+                            }
+                        }
+                        if ($thalilistResult->num_rows === 0) {
                             continue;
                         }
                         $thali = mysqli_fetch_assoc($thalilistResult);
+
+                        $name = '';
+                        if ($receiptNameColumn !== null) {
+                            $name = trim((string) ($row[$receiptNameColumn] ?? ''));
+                        }
+                        if ($name === '') {
+                            $name = trim((string) ($row[$nameColumn] ?? ''));
+                        }
+                        $amount = (float) str_replace(',', '', (string) ($row[$amountColumn] ?? 0));
+                        $paymentType = trim((string) ($row[$paymentColumn] ?? ''));
+                        $transactionId = trim((string) ($row[$transactionColumn] ?? ''));
 
                         // Single upsert instead of SELECT-then-branch.
                         db_query(
@@ -77,12 +159,12 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                                 $Receipt_No,
                                 (string) $thali['Thali'],
                                 (int) $thali['id'],
-                                (string) ($row[4] ?? ''),
-                                (float) ($row[6] ?? 0),
+                                $name,
+                                $amount,
                                 $date,
-                                (string) ($row[9] ?? ''),
-                                (string) ($row[14] ?? ''),
-                                (string) ($row[15] ?? ''),
+                                $paymentType,
+                                $transactionId,
+                                $takhmeemYear,
                             ]
                         );
 

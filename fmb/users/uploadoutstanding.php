@@ -60,7 +60,67 @@ $currentYear = '1447-1448';
 
                     $sheet = $spreadsheet->getActiveSheet();
                     $rows = $sheet->toArray();
-                    array_shift($rows); // header row
+
+                    // Reports may have a title row above the real column headings.
+                    // Resolve columns by heading name so extra or moved columns do not
+                    // break the import.
+                    $normalizeHeader = function ($v) {
+                        return strtolower(trim(preg_replace('/[^a-z0-9]+/', ' ', (string) $v)));
+                    };
+
+                    $headerRowIndex = null;
+                    $columns = [];
+                    foreach ($rows as $index => $row) {
+                        $candidate = [];
+                        foreach ($row as $columnIndex => $heading) {
+                            $normalized = $normalizeHeader($heading);
+                            if ($normalized !== '') {
+                                $candidate[$normalized] = $columnIndex;
+                            }
+                        }
+
+                        if (
+                            isset($candidate['its id']) ||
+                            isset($candidate['its no']) ||
+                            isset($candidate['its'])
+                        ) {
+                            $headerRowIndex = $index;
+                            $columns = $candidate;
+                            break;
+                        }
+                    }
+
+                    if ($headerRowIndex === null) {
+                        // Legacy exports did not always include recognized headings.
+                        // Preserve support for them using the old column positions.
+                        $headerRowIndex = -1;
+                    }
+
+                    $columnIndex = function (array $names) use ($columns) {
+                        foreach ($names as $name) {
+                            if (isset($columns[$name])) {
+                                return $columns[$name];
+                            }
+                        }
+                        return null;
+                    };
+
+                    $itsColumn       = $columnIndex(['its id', 'its no', 'its']);
+                    $sabeelColumn    = $columnIndex(['sabeel number', 'sabeel no', 'sabeel']);
+                    $yearColumn      = $columnIndex(['year']);
+                    $outstandingColumn = $columnIndex(['niyaz outstanding', 'outstanding']);
+                    $takmeemColumn   = $columnIndex(['total takhmeen', 'niyaz takhmeen', 'takhmeen', 'takmeem']);
+                    $previousColumn  = $columnIndex(['previous due']);
+
+                    // Fallback for an older workbook that had no descriptive headers.
+                    if ($itsColumn === null) $itsColumn = 0;
+                    if ($sabeelColumn === null) $sabeelColumn = 2;
+                    if ($yearColumn === null) $yearColumn = 5;
+                    if ($outstandingColumn === null) $outstandingColumn = 7;
+                    if ($takmeemColumn === null) $takmeemColumn = 10;
+                    if ($previousColumn === null) $previousColumn = 15;
+
+                    $rows = array_slice($rows, $headerRowIndex + 1);
 
                     // Convert "1,250.50" / "-3" / null to a rounded int
                     $num = function ($v) {
@@ -70,8 +130,8 @@ $currentYear = '1447-1448';
                     // Pass 1: ITS numbers that have a current-year row
                     $currentIts = [];
                     foreach ($rows as $row) {
-                        if (trim((string) ($row[5] ?? '')) === $currentYear) {
-                            $currentIts[trim((string) ($row[0] ?? ''))] = true;
+                        if (trim((string) ($row[$yearColumn] ?? '')) === $currentYear) {
+                            $currentIts[trim((string) ($row[$itsColumn] ?? ''))] = true;
                         }
                     }
 
@@ -87,9 +147,9 @@ $currentYear = '1447-1448';
 
                         // Pass 2: process rows
                         foreach ($rows as $row) {
-                            $its      = trim((string) ($row[0] ?? ''));
-                            $sabeelNo = trim((string) ($row[2] ?? ''));
-                            $rowYear  = trim((string) ($row[5] ?? ''));
+                            $its      = trim((string) ($row[$itsColumn] ?? ''));
+                            $sabeelNo = trim((string) ($row[$sabeelColumn] ?? ''));
+                            $rowYear  = trim((string) ($row[$yearColumn] ?? ''));
 
                             // Skip the totals row at the bottom of the report
                             if (stripos($its, 'GRAND TOTAL') !== false || stripos($rowYear, 'GRAND TOTAL') !== false) {
@@ -101,11 +161,11 @@ $currentYear = '1447-1448';
                                 $its = '';
                             }
 
-                            $outstanding = max(0, $num($row[7] ?? 0));   // Niyaz (Outstanding)
-                            $sheetPrev   = max(0, $num($row[15] ?? 0));  // Previous Due
+                            $outstanding = max(0, $num($row[$outstandingColumn] ?? 0));
+                            $sheetPrev   = max(0, $num($row[$previousColumn] ?? 0));
 
                             if ($rowYear === $currentYear) {
-                                $takmeem = max(0, $num($row[10] ?? 0));  // Total Takhmeen
+                                $takmeem = max(0, $num($row[$takmeemColumn] ?? 0));
                                 $prev    = max($sheetPrev, $outstanding - $takmeem);
                                 $paid    = max(0, $sheetPrev + $takmeem - $outstanding);
                             } else {
