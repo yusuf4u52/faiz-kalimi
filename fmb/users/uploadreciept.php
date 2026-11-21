@@ -104,6 +104,11 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
 
                     $rows = array_slice($rows, $headerRowIndex + 1);
 
+                    $inserted = 0;
+                    $updated = 0;
+                    $notFound = 0;
+                    $skipped = 0;
+
                     foreach ($rows as $row) {
                         $Receipt_No = trim((string) ($row[$receiptColumn] ?? ''));
                         $its = trim((string) ($row[$itsColumn] ?? ''));
@@ -112,18 +117,24 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                         $dateTimestamp = strtotime((string) ($row[$dateColumn] ?? ''));
                         $date = $dateTimestamp !== false ? date('Y-m-d', $dateTimestamp) : '';
 
-                        if ($Receipt_No === '' || $its === '') {
+                        if ($Receipt_No === '' || stripos($Receipt_No, 'grand total') !== false) {
+                            $skipped++;
                             continue;
                         }
 
-                        $thalilistResult = db_query($link, "SELECT id, Thali FROM thalilist WHERE `ITS_No` = ? LIMIT 1", "s", [$its]);
-                        if ($thalilistResult->num_rows === 0) {
-                            $sabeelNo = trim((string) ($row[$sabeelColumn] ?? ''));
-                            if ($sabeelNo !== '') {
-                                $thalilistResult = db_query($link, "SELECT id, Thali FROM thalilist WHERE `Thali` = ? LIMIT 1", "s", [$sabeelNo]);
-                            }
+                        $sabeelNo = trim((string) ($row[$sabeelColumn] ?? ''));
+                        $thalilistResult = null;
+
+                        if (preg_match('/^\d{8}$/', $its)) {
+                            $thalilistResult = db_query($link, "SELECT id, Thali FROM thalilist WHERE `ITS_No` = ? LIMIT 1", "s", [$its]);
                         }
-                        if ($thalilistResult->num_rows === 0) {
+                        if (($thalilistResult === null || $thalilistResult->num_rows === 0) && $sabeelNo !== '') {
+                            $thalilistResult = db_query($link, "SELECT id, Thali FROM thalilist WHERE `Thali` = ? LIMIT 1", "s", [$sabeelNo]);
+                        }
+                        if ($thalilistResult === null || $thalilistResult->num_rows === 0) {
+                            $notFound++;
+                            echo "<p style='color:red;'>Skipped receipt " . e($Receipt_No)
+                                . ": ITS " . e($its) . " / Sabeel " . e($sabeelNo) . " not found.</p>";
                             continue;
                         }
                         $thali = mysqli_fetch_assoc($thalilistResult);
@@ -139,38 +150,53 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                         $paymentType = trim((string) ($row[$paymentColumn] ?? ''));
                         $transactionId = trim((string) ($row[$transactionColumn] ?? ''));
 
-                        // Single upsert instead of SELECT-then-branch.
-                        db_query(
-                            $link,
-                            "INSERT INTO `$receiptsTable`
-                                (`Receipt_No`, `Thali_No`, `userid`, `name`, `Amount`, `Date`, `received_by`, `payment_type`, `transaction_id`, `takmeem_year`)
-                             VALUES (?, ?, ?, ?, ?, ?, 'saminabarnagarwala2812@gmail.com', ?, ?, ?)
-                             ON DUPLICATE KEY UPDATE
-                                `Thali_No` = VALUES(`Thali_No`),
-                                `userid` = VALUES(`userid`),
-                                `name` = VALUES(`name`),
-                                `Amount` = VALUES(`Amount`),
-                                `received_by` = VALUES(`received_by`),
-                                `payment_type` = VALUES(`payment_type`),
-                                `transaction_id` = VALUES(`transaction_id`),
-                                `takmeem_year` = VALUES(`takmeem_year`)",
-                            "ssisdssss",
-                            [
-                                $Receipt_No,
-                                (string) $thali['Thali'],
-                                (int) $thali['id'],
-                                $name,
-                                $amount,
-                                $date,
-                                $paymentType,
-                                $transactionId,
-                                $takhmeemYear,
-                            ]
-                        );
+                        try {
+                            // Single upsert instead of SELECT-then-branch.
+                            db_query(
+                                $link,
+                                "INSERT INTO `$receiptsTable`
+                                    (`Receipt_No`, `Thali_No`, `userid`, `name`, `Amount`, `Date`, `received_by`, `payment_type`, `transaction_id`, `takmeem_year`)
+                                 VALUES (?, ?, ?, ?, ?, ?, 'saminabarnagarwala2812@gmail.com', ?, ?, ?)
+                                 ON DUPLICATE KEY UPDATE
+                                    `Thali_No` = VALUES(`Thali_No`),
+                                    `userid` = VALUES(`userid`),
+                                    `name` = VALUES(`name`),
+                                    `Amount` = VALUES(`Amount`),
+                                    `received_by` = VALUES(`received_by`),
+                                    `payment_type` = VALUES(`payment_type`),
+                                    `transaction_id` = VALUES(`transaction_id`),
+                                    `takmeem_year` = VALUES(`takmeem_year`)",
+                                "ssisdssss",
+                                [
+                                    $Receipt_No,
+                                    (string) $thali['Thali'],
+                                    (int) $thali['id'],
+                                    $name,
+                                    $amount,
+                                    $date,
+                                    $paymentType,
+                                    $transactionId,
+                                    $takhmeemYear,
+                                ]
+                            );
 
-                        $wasUpdate = mysqli_affected_rows($link) > 1;
-                        echo '<h4>' . e($its) . ' reciept ' . ($wasUpdate ? 'updated' : 'inserted') . ' successfully</h4>';
+                            $wasUpdate = mysqli_affected_rows($link) > 1;
+                            if ($wasUpdate) {
+                                $updated++;
+                            } else {
+                                $inserted++;
+                            }
+                            echo '<h4>' . e($its !== '' ? $its : $sabeelNo) . ' reciept ' . ($wasUpdate ? 'updated' : 'inserted') . ' successfully</h4>';
+                        } catch (\Throwable $e) {
+                            error_log('[uploadreciept.php] receipt ' . $Receipt_No . ' failed: ' . $e->getMessage());
+                            echo "<p style='color:red;'>Could not import receipt " . e($Receipt_No) . ": " . e($e->getMessage()) . "</p>";
+                        }
                     }
+
+                    echo "<p style='color:green;'>Import complete. Inserted: " . (int) $inserted
+                        . ", Updated: " . (int) $updated
+                        . ", Not found: " . (int) $notFound
+                        . ", Skipped: " . (int) $skipped . "</p>";
                 } ?>
             </div>
         </div>
