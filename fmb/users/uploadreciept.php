@@ -57,6 +57,7 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
 
                         if (
                             isset($candidate['receiptno']) ||
+                            isset($candidate['recieptno']) ||
                             isset($candidate['reciept no']) ||
                             isset($candidate['receipt no'])
                         ) {
@@ -80,7 +81,7 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                         return null;
                     };
 
-                    $receiptColumn = $columnIndex(['receiptno', 'reciept no', 'receipt no']);
+                    $receiptColumn = $columnIndex(['receiptno', 'recieptno', 'reciept no', 'receipt no']);
                     $dateColumn = $columnIndex(['date']);
                     $itsColumn = $columnIndex(['its no', 'its']);
                     $nameColumn = $columnIndex(['full name']);
@@ -102,8 +103,6 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                     if ($transactionColumn === null) $transactionColumn = 14;
                     if ($yearColumn === null) $yearColumn = 15;
 
-                    $rows = array_slice($rows, $headerRowIndex + 1);
-
                     $inserted = 0;
                     $updated = 0;
                     $notFound = 0;
@@ -111,13 +110,33 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
 
                     foreach ($rows as $row) {
                         $Receipt_No = trim((string) ($row[$receiptColumn] ?? ''));
+
+                        // If the heading is missing or shifted, find the receipt number
+                        // itself. FMB receipt numbers are short numeric values near the
+                        // start of the row (usually 1759, 1760, and so on).
+                        if (!preg_match('/^\d{3,6}$/', $Receipt_No)) {
+                            foreach (array_slice($row, 0, 6) as $candidate) {
+                                $candidate = trim((string) $candidate);
+                                if (preg_match('/^\d{3,6}$/', $candidate)) {
+                                    $Receipt_No = $candidate;
+                                    break;
+                                }
+                            }
+                        }
+
                         $its = trim((string) ($row[$itsColumn] ?? ''));
                         $takhmeemYear = trim((string) ($row[$yearColumn] ?? ''));
                         $receiptsTable = $takhmeemYear === '1447-1448' ? 'receipts' : 'receipts_1447';
                         $dateTimestamp = strtotime((string) ($row[$dateColumn] ?? ''));
                         $date = $dateTimestamp !== false ? date('Y-m-d', $dateTimestamp) : '';
 
-                        if ($Receipt_No === '' || stripos($Receipt_No, 'grand total') !== false) {
+                        if (
+                            $Receipt_No === '' ||
+                            stripos($Receipt_No, 'grand total') !== false ||
+                            stripos($Receipt_No, 'receiptno') !== false ||
+                            stripos($Receipt_No, 'reciept no') !== false ||
+                            stripos($Receipt_No, 'receipt no') !== false
+                        ) {
                             $skipped++;
                             continue;
                         }
