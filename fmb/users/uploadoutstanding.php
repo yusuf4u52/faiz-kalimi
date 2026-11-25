@@ -65,7 +65,10 @@ $currentYear = '1447-1448';
                     // Resolve columns by heading name so extra or moved columns do not
                     // break the import.
                     $normalizeHeader = function ($v) {
-                        return strtolower(trim(preg_replace('/[^a-z0-9]+/', ' ', (string) $v)));
+                        // Lowercase FIRST, then collapse non-alphanumerics. (The other way
+                        // round stripped every capital letter, so "ITS ID" became "" and
+                        // no heading ever matched.)
+                        return trim(preg_replace('/[^a-z0-9]+/', ' ', strtolower((string) $v)));
                     };
 
                     $headerRowIndex = null;
@@ -127,11 +130,19 @@ $currentYear = '1447-1448';
                         return (int) round((float) str_replace(',', '', (string) ($v ?? 0)));
                     };
 
-                    // Pass 1: ITS numbers that have a current-year row
-                    $currentIts = [];
+                    // Pass 1: the latest year present for each ITS. A member can appear
+                    // on several rows (one per takhmeen year); only the latest row may
+                    // write, so the result no longer depends on the order of the rows.
+                    // Years look like "1447-1448", so a plain string compare works.
+                    $latestYear = [];
                     foreach ($rows as $row) {
-                        if (trim((string) ($row[$yearColumn] ?? '')) === $currentYear) {
-                            $currentIts[trim((string) ($row[$itsColumn] ?? ''))] = true;
+                        $k = trim((string) ($row[$itsColumn] ?? ''));
+                        $y = trim((string) ($row[$yearColumn] ?? ''));
+                        if ($k === '' || !preg_match('/^\d{8}$/', $k)) {
+                            continue;
+                        }
+                        if (!isset($latestYear[$k]) || strcmp($y, $latestYear[$k]) > 0) {
+                            $latestYear[$k] = $y;
                         }
                     }
 
@@ -141,6 +152,7 @@ $currentYear = '1447-1448';
                     $thaliConflict = 0;
                     $its = '';
                     $sabeelNo = '';
+                    $failed = false;
 
                     try {
                         $link->begin_transaction();
@@ -164,16 +176,18 @@ $currentYear = '1447-1448';
                             $outstanding = max(0, $num($row[$outstandingColumn] ?? 0));
                             $sheetPrev   = max(0, $num($row[$previousColumn] ?? 0));
 
+                            // A newer row exists for this member: don't let an older row overwrite it
+                            if ($its !== '' && isset($latestYear[$its]) && strcmp($rowYear, $latestYear[$its]) < 0) {
+                                $skipped++;
+                                continue;
+                            }
+
                             if ($rowYear === $currentYear) {
                                 $takmeem = max(0, $num($row[$takmeemColumn] ?? 0));
                                 $prev    = max($sheetPrev, $outstanding - $takmeem);
                                 $paid    = max(0, $sheetPrev + $takmeem - $outstanding);
                             } else {
-                                // Older-year row: never overwrite a member who has a current-year row
-                                if ($its !== '' && isset($currentIts[$its])) {
-                                    $skipped++;
-                                    continue;
-                                }
+                                // Latest row is an older year: carry its balance forward as Previous Due
                                 // Otherwise carry the old balance forward as Previous Due
                                 $takmeem = 0;
                                 $prev    = $outstanding;
@@ -250,10 +264,13 @@ $currentYear = '1447-1448';
                         $link->commit();
                     } catch (\Throwable $e) {
                         $link->rollback();
+                        $failed = true;
                         error_log('[uploadoutstanding.php] import failed: ' . $e->getMessage());
+                        echo "<p style='color:red;'>Import FAILED and was rolled back; nothing was saved. Last row: ITS "
+                            . e($its) . " / Sabeel " . e($sabeelNo) . ". Error: " . e($e->getMessage()) . "</p>";
                     }
 
-                    echo "<p style='color:green;'>Import complete. Updated: " . (int) $updated
+                    if (!$failed) echo "<p style='color:green;'>Import complete. Updated: " . (int) $updated
                         . ", Skipped (older duplicate): " . (int) $skipped
                         . ", Not found: " . (int) $notFound
                         . ", Thali conflicts: " . (int) $thaliConflict . "</p>";

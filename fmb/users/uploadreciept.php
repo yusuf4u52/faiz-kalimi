@@ -32,7 +32,11 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                         </div>
                     </form>
                 <?php } ?>
-                <?php if ($canImport && isset($_POST['import']) && isset($_FILES['import_reciept'])) {
+                <?php if ($canImport && isset($_POST['import']) && isset($_FILES['import_reciept'])
+                    && $_FILES['import_reciept']['error'] !== UPLOAD_ERR_OK) {
+                    echo "<p style='color:red;'>Upload failed (error code "
+                        . (int) $_FILES['import_reciept']['error'] . "). Please choose a file and try again.</p>";
+                } elseif ($canImport && isset($_POST['import']) && isset($_FILES['import_reciept'])) {
                     $filePath = $_FILES['import_reciept']['tmp_name'];
 
                     $spreadsheet = IOFactory::load($filePath);
@@ -41,7 +45,10 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
 
                     // Reports may have a title row above the real column headings.
                     $normalizeHeader = function ($v) {
-                        return strtolower(trim(preg_replace('/[^a-z0-9]+/', ' ', (string) $v)));
+                        // Lowercase FIRST, then collapse non-alphanumerics. (Doing it the
+                        // other way round stripped every capital letter, so "ReceiptNo"
+                        // became "eceipt o" and no heading ever matched.)
+                        return trim(preg_replace('/[^a-z0-9]+/', ' ', strtolower((string) $v)));
                     };
 
                     $headerRowIndex = null;
@@ -105,10 +112,15 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
 
                     $inserted = 0;
                     $updated = 0;
+                    $unchanged = 0;
                     $notFound = 0;
                     $skipped = 0;
 
-                    foreach ($rows as $row) {
+                    foreach ($rows as $rowIndex => $row) {
+                        // Ignore everything above and including the heading row.
+                        if ($rowIndex <= $headerRowIndex && $columns !== []) {
+                            continue;
+                        }
                         $Receipt_No = trim((string) ($row[$receiptColumn] ?? ''));
 
                         // If the heading is missing or shifted, find the receipt number
@@ -138,6 +150,12 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                             stripos($Receipt_No, 'receipt no') !== false
                         ) {
                             $skipped++;
+                            continue;
+                        }
+
+                        if ($date === '') {
+                            $skipped++;
+                            echo "<p style='color:red;'>Skipped receipt " . e($Receipt_No) . ": invalid date.</p>";
                             continue;
                         }
 
@@ -199,13 +217,19 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
                                 ]
                             );
 
-                            $wasUpdate = mysqli_affected_rows($link) > 1;
-                            if ($wasUpdate) {
-                                $updated++;
-                            } else {
+                            // MySQL: 1 = new row, 2 = existing row changed, 0 = existing row identical.
+                            $affected = mysqli_affected_rows($link);
+                            if ($affected === 1) {
                                 $inserted++;
+                                $status = 'inserted';
+                            } elseif ($affected === 2) {
+                                $updated++;
+                                $status = 'updated';
+                            } else {
+                                $unchanged++;
+                                $status = 'already up to date';
                             }
-                            echo '<h4>' . e($its !== '' ? $its : $sabeelNo) . ' reciept ' . ($wasUpdate ? 'updated' : 'inserted') . ' successfully</h4>';
+                            echo '<h4>' . e($its !== '' ? $its : $sabeelNo) . ' receipt ' . e($Receipt_No) . ' ' . $status . '</h4>';
                         } catch (\Throwable $e) {
                             error_log('[uploadreciept.php] receipt ' . $Receipt_No . ' failed: ' . $e->getMessage());
                             echo "<p style='color:red;'>Could not import receipt " . e($Receipt_No) . ": " . e($e->getMessage()) . "</p>";
@@ -214,6 +238,7 @@ $canImport = user_email_in(DATA_IMPORT_EMAILS);
 
                     echo "<p style='color:green;'>Import complete. Inserted: " . (int) $inserted
                         . ", Updated: " . (int) $updated
+                        . ", Unchanged: " . (int) $unchanged
                         . ", Not found: " . (int) $notFound
                         . ", Skipped: " . (int) $skipped . "</p>";
                 } ?>
