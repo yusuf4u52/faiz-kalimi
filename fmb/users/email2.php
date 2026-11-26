@@ -47,8 +47,43 @@ try {
     date_default_timezone_set('Asia/Kolkata');
     $today_date = date('Y-m-d');
     $tomorrow_date = $_GET['stop_date'] ?? date('Y-m-d', strtotime('+ 1 day'));
+    $parsedDate = DateTime::createFromFormat('Y-m-d', (string) $tomorrow_date);
+    if (!$parsedDate || $parsedDate->format('Y-m-d') !== $tomorrow_date) {
+        throw new RuntimeException('Invalid stop_date; expected YYYY-MM-DD.');
+    }
     $day = date('l', strtotime($tomorrow_date));
-    $hijridate = getHijriDate($tomorrow_date);
+
+    // The Hijri date can come from an outside source, and a single hiccup used
+    // to kill the whole run. Retry a few times; if it still fails, stop BEFORE
+    // any database change is made (the failure alert at the bottom tells you).
+    $hijridate = null;
+    for ($attempt = 1; $attempt <= 3; $attempt++) {
+        try {
+            $hijridate = getHijriDate($tomorrow_date);
+        } catch (Throwable $hijriError) {
+            error_log('[email2.php] getHijriDate attempt ' . $attempt . ' failed: ' . $hijriError->getMessage());
+            $hijridate = null;
+        }
+        if (!empty($hijridate)) {
+            break;
+        }
+        if ($attempt < 3) {
+            sleep(3);
+        }
+    }
+    if (empty($hijridate)) {
+        throw new RuntimeException('Could not get the Hijri date after 3 attempts.');
+    }
+
+    // A failed notification batch (SMTP hiccup) must never stop the daily
+    // report below from going out.
+    $sendBatchSafely = static function (array $batch, string $label): void {
+        try {
+            sendEmailBatch($batch);
+        } catch (Throwable $batchError) {
+            error_log('[email2.php] ' . $label . ' batch failed: ' . $batchError->getMessage());
+        }
+    };
 
     // --- Thalis stopping tomorrow ---
     $stop_thali = db_query($link, "SELECT DISTINCT `thali` FROM stop_thali WHERE `stop_date` = ?", "s", [$tomorrow_date]);
@@ -94,7 +129,7 @@ try {
                 error_log('[email2.php] Stop notification DB error: ' . $e->getMessage());
             }
         }
-        sendEmailBatch($stopNotifications);
+        $sendBatchSafely($stopNotifications, 'Stop notification');
     }
 
     // --- Thalis stopped today with no stop scheduled for tomorrow => resume tomorrow ---
@@ -150,7 +185,7 @@ try {
                 error_log('[email2.php] Start notification DB error: ' . $e->getMessage());
             }
         }
-        sendEmailBatch($startNotifications);
+        $sendBatchSafely($startNotifications, 'Start notification');
     }
 
     // --- Daily change/thali-count report for tomorrow ---
@@ -330,12 +365,23 @@ try {
         $total_registered_thali = $pivot["total"]["total"] + $registeredNotActiveCount;
         $msg .= "<br><strong>Total Registered Thali: " . e((string) $total_registered_thali) . "</strong>";
 
+        $hasChanges = !empty($processed) || !empty($request);
         $mailSent = false;
-        if (!empty($processed) || !empty($request)) {
-            $mailSent = sendEmail(DAILY_UPDATE_EMAILS, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
+        if ($hasChanges) {
+            // Retry transient SMTP failures before giving up.
+            for ($attempt = 1; $attempt <= 3 && !$mailSent; $attempt++) {
+                $mailSent = sendEmail(DAILY_UPDATE_EMAILS, 'Start Stop update ' . $tomorrow_date, $msg, null, null, true);
+                if (!$mailSent && $attempt < 3) {
+                    error_log('[email2.php] Daily update email attempt ' . $attempt . ' failed: ' . ($GLOBALS['lastSendEmailError'] ?? 'unknown'));
+                    sleep(5);
+                }
+            }
         }
 
-        if ($mailSent) {
+        if (!$hasChanges) {
+            // Nothing to report is not a failure.
+            $displayMessage('No start/stop changes for ' . $tomorrow_date . '; no update email needed.');
+        } elseif ($mailSent) {
             $displayMessage('Daily start/stop email sent successfully.');
 
             foreach ($transporterDailyRows as $row) {
@@ -440,6 +486,25 @@ try {
         ? 'Error: ' . $e->getMessage()
         : 'Processing failed. Check the PHP error log for details.');
     echo "An error occurred while processing the daily update.";
+
+    // Tell the admins, so a failed run is noticed instead of discovered later.
+    try {
+        sendEmail(
+            SKIP_NOTICE_EMAILS,
+            'FMB daily update FAILED ' . date('Y-m-d H:i'),
+            'email2.php failed: ' . e($e->getMessage()) . '<br>Please check the PHP error log or run it manually.',
+            null,
+            null,
+            true
+        );
+    } catch (Throwable $alertError) {
+        error_log('[email2.php] Could not send failure alert: ' . $alertError->getMessage());
+    }
+
+    // Non-zero exit code so the host's cron reports the failure.
+    if (PHP_SAPI === 'cli') {
+        exit(1);
+    }
 }
 
 // Keep the database backup independent from the daily start/stop workflow.
