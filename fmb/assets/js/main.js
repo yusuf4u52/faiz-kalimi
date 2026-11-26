@@ -97,7 +97,7 @@
     displayLength: 25,
     responsive: true,
     columnDefs: [{ searchable: false, orderable: false, targets: 0 }],
-    order: [[1, "asc"]],
+    order: [[2, "asc"]],
     layout: exportButtonsLayout(),
     initComplete() {
       attachFooterSearch(this.api());
