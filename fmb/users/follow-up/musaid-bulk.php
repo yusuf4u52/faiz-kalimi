@@ -11,11 +11,13 @@
  *   Musaid <td> : <?php echo e(musaid_label($values['fmb_musaid'] ?? null)); ?>
  *   before footer: <?php musaid_bulk_ui(); ?>
  */
-require_once __DIR__ . '/helpers.php';
+// The pages/endpoint have normally loaded helpers.php already; only load it if they have not.
+if (!function_exists('db_query')) {
+    require_once __DIR__ . '/helpers.php';
+}
 
-// Users whose users.role contains this text (case-insensitive) are FMB Musaids.
-// Change it here if your role value is spelled differently.
-const MUSAID_ROLE_LIKE = '%musaid%';
+// users.role value of the FMB Musaid users. NOT the older 'musaid' role, which is a different group.
+const MUSAID_ROLE = 'fmb_musaid';
 
 /** [user id => display name] of every user with the FMB Musaid role. */
 function musaid_users(): array
@@ -25,18 +27,17 @@ function musaid_users(): array
         return $cache;
     }
     $cache = [];
-    $res = db_query($GLOBALS['link'], "SELECT * FROM users ORDER BY name ASC");
-    while ($u = mysqli_fetch_assoc($res)) {
-        $label = '';
-        foreach (['name', 'full_name', 'fullname', 'username', 'user_name', 'email'] as $k) {
-            if (!empty($u[$k])) {
-                $label = (string) $u[$k];
-                break;
-            }
+    try {
+        $res = db_query($GLOBALS['link'], "SELECT id, username, email FROM users WHERE role = ?", "s", [MUSAID_ROLE]);
+        while ($u = mysqli_fetch_assoc($res)) {
+            $label = trim((string) ($u['username'] ?? '')) ?: trim((string) ($u['email'] ?? ''));
+            $cache[(int) $u['id']] = $label !== '' ? $label : 'User #' . $u['id'];
         }
-        $cache[(int) $u['id']] = $label !== '' ? $label : 'User #' . $u['id'];
+        asort($cache, SORT_NATURAL | SORT_FLAG_CASE);
+    } catch (Throwable $e) {
+        // Never let this feature take the whole list page down.
+        error_log('[musaid-bulk] could not load FMB Musaid users: ' . $e->getMessage());
     }
-    asort($cache, SORT_NATURAL | SORT_FLAG_CASE);
     return $cache;
 }
 
