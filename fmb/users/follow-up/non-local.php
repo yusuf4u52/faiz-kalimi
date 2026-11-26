@@ -2,6 +2,7 @@
 include('../header.php');
 include('../navbar.php');
 require_once('../helpers.php');
+require_once('../musaid-bulk.php');
 ?>
 
 <div class="card">
@@ -18,13 +19,13 @@ require_once('../helpers.php');
                 <?php if (!empty($_GET['status'])) { ?>
                     <div class="alert alert-info" role="alert"><?php echo e($_GET['status']); ?></div>
                 <?php } ?>
-                <?php $pendinghoob = db_query( $link, "SELECT t.*, r.*, (t.Previous_Due + t.yearly_hub - t.Paid) AS Total_Pending FROM thalilist AS t LEFT JOIN (SELECT * FROM (SELECT r.*, ROW_NUMBER() OVER (PARTITION BY r.userid ORDER BY r.Date DESC, r.id DESC) AS rn FROM receipts AS r) AS ranked WHERE rn = 1) AS r ON t.id = r.userid WHERE (t.Previous_Due + t.yearly_hub - t.Paid) > 0 AND t.thalisize IS NOT NULL AND t.hardstop != 1 AND t.yearly_hub > 0 AND t.sabeelType NOT LIKE '%Kalimi ITS%' AND t.Previous_Due <= 0 ORDER BY Total_Pending DESC, r.Date DESC");
+                <?php $pendinghoob = db_query( $link, "SELECT t.*, t.id AS thali_pk, r.*, (t.Previous_Due + t.yearly_hub - t.Paid) AS Total_Pending FROM thalilist AS t LEFT JOIN (SELECT * FROM (SELECT r.*, ROW_NUMBER() OVER (PARTITION BY r.userid ORDER BY r.Date DESC, r.id DESC) AS rn FROM receipts AS r) AS ranked WHERE rn = 1) AS r ON t.id = r.userid WHERE (t.Previous_Due + t.yearly_hub - t.Paid) > 0 AND t.thalisize IS NOT NULL AND t.hardstop != 1 AND t.yearly_hub > 0 AND t.sabeelType NOT LIKE '%Kalimi ITS%' AND t.Previous_Due <= 0 ORDER BY Total_Pending DESC, r.Date DESC");
                 if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="transporterlist" class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col">Sabeel No</th>
+                                    <th scope="col"><?php echo musaid_all_checkbox(); ?>Sabeel No</th>
                                     <th scope="col">Thali No</th>
                                     <th scope="col">Contact</th>
                                     <th scope="col">Whatsapp</th>
@@ -42,12 +43,13 @@ require_once('../helpers.php');
                                     <th scope="col">Wing/Flat</th>
                                     <th scope="col">Society</th>
                                     <th scope="col">Transporter</th>
+                                    <th scope="col" data-musaid-col>FMB Musaid</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php while ($values = mysqli_fetch_assoc($pendinghoob)) { ?>
                                     <tr>
-                                        <td><?php echo e($values['Thali']); ?></td>
+                                        <td><?php echo musaid_checkbox($values['thali_pk'] ?? 0); ?><?php echo e($values['Thali']); ?></td>
                                         <td><?php echo e($values['tiffinno']); ?></td>
                                         <td><a href="tel:<?php echo e($values['CONTACT']); ?>"><?php echo e($values['CONTACT']); ?></a></td>
                                         <td><a href="https://wa.me/91<?php echo e($values['WhatsApp']); ?>" target="_blank"><?php echo e($values['WhatsApp']); ?></a></td>
@@ -65,6 +67,7 @@ require_once('../helpers.php');
                                         <td><?php echo e($values['wingflat']); ?></td>
                                         <td><?php echo e($values['society']); ?></td>
                                         <td><?php echo e($values['Transporter']); ?></td>
+                                        <td><?php echo e(musaid_label($values['fmb_musaid'] ?? null)); ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -88,6 +91,7 @@ require_once('../helpers.php');
                                     <th scope="col">Wing/Flat</th>
                                     <th scope="col">Society</th>
                                     <th scope="col">Transporter</th>
+                                    <th scope="col">FMB Musaid</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -100,4 +104,5 @@ require_once('../helpers.php');
     </div>
 </div>
 
+<?php musaid_bulk_ui(); ?>
 <?php include('../footer.php'); ?>
