@@ -22,7 +22,7 @@ require_once('../musaid-bulk.php');
                 <?php $pendinghoob = db_query( $link, "SELECT t.*, t.id AS thali_pk, r.*, (t.Previous_Due + t.yearly_hub - t.Paid) AS Total_Pending FROM thalilist AS t LEFT JOIN (SELECT * FROM (SELECT r.*, ROW_NUMBER() OVER (PARTITION BY r.userid ORDER BY r.Date DESC, r.id DESC) AS rn FROM receipts AS r) AS ranked WHERE rn = 1) AS r ON t.id = r.userid WHERE (t.Previous_Due + t.yearly_hub - t.Paid) > 0 AND t.thalisize IS NOT NULL AND t.hardstop != 1 AND t.sabeelType LIKE '%Kalimi ITS%' AND t.Previous_Due <= 0 ORDER BY Total_Pending DESC, r.Date DESC");
                 if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
-                        <table id="transporterlist" class="table table-striped table-hover">
+                        <table id="transporterlist" data-no-serial class="table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th scope="col"><?php echo musaid_all_checkbox(); ?>Sabeel No</th>

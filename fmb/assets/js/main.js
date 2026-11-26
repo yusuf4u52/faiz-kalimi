@@ -39,23 +39,22 @@
   // Turns each column's footer cell into a live search box.
   // (Behaviour, including the existing keyup-guard, is unchanged.)
   function attachFooterSearch(tableApi) {
-  tableApi.columns().every(function () {
-    const column = this;
-    const footer = column.footer();
-    if (!footer) return;
+    tableApi.columns().every(function () {
+      const column = this;
+      const title = column.footer().textContent;
 
-    const input = document.createElement("input");
-    input.placeholder = footer.textContent;
-    input.className = "form-control form-control-sm";
-    footer.replaceChildren(input);
+      const input = document.createElement("input");
+      input.placeholder = title;
+      input.className = "form-control form-control-sm";
+      column.footer().replaceChildren(input);
 
-    input.addEventListener("keyup", () => {
-      if (column.search() !== input.value) {
-        column.search(input.value).draw();
-      }
+      input.addEventListener("keyup", () => {
+        if (column.search() !== input.value) {
+          column.search(input.value).draw();
+        }
+      });
     });
-  });
-}
+  }
 
   // Inserts a "<strong>group</strong>" divider row whenever column 0 changes.
   function groupRowDrawCallback(colspan) {
@@ -95,37 +94,29 @@
   });
 
   const transporterEl = document.querySelector("table#transporterlist");
-// Tables whose first header has a checkbox (e.g. local.php with Musaid)
-// use column 0 for real data, so don't turn it into a serial number.
-const useSerialColumn =
-  !transporterEl ||
-  !transporterEl.querySelector("thead th:first-child input[type='checkbox']");
+  const useSerialColumn = !(transporterEl && transporterEl.hasAttribute("data-no-serial"));
 
-const transporterlist = new DataTable("table#transporterlist", {
-  displayLength: 25,
-  responsive: true,
-  columnDefs: useSerialColumn
-    ? [{ searchable: false, orderable: false, targets: 0 }]
-    : [],
-  order: useSerialColumn ? [[2, "asc"]] : [], // [] keeps the SQL order
-  layout: exportButtonsLayout(),
-  initComplete() {
-    attachFooterSearch(this.api());
-  },
-});
-
-if (useSerialColumn) {
-  transporterlist.on("draw.dt", function () {
-    const pageInfo = transporterlist.page.info();
-    transporterlist
-      .column(0, { page: "current" })
-      .nodes()
-      .each((cell, i) => {
-        cell.innerHTML = i + 1 + pageInfo.start;
-      });
+  const transporterlist = new DataTable("table#transporterlist", {
+    displayLength: 25,
+    responsive: true,
+    columnDefs: useSerialColumn
+      ? [{ searchable: false, orderable: false, targets: 0 }]
+      : [{ orderable: false, targets: 0 }],
+    order: useSerialColumn ? [[2, "asc"]] : [], // [] keeps the SQL order
+    layout: exportButtonsLayout(),
+    initComplete() {
+      attachFooterSearch(this.api());
+    },
   });
-}
 
+  if (useSerialColumn) {
+    transporterlist.on("draw.dt", function () {
+      const start = transporterlist.page.info().start;
+      transporterlist.column(0, { page: "current" }).nodes().each((cell, i) => {
+        cell.innerHTML = i + 1 + start;
+      });
+    });
+  }
   const paymentreport = new DataTable("table#paymentreport", {
     displayLength: 25,
     responsive: true,
