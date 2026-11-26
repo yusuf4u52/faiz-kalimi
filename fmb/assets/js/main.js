@@ -39,22 +39,23 @@
   // Turns each column's footer cell into a live search box.
   // (Behaviour, including the existing keyup-guard, is unchanged.)
   function attachFooterSearch(tableApi) {
-    tableApi.columns().every(function () {
-      const column = this;
-      const title = column.footer().textContent;
+  tableApi.columns().every(function () {
+    const column = this;
+    const footer = column.footer();
+    if (!footer) return;
 
-      const input = document.createElement("input");
-      input.placeholder = title;
-      input.className = "form-control form-control-sm";
-      column.footer().replaceChildren(input);
+    const input = document.createElement("input");
+    input.placeholder = footer.textContent;
+    input.className = "form-control form-control-sm";
+    footer.replaceChildren(input);
 
-      input.addEventListener("keyup", () => {
-        if (column.search() !== this.value) {
-          column.search(input.value).draw();
-        }
-      });
+    input.addEventListener("keyup", () => {
+      if (column.search() !== input.value) {
+        column.search(input.value).draw();
+      }
     });
-  }
+  });
+}
 
   // Inserts a "<strong>group</strong>" divider row whenever column 0 changes.
   function groupRowDrawCallback(colspan) {
@@ -93,17 +94,27 @@
     layout: exportButtonsLayout(),
   });
 
-  const transporterlist = new DataTable("table#transporterlist", {
-    displayLength: 25,
-    responsive: true,
-    columnDefs: [{ searchable: false, orderable: false, targets: 0 }],
-    order: [[2, "asc"]],
-    layout: exportButtonsLayout(),
-    initComplete() {
-      attachFooterSearch(this.api());
-    },
-  });
+  const transporterEl = document.querySelector("table#transporterlist");
+// Tables whose first header has a checkbox (e.g. local.php with Musaid)
+// use column 0 for real data, so don't turn it into a serial number.
+const useSerialColumn =
+  !transporterEl ||
+  !transporterEl.querySelector("thead th:first-child input[type='checkbox']");
 
+const transporterlist = new DataTable("table#transporterlist", {
+  displayLength: 25,
+  responsive: true,
+  columnDefs: useSerialColumn
+    ? [{ searchable: false, orderable: false, targets: 0 }]
+    : [],
+  order: useSerialColumn ? [[2, "asc"]] : [], // [] keeps the SQL order
+  layout: exportButtonsLayout(),
+  initComplete() {
+    attachFooterSearch(this.api());
+  },
+});
+
+if (useSerialColumn) {
   transporterlist.on("draw.dt", function () {
     const pageInfo = transporterlist.page.info();
     transporterlist
@@ -113,6 +124,7 @@
         cell.innerHTML = i + 1 + pageInfo.start;
       });
   });
+}
 
   const paymentreport = new DataTable("table#paymentreport", {
     displayLength: 25,
