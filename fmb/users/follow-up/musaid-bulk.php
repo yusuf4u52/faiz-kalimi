@@ -5,10 +5,10 @@
  *
  * Page usage:
  *   require_once('../musaid-bulk.php');            // near the top, after helpers.php
- *   first <th>  : <?php echo musaid_all_checkbox(); ?>Sabeel No
- *   first <td>  : <?php echo musaid_checkbox($values['thali_pk']); ?>...
+ *   first <th>  : <?php echo bulk_musaid_all_checkbox(); ?>Sabeel No
+ *   first <td>  : <?php echo bulk_musaid_checkbox($values['thali_pk']); ?>...
  *   Musaid <th> : add the attribute  data-musaid-col
- *   Musaid <td> : <?php echo e(musaid_label($values['fmb_musaid'] ?? null)); ?>
+ *   Musaid <td> : <?php echo e(bulk_musaid_label($values['fmb_musaid'] ?? null)); ?>
  *   before footer: <?php musaid_bulk_ui(); ?>
  */
 // The pages/endpoint have normally loaded helpers.php already; only load it if they have not.
@@ -17,10 +17,10 @@ if (!function_exists('db_query')) {
 }
 
 // users.role value of the FMB Musaid users. NOT the older 'musaid' role, which is a different group.
-const MUSAID_ROLE = 'fmb_musaid';
+const BULK_MUSAID_ROLE = 'fmb_musaid';
 
 /** [user id => display name] of every user with the FMB Musaid role. */
-function musaid_users(): array
+function bulk_musaid_users(): array
 {
     static $cache = null;
     if ($cache !== null) {
@@ -28,7 +28,7 @@ function musaid_users(): array
     }
     $cache = [];
     try {
-        $res = db_query($GLOBALS['link'], "SELECT id, username, email FROM users WHERE role = ?", "s", [MUSAID_ROLE]);
+        $res = db_query($GLOBALS['link'], "SELECT id, username, email FROM users WHERE role = ?", "s", [BULK_MUSAID_ROLE]);
         while ($u = mysqli_fetch_assoc($res)) {
             $label = trim((string) ($u['username'] ?? '')) ?: trim((string) ($u['email'] ?? ''));
             $cache[(int) $u['id']] = $label !== '' ? $label : 'User #' . $u['id'];
@@ -42,29 +42,29 @@ function musaid_users(): array
 }
 
 /** Name shown in the FMB Musaid column for a stored fmb_musaid value. */
-function musaid_label($id): string
+function bulk_musaid_label($id): string
 {
     if ($id === null || $id === '' || (int) $id === 0) {
         return '';
     }
-    return musaid_users()[(int) $id] ?? (string) $id;
+    return bulk_musaid_users()[(int) $id] ?? (string) $id;
 }
 
-function musaid_can_assign(): bool
+function bulk_musaid_can_assign(): bool
 {
     return user_email_in(FOLLOW_UP_ACCESS_EMAILS);
 }
 
-function musaid_checkbox($thaliId): string
+function bulk_musaid_checkbox($thaliId): string
 {
-    return musaid_can_assign()
+    return bulk_musaid_can_assign()
         ? '<input type="checkbox" class="form-check-input musaid-row me-2" value="' . (int) $thaliId . '" aria-label="Select member">'
         : '';
 }
 
-function musaid_all_checkbox(): string
+function bulk_musaid_all_checkbox(): string
 {
-    return musaid_can_assign()
+    return bulk_musaid_can_assign()
         ? '<input type="checkbox" class="form-check-input musaid-all me-2" aria-label="Select all members">'
         : '';
 }
@@ -72,10 +72,10 @@ function musaid_all_checkbox(): string
 /** The floating "N selected - Assign" bar, the Musaid modal, and the script. */
 function musaid_bulk_ui(string $endpoint = '../musaid-assign.php'): void
 {
-    if (!musaid_can_assign()) {
+    if (!bulk_musaid_can_assign()) {
         return;
     }
-    $users = musaid_users();
+    $users = bulk_musaid_users();
     ?>
     <div id="musaid-bar" class="d-none align-items-center gap-3 bg-body border rounded shadow px-3 py-2"
          style="position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:1040">

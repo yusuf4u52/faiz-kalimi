@@ -21,7 +21,7 @@ function musaidJson(array $payload, int $status = 200): void
     exit;
 }
 
-if (!musaid_can_assign()) {
+if (!bulk_musaid_can_assign()) {
     musaidJson(['ok' => false, 'message' => 'Forbidden.'], 403);
 }
 // A cross-site form cannot add this header, so forged requests are refused.
@@ -38,7 +38,7 @@ if (!$ids || count($ids) > 2000) {
 }
 
 $musaidId = (int) ($_POST['musaid'] ?? 0);
-$users = musaid_users();
+$users = bulk_musaid_users();
 if (!isset($users[$musaidId])) {
     musaidJson(['ok' => false, 'message' => 'The selected user does not have the FMB Musaid role.'], 400);
 }

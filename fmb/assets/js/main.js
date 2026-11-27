@@ -49,7 +49,7 @@
       column.footer().replaceChildren(input);
 
       input.addEventListener("keyup", () => {
-        if (column.search() !== input.value) {
+        if (column.search() !== this.value) {
           column.search(input.value).draw();
         }
       });
@@ -93,30 +93,27 @@
     layout: exportButtonsLayout(),
   });
 
-  const transporterEl = document.querySelector("table#transporterlist");
-  const useSerialColumn = !(transporterEl && transporterEl.hasAttribute("data-no-serial"));
-
   const transporterlist = new DataTable("table#transporterlist", {
     displayLength: 25,
     responsive: true,
-    columnDefs: useSerialColumn
-      ? [{ searchable: false, orderable: false, targets: 0 }]
-      : [{ orderable: false, targets: 0 }],
-    order: useSerialColumn ? [[2, "asc"]] : [], // [] keeps the SQL order
+    columnDefs: [{ searchable: false, orderable: false, targets: 0 }],
+    order: [[1, "asc"]],
     layout: exportButtonsLayout(),
     initComplete() {
       attachFooterSearch(this.api());
     },
   });
 
-  if (useSerialColumn) {
-    transporterlist.on("draw.dt", function () {
-      const start = transporterlist.page.info().start;
-      transporterlist.column(0, { page: "current" }).nodes().each((cell, i) => {
-        cell.innerHTML = i + 1 + start;
+  transporterlist.on("draw.dt", function () {
+    const pageInfo = transporterlist.page.info();
+    transporterlist
+      .column(0, { page: "current" })
+      .nodes()
+      .each((cell, i) => {
+        cell.innerHTML = i + 1 + pageInfo.start;
       });
-    });
-  }
+  });
+
   const paymentreport = new DataTable("table#paymentreport", {
     displayLength: 25,
     responsive: true,

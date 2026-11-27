@@ -2,6 +2,7 @@
 include('../header.php');
 include('../navbar.php');
 require_once('../helpers.php');
+require_once('../musaid-bulk.php');
 ?>
 
 <div class="card">
@@ -9,62 +10,62 @@ require_once('../helpers.php');
         <div class="row">
             <div class="col-12">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                    <h2 class="mb-0">Non Local Current Year Pending Hoob</h2>
+                    <h2 class="mb-0">Previous Year Pending Hoob</h2>
                     <form action="email.php" method="post" data-follow-up-email>
-                        <input type="hidden" name="report" value="non-local">
+                        <input type="hidden" name="report" value="previous">
                         <button type="submit" class="btn btn-light"><i class="bi bi-envelope me-1"></i>Email Members</button>
                     </form>
                 </div>
                 <?php if (!empty($_GET['status'])) { ?>
                     <div class="alert alert-info" role="alert"><?php echo e($_GET['status']); ?></div>
                 <?php } ?>
-                <?php $pendinghoob = db_query( $link, "SELECT t.*, r.*, (t.Previous_Due + t.yearly_hub - t.Paid) AS Total_Pending FROM thalilist AS t LEFT JOIN (SELECT * FROM (SELECT r.*, ROW_NUMBER() OVER (PARTITION BY r.userid ORDER BY r.Date DESC, r.id DESC) AS rn FROM receipts AS r) AS ranked WHERE rn = 1) AS r ON t.id = r.userid WHERE (t.Previous_Due + t.yearly_hub - t.Paid) > 0 AND t.thalisize IS NOT NULL AND t.hardstop != 1 AND t.yearly_hub > 0 AND t.sabeelType NOT LIKE '%Kalimi ITS%' AND t.Previous_Due <= 0 ORDER BY Total_Pending DESC, r.Date DESC");
+                <?php $pendinghoob = db_query($link, "SELECT t.*, t.id AS thali_pk, r.* FROM thalilist as t LEFT JOIN ( SELECT * FROM ( SELECT r.*, ROW_NUMBER() OVER ( PARTITION BY r.userid ORDER BY r.Date DESC, r.id DESC ) AS rn FROM receipts_1447 AS r ) AS ranked WHERE rn = 1 ) AS r ON t.id = r.userid WHERE t.Previous_Due > 5 ORDER BY t.Previous_Due DESC, r.Date DESC");
                 if ($pendinghoob->num_rows > 0) { ?>
                     <div class="table-responsive">
                         <table id="transporterlist" class="table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th scope="col">Sabeel No</th>
-                                    <th scope="col">Thali No</th>
+                                    <th scope="col"><?php echo bulk_musaid_all_checkbox(); ?>Thali No</th>
                                     <th scope="col">Contact</th>
                                     <th scope="col">Whatsapp</th>
                                     <th scope="col">ITS No</th>
                                     <th scope="col">Name</th>
+                                    <th scope="col">Previous Due</th>
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
                                     <th scope="col">Pending</th>
-                                    <th scope="col">Paid</th>
                                     <th scope="col">Last Payment</th>
                                     <th scope="col">Payment Date</th>
-                                    <th scope="col">Paid %</th>
                                     <th scope="col">Thali Size</th>
                                     <th scope="col">Sabeel Type</th>
                                     <th scope="col">Wing/Flat</th>
                                     <th scope="col">Society</th>
                                     <th scope="col">Transporter</th>
+                                    <th scope="col" data-musaid-col>FMB Musaid</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php while ($values = mysqli_fetch_assoc($pendinghoob)) { ?>
                                     <tr>
                                         <td><?php echo e($values['Thali']); ?></td>
-                                        <td><?php echo e($values['tiffinno']); ?></td>
+                                        <td data-order="<?php echo e((string) $values['tiffinno']); ?>"><?php echo bulk_musaid_checkbox($values['thali_pk'] ?? 0); ?><?php echo e($values['tiffinno']); ?></td>
                                         <td><a href="tel:<?php echo e($values['CONTACT']); ?>"><?php echo e($values['CONTACT']); ?></a></td>
                                         <td><a href="https://wa.me/91<?php echo e($values['WhatsApp']); ?>" target="_blank"><?php echo e($values['WhatsApp']); ?></a></td>
                                         <td><?php echo e($values['ITS_No']); ?></td>
                                         <td><?php echo e($values['NAME']); ?></td>
+                                        <td><?php echo e((string) $values['Previous_Due']); ?></td>
                                         <td><?php echo e((string) $values['previous_hub']); ?></td>
                                         <td><?php echo e((string) $values['yearly_hub']); ?></td>
                                         <td><strong><?php echo e((string) ($values['Total_Pending'] ?? '')); ?></strong></td>
-                                        <td><?php echo e((string) ($values['Paid'] ?? '')); ?></td>
                                         <td><?php echo e((string) ($values['Amount'] ?? '')); ?></td>
-                                        <td><?php echo e((string) $values['Date']); ?></td>
-                                        <td><?php echo e($values['Paid %']); ?>%</td>
+                                        <td><?php echo e((string) ($values['Date'] ?? '')); ?></td>
                                         <td><?php echo e($values['thalisize']); ?></td>
                                         <td><?php echo e($values['sabeelType']); ?></td>
                                         <td><?php echo e($values['wingflat']); ?></td>
                                         <td><?php echo e($values['society']); ?></td>
                                         <td><?php echo e($values['Transporter']); ?></td>
+                                        <td><?php echo e(bulk_musaid_label($values['fmb_musaid'] ?? null)); ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -76,18 +77,18 @@ require_once('../helpers.php');
                                     <th scope="col">Whatsapp</th>
                                     <th scope="col">ITS No</th>
                                     <th scope="col">Name</th>
+                                    <th scope="col">Previous Due</th>
                                     <th scope="col">Previous Hub</th>
                                     <th scope="col">Current Hub</th>
                                     <th scope="col">Pending</th>
-                                    <th scope="col">Paid</th>
                                     <th scope="col">Last Payment</th>
                                     <th scope="col">Payment Date</th>
-                                    <th scope="col">Paid %</th>
                                     <th scope="col">Thali Size</th>
                                     <th scope="col">Sabeel Type</th>
                                     <th scope="col">Wing/Flat</th>
                                     <th scope="col">Society</th>
                                     <th scope="col">Transporter</th>
+                                    <th scope="col">FMB Musaid</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -100,4 +101,5 @@ require_once('../helpers.php');
     </div>
 </div>
 
+<?php musaid_bulk_ui(); ?>
 <?php include('../footer.php'); ?>
