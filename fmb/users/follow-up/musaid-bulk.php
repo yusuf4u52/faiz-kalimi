@@ -13,7 +13,7 @@
  */
 // The pages/endpoint have normally loaded helpers.php already; only load it if they have not.
 if (!function_exists('db_query')) {
-    require_once __DIR__ . '/helpers.php';
+    require_once __DIR__ . '/../helpers.php';
 }
 
 // users.role value of the FMB Musaid users. NOT the older 'musaid' role, which is a different group.
