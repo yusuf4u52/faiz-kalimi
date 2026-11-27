@@ -28,7 +28,7 @@ function bulk_musaid_users(): array
     }
     $cache = [];
     try {
-        $res = db_query($GLOBALS['link'], "SELECT id, username, email FROM users WHERE role = ?", "s", [BULK_MUSAID_ROLE]);
+        $res = db_query($GLOBALS['link'], "SELECT id, username, email FROM users order by username, email");
         while ($u = mysqli_fetch_assoc($res)) {
             $label = trim((string) ($u['username'] ?? '')) ?: trim((string) ($u['email'] ?? ''));
             $cache[(int) $u['id']] = $label !== '' ? $label : 'User #' . $u['id'];
@@ -80,7 +80,7 @@ function musaid_bulk_ui(string $endpoint = 'musaid-assign.php'): void
     <div id="musaid-bar" class="d-none align-items-center gap-3 bg-body border rounded shadow px-3 py-2"
          style="position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:1040">
         <span><strong id="musaid-count">0</strong> selected</span>
-        <button type="button" class="btn btn-primary btn-sm" id="musaid-open">Assign FMB Musaid</button>
+        <button type="button" class="btn btn-light btn-sm" id="musaid-open">Assign FMB Musaid</button>
     </div>
 
     <div class="modal fade" id="musaid-modal" tabindex="-1" aria-hidden="true">
