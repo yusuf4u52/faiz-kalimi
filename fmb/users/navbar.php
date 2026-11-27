@@ -122,6 +122,9 @@ if ($curr_page !== 'events.php') {
                             </ul>
                         </li>
                     <?php } ?>
+                    <?php if (isset($_SESSION['role'])) { ?>
+                        <li class="nav-item"><a class="nav-link" href="/fmb/users/follow-up/musaid-followup.php">Musaid Follow Up</a></li>
+                    <?php } ?>
                     <?php if (user_email_in(THALISEARCH_ACCESS_EMAILS)) { ?>
                         <li class="nav-item"><a class="nav-link" href="/fmb/users/thalisearch.php">Thaali Search</a></li>
                     <?php } ?>

@@ -17,6 +17,10 @@ $rights = [
         "/fmb/users/musaid.php",
         "/fmb/users/_stop_thali_admin.php",
     ],
+    // Pages open to every user listed in the users table (any role).
+    "any_user" => [
+        "/fmb/users/follow-up/musaid-followup.php",
+    ],
     "admin" => [
         "/fmb/users/musaid.php",
         "/fmb/users/admin_scripts.php",
@@ -108,7 +112,7 @@ if ($row = mysqli_fetch_assoc($sql)) {
         // real authorization bypass across every page that includes
         // _authCheck.php.
         $allowedPaths = $rights[$row['role']] ?? [];
-        if (!in_array($request_path, $allowedPaths, true) && !in_array($request_path, $rights['all'], true)) {
+        if (!in_array($request_path, $allowedPaths, true) && !in_array($request_path, $rights['any_user'], true) && !in_array($request_path, $rights['all'], true)) {
             header("Location: /fmb/users/index.php");
             exit;
         }

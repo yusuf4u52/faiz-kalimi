@@ -107,7 +107,7 @@ function musaid_bulk_ui(string $endpoint = 'musaid-assign.php'): void
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="musaid-confirm"<?php echo $users ? '' : ' disabled'; ?>>Confirm</button>
+                    <button type="button" class="btn btn-light" id="musaid-confirm"<?php echo $users ? '' : ' disabled'; ?>>Confirm</button>
                 </div>
             </div>
         </div>
