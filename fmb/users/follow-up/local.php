@@ -1,10 +1,8 @@
 <?php
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
 include('../header.php');
 include('../navbar.php');
 require_once('../helpers.php');
-require_once('musaid-bulk.php');
+require_once(__DIR__ . '/musaid-bulk.php');
 ?>
 
 <div class="card">

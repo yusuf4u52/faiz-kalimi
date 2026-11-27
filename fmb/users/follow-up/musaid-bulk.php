@@ -70,7 +70,7 @@ function bulk_musaid_all_checkbox(): string
 }
 
 /** The floating "N selected - Assign" bar, the Musaid modal, and the script. */
-function musaid_bulk_ui(string $endpoint = '../musaid-assign.php'): void
+function musaid_bulk_ui(string $endpoint = 'musaid-assign.php'): void
 {
     if (!bulk_musaid_can_assign()) {
         return;
